@@ -4,11 +4,11 @@ import { Root } from "../Root";
 import { NAV } from "../nav";
 import type { RscPayload } from "./shared";
 
-// A page's RSC payload lives next to its HTML: /buttons/index.rsc — a plain
-// static file after build, and a route the dev handler answers below.
-const RSC_MARKER = "index.rsc";
+// A page's RSC payload lives next to its HTML (/buttons.rsc, /dir/index.rsc) —
+// a plain static file after build, and a route the dev handler answers below.
+const RSC_EXT = ".rsc";
 
-// Every route is prerendered at build time (dir-style paths → <path>index.html).
+// Every route is prerendered at build time (see renderStatic in vite.config).
 export function getStaticPaths(): string[] {
   return NAV.map((item) => item.path);
 }
@@ -16,8 +16,12 @@ export function getStaticPaths(): string[] {
 // Dev-server handler: serve the RSC payload or the full HTML document.
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const isRsc = url.pathname.endsWith(`/${RSC_MARKER}`);
-  if (isRsc) url.pathname = url.pathname.slice(0, -RSC_MARKER.length);
+  const isRsc = url.pathname.endsWith(RSC_EXT);
+  if (isRsc) {
+    url.pathname = url.pathname.slice(0, -RSC_EXT.length);
+    // "/dir/index.rsc" → "/dir/" (Root strips the slash back off).
+    if (url.pathname.endsWith("/index")) url.pathname = url.pathname.slice(0, -"index".length);
+  }
 
   const rscStream = renderToReadableStream<RscPayload>({ root: <Root url={url} /> });
   if (isRsc) {

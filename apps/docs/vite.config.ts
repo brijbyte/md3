@@ -72,15 +72,11 @@ async function renderStatic(config: ResolvedConfig) {
       new Request(new URL(staticPath, "http://ssg.local")),
     );
     // Each route gets its HTML plus its RSC payload for client soft navigation.
-    const dir = staticPath.endsWith("/") ? staticPath : `${staticPath}/`;
-    const htmlFile = path.join(outDir, dir, "index.html");
-    await writeStream(htmlFile, html);
-    await writeStream(path.join(outDir, dir, "index.rsc"), payload);
-    // Routes are slashless (/buttons): also emit buttons.html so static hosts
-    // resolve the extensionless URL directly (sirv, GitHub Pages, …).
-    if (staticPath !== "/") {
-      await fs.promises.copyFile(htmlFile, path.join(outDir, `${staticPath}.html`));
-    }
+    // "/dir/" routes emit dir/index.{html,rsc}; slashless routes emit
+    // <path>.{html,rsc} (hosts resolve the extensionless URL via .html).
+    const base = staticPath.endsWith("/") ? `${staticPath}index` : staticPath;
+    await writeStream(path.join(outDir, `${base}.html`), html);
+    await writeStream(path.join(outDir, `${base}.rsc`), payload);
   }
 }
 

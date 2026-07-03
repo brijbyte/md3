@@ -19,9 +19,10 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   component page per component in `src/pages/`, each `React.lazy`-loaded inside `Suspense`
   so only the active route's server chunk is imported); `src/framework/entry.{rsc,ssr,browser}.tsx`
   are the three environment entries; the `md3:ssg` plugin in vite.config.ts prerenders every
-  `getStaticPaths()` route (slashless, e.g. `/buttons`) to `<path>/index.html` + a
-  `<path>.html` copy (hosts resolve the extensionless URL) **plus `<path>/index.rsc`**
-  (its RSC payload), so **`dist/client/` is the fully static deployable site** (`vite preview`
+  `getStaticPaths()` route (slashless, e.g. `/buttons`) to `<path>.html` (hosts resolve
+  the extensionless URL) **plus `<path>.rsc`** (its RSC payload; `/`-ending routes get
+  `<dir>/index.{html,rsc}` instead), so **`dist/client/` is the fully static deployable
+  site** (`vite preview`
   serves it with no server handler). Navigation is soft: `entry.browser.tsx` intercepts
   same-origin left-clicks + popstate, fetches the target's static `index.rsc`, and swaps
   the payload in a transition (full-reload fallback on fetch failure; modified/external

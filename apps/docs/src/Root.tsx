@@ -53,7 +53,11 @@ export function Root({ url }: { url: URL }) {
 
   return (
     // data-theme is set by the inline script before hydration.
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress"
+    >
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -71,7 +75,7 @@ export function Root({ url }: { url: URL }) {
         />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>
+      <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
         <div className="mx-auto flex min-h-screen max-w-7xl">
           <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
             <a href="/" className="px-4 pt-4 pb-2 font-brand text-title-large">
@@ -126,7 +130,6 @@ export function Root({ url }: { url: URL }) {
                     // re-shows the fallback of an existing boundary; keying by route
                     // remounts the boundary so pending page content shows the fallback.
                     <React.Suspense
-                      key={pathname}
                       fallback={
                         <div
                           className="flex min-h-96 items-center justify-center"
