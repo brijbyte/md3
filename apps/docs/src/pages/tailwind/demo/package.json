@@ -1,0 +1,21 @@
+{
+  "name": "md3-demos-tailwind",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tailwind utility overrides",
+  "type": "module",
+  "exports": {
+    "./utility-overrides": {
+      "style": "./utility-overrides.css",
+      "default": "./utility-overrides.tsx"
+    }
+  },
+  "dependencies": {
+    "@brijbyte/md3-icons": "workspace:*",
+    "@brijbyte/md3-react": "workspace:*",
+    "tailwindcss": "^4"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "md3-demos-buttons",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Buttons",
+  "type": "module",
+  "exports": {
+    "./common-buttons": {
+      "style": "./common-buttons.css",
+      "default": "./common-buttons.tsx"
+    },
+    "./icon-buttons": {
+      "style": "./icon-buttons.css",
+      "default": "./icon-buttons.tsx"
+    },
+    "./fabs": {
+      "style": "./fabs.css",
+      "default": "./fabs.tsx"
+    },
+    "./button-group-standard": {
+      "style": "./button-group-standard.css",
+      "default": "./button-group-standard.tsx"
+    },
+    "./button-group-connected": {
+      "style": "./button-group-connected.css",
+      "default": "./button-group-connected.tsx"
+    }
+  },
+  "dependencies": {
+    "@brijbyte/md3-icons": "workspace:*",
+    "@brijbyte/md3-react": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

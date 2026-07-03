@@ -23,8 +23,8 @@ export default defineConfig({
         ssr: "./src/framework/entry.ssr.tsx",
       },
     }),
-    layerPinPlugin(),
     ssgPlugin(),
+    demosPlugin(),
   ],
   resolve: {
     tsconfigPaths: true,
@@ -95,7 +95,9 @@ function shikiHastPlugin() {
           themes: { light: "material-theme-lighter", dark: "material-theme-darker" },
           defaultColor: false,
         });
-        return toReactProps(hast.children[0]);
+        const pre = hast.children[0];
+        if (pre.type === "element") pre.properties["data-language"] = lang;
+        return toReactProps(pre);
       },
     },
   });
@@ -118,22 +120,140 @@ function toReactProps<T>(node: T): T {
   return node;
 }
 
-// The cascade-layer order pin only holds if it's parsed before any @layer block, but
-// plugin-rsc's client-reference stylesheets can precede app.css in the head (React
-// emits precedence groups in first-encounter order, which varies per page). Prepend
-// the pin to every CSS asset so link order can never change layer order.
-function layerPinPlugin(): Plugin {
-  const pin = "@layer theme, base, md3.tokens, md3.components, components, utilities;\n";
-  return {
-    name: "md3:layer-pin",
-    generateBundle(_options, bundle) {
-      for (const asset of Object.values(bundle)) {
-        if (asset.type !== "asset" || !asset.fileName.endsWith(".css")) continue;
-        asset.source =
-          typeof asset.source === "string"
-            ? pin + asset.source
-            : pin + new TextDecoder().decode(asset.source);
+// Standalone demos: each src/pages/<page>/demo/ folder is a drop-in package whose
+// package.json `exports` lists the demo files (default export = the demo) and whose
+// `description` is the demo title. This plugin scans those manifests and serves them
+// as the `virtual:md3-demos` registry — "<page>/<export>" → { title, lazy loader } —
+// consumed by the <Demo of="…"> server component. Demo files import the library by
+// its published specifiers (incl. styles.css), so a folder copies out of the repo
+// verbatim; the docs aliases above just redirect those imports to library source.
+function demosPlugin(): Plugin {
+  const pagesDir = path.resolve(import.meta.dirname, "src/pages");
+  const VIRTUAL = "virtual:md3-demos";
+  const RESOLVED = "\0" + VIRTUAL;
+
+  function buildRegistry() {
+    const entries: string[] = [];
+    for (const page of fs.readdirSync(pagesDir, { withFileTypes: true })) {
+      if (!page.isDirectory()) continue;
+      const pkgPath = path.join(pagesDir, page.name, "demo", "package.json");
+      if (!fs.existsSync(pkgPath)) continue;
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as {
+        description?: string;
+        exports?: Record<string, string | { style?: string; default: string }>;
+      };
+      // Export values are conditional: `default` is the demo module, `style`
+      // its stylesheet (docs-resolved to the shared stub; see resolveId).
+      for (const [subpath, target] of Object.entries(pkg.exports ?? {})) {
+        const id = `${page.name}/${subpath.replace(/^\.\//, "")}`;
+        const files = typeof target === "string" ? { default: target } : target;
+        for (const file of Object.values(files)) {
+          if (!fs.existsSync(path.join(pagesDir, page.name, "demo", file))) {
+            throw new Error(`[md3:demos] ${pkgPath} export "${subpath}" points to missing ${file}`);
+          }
+        }
+        const abs = path.join(pagesDir, page.name, "demo", files.default);
+        entries.push(
+          `  ${JSON.stringify(id)}: { title: ${JSON.stringify(pkg.description ?? id)}, ` +
+            `load: () => import(${JSON.stringify(abs)}) }`,
+        );
       }
+    }
+    return `export const DEMOS = {\n${entries.join(",\n")}\n};\n`;
+  }
+
+  // Pages import Demo from "./demo" (the sibling demo folder): that resolves to
+  // a generated page-scoped wrapper, so `of` is relative to the page —
+  // <Demo of="states" /> inside pages/switch/ means "switch/states".
+  const SCOPED = "\0md3-demo-scope:";
+  const demoComponent = path.resolve(import.meta.dirname, "src/components/demo.tsx");
+
+  // Each demo tsx imports a sibling css file listing the library stylesheets a
+  // consumer needs (drop-in fidelity). In the docs app that css must not compile
+  // as-is (its @imports target the published package, and identical outputs would
+  // dedupe into one asset, desyncing plugin-rsc's per-chunk manifest). Instead it
+  // resolves to a virtual JS module importing the equivalent library *source* css
+  // (the component CSS Modules). That also puts those styles in the server module
+  // graph, so dev SSR emits them in <head> at first paint — otherwise they'd only
+  // arrive with the client JS modules (FOUC on slow networks). tokens.css is
+  // skipped: app.css already provides it globally.
+  const DEMO_CSS = "\0md3-demo-css:";
+  const libSrc = path.resolve(import.meta.dirname, "../../packages/react/src");
+  function demoCssToImports(cssPath: string) {
+    const imports: string[] = [];
+    const css = fs.readFileSync(cssPath, "utf8");
+    for (const m of css.matchAll(/@import\s+["']@brijbyte\/md3-react\/([\w-]+)\.css["']/g)) {
+      if (m[1] === "tokens") continue;
+      const dir = path.join(libSrc, m[1]);
+      const mod = fs.readdirSync(dir).find((f) => f.endsWith(".module.css"));
+      if (!mod) throw new Error(`[md3:demos] no source css for import "${m[1]}.css" in ${cssPath}`);
+      imports.push(`import ${JSON.stringify(path.join(dir, mod))};`);
+    }
+    return imports.join("\n") + "\n";
+  }
+
+  return {
+    name: "md3:demos",
+    // Pre: "./demo" is a real directory, so the default resolver would try (and
+    // fail) to resolve it as a package before this plugin gets a look.
+    enforce: "pre",
+    resolveId(id, importer) {
+      if (id === VIRTUAL) return RESOLVED;
+      if (!importer?.startsWith(pagesDir + path.sep)) return;
+      if (
+        id.startsWith("./") &&
+        id.endsWith(".css") &&
+        importer.includes(`${path.sep}demo${path.sep}`)
+      ) {
+        // ".js" suffix: the module is JS (css-module imports), and extension
+        // sniffers (tailwind's transform filter) must not treat the id as css.
+        return DEMO_CSS + path.resolve(path.dirname(importer), id) + ".js";
+      }
+      if (id === "./demo") {
+        const page = path.relative(pagesDir, importer).split(path.sep)[0];
+        if (fs.existsSync(path.join(pagesDir, page, "demo", "package.json"))) {
+          return SCOPED + page;
+        }
+      }
+    },
+    // plugin-rsc's css-export transform also links the raw demo css file in dev;
+    // its library @imports only mean something to a consumer's bundler, so strip
+    // them before vite's css pipeline tries (and fails) to resolve them.
+    transform(code, id) {
+      // Dev serves link-fetched css with a query ("?direct") — match on the file.
+      const file = id.split("?")[0];
+      if (file.startsWith(pagesDir + path.sep) && /[\\/]demo[\\/][\w-]+\.css$/.test(file)) {
+        return code.replace(/@import\s+["']@brijbyte\/md3-react\/[^"']+["'];?/g, "");
+      }
+    },
+    load(id) {
+      if (id === RESOLVED) return buildRegistry();
+      if (id.startsWith(DEMO_CSS)) {
+        const cssPath = id.slice(DEMO_CSS.length, -".js".length);
+        this.addWatchFile(cssPath);
+        return demoCssToImports(cssPath);
+      }
+      if (id.startsWith(SCOPED)) {
+        const page = id.slice(SCOPED.length);
+        return (
+          `import * as React from "react";\n` +
+          `import { Demo as Base } from ${JSON.stringify(demoComponent)};\n` +
+          `export function Demo({ of, ...props }) {\n` +
+          `  return React.createElement(Base, { of: ${JSON.stringify(page + "/")} + of, ...props });\n` +
+          `}\n`
+        );
+      }
+    },
+    // Dev: a demo manifest edit re-scans the registry in every RSC environment.
+    configureServer(server) {
+      server.watcher.on("all", (_event, file) => {
+        if (!file.startsWith(pagesDir) || !file.endsWith("package.json")) return;
+        for (const env of Object.values(server.environments)) {
+          const mod = env.moduleGraph.getModuleById(RESOLVED);
+          if (mod) env.moduleGraph.invalidateModule(mod);
+        }
+        server.ws.send({ type: "full-reload" });
+      });
     },
   };
 }

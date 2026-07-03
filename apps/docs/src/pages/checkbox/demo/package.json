@@ -1,0 +1,19 @@
+{
+  "name": "md3-demos-checkbox",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Checkbox states",
+  "type": "module",
+  "exports": {
+    "./states": {
+      "style": "./states.css",
+      "default": "./states.tsx"
+    }
+  },
+  "dependencies": {
+    "@brijbyte/md3-react": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

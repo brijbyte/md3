@@ -27,12 +27,12 @@ function mdxPage(
 // the lazy import to resolve, so the static HTML is still complete.
 const PAGES: Record<string, React.ComponentType> = {
   "/": React.lazy(() => import("./pages/home")),
-  "/getting-started": mdxPage(() => import("./pages/getting-started.mdx")),
-  "/buttons": React.lazy(() => import("./pages/buttons")),
-  "/checkbox": React.lazy(() => import("./pages/checkbox")),
-  "/radio": React.lazy(() => import("./pages/radio")),
-  "/switch": React.lazy(() => import("./pages/switch")),
-  "/tailwind": React.lazy(() => import("./pages/tailwind")),
+  "/getting-started": mdxPage(() => import("./pages/getting-started/page.mdx")),
+  "/buttons": mdxPage(() => import("./pages/buttons/page.mdx")),
+  "/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
+  "/radio": mdxPage(() => import("./pages/radio/page.mdx")),
+  "/switch": mdxPage(() => import("./pages/switch/page.mdx")),
+  "/tailwind": mdxPage(() => import("./pages/tailwind/page.mdx")),
 };
 
 // The landing page renders without the docs chrome; everything else gets the

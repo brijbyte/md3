@@ -2,11 +2,7 @@
 title: Getting started
 ---
 
-import { Button } from "@brijbyte/md3-react/button";
-import { Checkbox } from "@brijbyte/md3-react/checkbox";
-import { Switch } from "@brijbyte/md3-react/switch";
-import AddIcon from "@brijbyte/md3-icons/outlined/add";
-import { Demo } from "../components/demo";
+import { Demo } from "./demo";
 
 ## Install
 
@@ -46,34 +42,27 @@ The typescale expects Roboto; load it however you prefer, for example:
 
 ## Use a component
 
-There is no barrel export — import each component from its own path for better
-tree-shaking and code-splitting:
+Import each component (and its css) from its own path for better tree-shaking and
+code-splitting:
 
 ```tsx
 import { Button } from "@brijbyte/md3-react/button";
 import AddIcon from "@brijbyte/md3-icons/outlined/add";
+
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/button.css";
 
 <Button variant="tonal" icon={<AddIcon />}>
   Add item
 </Button>;
 ```
 
-<Demo>
-  <Button icon={<AddIcon />}>Add item</Button>
-  <Button variant="tonal" icon={<AddIcon />}>
-    Add item
-  </Button>
-  <Button variant="outlined">Outlined</Button>
-</Demo>
+<Demo of="first-buttons" />
 
 Props pass through to the underlying Base UI primitive, so everything it supports —
 `render`, `disabled`, event handlers — works unchanged:
 
-<Demo>
-  <Checkbox defaultChecked aria-label="Demo checkbox" />
-  <Switch defaultChecked aria-label="Demo switch" />
-  <Button disabled>Disabled</Button>
-</Demo>
+<Demo of="base-ui-props" />
 
 ## Theming
 
@@ -83,14 +72,6 @@ via `prefers-color-scheme`, or explicitly with a `data-theme` attribute on `<htm
 ```html
 <html data-theme="dark"></html>
 ```
-
-Try it with the theme toggle in the header — every component on this page follows.
-
-## Server components
-
-Components are marked `'use client'`, so they can be imported and rendered directly from
-React Server Component trees (this page is itself a server-rendered MDX file with live
-client components inside it).
 
 ## Tailwind CSS
 

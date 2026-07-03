@@ -60,3 +60,18 @@
 }
 
 @import "@brijbyte/md3-react/styles.css";
+
+/* Demo playground isolation: `all: initial` severs every inherited docs style at
+   the boundary (and, being unlayered, outranks every layer). Custom properties are
+   exempt from `all`, so --md-sys-* tokens flow through and demos follow the theme. */
+.demo-surface {
+  all: initial;
+  display: flow-root;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  color: var(--md-sys-color-on-surface);
+  -webkit-font-smoothing: antialiased;
+}

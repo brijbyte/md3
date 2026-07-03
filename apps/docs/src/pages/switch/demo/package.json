@@ -1,0 +1,19 @@
+{
+  "name": "md3-demos-switch",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Switch states",
+  "type": "module",
+  "exports": {
+    "./states": {
+      "style": "./states.css",
+      "default": "./states.tsx"
+    }
+  },
+  "dependencies": {
+    "@brijbyte/md3-react": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

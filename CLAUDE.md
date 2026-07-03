@@ -18,39 +18,60 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
 - `apps/docs` — Vite RSC docs/demo app (future md3.brijbyte.com), built with
   `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document
-  and routing (no index.html; routes/metadata in `src/nav.ts`, one server-component page
-  per route in `src/pages/`, each `React.lazy`-loaded inside `Suspense`
-  so only the active route's server chunk is imported). Two layouts in Root: `/` is a
+  and routing (routes/metadata in `src/nav.ts`; every docs route is an MDX page at
+  `src/pages/<name>/page.mdx`, `React.lazy`-loaded inside `Suspense` so only the active
+  route's server chunk is imported — `home.tsx` stays TSX, it's the custom landing).
+  Two layouts in Root: `/` is a
   standalone landing page (hero + cards, no sidebar); every other route gets the docs
-  sidebar (NAV minus `/`). Pages can be authored in MDX (`src/pages/*.mdx`, compiled by
+  sidebar (NAV minus `/`). MDX is compiled by
   Sätteri via `vite-plugin-satteri` — wrapped in vite.config's `mdxPlugin()`, which skips
-  plugin-rsc's virtual ids ending in `.mdx`): MDX output is a server component, live demos
-  are just JSX imports inside the .mdx (see `getting-started.mdx` + the `Demo` wrapper in
-  `components/demo.tsx`), and Root's `mdxPage()` injects the MD3-styled markdown element
+  plugin-rsc's virtual ids ending in `.mdx`; MDX output is a server component, and Root's
+  `mdxPage()` injects the MD3-styled markdown element
   map from `components/mdx-components.tsx`. Code blocks are highlighted at compile time by
   Shiki via a Sätteri hast plugin (`shikiHastPlugin` in vite.config — dual material themes
-  as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]` CSS in app.css; zero
-  client JS). `src/framework/entry.{rsc,ssr,browser}.tsx`
+  as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]` CSS in app.css;
+  `data-language` on the `<pre>`; zero client JS).
+  **Demos** are standalone drop-in packages: `src/pages/<page>/demo/` holds a
+  `package.json` (name, `description` = demo title, real deps, and an `exports` map per
+  demo — `{ "style": "./x.css", "default": "./x.tsx" }`, default export = the demo) plus
+  the demo files, which import the library only by published specifiers and use inline
+  token styles (no docs Tailwind classes), so a folder copies out of the repo verbatim.
+  The `md3:demos` plugin (vite.config) scans those manifests into the `virtual:md3-demos`
+  registry ("<page>/<export>" → title + lazy loader) consumed by the `Demo` server
+  component (`components/demo.tsx`, renders a skeleton fallback); pages
+  `import { Demo } from "./demo"` — the plugin (enforce: pre, or the real directory wins
+  resolution) serves a page-scoped wrapper so `<Demo of="states" />` is relative to the
+  page. Each demo tsx imports its sibling css file (the stylesheets a consumer needs);
+  in-app that resolves to a virtual JS module importing the equivalent library _source_
+  css modules — putting them in the server graph so dev SSR links them in `<head>` at
+  first paint (no FOUC), deduping with the components' own css imports in build — and the
+  raw demo css (also linked by plugin-rsc's css-export transform in dev) gets its
+  consumer-only `@import "@brijbyte/md3-react/*.css"` lines stripped by the same plugin.
+  The demo playground `div.demo-surface` (unlayered rule in app.css) uses `all: initial`
+  to sever inherited docs styles while `--md-sys-*` custom properties (exempt from `all`)
+  flow through, so demos ignore host CSS but follow the theme toggle. `src/framework/entry.{rsc,ssr,browser}.tsx`
   are the three environment entries; the `md3:ssg` plugin in vite.config.ts prerenders every
   `getStaticPaths()` route (slashless, e.g. `/buttons`) to `<path>.html` (hosts resolve
   the extensionless URL) **plus `<path>.rsc`** (its RSC payload; `/`-ending routes get
   `<dir>/index.{html,rsc}` instead), so **`dist/client/` is the fully static deployable
-  site** (`vite preview`
-  serves it with no server handler). Navigation is soft: `entry.browser.tsx` intercepts
+  site** (`vite preview` serves it with no server handler). Navigation is soft:
+  `entry.browser.tsx` intercepts
   same-origin left-clicks + popstate, fetches the target's static `index.rsc`, and swaps
   the payload in a transition (full-reload fallback on fetch failure; modified/external
-  clicks untouched). The dev handler serves `…/index.rsc` requests from the same URL shape. Interactive code lives under `'use client'`
+  clicks untouched). The dev handler serves `…/index.rsc` requests from the same URL shape.
+  Interactive code lives under `'use client'`
   (`components/ThemeToggle.tsx`; library components are the client leaves) and hydrates from
   the RSC payload inlined in the HTML. All icons come from `@brijbyte/md3-icons` — never
   hand-write SVGs in docs. Styled entirely with Tailwind v4 (`@tailwindcss/vite`); doubles
-  as the Tailwind-integration testbed. Layer order is pinned by the first line of
-  `src/app.css` (`@layer theme, base, md3.tokens, md3.components, components, utilities;`),
-  and `app.css` also `@import`s `@brijbyte/md3-react/styles.css` — but in the built site
-  plugin-rsc emits per-client-reference stylesheets whose head order varies per page (React
-  streams precedence groups in first-encounter order), so vite.config's `layerPinPlugin()`
-  prepends the pin to every emitted CSS asset, making layer order independent of link order;
+  as the Tailwind-integration testbed. Layer order
+  (`@layer theme, base, md3.tokens, md3.components, components, utilities;`) is pinned by
+  a hoistable `<style href precedence>` rendered in `entry.rsc.tsx`'s `App` wrapper before
+  `<Root>` — plugin-rsc emits per-client-reference stylesheets whose head order varies per
+  page (React streams precedence groups in first-encounter order), and rendering the pin
+  first makes its precedence group sort above every stylesheet link, so it's parsed before
+  any `@layer` block regardless of link order (app.css's first line repeats the pin);
   that slots md3 between preflight (can't break components) and utilities (can override
-  them). MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in
+  them). `app.css` also `@import`s `@brijbyte/md3-react/styles.css`. MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in
   `app.css`). The library-source aliases live twice: tsconfig `paths` (for TS importers +
   editor) and mirrored `resolve.alias` regexes in vite.config — tsconfigPaths does not
   apply to imports from `.mdx`/`.css` files, which would otherwise silently bundle a second
@@ -82,10 +103,10 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - **JS/CSS decoupled**: no CSS imports in published JS — consumers import stylesheets
   themselves (documented in `packages/react/README.md`). Keep it that way for standard
   npm-package behavior.
-- **RSC support**: every component source file starts with `'use client'`. New components
-  must include it. The build uses `preserveModules` (dist mirrors src, one file per module),
-  and Rolldown preserves the directive per module natively — so re-export `index.ts` files,
-  CSS-module maps, tokens, and utils stay directive-free/server-safe.
+- **RSC support**: For a client component,`'use client'` at the start of the file is must.
+  New components must include it. The build uses `preserveModules` (dist mirrors src, one
+  file per module), and Rolldown preserves the directive per module natively — so re-export
+  `index.ts` files, CSS-module maps, tokens, and utils stay directive-free/server-safe.
 
 ## Token pipeline
 
@@ -188,7 +209,9 @@ fast-spatial: stiffness 800, damping 0.6) — specs from MDC Android
 `button_group_tokens.xml`, material-web has none); `@brijbyte/md3-icons` package; Base UI
 render/className/style pass-through; Tailwind v4 docs app (integration verified); 48dp
 touch targets on all interactive components; docs restructure (standalone landing page,
-sidebar docs layout, MDX authoring via Sätteri, Getting started page).
+sidebar docs layout, MDX authoring via Sätteri, Getting started page); standalone demo
+packages (`pages/<page>/demo/` + `md3:demos` plugin, isolated `.demo-surface`, all docs
+routes as `page.mdx`); layer pin as hoistable head `<style>`.
 
 Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site
