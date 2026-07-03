@@ -1,3 +1,6 @@
 # RSC payloads fetched during client soft navigation.
 /*.rsc
   Content-Type: text/x-component; charset=utf-8
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
