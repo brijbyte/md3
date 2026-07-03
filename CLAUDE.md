@@ -17,10 +17,20 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   emitted directly; only the shared `src/createIcon.jsx` helper is compiled (vite lib build).
   Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
 - `apps/docs` — Vite RSC docs/demo app (future md3.brijbyte.com), built with
-  `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document,
-  sidebar nav, and routing (no index.html; routes/metadata in `src/nav.ts`, one server-
-  component page per component in `src/pages/`, each `React.lazy`-loaded inside `Suspense`
-  so only the active route's server chunk is imported); `src/framework/entry.{rsc,ssr,browser}.tsx`
+  `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document
+  and routing (no index.html; routes/metadata in `src/nav.ts`, one server-component page
+  per route in `src/pages/`, each `React.lazy`-loaded inside `Suspense`
+  so only the active route's server chunk is imported). Two layouts in Root: `/` is a
+  standalone landing page (hero + cards, no sidebar); every other route gets the docs
+  sidebar (NAV minus `/`). Pages can be authored in MDX (`src/pages/*.mdx`, compiled by
+  Sätteri via `vite-plugin-satteri` — wrapped in vite.config's `mdxPlugin()`, which skips
+  plugin-rsc's virtual ids ending in `.mdx`): MDX output is a server component, live demos
+  are just JSX imports inside the .mdx (see `getting-started.mdx` + the `Demo` wrapper in
+  `components/demo.tsx`), and Root's `mdxPage()` injects the MD3-styled markdown element
+  map from `components/mdx-components.tsx`. Code blocks are highlighted at compile time by
+  Shiki via a Sätteri hast plugin (`shikiHastPlugin` in vite.config — dual material themes
+  as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]` CSS in app.css; zero
+  client JS). `src/framework/entry.{rsc,ssr,browser}.tsx`
   are the three environment entries; the `md3:ssg` plugin in vite.config.ts prerenders every
   `getStaticPaths()` route (slashless, e.g. `/buttons`) to `<path>.html` (hosts resolve
   the extensionless URL) **plus `<path>.rsc`** (its RSC payload; `/`-ending routes get
@@ -35,11 +45,16 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   hand-write SVGs in docs. Styled entirely with Tailwind v4 (`@tailwindcss/vite`); doubles
   as the Tailwind-integration testbed. Layer order is pinned by the first line of
   `src/app.css` (`@layer theme, base, md3.tokens, md3.components, components, utilities;`),
-  and `app.css` also `@import`s `@brijbyte/md3-react/styles.css` — everything flows
-  through that one stylesheet (Root.tsx's only CSS import), so the pin is always the
-  first layer declaration parsed; that slots md3 between preflight (can't break
-  components) and utilities (can override them). MD3 tokens come from the library's
-  generated `tailwind-tokens.css` (imported in `app.css`).
+  and `app.css` also `@import`s `@brijbyte/md3-react/styles.css` — but in the built site
+  plugin-rsc emits per-client-reference stylesheets whose head order varies per page (React
+  streams precedence groups in first-encounter order), so vite.config's `layerPinPlugin()`
+  prepends the pin to every emitted CSS asset, making layer order independent of link order;
+  that slots md3 between preflight (can't break components) and utilities (can override
+  them). MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in
+  `app.css`). The library-source aliases live twice: tsconfig `paths` (for TS importers +
+  editor) and mirrored `resolve.alias` regexes in vite.config — tsconfigPaths does not
+  apply to imports from `.mdx`/`.css` files, which would otherwise silently bundle a second
+  copy of every component from the built package dist.
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
   Root `package.json` enforces Node >=26 / pnpm >=11.9 (`engineStrict`).
 
@@ -172,7 +187,8 @@ corner morph in CSS, press width morph via rAF spring (MDC expressive
 fast-spatial: stiffness 800, damping 0.6) — specs from MDC Android
 `button_group_tokens.xml`, material-web has none); `@brijbyte/md3-icons` package; Base UI
 render/className/style pass-through; Tailwind v4 docs app (integration verified); 48dp
-touch targets on all interactive components.
+touch targets on all interactive components; docs restructure (standalone landing page,
+sidebar docs layout, MDX authoring via Sätteri, Getting started page).
 
 Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site

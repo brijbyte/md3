@@ -21,6 +21,9 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-rsc": "^0.5.27",
     "rsc-html-stream": "^0.0.7",
-    "tailwindcss": "^4.3.2"
+    "satteri": "^0.9.4",
+    "shiki": "^4.3.0",
+    "tailwindcss": "^4.3.2",
+    "vite-plugin-satteri": "^0.2.14"
   }
 }

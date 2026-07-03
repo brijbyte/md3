@@ -10,6 +10,15 @@ export function Section({ title, children }: { title: string; children: React.Re
   );
 }
 
+// Live-demo surface for MDX content: drop components in, they render as-is.
+export function Demo({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="my-4 flex flex-wrap items-center gap-4 rounded-extra-large bg-surface-container-low p-6">
+      {children}
+    </div>
+  );
+}
+
 export function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-4 py-3">

@@ -4,6 +4,7 @@ import CheckBoxIcon from "@brijbyte/md3-icons/outlined/check-box";
 import HomeIcon from "@brijbyte/md3-icons/outlined/home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/radio-button-checked";
+import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/rocket-launch";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/toggle-on";
 
 export type NavItem = {
@@ -17,11 +18,19 @@ export type NavItem = {
 
 export const NAV: NavItem[] = [
   {
+    // Landing page: rendered without the docs sidebar (see Root.tsx).
     path: "/",
     label: "Overview",
     title: "MD3 React",
     description: "Material Design 3 components for React, built on Base UI.",
     icon: HomeIcon,
+  },
+  {
+    path: "/getting-started",
+    label: "Getting started",
+    title: "Getting started",
+    description: "Install the library, load the styles, and render your first component.",
+    icon: RocketLaunchIcon,
   },
   {
     path: "/buttons",

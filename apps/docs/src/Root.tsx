@@ -6,19 +6,38 @@ import "./app.css";
 import * as React from "react";
 import SpinnerIcon from "@brijbyte/md3-icons/outlined/progress-activity";
 import { NAV, type NavItem } from "./nav";
+import { MDX_COMPONENTS } from "./components/mdx-components";
 import { ThemeToggle } from "./components/ThemeToggle";
+
+// MDX pages compile to plain server components; inject the MD3-styled
+// markdown element map here so .mdx files never have to.
+function mdxPage(
+  load: () => Promise<{
+    default: React.ComponentType<{ components?: Record<string, React.ElementType> }>;
+  }>,
+): React.ComponentType {
+  return React.lazy(async () => {
+    const { default: Content } = await load();
+    return { default: () => <Content components={MDX_COMPONENTS} /> };
+  });
+}
 
 // React.lazy works in server components too: each page becomes its own server
 // chunk, loaded only when its route renders. During SSG, prerender() waits for
 // the lazy import to resolve, so the static HTML is still complete.
 const PAGES: Record<string, React.ComponentType> = {
   "/": React.lazy(() => import("./pages/home")),
+  "/getting-started": mdxPage(() => import("./pages/getting-started.mdx")),
   "/buttons": React.lazy(() => import("./pages/buttons")),
   "/checkbox": React.lazy(() => import("./pages/checkbox")),
   "/radio": React.lazy(() => import("./pages/radio")),
   "/switch": React.lazy(() => import("./pages/switch")),
   "/tailwind": React.lazy(() => import("./pages/tailwind")),
 };
+
+// The landing page renders without the docs chrome; everything else gets the
+// sidebar, which lists all routes except the landing page itself.
+const SIDEBAR = NAV.filter((item) => item.path !== "/");
 
 // Apply persisted theme before first paint to avoid a flash.
 const themeInitScript = `
@@ -30,6 +49,19 @@ document.documentElement.dataset.theme =
       ? "dark"
       : "light";
 `;
+
+function PageFallback() {
+  return (
+    <div
+      className="flex min-h-96 items-center justify-center"
+      role="progressbar"
+      aria-label="Loading page"
+    >
+      {/* MD3 circular indicator: 48dp, primary color. */}
+      <SpinnerIcon className="animate-spin text-5xl text-primary" />
+    </div>
+  );
+}
 
 export default function Root({ url }: { url: URL }) {
   // Canonical paths are slashless ("/buttons"); static hosts serve
@@ -68,92 +100,116 @@ export default function Root({ url }: { url: URL }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
-        <div className="mx-auto flex min-h-screen max-w-7xl">
-          <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
-            <a href="/" className="px-4 pt-4 pb-2 font-brand text-title-large">
-              MD3 React
-            </a>
-            <p className="px-4 pb-4 text-body-small text-on-surface-variant">
-              Material Design 3, on Base UI
-            </p>
-            <nav className="flex flex-col gap-1" aria-label="Components">
-              {NAV.map((item) => (
-                <NavLink key={item.path} item={item} active={item.path === pathname} />
-              ))}
-            </nav>
-          </aside>
-
-          <div className="min-w-0 flex-1">
-            <div className="mx-auto max-w-190 px-6 pt-6 pb-24">
-              <header className="flex items-center justify-between gap-4 pb-4">
-                <a href="/" className="font-brand text-title-large md:hidden">
-                  MD3 React
-                </a>
-                <span className="hidden md:block" aria-hidden />
-                <ThemeToggle />
-              </header>
-              <nav
-                className="-mx-6 mb-6 flex gap-2 overflow-x-auto px-6 md:hidden"
-                aria-label="Components"
-              >
-                {NAV.map((item) => (
-                  <a
-                    key={item.path}
-                    href={item.path}
-                    aria-current={item.path === pathname ? "page" : undefined}
-                    className={`flex h-10 shrink-0 items-center rounded-full px-4 text-label-large ${
-                      item.path === pathname
-                        ? "bg-secondary-container text-on-secondary-container"
-                        : "bg-surface-container-low text-on-surface-variant"
-                    }`}
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
-              {route ? (
-                <>
-                  <h1 className="font-brand text-headline-large">{route.title}</h1>
-                  <p className="mt-2 mb-8 text-body-large text-on-surface-variant">
-                    {route.description}
-                  </p>
-                  {Page && (
-                    // key: soft navigation swaps payloads in a transition, which never
-                    // re-shows the fallback of an existing boundary; keying by route
-                    // remounts the boundary so pending page content shows the fallback.
-                    <React.Suspense
-                      fallback={
-                        <div
-                          className="flex min-h-96 items-center justify-center"
-                          role="progressbar"
-                          aria-label="Loading page"
-                        >
-                          {/* MD3 circular indicator: 48dp, primary color. */}
-                          <SpinnerIcon className="animate-spin text-5xl text-primary" />
-                        </div>
-                      }
-                    >
-                      <Page />
-                    </React.Suspense>
-                  )}
-                </>
-              ) : (
-                <>
-                  <h1 className="font-brand text-headline-large">Page not found</h1>
-                  <p className="mt-2 text-body-large text-on-surface-variant">
-                    Nothing lives at {url.pathname}.{" "}
-                    <a href="/" className="text-primary underline">
-                      Back to the overview
-                    </a>
-                    .
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        {pathname === "/" && Page ? (
+          <LandingLayout Page={Page} />
+        ) : (
+          <DocsLayout pathname={pathname} route={route} Page={Page} url={url} />
+        )}
       </body>
     </html>
+  );
+}
+
+// Full-width landing: no sidebar, just a slim header and the page content.
+function LandingLayout({ Page }: { Page: React.ComponentType }) {
+  return (
+    <div className="mx-auto max-w-5xl px-6 pt-6 pb-24">
+      <header className="flex items-center justify-between gap-4 pb-12">
+        <span className="font-brand text-title-large">MD3 React</span>
+        <ThemeToggle />
+      </header>
+      <React.Suspense fallback={<PageFallback />}>
+        <Page />
+      </React.Suspense>
+    </div>
+  );
+}
+
+function DocsLayout({
+  pathname,
+  route,
+  Page,
+  url,
+}: {
+  pathname: string;
+  route: NavItem | undefined;
+  Page: React.ComponentType | undefined;
+  url: URL;
+}) {
+  return (
+    <div className="mx-auto flex min-h-screen max-w-7xl">
+      <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
+        <a href="/" className="px-4 pt-4 pb-2 font-brand text-title-large">
+          MD3 React
+        </a>
+        <p className="px-4 pb-4 text-body-small text-on-surface-variant">
+          Material Design 3, on Base UI
+        </p>
+        <nav className="flex flex-col gap-1" aria-label="Documentation">
+          {SIDEBAR.map((item) => (
+            <NavLink key={item.path} item={item} active={item.path === pathname} />
+          ))}
+        </nav>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+        <div className="mx-auto max-w-190 px-6 pt-6 pb-24">
+          <header className="flex items-center justify-between gap-4 pb-4">
+            <a href="/" className="font-brand text-title-large md:hidden">
+              MD3 React
+            </a>
+            <span className="hidden md:block" aria-hidden />
+            <ThemeToggle />
+          </header>
+          <nav
+            className="-mx-6 mb-6 flex gap-2 overflow-x-auto px-6 md:hidden"
+            aria-label="Documentation"
+          >
+            {SIDEBAR.map((item) => (
+              <a
+                key={item.path}
+                href={item.path}
+                aria-current={item.path === pathname ? "page" : undefined}
+                className={`flex h-10 shrink-0 items-center rounded-full px-4 text-label-large ${
+                  item.path === pathname
+                    ? "bg-secondary-container text-on-secondary-container"
+                    : "bg-surface-container-low text-on-surface-variant"
+                }`}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          {route ? (
+            <>
+              <h1 className="font-brand text-headline-large">{route.title}</h1>
+              <p className="mt-2 mb-8 text-body-large text-on-surface-variant">
+                {route.description}
+              </p>
+              {Page && (
+                // key: soft navigation swaps payloads in a transition, which never
+                // re-shows the fallback of an existing boundary; keying by route
+                // remounts the boundary so pending page content shows the fallback.
+                <React.Suspense fallback={<PageFallback />}>
+                  <Page />
+                </React.Suspense>
+              )}
+            </>
+          ) : (
+            <>
+              <h1 className="font-brand text-headline-large">Page not found</h1>
+              <p className="mt-2 text-body-large text-on-surface-variant">
+                Nothing lives at {url.pathname}.{" "}
+                <a href="/" className="text-primary underline">
+                  Back to the overview
+                </a>
+                .
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -1,13 +1,29 @@
+import { Button } from "@brijbyte/md3-react/button";
+import ArrowForwardIcon from "@brijbyte/md3-icons/outlined/arrow-forward";
 import { NAV } from "../nav";
 
 export default function HomePage() {
   return (
     <>
-      <p className="max-w-prose text-body-large">
-        A React implementation of Google’s Material Design 3, built as a styled layer on top of the
-        headless Base UI primitives. Pick a component to see every variant and state.
-      </p>
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="max-w-prose">
+        <h1 className="font-brand text-display-small">
+          Material Design 3 <span className="text-primary">for React</span>
+        </h1>
+        <p className="mt-4 text-body-large text-on-surface-variant">
+          A React implementation of Google’s Material Design 3, built as a styled layer on top of
+          the headless Base UI primitives. Pick a component to see every variant and state.
+        </p>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <Button
+            render={<a href="/getting-started" />}
+            nativeButton={false}
+            icon={<ArrowForwardIcon />}
+          >
+            Get started
+          </Button>
+        </div>
+      </section>
+      <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {NAV.filter((item) => item.path !== "/").map((item) => (
           <a
             key={item.path}

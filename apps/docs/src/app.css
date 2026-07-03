@@ -45,4 +45,18 @@
   }
 }
 
+/* Shiki dual-theme tokens: the compile emits --shiki-light/--shiki-dark per span
+   (defaultColor: false); pick one by [data-theme]. Background stays on our tokens. */
+@layer components {
+  .shiki span {
+    color: var(--shiki-light);
+    font-style: var(--shiki-light-font-style, inherit);
+  }
+
+  [data-theme="dark"] .shiki span {
+    color: var(--shiki-dark);
+    font-style: var(--shiki-dark-font-style, inherit);
+  }
+}
+
 @import "@brijbyte/md3-react/styles.css";
