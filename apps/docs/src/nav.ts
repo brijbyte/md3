@@ -7,6 +7,7 @@ import HomeIcon from "@brijbyte/md3-icons/outlined/home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/radio-button-checked";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/toggle-on";
+import ViewWeekIcon from "@brijbyte/md3-icons/outlined/view-week";
 
 export type NavItem = {
   // Slashless route ("/buttons"); SSG writes it as `<path>/index.html`.
@@ -31,6 +32,13 @@ export const NAV: NavItem[] = [
     title: "Buttons",
     description: "Common buttons prompt most actions in a UI, in five variants.",
     icon: ButtonsIcon,
+  },
+  {
+    path: "/button-group",
+    label: "Button group",
+    title: "Button groups",
+    description: "Button groups organize related buttons, standard or connected.",
+    icon: ViewWeekIcon,
   },
   {
     path: "/icon-buttons",

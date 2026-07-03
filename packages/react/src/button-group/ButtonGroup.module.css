@@ -1,0 +1,49 @@
+/* Spec values from MDC Android button_group_tokens.xml + expressive state lists
+   (material-components-android); material-web has no button-group tokens. */
+@layer md3.components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .root[data-variant="connected"] {
+    gap: 2px;
+  }
+
+  /* Connected children fuse into a pill; inner corners morph by state. */
+  .root[data-variant="connected"] > * {
+    --_inner-corner: var(--md-sys-shape-corner-small);
+    border-radius: var(--_inner-corner);
+    transition: border-radius var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  /* Outer corners follow the container shape (full) in every state. */
+  .root[data-variant="connected"] > :first-child {
+    border-start-start-radius: var(--md-sys-shape-corner-full);
+    border-end-start-radius: var(--md-sys-shape-corner-full);
+  }
+
+  .root[data-variant="connected"] > :last-child {
+    border-start-end-radius: var(--md-sys-shape-corner-full);
+    border-end-end-radius: var(--md-sys-shape-corner-full);
+  }
+
+  /* Selected toggles round fully; pressing a toggle tightens inner corners
+     (checkable-only per spec — :active on [data-toggle] outranks [data-pressed]). */
+  .root[data-variant="connected"] > [data-pressed] {
+    --_inner-corner: var(--md-sys-shape-corner-full);
+  }
+
+  .root[data-variant="connected"] > [data-toggle]:active {
+    --_inner-corner: var(--md-sys-shape-corner-extra-small);
+  }
+
+  /* The focus ring (3px + 2px offset) reaches past the 2dp gap; paint the
+     focused child above its later siblings so the ring isn't clipped
+     (MDC draws the focused child last for the same reason). */
+  .root > :focus-visible {
+    z-index: 1;
+  }
+}

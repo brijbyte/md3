@@ -30,14 +30,15 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   (`components/ThemeToggle.tsx`; library components are the client leaves) and hydrates from
   the RSC payload inlined in the HTML. All icons come from `@brijbyte/md3-icons` — never
   hand-write SVGs in docs. Styled entirely with Tailwind v4 (`@tailwindcss/vite`); doubles
-  as the Tailwind-integration testbed. Layer order (`@layer theme, base, md3.tokens,
-md3.components, components, utilities;`, `src/layers.css`) **cannot rely on stylesheet
-  link order** — React emits client-reference CSS `<link>`s before the server CSS — so
-  `entry.ssr.tsx` injects the pin as an inline `<style>` at the top of `<head>`
-  (`injectLayerPin`), guaranteeing it's the first layer declaration; that slots md3 between
-  preflight (can't break components) and utilities (can override them). MD3 tokens come from
-  the library's generated `tailwind-tokens.css` (imported in `app.css`).
+  as the Tailwind-integration testbed. Layer order is pinned by the first line of
+  `src/app.css` (`@layer theme, base, md3.tokens, md3.components, components, utilities;`),
+  and `app.css` also `@import`s `@brijbyte/md3-react/styles.css` — everything flows
+  through that one stylesheet (Root.tsx's only CSS import), so the pin is always the
+  first layer declaration parsed; that slots md3 between preflight (can't break
+  components) and utilities (can override them). MD3 tokens come from the library's
+  generated `tailwind-tokens.css` (imported in `app.css`).
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
+  Root `package.json` enforces Node >=26 / pnpm >=11.9 (`engineStrict`).
 
 ## Architecture decisions (settled — don't relitigate)
 
@@ -161,7 +162,10 @@ Patterns:
 
 Done: tokens pipeline, ripple, Button (5 variants), IconButton (standard/filled/tonal/
 outlined + toggle), FAB (small/medium/large, colors, lowered, extended), Checkbox
-(+ indeterminate), Radio (+ RadioGroup), Switch; `@brijbyte/md3-icons` package; Base UI
+(+ indeterminate), Radio (+ RadioGroup), Switch, ButtonGroup (standard + connected;
+corner morph in CSS, press width morph via rAF spring (MDC expressive
+fast-spatial: stiffness 800, damping 0.6) — specs from MDC Android
+`button_group_tokens.xml`, material-web has none); `@brijbyte/md3-icons` package; Base UI
 render/className/style pass-through; Tailwind v4 docs app (integration verified).
 
 Next candidates: 48dp touch targets, error states (checkbox), Chips, Cards, TextField,
