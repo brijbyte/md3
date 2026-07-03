@@ -32,6 +32,7 @@ const PAGES: Record<string, React.ComponentType> = {
   "/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
   "/radio": mdxPage(() => import("./pages/radio/page.mdx")),
   "/switch": mdxPage(() => import("./pages/switch/page.mdx")),
+  "/tabs": mdxPage(() => import("./pages/tabs/page.mdx")),
   "/tailwind": mdxPage(() => import("./pages/tailwind/page.mdx")),
 };
 

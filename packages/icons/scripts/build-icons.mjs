@@ -1,6 +1,15 @@
 // Generates dist/<style>/<icon>.js + .d.ts from @material-symbols/svg-400
 // (npm mirror of Google Fonts' Material Symbols SVGs).
-import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { createRequire } from "node:module";
 import { build } from "vite";
 import path from "node:path";
@@ -10,6 +19,11 @@ const require = createRequire(import.meta.url);
 const pkgRoot = fileURLToPath(new URL("..", import.meta.url));
 const svgRoot = path.dirname(require.resolve("@material-symbols/svg-400/package.json"));
 const distDir = path.join(pkgRoot, "dist");
+// Build into a staging dir, then swap it in — regenerating ~10k files in place
+// leaves a seconds-long window where a running docs dev server can't resolve
+// half-written imports (e.g. createIcon.js, which is compiled last).
+const stagingDir = path.join(pkgRoot, "dist.tmp");
+const oldDir = path.join(pkgRoot, "dist.old");
 
 const STYLES = ["outlined", "rounded", "sharp"];
 const VIEWBOX = "0 -960 960 960";
@@ -33,12 +47,13 @@ const parseSvg = (/** @type {string} */ svg, /** @type {string} */ file) => {
   return ds.join(" ");
 };
 
-rmSync(distDir, { recursive: true, force: true });
+rmSync(stagingDir, { recursive: true, force: true });
+rmSync(oldDir, { recursive: true, force: true }); // leftover from a crashed run
 let count = 0;
 
 for (const style of STYLES) {
   const srcDir = path.join(svgRoot, style);
-  const outDir = path.join(distDir, style);
+  const outDir = path.join(stagingDir, style);
   mkdirSync(outDir, { recursive: true });
 
   for (const file of readdirSync(srcDir)) {
@@ -74,11 +89,16 @@ await build({
       formats: ["es"],
       fileName: "createIcon",
     },
-    outDir: distDir,
+    outDir: stagingDir,
     emptyOutDir: false,
     minify: false,
     rollupOptions: { external: [/^react/] },
   },
 });
-cpSync(path.join(pkgRoot, "src/createIcon.d.ts"), path.join(distDir, "createIcon.d.ts"));
+cpSync(path.join(pkgRoot, "src/createIcon.d.ts"), path.join(stagingDir, "createIcon.d.ts"));
+
+// Atomic-ish swap: dist is only ever missing between the two renames.
+if (existsSync(distDir)) renameSync(distDir, oldDir);
+renameSync(stagingDir, distDir);
+rmSync(oldDir, { recursive: true, force: true });
 console.log(`Generated ${count} icon modules (${STYLES.join(", ")}).`);

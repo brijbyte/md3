@@ -5,6 +5,7 @@ import HomeIcon from "@brijbyte/md3-icons/outlined/home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/radio-button-checked";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/rocket-launch";
+import TabIcon from "@brijbyte/md3-icons/outlined/tab";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/toggle-on";
 
 export type NavItem = {
@@ -59,6 +60,13 @@ export const NAV: NavItem[] = [
     title: "Switch",
     description: "Switches toggle the state of a single item on or off.",
     icon: ToggleOnIcon,
+  },
+  {
+    path: "/tabs",
+    label: "Tabs",
+    title: "Tabs",
+    description: "Tabs organize content across different screens and views.",
+    icon: TabIcon,
   },
   {
     path: "/tailwind",

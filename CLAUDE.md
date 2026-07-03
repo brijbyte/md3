@@ -211,8 +211,18 @@ render/className/style pass-through; Tailwind v4 docs app (integration verified)
 touch targets on all interactive components; docs restructure (standalone landing page,
 sidebar docs layout, MDX authoring via Sätteri, Getting started page); standalone demo
 packages (`pages/<page>/demo/` + `md3:demos` plugin, isolated `.demo-surface`, all docs
-routes as `page.mdx`); layer pin as hoistable head `<style>`.
+routes as `page.mdx`); layer pin as hoistable head `<style>`; Tabs (primary/secondary,
+icons; Base UI `Tabs.Indicator` positioned by its `--active-tab-left/right` vars, elastic
+slide in pure CSS — per-edge sine easings flipped by `data-activation-direction`,
+matching MDC Android's ElasticTabIndicatorInterpolator but at 250ms medium1 (material-web
+duration; Android's 500ms long2 reads too slow); primary label-hug is `calc(±16px)` off
+the tab box, exact at intrinsic tab widths but tab-width−32 if a consumer stretches tabs;
+`activateOnFocus` defaults true per material-web; `TabPanel` is unstyled a11y wiring —
+MD3 specs only the tab bar, panels have no tokens/anatomy); icons build writes to
+`dist.tmp` then rename-swaps into `dist` (in-place regen left a seconds-long window where
+a running docs dev server couldn't resolve half-written imports).
 
-Next candidates: error states (checkbox), Chips, Cards, TextField,
+Next candidates: Badge (standalone component + attached to Tab items — small dot and
+large numbered variants), error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site
 content + deploy.

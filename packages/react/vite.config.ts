@@ -113,6 +113,7 @@ export default defineConfig({
         "checkbox/index": "src/checkbox/index.ts",
         "radio/index": "src/radio/index.ts",
         "switch/index": "src/switch/index.ts",
+        "tabs/index": "src/tabs/index.ts",
       },
       formats: ["es"],
     },

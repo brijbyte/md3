@@ -1,0 +1,183 @@
+/* Spec: tokens/component-specs.json → primary-navigation-tab / secondary-navigation-tab.
+   Container 48 (64 primary stacked icon+label), label title-small, icon 24; padding
+   0 16 and content gaps 8 (row) / 2 (stacked) from material-web tabs/internal. */
+@layer md3.components {
+  .root {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .list {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    background: var(--md-sys-color-surface);
+    /* Divider (1dp outline-variant), inset so the active indicator paints over it */
+    box-shadow: inset 0 -1px var(--md-sys-color-outline-variant);
+  }
+
+  .list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    white-space: nowrap;
+    font-family: var(--md-sys-typescale-title-small-font);
+    font-size: var(--md-sys-typescale-title-small-size);
+    line-height: var(--md-sys-typescale-title-small-line-height);
+    font-weight: var(--md-sys-typescale-title-small-weight);
+    letter-spacing: var(--md-sys-typescale-title-small-tracking);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .tab:hover,
+  .tab:focus-visible,
+  .tab:active {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  /* Inward focus ring — the list is a scroll container, an outset ring would clip.
+     8px shape per material-web; radius is focus-only so nothing else rounds. */
+  .tab:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -4px;
+    border-radius: 8px;
+  }
+
+  /* State layer: hover/focus tint + ripple host, colored per state below */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .tab:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .tab:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .content {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+  }
+
+  .icon {
+    display: inline-flex;
+    font-size: 24px;
+    inline-size: 24px;
+    block-size: 24px;
+  }
+
+  /* Active indicator: Base UI positions it via --active-tab-* vars (scroll-aware
+     tab box). Primary hugs the label: the tab's 16px padding is subtracted per
+     side — exact while tabs keep their intrinsic width (the MD3 default here).
+     Both edges are insets so they can ease independently (elastic, below). */
+  .indicator {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: calc(var(--active-tab-left) + 16px);
+    right: calc(var(--active-tab-right) + 16px);
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: var(--md-sys-color-primary);
+  }
+
+  /* Elastic slide, per MDC Android ElasticTabIndicatorInterpolator: the edge in
+     the direction of travel leads (ease-out sine), the other trails (ease-in
+     sine), stretching the indicator toward the target. 250ms (material-web /
+     MDC mtrl duration; Android M3's 500ms long2 reads too slow). No rule for
+     "none" — initial render doesn't slide. */
+  @media (prefers-reduced-motion: no-preference) {
+    .indicator[data-activation-direction="right"] {
+      transition:
+        left var(--md-sys-motion-duration-medium1) cubic-bezier(0.12, 0, 0.39, 0),
+        right var(--md-sys-motion-duration-medium1) cubic-bezier(0.61, 1, 0.88, 1);
+    }
+
+    .indicator[data-activation-direction="left"] {
+      transition:
+        left var(--md-sys-motion-duration-medium1) cubic-bezier(0.61, 1, 0.88, 1),
+        right var(--md-sys-motion-duration-medium1) cubic-bezier(0.12, 0, 0.39, 0);
+    }
+  }
+
+  /* Primary: icon stacks above the label (64px container) */
+  .list[data-variant="primary"] .tab[data-stacked] .content {
+    flex-direction: column;
+    gap: 2px;
+    height: 64px;
+  }
+
+  .list[data-variant="primary"] .tab[data-active] {
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Primary pressed + selected state layers are primary (hover/focus stay on-surface) */
+  .list[data-variant="primary"] .tab:active .stateLayer,
+  .list[data-variant="primary"] .tab[data-active] .stateLayer {
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Secondary: 2px square indicator spanning the whole tab */
+  .list[data-variant="secondary"] .indicator {
+    left: var(--active-tab-left);
+    right: var(--active-tab-right);
+    height: 2px;
+    border-radius: 0;
+  }
+
+  .list[data-variant="secondary"] .tab[data-active] {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  /* No disabled tokens in the tabs spec; repo-universal 38% content */
+  .tab[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .panel:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+}

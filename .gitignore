@@ -1,5 +1,7 @@
 node_modules/
 dist/
+dist.tmp/
+dist.old/
 *.log
 .DS_Store
 packages/react/src/generated/
