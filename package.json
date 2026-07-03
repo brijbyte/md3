@@ -12,6 +12,8 @@
     "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "oxfmt": "^0.57.0",
     "oxlint": "^1.72.0",
     "typescript": "^6.0.3",
