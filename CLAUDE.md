@@ -1,5 +1,8 @@
 # md3.brijbyte.com
 
+Skip the teaching/learning-checklist workflow here (no LEARNING.md, no comprehension
+quizzes) — overrides the global CLAUDE.md teacher instructions. Just do the work.
+
 React implementation of Google's Material Design 3 (https://m3.material.io/), built as a
 styled layer on top of Base UI (`@base-ui/react`, the headless library). Deliverable is
 both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
