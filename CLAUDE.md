@@ -18,7 +18,7 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   is pinned by `src/layers.css` (`@layer theme, base, md3.tokens, md3.components, components,
 utilities;`) which must stay the first stylesheet loaded and in its own non-Tailwind file —
   that slots md3 between preflight (can't break components) and utilities (can override them).
-  MD3 tokens are exposed as Tailwind theme values in `app.css` (`@theme inline`).
+  MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in `app.css`).
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
 
 ## Architecture decisions (settled — don't relitigate)
@@ -38,8 +38,10 @@ utilities;`) which must stay the first stylesheet loaded and in its own non-Tail
   with a `prefers-color-scheme` fallback (`:root:not([data-theme='light'])`). Dynamic
   color (Material You seed generation) is a possible later addition, not current scope.
 - **CSS distribution**: per-component files (`dist/styles/<component>.css`, plus
-  `tokens.css` and `ripple.css`) AND an aggregated `dist/index.css` (exported as
-  `@brijbyte/md3-react/styles.css`). Aggregate puts tokens first to establish layer order.
+  `tokens.css`, `ripple.css`, and `tailwind-tokens.css`) AND an aggregated `dist/index.css`
+  (exported as `@brijbyte/md3-react/styles.css`). Aggregate puts tokens first to establish
+  layer order; `tailwind-tokens.css` is never aggregated (raw `@theme` — only meaningful
+  inside a consumer's Tailwind v4 build, imported after `@import "tailwindcss"`).
 - **JS/CSS decoupled**: no CSS imports in published JS — consumers import stylesheets
   themselves (documented in `packages/react/README.md`). Keep it that way for standard
   npm-package behavior.
@@ -54,9 +56,11 @@ utilities;`) which must stay the first stylesheet loaded and in its own non-Tail
   (color light+dark, typescale, shape, state-layer opacities, elevation, motion) using
   MD3 baseline values.
 - `scripts/build-tokens.mjs` generates `src/generated/tokens.css` (custom props named
-  `--md-sys-color-primary` etc., kebab-case per MD3 convention) and `src/generated/tokens.ts`
-  (typed map, **camelCase keys**, values are `var(...)` strings). `src/generated/` is
-  gitignored.
+  `--md-sys-color-primary` etc., kebab-case per MD3 convention), `src/generated/tokens.ts`
+  (typed map, **camelCase keys**, values are `var(...)` strings), and
+  `src/generated/tailwind-tokens.css` (Tailwind v4 `@theme inline` mapping all system tokens
+  to utility names — `bg-primary`, `text-title-large`, `shadow-level1`, verbatim token keys,
+  no prefix; settled naming). `src/generated/` is gitignored.
 - Codegen runs inside the Vite build via the `md3:codegen` plugin (tokens + tcm CSS
   typings, regenerates in `--watch` mode too). Standalone CLIs still exist:
   `pnpm build:tokens`, `pnpm typegen:css` — useful before a bare `tsc` on a fresh clone.

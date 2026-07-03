@@ -49,6 +49,26 @@ them) and `utilities` (utility classes override component styles without
 <Button className="rounded-lg bg-fuchsia-600">Tailwind-styled</Button>
 ```
 
+To use the MD3 tokens as Tailwind utilities in your own markup, import the
+generated theme inside your Tailwind entry CSS (values are `var()` references,
+so they track light/dark at runtime):
+
+```css
+@import "tailwindcss";
+@import "@brijbyte/md3-react/tailwind-tokens.css";
+```
+
+```tsx
+<div className="bg-surface-container-low rounded-extra-large shadow-level1">
+  <h2 className="font-brand text-title-large text-on-surface">Title</h2>
+</div>
+```
+
+Covers all system tokens: colors (`bg-primary`, `text-on-surface-variant`, …),
+typescale (`text-body-large` with line-height/weight/tracking), shape
+(`rounded-extra-large`), elevation (`shadow-level1`…`level5`), easing
+(`ease-emphasized`), and fonts (`font-brand`, `font-plain`).
+
 ## Usage
 
 ```tsx

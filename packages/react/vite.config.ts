@@ -4,7 +4,12 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import DtsCreatorImport from "typed-css-modules";
-import { buildTokens, tokensJsonPath, tokensCssPath } from "./scripts/build-tokens.mjs";
+import {
+  buildTokens,
+  tailwindTokensCssPath,
+  tokensCssPath,
+  tokensJsonPath,
+} from "./scripts/build-tokens.mjs";
 
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -75,6 +80,13 @@ function md3EmitCss(): Plugin {
           type: "asset",
           fileName: "styles/ripple.css",
           source: rippleCss,
+        });
+        // Tailwind-only theme file: shipped standalone, never in the aggregate
+        // (raw @theme is only meaningful inside a consumer's Tailwind build).
+        this.emitFile({
+          type: "asset",
+          fileName: "styles/tailwind-tokens.css",
+          source: readFileSync(tailwindTokensCssPath, "utf8"),
         });
 
         // Tokens first to establish @layer order, ripple next, then components.

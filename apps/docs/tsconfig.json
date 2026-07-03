@@ -13,6 +13,9 @@
     // Vite picks these up via vite-tsconfig-paths.
     "paths": {
       "@brijbyte/md3-react/styles.css": ["../../packages/react/src/dev-styles.css"],
+      "@brijbyte/md3-react/tailwind-tokens.css": [
+        "../../packages/react/src/generated/tailwind-tokens.css"
+      ],
       "@brijbyte/md3-react/*": ["../../packages/react/src/*/index.ts"]
     }
   },

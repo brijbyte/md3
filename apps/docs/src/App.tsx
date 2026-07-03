@@ -34,7 +34,7 @@ export function App() {
   const [theme, setTheme] = useTheme();
 
   return (
-    <div className="mx-auto max-w-[920px] px-6 pt-8 pb-24">
+    <div className="mx-auto max-w-230 px-6 pt-8 pb-24">
       <header className="flex items-center justify-between gap-4 pt-4 pb-10">
         <div>
           <h1 className="font-brand text-headline-medium">MD3 React</h1>
@@ -171,7 +171,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-4 py-3">
-      <span className="w-[90px] shrink-0 text-label-large text-on-surface-variant capitalize">
+      <span className="w-22.5 shrink-0 text-label-large text-on-surface-variant capitalize">
         {label}
       </span>
       {children}
