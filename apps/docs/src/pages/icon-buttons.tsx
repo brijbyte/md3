@@ -5,7 +5,7 @@ import { Row, Section } from "../components/demo";
 
 const variants = ["standard", "filled", "tonal", "outlined"] as const;
 
-export function IconButtonsPage() {
+export default function IconButtonsPage() {
   return (
     <Section title="Variants">
       {variants.map((variant) => (

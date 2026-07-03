@@ -1,7 +1,7 @@
 import { Switch } from "@brijbyte/md3-react/switch";
 import { Row, Section } from "../components/demo";
 
-export function SwitchPage() {
+export default function SwitchPage() {
   return (
     <Section title="States">
       <Row label="states">

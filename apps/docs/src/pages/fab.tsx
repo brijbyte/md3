@@ -5,7 +5,7 @@ import { Row, Section } from "../components/demo";
 
 const colors = ["primary", "secondary", "tertiary", "surface"] as const;
 
-export function FabPage() {
+export default function FabPage() {
   return (
     <>
       <Section title="Sizes">

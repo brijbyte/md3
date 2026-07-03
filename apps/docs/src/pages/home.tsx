@@ -1,6 +1,6 @@
 import { NAV } from "../nav";
 
-export function HomePage() {
+export default function HomePage() {
   return (
     <>
       <p className="max-w-prose text-body-large">

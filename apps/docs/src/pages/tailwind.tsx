@@ -3,7 +3,7 @@ import { Fab } from "@brijbyte/md3-react/fab";
 import AddIcon from "@brijbyte/md3-icons/outlined/add";
 import { Row, Section } from "../components/demo";
 
-export function TailwindPage() {
+export default function TailwindPage() {
   return (
     <Section title="Utility overrides">
       <Row label="utilities">

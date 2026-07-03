@@ -1,7 +1,7 @@
 import { Checkbox } from "@brijbyte/md3-react/checkbox";
 import { Row, Section } from "../components/demo";
 
-export function CheckboxPage() {
+export default function CheckboxPage() {
   return (
     <Section title="States">
       <Row label="states">

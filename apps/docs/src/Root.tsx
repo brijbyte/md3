@@ -12,22 +12,15 @@ import { ThemeToggle } from "./components/ThemeToggle";
 // React.lazy works in server components too: each page becomes its own server
 // chunk, loaded only when its route renders. During SSG, prerender() waits for
 // the lazy import to resolve, so the static HTML is still complete.
-function lazyPage(
-  load: () => Promise<Record<string, React.ComponentType>>,
-  name: string,
-): React.ComponentType {
-  return React.lazy(async () => ({ default: (await load())[name] }));
-}
-
 const PAGES: Record<string, React.ComponentType> = {
-  "/": lazyPage(() => import("./pages/home"), "HomePage"),
-  "/buttons": lazyPage(() => import("./pages/buttons"), "ButtonsPage"),
-  "/icon-buttons": lazyPage(() => import("./pages/icon-buttons"), "IconButtonsPage"),
-  "/fab": lazyPage(() => import("./pages/fab"), "FabPage"),
-  "/checkbox": lazyPage(() => import("./pages/checkbox"), "CheckboxPage"),
-  "/radio": lazyPage(() => import("./pages/radio"), "RadioPage"),
-  "/switch": lazyPage(() => import("./pages/switch"), "SwitchPage"),
-  "/tailwind": lazyPage(() => import("./pages/tailwind"), "TailwindPage"),
+  "/": React.lazy(() => import("./pages/home")),
+  "/buttons": React.lazy(() => import("./pages/buttons")),
+  "/icon-buttons": React.lazy(() => import("./pages/icon-buttons")),
+  "/fab": React.lazy(() => import("./pages/fab")),
+  "/checkbox": React.lazy(() => import("./pages/checkbox")),
+  "/radio": React.lazy(() => import("./pages/radio")),
+  "/switch": React.lazy(() => import("./pages/switch")),
+  "/tailwind": React.lazy(() => import("./pages/tailwind")),
 };
 
 // Apply persisted theme before first paint to avoid a flash.
@@ -41,7 +34,7 @@ document.documentElement.dataset.theme =
       : "light";
 `;
 
-export function Root({ url }: { url: URL }) {
+export default function Root({ url }: { url: URL }) {
   // Canonical paths are slashless ("/buttons"); static hosts serve
   // buttons/index.html at "/buttons/" too, so strip the trailing slash.
   const pathname =

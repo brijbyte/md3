@@ -66,7 +66,7 @@ async function renderStatic(config: ResolvedConfig) {
   );
 
   const outDir = config.environments.client.build.outDir;
-  for (const staticPath of await entry.getStaticPaths()) {
+  for (const staticPath of entry.getStaticPaths()) {
     config.logger.info(`[md3:ssg] rendering ${staticPath}`);
     const { html, rsc: payload } = await entry.handleSsg(
       new Request(new URL(staticPath, "http://ssg.local")),

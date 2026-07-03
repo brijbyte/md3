@@ -1,7 +1,7 @@
 import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
 import { Row, Section } from "../components/demo";
 
-export function RadioPage() {
+export default function RadioPage() {
   return (
     <Section title="States">
       <Row label="group">
