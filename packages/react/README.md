@@ -30,6 +30,25 @@ import "@brijbyte/md3-react/ripple.css"; // required by pressable components
 import "@brijbyte/md3-react/button.css";
 ```
 
+## Tailwind CSS
+
+All library CSS lives in the `md3.tokens` / `md3.components` cascade layers, so
+Tailwind v4 integrates cleanly — pin the layer order once, before any stylesheet
+loads (its own file, not processed by Tailwind):
+
+```css
+/* layers.css — must be the first stylesheet the app loads */
+@layer theme, base, md3.tokens, md3.components, components, utilities;
+```
+
+This slots the components between Tailwind's `base` (preflight can't break
+them) and `utilities` (utility classes override component styles without
+`!important`):
+
+```tsx
+<Button className="rounded-lg bg-fuchsia-600">Tailwind-styled</Button>
+```
+
 ## Usage
 
 ```tsx

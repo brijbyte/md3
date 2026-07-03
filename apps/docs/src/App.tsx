@@ -34,11 +34,13 @@ export function App() {
   const [theme, setTheme] = useTheme();
 
   return (
-    <div className="app">
-      <header className="app-header">
+    <div className="mx-auto max-w-[920px] px-6 pt-8 pb-24">
+      <header className="flex items-center justify-between gap-4 pt-4 pb-10">
         <div>
-          <h1 className="app-title">MD3 React</h1>
-          <p className="app-subtitle">Material Design 3 components for React, built on Base UI.</p>
+          <h1 className="font-brand text-headline-medium">MD3 React</h1>
+          <p className="text-body-medium text-on-surface-variant">
+            Material Design 3 components for React, built on Base UI.
+          </p>
         </div>
         <IconButton
           variant="tonal"
@@ -80,7 +82,9 @@ export function App() {
             </IconButton>
           </Row>
         ))}
-        <p className="hint">The middle two of each row are toggles — click them.</p>
+        <p className="mt-2 text-body-medium text-on-surface-variant">
+          The middle two of each row are toggles — click them.
+        </p>
       </Section>
 
       <Section title="FAB">
@@ -110,18 +114,37 @@ export function App() {
 
       <Section title="Radio">
         <Row label="group">
-          <RadioGroup defaultValue="a" style={{ display: "flex", gap: 8 }}>
+          <RadioGroup defaultValue="a" className="flex gap-2">
             <Radio value="a" aria-label="Option A" />
             <Radio value="b" aria-label="Option B" />
             <Radio value="c" aria-label="Option C" disabled />
           </RadioGroup>
         </Row>
         <Row label="disabled">
-          <RadioGroup defaultValue="a" disabled style={{ display: "flex", gap: 8 }}>
+          <RadioGroup defaultValue="a" disabled className="flex gap-2">
             <Radio value="a" aria-label="Disabled selected" />
             <Radio value="b" aria-label="Disabled unselected" />
           </RadioGroup>
         </Row>
+      </Section>
+
+      <Section title="Tailwind overrides">
+        <Row label="utilities">
+          <Button className="rounded-lg">rounded-lg</Button>
+          <Button className="bg-fuchsia-600">bg-fuchsia-600</Button>
+          <Button variant="outlined" className="px-10">
+            px-10
+          </Button>
+          <Fab
+            aria-label="Squarish teal FAB"
+            icon={<PlusIcon />}
+            className="rounded-md bg-teal-600 text-white"
+          />
+        </Row>
+        <p className="mt-2 text-body-medium text-on-surface-variant">
+          Utility classes win over component styles: the utilities layer is declared after
+          md3.components, so no !important is needed.
+        </p>
       </Section>
 
       <Section title="Switch">
@@ -138,8 +161,8 @@ export function App() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="section">
-      <h2 className="section-title">{title}</h2>
+    <section className="mb-6 rounded-extra-large bg-surface-container-low px-7 pt-6 pb-7">
+      <h2 className="mb-2 font-brand text-title-large">{title}</h2>
       {children}
     </section>
   );
@@ -147,8 +170,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="row">
-      <span className="row-label">{label}</span>
+    <div className="flex flex-wrap items-center gap-4 py-3">
+      <span className="w-[90px] shrink-0 text-label-large text-on-surface-variant capitalize">
+        {label}
+      </span>
       {children}
     </div>
   );

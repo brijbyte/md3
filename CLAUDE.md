@@ -13,7 +13,12 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   `@material-symbols/svg-400` (npm mirror of Google Fonts SVGs) — per-icon `.js`/`.d.ts`
   emitted directly; only the shared `src/createIcon.jsx` helper is compiled (vite lib build).
   Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
-- `apps/docs` — Vite + React docs/demo app (future md3.brijbyte.com).
+- `apps/docs` — Vite + React docs/demo app (future md3.brijbyte.com). Styled entirely with
+  Tailwind v4 (`@tailwindcss/vite`); doubles as the Tailwind-integration testbed. Layer order
+  is pinned by `src/layers.css` (`@layer theme, base, md3.tokens, md3.components, components,
+utilities;`) which must stay the first stylesheet loaded and in its own non-Tailwind file —
+  that slots md3 between preflight (can't break components) and utilities (can override them).
+  MD3 tokens are exposed as Tailwind theme values in `app.css` (`@theme inline`).
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
 
 ## Architecture decisions (settled — don't relitigate)
@@ -134,7 +139,8 @@ Patterns:
 
 Done: tokens pipeline, ripple, Button (5 variants), IconButton (standard/filled/tonal/
 outlined + toggle), FAB (small/medium/large, colors, lowered, extended), Checkbox
-(+ indeterminate), Radio (+ RadioGroup), Switch.
+(+ indeterminate), Radio (+ RadioGroup), Switch; `@brijbyte/md3-icons` package; Base UI
+render/className/style pass-through; Tailwind v4 docs app (integration verified).
 
 Next candidates: 48dp touch targets, error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site

@@ -1,8 +1,9 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import "@brijbyte/md3-react/styles.css";
-import "./reset.css";
+// layers.css first: it pins the cascade-layer order everything else slots into.
+import "./layers.css";
 import "./app.css";
+import "@brijbyte/md3-react/styles.css";
 import { App } from "./App";
 
 createRoot(document.getElementById("root")!).render(

@@ -1,61 +1,53 @@
-.app {
-  max-width: 920px;
-  margin-inline: auto;
-  padding: 32px 24px 96px;
+@import "tailwindcss";
+
+/* Dark mode follows html[data-theme] (set pre-paint in index.html). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Expose MD3 system tokens as Tailwind theme values (bg-surface, text-title-large, …).
+   `inline` keeps the var() reference so the values track the active theme. */
+@theme inline {
+  --color-background: var(--md-sys-color-background);
+  --color-on-background: var(--md-sys-color-on-background);
+  --color-surface: var(--md-sys-color-surface);
+  --color-on-surface: var(--md-sys-color-on-surface);
+  --color-surface-container-low: var(--md-sys-color-surface-container-low);
+  --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
+  --color-primary: var(--md-sys-color-primary);
+  --color-on-primary: var(--md-sys-color-on-primary);
+
+  --font-brand: var(--md-ref-typeface-brand);
+  --font-plain: var(--md-ref-typeface-plain);
+
+  --text-body-medium: var(--md-sys-typescale-body-medium-size);
+  --text-body-medium--line-height: var(--md-sys-typescale-body-medium-line-height);
+  --text-body-large: var(--md-sys-typescale-body-large-size);
+  --text-body-large--line-height: var(--md-sys-typescale-body-large-line-height);
+  --text-label-large: var(--md-sys-typescale-label-large-size);
+  --text-label-large--line-height: var(--md-sys-typescale-label-large-line-height);
+  --text-title-large: var(--md-sys-typescale-title-large-size);
+  --text-title-large--line-height: var(--md-sys-typescale-title-large-line-height);
+  --text-headline-medium: var(--md-sys-typescale-headline-medium-size);
+  --text-headline-medium--line-height: var(--md-sys-typescale-headline-medium-line-height);
+
+  --radius-extra-large: var(--md-sys-shape-corner-extra-large);
 }
 
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-block: 16px 40px;
-}
+@layer base {
+  html {
+    color-scheme: light;
+  }
 
-.app-title {
-  font-family: var(--md-ref-typeface-brand);
-  font-size: var(--md-sys-typescale-headline-medium-size);
-  line-height: var(--md-sys-typescale-headline-medium-line-height);
-}
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
 
-.app-subtitle {
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: var(--md-sys-typescale-body-medium-size);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
-}
-
-.section {
-  background: var(--md-sys-color-surface-container-low);
-  border-radius: var(--md-sys-shape-corner-extra-large);
-  padding: 24px 28px 28px;
-  margin-block-end: 24px;
-}
-
-.section-title {
-  font-family: var(--md-ref-typeface-brand);
-  font-size: var(--md-sys-typescale-title-large-size);
-  line-height: var(--md-sys-typescale-title-large-line-height);
-  margin-block-end: 8px;
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  padding-block: 12px;
-}
-
-.row-label {
-  width: 90px;
-  flex-shrink: 0;
-  text-transform: capitalize;
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: var(--md-sys-typescale-label-large-size);
-}
-
-.hint {
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: var(--md-sys-typescale-body-medium-size);
-  margin-block-start: 8px;
+  body {
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    font-family: var(--md-ref-typeface-plain);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+  }
 }
