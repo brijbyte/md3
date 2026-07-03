@@ -19,14 +19,8 @@ Base UI while the visuals follow the [Material Design 3](https://m3.material.io/
 ## Load the styles
 
 JavaScript and CSS are decoupled — importing a component does **not** pull in its styles.
-Import the stylesheet once at your app root:
-
-```tsx
-import "@brijbyte/md3-react/styles.css";
-```
-
-Or, for a minimal payload, import the shared layers plus only the components you use. Add these
-imports to your enty point css file (e.g. `index.css`):
+Import the shared layers plus only the components you use, so the CSS payload stays
+minimal. Add these imports to your entry-point css file (e.g. `index.css`):
 
 ```css
 /* required: tokens + theming */
@@ -40,6 +34,10 @@ and then import the component css you need wherever required:
 ```css
 @import "@brijbyte/md3-react/button.css";
 ```
+
+> [!NOTE]
+> There's also an everything bundle — `@import "@brijbyte/md3-react/styles.css"` — but it
+> ships every component's CSS whether you use it or not; prefer the per-component imports.
 
 The typescale expects Roboto; load it however you prefer, for example:
 
@@ -85,5 +83,5 @@ via `prefers-color-scheme`, or explicitly with a `data-theme` attribute on `<htm
 
 All library CSS lives in the `md3.tokens` / `md3.components` cascade layers, so unlayered
 consumer CSS — including Tailwind utilities — always wins overrides. See
-[Tailwind overrides](/tailwind) for the full setup, including using MD3 tokens as
+[Tailwind overrides](/overview/tailwind) for the full setup, including using MD3 tokens as
 Tailwind utilities (`bg-primary`, `text-title-large`, `shadow-level1`, …).

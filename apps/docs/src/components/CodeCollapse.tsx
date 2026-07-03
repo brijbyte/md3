@@ -34,7 +34,7 @@ export function CodeCollapse({ children }: { children: React.ReactNode }) {
     <div ref={collapsedRef} className="relative max-h-40 overflow-hidden rounded-b-large">
       {children}
       {/* pointer-events-none keeps the copy button clickable under the fade */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-linear-to-b from-transparent to-surface-container">
+      <div className="pointer-events-none absolute inset-0 flex items-end justify-center bg-linear-to-b from-transparent to-surface-container">
         <Button
           variant="elevated"
           className="pointer-events-auto"

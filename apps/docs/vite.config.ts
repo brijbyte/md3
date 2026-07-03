@@ -67,7 +67,7 @@ function mdxPlugin(): Plugin {
   const base = satteri({
     markdown: false,
     features: { gfm: true, frontmatter: true },
-    hastPlugins: [shikiHastPlugin()],
+    hastPlugins: [alertsHastPlugin(), shikiHastPlugin()],
   });
   const transform = base.transform as (
     this: unknown,
@@ -103,6 +103,31 @@ function shikiStyleNode(css: string) {
     properties: { href: shikiCssHref(css), precedence: "md3-shiki" },
     children: [{ type: "text" as const, value: css }],
   };
+}
+
+// GFM alert blocks (`> [!NOTE]` …): Sätteri's GFM doesn't parse them, so tag the
+// blockquote here; mdx-components renders [data-alert] blockquotes as callouts.
+const ALERT_RE = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n?/;
+function alertsHastPlugin() {
+  return defineHastPlugin({
+    name: "gfm-alerts",
+    element: {
+      filter: ["blockquote"],
+      // Nodes are readonly views over the Rust arena — mutate via ctx only.
+      visit(node, ctx) {
+        const para = node.children.find((c) => c.type === "element" && c.tagName === "p");
+        if (!para || para.type !== "element") return;
+        const [text] = para.children;
+        if (!text || text.type !== "text") return;
+        const m = ALERT_RE.exec(text.value);
+        if (!m) return;
+        const rest = text.value.slice(m[0].length);
+        if (rest) ctx.replaceNode(text, { type: "text", value: rest });
+        else ctx.removeChildAt(para, 0);
+        ctx.setProperty(node, "data-alert", m[1].toLowerCase());
+      },
+    },
+  });
 }
 
 // Compile-time syntax highlighting: replace fenced code blocks with Shiki's hast.

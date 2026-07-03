@@ -8,6 +8,10 @@
     "./utility-overrides": {
       "style": "./utility-overrides.css",
       "default": "./utility-overrides.tsx"
+    },
+    "./token-utilities": {
+      "style": "./token-utilities.css",
+      "default": "./token-utilities.tsx"
     }
   },
   "dependencies": {

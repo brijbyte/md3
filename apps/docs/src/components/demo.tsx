@@ -57,7 +57,7 @@ function DemoCode({
           {css}
         </style>
       )}
-      <TabList variant="primary" aria-label="Demo source files" className="rounded-t-md">
+      <TabList variant="primary" aria-label="Demo source files">
         {files.map((f) => (
           <Tab key={f.name} value={f.name}>
             {f.name}
@@ -119,8 +119,8 @@ export function Demo({
   if (!entry) throw new Error(`Unknown demo "${of}" — is it in its package.json exports?`);
   const Content = React.lazy(entry.load);
   return (
-    <section className="my-6 rounded-extra-large bg-surface-container-low px-7 pt-6 pb-7">
-      {title && <h2 className="mb-4 font-brand text-title-large">{title}</h2>}
+    <section className="rounded-large bg-surface-container-low pt-4 my-6">
+      {title && <h2 className="mb-4 px-4 font-brand text-title-large">{title}</h2>}
       <div className="demo-surface">
         {/* Center the demo as one block (fit-content, auto margins) so multi-row
             demos keep their internal left alignment; gap spaces stacked rows. */}
@@ -131,7 +131,7 @@ export function Demo({
         </div>
       </div>
       {children != null && (
-        <div className="mt-4 text-body-medium text-on-surface-variant">{children}</div>
+        <div className="mt-4 px-4 text-body-medium text-on-surface-variant">{children}</div>
       )}
       <React.Suspense fallback={<DemoCodeSkeleton />}>
         <DemoCodeLoader code={entry.code()} />

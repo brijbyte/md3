@@ -1,8 +1,75 @@
 ---
-title: Tailwind overrides
+title: Tailwind integration
 ---
 
 import { Demo } from "./demo";
+
+## Setup
+
+Tailwind v4 and the library share one cascade. In your Tailwind entry CSS, pin the layer
+order on the first line, then import the shared layers, the components you actually use,
+and the token→utility mapping:
+
+```css
+@layer theme, base, md3.tokens, md3.components, components, utilities;
+
+@import "tailwindcss";
+
+/* required: tokens + theming, ripple (used by most pressable components) */
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+
+/* only the components you use — keeps the CSS payload minimal */
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/checkbox.css";
+
+/* MD3 tokens as Tailwind utilities (see below) */
+@import "@brijbyte/md3-react/tailwind-tokens.css";
+```
+
+The pin slots the library's layers (`md3.tokens`, `md3.components`) between Tailwind's
+`base` and `utilities`, so preflight can't break the components and any utility class
+outranks component styles — this page runs on exactly that setup.
+
+## Tokens as Tailwind utilities
+
+`@brijbyte/md3-react/tailwind-tokens.css` is a generated Tailwind v4 `@theme inline`
+block that maps every MD3 system token to a Tailwind theme namespace, giving you
+token-backed utility classes with the token's own name:
+
+| MD3 tokens                 | Utilities                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| `--md-sys-color-*`         | `bg-background`, `text-on-background`, `bg-primary`, `border-outline`, … (all 37 roles, verbatim) |
+| `--md-sys-typescale-*`     | `text-display-large` … `text-label-small` — each sets size, line-height, weight, and tracking     |
+| `--md-sys-shape-corner-*`  | `rounded-extra-small` … `rounded-extra-large`                                                     |
+| `--md-sys-elevation-*`     | `shadow-level0` … `shadow-level5`                                                                 |
+| `--md-sys-motion-easing-*` | `ease-standard`, `ease-emphasized`, plus `-accelerate` / `-decelerate` variants                   |
+
+Because the mapping is `@theme inline`, each utility resolves to `var(--md-sys-*)` at
+runtime rather than a frozen value — so `bg-background` follows the active theme
+(`data-theme="dark"` or `prefers-color-scheme`) automatically. No `dark:` variants
+needed, and any future dynamic-color theming picks up for free.
+
+```tsx
+<article className="rounded-large bg-surface-container-high p-6 shadow-level1">
+  <h3 className="text-title-large text-on-surface">Tokens as utilities</h3>
+  <p className="text-body-medium text-on-surface-variant">…</p>
+</article>
+```
+
+<Demo of="token-utilities" title="Tokens as utilities">
+  Toggle the docs theme — every class in this card is a token utility, so it follows.
+</Demo>
+
+> [!IMPORTANT]
+> `tailwind-tokens.css` only defines the theme mapping; the token values themselves come
+> from `tokens.css`, which must also be loaded. The mapping ships as its own file because
+> a raw `@theme` block is only meaningful inside a Tailwind v4 build.
+
+## Overriding component styles
+
+Utility classes win over component styles: the `utilities` layer is declared after
+`md3.components`, so no `!important` is needed.
 
 <Demo of="utility-overrides" title="Utility overrides">
   Utility classes win over component styles: the utilities layer is declared after md3.components,

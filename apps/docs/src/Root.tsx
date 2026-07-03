@@ -5,7 +5,7 @@ import "./app.css";
 
 import * as React from "react";
 import SpinnerIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
-import { NAV, type NavItem } from "./nav";
+import { NAV, SECTIONS, type NavItem } from "./nav";
 import { MDX_COMPONENTS } from "./components/mdx-components";
 import { ThemeToggle } from "./components/ThemeToggle";
 
@@ -27,18 +27,18 @@ function mdxPage(
 // the lazy import to resolve, so the static HTML is still complete.
 const PAGES: Record<string, React.ComponentType> = {
   "/": React.lazy(() => import("./pages/home")),
-  "/getting-started": mdxPage(() => import("./pages/getting-started/page.mdx")),
-  "/buttons": mdxPage(() => import("./pages/buttons/page.mdx")),
-  "/badge": mdxPage(() => import("./pages/badge/page.mdx")),
-  "/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
-  "/radio": mdxPage(() => import("./pages/radio/page.mdx")),
-  "/switch": mdxPage(() => import("./pages/switch/page.mdx")),
-  "/tabs": mdxPage(() => import("./pages/tabs/page.mdx")),
-  "/tailwind": mdxPage(() => import("./pages/tailwind/page.mdx")),
+  "/overview/getting-started": mdxPage(() => import("./pages/getting-started/page.mdx")),
+  "/overview/tailwind": mdxPage(() => import("./pages/tailwind/page.mdx")),
+  "/components/buttons": mdxPage(() => import("./pages/buttons/page.mdx")),
+  "/components/badge": mdxPage(() => import("./pages/badge/page.mdx")),
+  "/components/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
+  "/components/radio": mdxPage(() => import("./pages/radio/page.mdx")),
+  "/components/switch": mdxPage(() => import("./pages/switch/page.mdx")),
+  "/components/tabs": mdxPage(() => import("./pages/tabs/page.mdx")),
 };
 
 // The landing page renders without the docs chrome; everything else gets the
-// sidebar, which lists all routes except the landing page itself.
+// sidebar (grouped SECTIONS on desktop, a flat chip row on mobile).
 const SIDEBAR = NAV.filter((item) => item.path !== "/");
 
 // Apply persisted theme before first paint to avoid a flash.
@@ -148,9 +148,19 @@ function DocsLayout({
         <p className="px-4 pb-4 text-body-small text-on-surface-variant">
           Material Design 3, on Base UI
         </p>
-        <nav className="flex flex-col gap-1" aria-label="Documentation">
-          {SIDEBAR.map((item) => (
-            <NavLink key={item.path} item={item} active={item.path === pathname} />
+        <nav className="flex flex-col" aria-label="Documentation">
+          {SECTIONS.map((section) => (
+            <React.Fragment key={section.label}>
+              {/* MD3 nav-drawer section header. */}
+              <span className="px-4 pt-5 pb-2 text-title-small text-on-surface-variant">
+                {section.label}
+              </span>
+              <div className="flex flex-col gap-1">
+                {section.items.map((item) => (
+                  <NavLink key={item.path} item={item} active={item.path === pathname} />
+                ))}
+              </div>
+            </React.Fragment>
           ))}
         </nav>
       </aside>

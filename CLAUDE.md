@@ -29,12 +29,17 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   case-insensitively with a canonical name, e.g. `addchart` vs `add_chart`, are skipped).
 - `apps/docs` — Vite RSC docs/demo app (future md3.brijbyte.com), built with
   `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document
-  and routing (routes/metadata in `src/nav.ts`; every docs route is an MDX page at
-  `src/pages/<name>/page.mdx`, `React.lazy`-loaded inside `Suspense` so only the active
+  and routing (routes/metadata in `src/nav.ts` — nested sections `SECTIONS` (Overview,
+  Components) with routes `/<section>/<page>` (`/overview/getting-started`,
+  `/components/buttons`), flattened into `NAV` (landing first) for lookup/SSG; every
+  docs route is an MDX page at
+  `src/pages/<name>/page.mdx` (page dirs are flat — only routes are nested),
+  `React.lazy`-loaded inside `Suspense` so only the active
   route's server chunk is imported — `home.tsx` stays TSX, it's the custom landing).
   Two layouts in Root: `/` is a
   standalone landing page (hero + cards, no sidebar); every other route gets the docs
-  sidebar (NAV minus `/`). MDX is compiled by
+  sidebar (SECTIONS with MD3 section headers on desktop, flat chips on mobile). MDX is
+  compiled by
   Sätteri via `vite-plugin-satteri` — wrapped in vite.config's `mdxPlugin()`, which skips
   plugin-rsc's virtual ids ending in `.mdx`; MDX output is a server component, and Root's
   `mdxPage()` injects the MD3-styled markdown element

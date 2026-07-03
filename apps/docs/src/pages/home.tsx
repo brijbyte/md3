@@ -15,7 +15,7 @@ export default function HomePage() {
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <Button
-            render={<a href="/getting-started" />}
+            render={<a href="/overview/getting-started" />}
             nativeButton={false}
             icon={<ArrowForwardIcon />}
           >
