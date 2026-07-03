@@ -1,0 +1,137 @@
+/* Spec: tokens/component-specs.json → switch.
+   Track 52x32 corner-full, outline 2 when unselected.
+   Handle: 16 unselected / 24 selected / 28 pressed, state layer 40 on handle. */
+@layer md3.components {
+  .root {
+    position: relative;
+    display: inline-flex;
+    width: 52px;
+    height: 32px;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container-highest);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition:
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+    /* Handle geometry, overridden per state below */
+    --md3-handle-size: 16px;
+    --md3-handle-x: 16px; /* handle center, from track left edge */
+    --md3-handle-color: var(--md-sys-color-outline);
+    --md3-state-color: var(--md-sys-color-on-surface);
+  }
+
+  .root[data-checked] {
+    background: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
+    --md3-handle-size: 24px;
+    --md3-handle-x: 36px;
+    --md3-handle-color: var(--md-sys-color-on-primary);
+    --md3-state-color: var(--md-sys-color-primary);
+  }
+
+  .root:hover,
+  .root:focus-visible {
+    --md3-handle-color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-checked]:hover,
+  .root[data-checked]:focus-visible {
+    --md3-handle-color: var(--md-sys-color-primary-container);
+  }
+
+  .root:active {
+    --md3-handle-size: 28px;
+    --md3-handle-color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-checked]:active {
+    --md3-handle-color: var(--md-sys-color-primary-container);
+  }
+
+  .root:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .thumb {
+    position: absolute;
+    top: 50%;
+    /* Offset by border width so --md3-handle-x is relative to the outer track box */
+    left: calc(var(--md3-handle-x) - 2px);
+    width: var(--md3-handle-size);
+    height: var(--md3-handle-size);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md3-handle-color);
+    transform: translate(-50%, -50%);
+    transition:
+      left var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* 40px hover/focus/pressed state layer centered on the handle */
+  .stateLayer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-full);
+    transform: translate(-50%, -50%);
+    background: var(--md3-state-color);
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .root:active .stateLayer {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  /* Disabled */
+  .root[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-surface-container-highest)
+        calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    --md3-handle-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root[data-disabled][data-checked] {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    border-color: transparent;
+    --md3-handle-color: var(--md-sys-color-surface);
+  }
+}

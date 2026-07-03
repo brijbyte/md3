@@ -1,0 +1,143 @@
+/* Spec: tokens/component-specs.json → checkbox.
+   Container 18x18 radius 2, icon 18, state layer 40 round.
+   Note the pressed state-layer color flip: unselected pressed → primary,
+   selected pressed → on-surface. */
+@layer md3.components {
+  .root {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .root:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -1px;
+  }
+
+  /* State layer colors per selection state; ripple inherits via currentColor */
+  .root[data-unchecked] {
+    --md3-state-color: var(--md-sys-color-on-surface);
+    --md3-pressed-color: var(--md-sys-color-primary);
+  }
+
+  .root[data-checked],
+  .root[data-indeterminate] {
+    --md3-state-color: var(--md-sys-color-primary);
+    --md3-pressed-color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    color: var(--md3-state-color);
+  }
+
+  .root:active .stateLayer {
+    color: var(--md3-pressed-color);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 2px solid var(--md-sys-color-on-surface-variant);
+    box-sizing: border-box;
+    transition:
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .root:hover .box,
+  .root:focus-visible .box,
+  .root:active .box {
+    border-color: var(--md-sys-color-on-surface);
+  }
+
+  .root[data-checked] .box,
+  .root[data-indeterminate] .box {
+    background: var(--md-sys-color-primary);
+    border: none;
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .indicator {
+    position: relative;
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+  }
+
+  .checkIcon,
+  .indeterminateIcon {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .indeterminateIcon,
+  .root[data-indeterminate] .checkIcon {
+    display: none;
+  }
+
+  .root[data-indeterminate] .indeterminateIcon {
+    display: block;
+  }
+
+  /* Disabled — checkbox uses 38% for both outline and container (not 12%) */
+  .root[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .root[data-disabled][data-unchecked] .box {
+    border-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root[data-disabled][data-checked] .box,
+  .root[data-disabled][data-indeterminate] .box {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    color: var(--md-sys-color-surface);
+  }
+}

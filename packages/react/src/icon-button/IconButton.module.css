@@ -1,0 +1,140 @@
+/* Spec: tokens/component-specs.json → icon-button, filled-icon-button,
+   filled-tonal-icon-button, outlined-icon-button */
+@layer md3.components {
+  .root {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: var(--md-sys-shape-corner-full);
+    overflow: hidden;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: background-color var(--md-sys-motion-duration-short2)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  .root:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .icon {
+    display: inline-flex;
+    font-size: 24px;
+    inline-size: 24px;
+    block-size: 24px;
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /* Standard: unselected on-surface-variant, selected primary */
+  .root[data-variant="standard"] {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-variant="standard"][data-pressed] {
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Filled: default (non-toggle) primary container */
+  .root[data-variant="filled"] {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .root[data-variant="filled"][data-toggle]:not([data-pressed]) {
+    background: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Tonal: default secondary container */
+  .root[data-variant="tonal"] {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .root[data-variant="tonal"][data-toggle]:not([data-pressed]) {
+    background: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Outlined: unselected outlined, selected inverse-surface container */
+  .root[data-variant="outlined"] {
+    border: 1px solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-variant="outlined"][data-pressed] {
+    border: none;
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+  }
+
+  /* Disabled */
+  .root:disabled,
+  .root[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root[data-variant="filled"]:disabled,
+  .root[data-variant="tonal"]:disabled,
+  .root[data-variant="outlined"][data-pressed]:disabled {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root[data-variant="outlined"]:disabled:not([data-pressed]) {
+    background: transparent;
+    border-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+}

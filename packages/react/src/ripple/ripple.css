@@ -1,0 +1,31 @@
+/* Spec: material-web ripple/internal/_ripple.scss.
+   Soft-edged press indicator; grow is animated from JS (useRipple),
+   fade in 105ms / out 375ms linear via [data-pressed]. */
+@layer md3.components {
+  .md3-ripple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(
+      closest-side,
+      currentColor max(calc(100% - 70px), 65%),
+      transparent 100%
+    );
+    transform-origin: center center;
+    opacity: 0;
+    transition: opacity 375ms linear;
+  }
+
+  .md3-ripple[data-pressed] {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+    transition-duration: 105ms;
+  }
+
+  @media (forced-colors: active) {
+    .md3-ripple {
+      display: none;
+    }
+  }
+}

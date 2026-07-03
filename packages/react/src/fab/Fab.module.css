@@ -1,0 +1,134 @@
+/* Spec: tokens/component-specs.json → fab-primary(-small|-large), extended-fab-primary.
+   Extended FAB spacing (16/20 padding, 12 gap) from material-web fab/internal/_shared.scss. */
+@layer md3.components {
+  .root {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    box-shadow: var(--md-sys-elevation-level3);
+    transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  .root:hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+
+  .root[data-lowered] {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-lowered]:hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .root:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  /* Sizes */
+  .root[data-size="medium"] {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .root[data-size="small"] {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  .root[data-size="large"] {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+  }
+
+  .root[data-size="large"] .icon {
+    font-size: 36px;
+    inline-size: 36px;
+    block-size: 36px;
+  }
+
+  .root[data-extended] {
+    width: auto;
+    padding-inline: 16px 20px;
+    gap: 12px;
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  }
+
+  /* Colors */
+  .root[data-color="primary"] {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  .root[data-color="secondary"] {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .root[data-color="tertiary"] {
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  .root[data-color="surface"] {
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-primary);
+  }
+
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .icon {
+    display: inline-flex;
+    font-size: 24px;
+    inline-size: 24px;
+    block-size: 24px;
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .label {
+    white-space: nowrap;
+  }
+}

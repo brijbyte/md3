@@ -1,0 +1,110 @@
+/* Spec: tokens/component-specs.json → radio-button.
+   Icon 20x20 (2px ring), inner dot 10, state layer 40 round.
+   Pressed state-layer colors flip like checkbox. */
+@layer md3.components {
+  .root {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: var(--md-sys-shape-corner-full);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .root:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -1px;
+  }
+
+  .root[data-unchecked] {
+    --md3-icon-color: var(--md-sys-color-on-surface-variant);
+    --md3-state-color: var(--md-sys-color-on-surface);
+    --md3-pressed-color: var(--md-sys-color-primary);
+  }
+
+  .root[data-unchecked]:hover,
+  .root[data-unchecked]:focus-visible,
+  .root[data-unchecked]:active {
+    --md3-icon-color: var(--md-sys-color-on-surface);
+  }
+
+  .root[data-checked] {
+    --md3-icon-color: var(--md-sys-color-primary);
+    --md3-state-color: var(--md-sys-color-primary);
+    --md3-pressed-color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    color: var(--md3-state-color);
+  }
+
+  .root:active .stateLayer {
+    color: var(--md3-pressed-color);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    border: 2px solid var(--md3-icon-color);
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: border-color var(--md-sys-motion-duration-short2)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md3-icon-color);
+    transform: scale(0);
+    transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  }
+
+  .root[data-checked] .dot {
+    transform: scale(1);
+  }
+
+  /* Disabled: icon on-surface 38% */
+  .root[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+    --md3-icon-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+}
