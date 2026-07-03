@@ -1,5 +1,6 @@
 import type * as React from "react";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/buttons-alt";
+import NotificationsIcon from "@brijbyte/md3-icons/outlined/notifications";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/check-box";
 import HomeIcon from "@brijbyte/md3-icons/outlined/home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
@@ -39,6 +40,13 @@ export const NAV: NavItem[] = [
     title: "Buttons",
     description: "Common buttons, icon buttons, FABs, and button groups.",
     icon: ButtonsIcon,
+  },
+  {
+    path: "/badge",
+    label: "Badge",
+    title: "Badge",
+    description: "Badges show notifications, counts, or status information.",
+    icon: NotificationsIcon,
   },
   {
     path: "/checkbox",

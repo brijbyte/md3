@@ -16,6 +16,10 @@
     "./icons": {
       "style": "./icons.css",
       "default": "./icons.tsx"
+    },
+    "./badges": {
+      "style": "./badges.css",
+      "default": "./badges.tsx"
     }
   },
   "dependencies": {

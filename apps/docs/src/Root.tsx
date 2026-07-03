@@ -29,6 +29,7 @@ const PAGES: Record<string, React.ComponentType> = {
   "/": React.lazy(() => import("./pages/home")),
   "/getting-started": mdxPage(() => import("./pages/getting-started/page.mdx")),
   "/buttons": mdxPage(() => import("./pages/buttons/page.mdx")),
+  "/badge": mdxPage(() => import("./pages/badge/page.mdx")),
   "/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
   "/radio": mdxPage(() => import("./pages/radio/page.mdx")),
   "/switch": mdxPage(() => import("./pages/switch/page.mdx")),

@@ -38,10 +38,12 @@ export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function T
 export interface TabProps extends BaseTabs.Tab.Props {
   /** Icon element, sized per MD3 spec (24dp). Stacks above the label in primary tabs. */
   icon?: React.ReactNode;
+  /** A Badge, anchored to the icon's top-right corner (inline after the label if no icon). */
+  badge?: React.ReactNode;
 }
 
 export const Tab = React.forwardRef<HTMLButtonElement, TabProps>(function Tab(props, ref) {
-  const { className, icon, children, onPointerDown, ...rest } = props;
+  const { className, icon, badge, children, onPointerDown, ...rest } = props;
   const ripple = useRipple();
 
   return (
@@ -57,8 +59,14 @@ export const Tab = React.forwardRef<HTMLButtonElement, TabProps>(function Tab(pr
     >
       <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
       <span className={styles.content}>
-        {icon ? <span className={styles.icon}>{icon}</span> : null}
+        {icon ? (
+          <span className={styles.icon}>
+            {icon}
+            {badge ? <span className={styles.badge}>{badge}</span> : null}
+          </span>
+        ) : null}
         {children}
+        {!icon && badge ? <span className={styles.inlineBadge}>{badge}</span> : null}
       </span>
     </BaseTabs.Tab>
   );

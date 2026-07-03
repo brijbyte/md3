@@ -1,0 +1,34 @@
+/* Spec: tokens/component-specs.json → badge.
+   Dot 6px / large 16px min-width with 4px label padding, corner-full, error
+   colors, label-small (material-web labs/badge/internal/_badge.scss). */
+@layer md3.components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-error);
+  }
+
+  .root[data-variant="small"] {
+    width: 6px;
+    height: 6px;
+  }
+
+  .root[data-variant="large"] {
+    height: 16px;
+    min-width: 16px;
+    color: var(--md-sys-color-on-error);
+  }
+
+  .label {
+    padding: 0 4px;
+    text-align: center;
+    font-family: var(--md-sys-typescale-label-small-font);
+    font-size: var(--md-sys-typescale-label-small-size);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  }
+}

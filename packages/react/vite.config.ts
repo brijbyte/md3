@@ -114,6 +114,7 @@ export default defineConfig({
         "radio/index": "src/radio/index.ts",
         "switch/index": "src/switch/index.ts",
         "tabs/index": "src/tabs/index.ts",
+        "badge/index": "src/badge/index.ts",
       },
       formats: ["es"],
     },

@@ -1,4 +1,19 @@
 {
+  "badge": {
+    "color": "md-sys-color.error",
+    "large-color": "md-sys-color.error",
+    "large-label-text-color": "md-sys-color.on-error",
+    "large-label-text-font": "md-sys-typescale.label-small-font",
+    "large-label-text-line-height": "md-sys-typescale.label-small-line-height",
+    "large-label-text-size": "md-sys-typescale.label-small-size",
+    "large-label-text-tracking": "md-sys-typescale.label-small-tracking",
+    "large-label-text-type": "if( $exclude-hardcoded-values, null, md-sys-typescale.label-small-weight md-sys-typescale.label-small-size #{'/'} map.get( $deps, 'md-sys-typescale', 'label-small-line-height' ) md-sys-typescale.label-small-font )",
+    "large-label-text-weight": "md-sys-typescale.label-small-weight",
+    "large-shape": "md-sys-shape.corner-full",
+    "large-size": "16px",
+    "shape": "md-sys-shape.corner-full",
+    "size": "6px"
+  },
   "checkbox": {
     "container-shape": "2px",
     "container-size": "18px",

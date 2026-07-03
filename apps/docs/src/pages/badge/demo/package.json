@@ -1,0 +1,19 @@
+{
+  "name": "md3-demos-badge",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Badge",
+  "type": "module",
+  "exports": {
+    "./variants": {
+      "style": "./variants.css",
+      "default": "./variants.tsx"
+    }
+  },
+  "dependencies": {
+    "@brijbyte/md3-react": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

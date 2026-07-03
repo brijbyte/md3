@@ -96,10 +96,35 @@
   }
 
   .icon {
+    position: relative;
     display: inline-flex;
     font-size: 24px;
     inline-size: 24px;
     block-size: 24px;
+  }
+
+  /* Badge slot, anchored from the icon's top center per material-web
+     labs/badge: dot offset 6/4, large 2/1 (matches the [data-variant] the
+     Badge exposes). Text-only tabs get the badge inline after the label. */
+  .badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    display: inline-flex;
+  }
+
+  .badge:has([data-variant="small"]) {
+    margin-inline-start: 6px;
+    margin-block-start: 4px;
+  }
+
+  .badge:has([data-variant="large"]) {
+    margin-inline-start: 2px;
+    margin-block-start: 1px;
+  }
+
+  .inlineBadge {
+    display: inline-flex;
   }
 
   /* Active indicator: Base UI positions it via --active-tab-* vars (scroll-aware

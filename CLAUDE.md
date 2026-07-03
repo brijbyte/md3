@@ -220,9 +220,16 @@ the tab box, exact at intrinsic tab widths but tab-width−32 if a consumer stre
 `activateOnFocus` defaults true per material-web; `TabPanel` is unstyled a11y wiring —
 MD3 specs only the tab bar, panels have no tokens/anatomy); icons build writes to
 `dist.tmp` then rename-swaps into `dist` (in-place regen left a seconds-long window where
-a running docs dev server couldn't resolve half-written imports).
+a running docs dev server couldn't resolve half-written imports); Badge (dot when empty /
+large numbered via children, error colors; directive-free so it renders server-side —
+plain string className, no Base UI callback form; Tab takes `badge`, anchored to the icon
+top-right per material-web labs/badge offsets — dot 6/4, large 2/1 from icon top-center,
+selected in CSS via the Badge's public `data-variant` — or inline after a text-only label;
+tokens verified identical to MDC Android `Widget.Material3.Badge`, but Android's built-in
+maxNumber=999 "999+" clamping is left to consumers, and its edge-based anchor offsets
+(badge center 6/12dp inside the top-end corner, ~3dp off material-web's) are not used;
+the tab-badge demo lives on the Tabs docs page, not Badge's).
 
-Next candidates: Badge (standalone component + attached to Tab items — small dot and
-large numbered variants), error states (checkbox), Chips, Cards, TextField,
+Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site
 content + deploy.
