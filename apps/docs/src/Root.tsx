@@ -43,10 +43,12 @@ export default function Root({ url }: { url: URL }) {
 
   return (
     // data-theme is set by the inline script before hydration.
+    // scrollbar-gutter must live on <html>: browsers propagate it to the
+    // viewport only from the root element (body would only affect body's box).
     <html
       lang="en"
       suppressHydrationWarning
-      className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress"
+      className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable"
     >
       <head>
         <meta charSet="UTF-8" />
