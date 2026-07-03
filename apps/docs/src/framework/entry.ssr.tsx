@@ -27,39 +27,5 @@ export async function renderHtml(
     ? (await prerender(<SsrRoot />, { bootstrapScriptContent })).prelude
     : await renderToReadableStream(<SsrRoot />, { bootstrapScriptContent });
 
-  return htmlStream.pipeThrough(injectLayerPin()).pipeThrough(injectRSCPayload(rscStream2));
-}
-
-// The cascade-layer order must be the first layer declaration the browser
-// parses, but React emits the stylesheet <link>s in an order we don't control
-// (client-reference CSS before the server CSS containing layers.css). Inject
-// the pin inline at the top of <head> so it always wins.
-const LAYER_PIN =
-  "<style>@layer theme, base, md3.tokens, md3.components, components, utilities;</style>";
-
-function injectLayerPin(): TransformStream<Uint8Array, Uint8Array> {
-  const decoder = new TextDecoder();
-  const encoder = new TextEncoder();
-  let buffer = "";
-  let injected = false;
-  return new TransformStream({
-    transform(chunk, controller) {
-      if (injected) {
-        controller.enqueue(chunk);
-        return;
-      }
-      // Buffer until <head> appears (it could straddle chunk boundaries).
-      buffer += decoder.decode(chunk, { stream: true });
-      const i = buffer.indexOf("<head>");
-      if (i !== -1) {
-        injected = true;
-        const at = i + "<head>".length;
-        controller.enqueue(encoder.encode(buffer.slice(0, at) + LAYER_PIN + buffer.slice(at)));
-        buffer = "";
-      }
-    },
-    flush(controller) {
-      if (buffer) controller.enqueue(encoder.encode(buffer));
-    },
-  });
+  return htmlStream.pipeThrough(injectRSCPayload(rscStream2));
 }

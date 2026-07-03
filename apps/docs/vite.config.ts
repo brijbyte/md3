@@ -24,16 +24,6 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  environments: {
-    client: {
-      optimizeDeps: {
-        // Client components are only reached through the RSC graph, which the
-        // dep scanner doesn't crawl; scanning all of src pre-bundles @base-ui/*
-        // so dev doesn't re-optimize (and reload) mid-hydration.
-        entries: ["./src/**/*.tsx"],
-      },
-    },
-  },
 });
 
 // Prerenders every static path to plain .html after the RSC build, so

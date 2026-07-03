@@ -1,3 +1,4 @@
+@layer theme, base, md3.tokens, md3.components, components, utilities;
 @import "tailwindcss";
 
 /* Dark mode follows html[data-theme] (set pre-paint in index.html). */
@@ -43,3 +44,5 @@
     }
   }
 }
+
+@import "@brijbyte/md3-react/styles.css";

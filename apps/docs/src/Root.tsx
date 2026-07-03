@@ -1,9 +1,8 @@
 // Server component owning the HTML document (replaces index.html).
-// layers.css first: it pins the cascade-layer order everything else slots into;
-// the RSC plugin turns these imports into <link> tags in import order.
-import "./layers.css";
+// app.css is the single stylesheet: its first line pins the cascade-layer
+// order, and it @imports the library CSS so nothing depends on link order.
 import "./app.css";
-import "@brijbyte/md3-react/styles.css";
+
 import * as React from "react";
 import SpinnerIcon from "@brijbyte/md3-icons/outlined/progress-activity";
 import { NAV, type NavItem } from "./nav";

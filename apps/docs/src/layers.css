@@ -1,6 +1,0 @@
-/* Pin the cascade-layer order (first declaration wins): the library's md3.*
-   layers sit between Tailwind's base and utilities, so preflight can't break
-   component styles while utility classes can override them — no !important.
-   Kept in its own non-Tailwind file so the compiler can't reorder it; must be
-   the first stylesheet the app loads. */
-@layer theme, base, md3.tokens, md3.components, components, utilities;
