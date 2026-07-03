@@ -82,6 +82,7 @@ export default function Root({ url }: { url: URL }) {
     <html
       lang="en"
       suppressHydrationWarning
+      data-theme="dark"
       className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable"
     >
       <head>

@@ -6,12 +6,14 @@ import { Demo } from "./demo";
 
 ## Install
 
-```bash
+```sh
+npm install @brijbyte/md3-react
+# or
 pnpm add @brijbyte/md3-react
 ```
 
-The library is a styled layer over [Base UI](https://base-ui.com): every component wraps a
-headless Base UI primitive, so behavior, accessibility, and keyboard handling come from
+The library is a styled layer over [Base UI](https://base-ui.com): majority of the component
+wraps a headless Base UI primitive, so behavior, accessibility, and keyboard handling come from
 Base UI while the visuals follow the [Material Design 3](https://m3.material.io/) spec.
 
 ## Load the styles
@@ -23,12 +25,20 @@ Import the stylesheet once at your app root:
 import "@brijbyte/md3-react/styles.css";
 ```
 
-Or, for a minimal payload, import the shared layers plus only the components you use:
+Or, for a minimal payload, import the shared layers plus only the components you use. Add these
+imports to your enty point css file (e.g. `index.css`):
 
-```tsx
-import "@brijbyte/md3-react/tokens.css"; // required: design tokens + theming
-import "@brijbyte/md3-react/ripple.css"; // required by pressable components
-import "@brijbyte/md3-react/button.css";
+```css
+/* required: tokens + theming */
+@import "@brijbyte/md3-react/tokens.css";
+/* required by most pressable components */
+@import "@brijbyte/md3-react/ripple.css";
+```
+
+and then import the component css you need wherever required:
+
+```css
+@import "@brijbyte/md3-react/button.css";
 ```
 
 The typescale expects Roboto; load it however you prefer, for example:
@@ -42,14 +52,12 @@ The typescale expects Roboto; load it however you prefer, for example:
 
 ## Use a component
 
-Import each component (and its css) from its own path for better tree-shaking and
-code-splitting:
+Import each component (and its css) from its own path:
 
 ```tsx
 import { Button } from "@brijbyte/md3-react/button";
 import AddIcon from "@brijbyte/md3-icons/outlined/add";
 
-import "@brijbyte/md3-react/ripple.css";
 import "@brijbyte/md3-react/button.css";
 
 <Button variant="tonal" icon={<AddIcon />}>

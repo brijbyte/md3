@@ -18,6 +18,7 @@ export default defineConfig({
     mdxPlugin(),
     tailwindcss(),
     react(),
+    fixRscDevCssRemoval(),
     rsc({
       entries: {
         client: "./src/framework/entry.browser.tsx",
@@ -172,6 +173,62 @@ function collectDemoFiles(dir: string, entry: string) {
     }
   }
   return files;
+}
+
+// Dev FOUC fix: plugin-rsc's RemoveDuplicateServerCss deletes every server-rendered
+// client-reference css <link> on its first hydration effect, assuming the client
+// chunks' injected styles have taken over — but under slow loads hydration beats the
+// lazy chunks, stripping live styles for a visibly unstyled window until the chunks
+// arrive (styled → unstyled → styled). Override the dev-only virtual module so a
+// link is only removed once vite's injected <style data-vite-dev-id> for the same
+// file exists; a head MutationObserver retires the rest as their styles land.
+function fixRscDevCssRemoval(): Plugin {
+  const VIRTUAL = "virtual:vite-rsc/remove-duplicate-server-css";
+  return {
+    name: "md3:fix-rsc-dev-css-removal",
+    apply: "serve",
+    resolveId(id) {
+      if (id === VIRTUAL) return "\0" + VIRTUAL;
+    },
+    load(id) {
+      if (id !== "\0" + VIRTUAL) return;
+      return `\
+"use client"
+import * as React from "react";
+
+const SELECTOR = "link[rel='stylesheet'][data-precedence^='vite-rsc/client-reference']";
+
+function hasInjectedStyle(link) {
+  const path = decodeURIComponent(new URL(link.href, location.href).pathname)
+    .replace(/^\\/@fs/, "");
+  for (const style of document.querySelectorAll("style[data-vite-dev-id]")) {
+    const id = style.getAttribute("data-vite-dev-id").split("?")[0];
+    if (id === path || id.endsWith(path)) return true;
+  }
+  return false;
+}
+
+function sweep() {
+  for (const link of document.querySelectorAll(SELECTOR)) {
+    if (hasInjectedStyle(link)) link.remove();
+  }
+  return document.querySelector(SELECTOR) === null;
+}
+
+export default function RemoveDuplicateServerCss() {
+  React.useEffect(() => {
+    if (sweep()) return;
+    const observer = new MutationObserver(() => {
+      if (sweep()) observer.disconnect();
+    });
+    observer.observe(document.head, { childList: true });
+    return () => observer.disconnect();
+  }, []);
+  return null;
+}
+`;
+    },
+  };
 }
 
 // Standalone demos: each src/pages/<page>/demo/ folder is a drop-in package whose

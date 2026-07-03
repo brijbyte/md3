@@ -16,6 +16,11 @@ function rscUrl(href: string): string {
 let navigate: () => void = () => {};
 
 async function main() {
+  // Dev: inject every library css module before hydration (see dev-css.ts) so
+  // plugin-rsc's link dedup can never retire a stylesheet that has no injected
+  // replacement yet. Dead-code-eliminated from the build.
+  if (import.meta.env.DEV) await import("./dev-css");
+
   const initialPayload = await createFromReadableStream<RscPayload>(rscStream);
 
   function BrowserRoot() {

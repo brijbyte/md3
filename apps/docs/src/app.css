@@ -94,6 +94,25 @@
 
 @import "@brijbyte/md3-react/styles.css";
 
+/* Roboto arrives late from Google Fonts (display=swap) and its widths differ
+   enough from system-ui that text visibly shifts on swap (the code-showcase tab
+   labels made it obvious). This Arial-based fallback carries Roboto's metrics
+   (fontaine/next-font values), so pre-swap text occupies the same space. */
+@font-face {
+  font-family: "Roboto Fallback";
+  src: local("Arial");
+  ascent-override: 92.7734%;
+  descent-override: 24.4141%;
+  line-gap-override: 0%;
+  size-adjust: 100.1106%;
+}
+
+/* Unlayered, so it wins over the md3.tokens defaults ("Roboto", system-ui). */
+:root {
+  --md-ref-typeface-brand: "Roboto", "Roboto Fallback", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Roboto", "Roboto Fallback", system-ui, sans-serif;
+}
+
 /* Demo playground isolation: `all: initial` severs every inherited docs style at
    the boundary (and, being unlayered, outranks every layer). Custom properties are
    exempt from `all`, so --md-sys-* tokens flow through and demos follow the theme. */

@@ -1,0 +1,16 @@
+// Dev-only (see entry.browser): every library css module, imported into the
+// client graph so vite injects its <style data-vite-dev-id> copies up front.
+// plugin-rsc's server-rendered css <link>s have a removal lifecycle (dedup on
+// hydration); awaiting this module before hydrateRoot guarantees the injected
+// styles exist before any link can be retired — no unstyled window, and library
+// css HMR keeps working natively on these copies. Add new components here.
+import "@brijbyte/md3-react/badge/Badge.module.css";
+import "@brijbyte/md3-react/button/Button.module.css";
+import "@brijbyte/md3-react/button-group/ButtonGroup.module.css";
+import "@brijbyte/md3-react/checkbox/Checkbox.module.css";
+import "@brijbyte/md3-react/fab/Fab.module.css";
+import "@brijbyte/md3-react/icon-button/IconButton.module.css";
+import "@brijbyte/md3-react/radio/Radio.module.css";
+import "@brijbyte/md3-react/ripple/ripple.module.css";
+import "@brijbyte/md3-react/switch/Switch.module.css";
+import "@brijbyte/md3-react/tabs/Tabs.module.css";

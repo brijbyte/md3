@@ -248,7 +248,21 @@ elevated "Show code" button; expanded is full height — no inner vertical scrol
 a text "Hide code" button below that collapses back); the showcase chrome css (tabs,
 buttons, ripple) is imported by demo.tsx as source `.module.css` paths (dedicated
 `*.module.css` vite alias) so dev SSR links it at first paint — client-chunk-only css
-was a FOUC on the tab items; the demo itself renders centered in the surface via a
+was a FOUC on the tab items; the real dev FOUC culprit was plugin-rsc's
+`RemoveDuplicateServerCss` (its hydration effect deletes every server-rendered
+client-reference css `<link>` before slow-loading lazy chunks have injected their
+css modules → styled → unstyled → styled flash) — `md3:fix-rsc-dev-css-removal`
+(vite.config, serve-only) overrides the `virtual:vite-rsc/remove-duplicate-server-css`
+module so a link is removed only once a matching `style[data-vite-dev-id]` exists
+(head MutationObserver retires the rest; worth upstreaming to plugin-rsc); belt and
+braces, entry.browser awaits `framework/dev-css.ts` (every library `.module.css`,
+DEV-only, dead-code-eliminated from build) before hydrateRoot, so vite's injected
+style copies exist before any link can be retired — add new components to that list;
+the remaining "tab items shift" was the Roboto webfont swap (Google Fonts
+display=swap vs system-ui widths) — app.css declares a metrics-adjusted `"Roboto
+Fallback"` (Arial + fontaine overrides) and overrides `--md-ref-typeface-brand/plain`
+to slot it before system-ui, making the swap reflow-free; the demo
+itself renders centered in the surface via a
 `w-fit mx-auto flex-col gap-4` wrapper (whole block centered, internal left alignment
 kept — demo css should size fixed widths as `width: Npx; max-width: 100%`, not
 `width: 100%; max-width: Npx`, which collapses under fit-content); sources come from the
