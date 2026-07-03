@@ -1,13 +1,10 @@
 import type * as React from "react";
-import AddCircleIcon from "@brijbyte/md3-icons/outlined/add-circle";
-import AppsIcon from "@brijbyte/md3-icons/outlined/apps";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/buttons-alt";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/check-box";
 import HomeIcon from "@brijbyte/md3-icons/outlined/home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/radio-button-checked";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/toggle-on";
-import ViewWeekIcon from "@brijbyte/md3-icons/outlined/view-week";
 
 export type NavItem = {
   // Slashless route ("/buttons"); SSG writes it as `<path>/index.html`.
@@ -30,29 +27,8 @@ export const NAV: NavItem[] = [
     path: "/buttons",
     label: "Buttons",
     title: "Buttons",
-    description: "Common buttons prompt most actions in a UI, in five variants.",
+    description: "Common buttons, icon buttons, FABs, and button groups.",
     icon: ButtonsIcon,
-  },
-  {
-    path: "/button-group",
-    label: "Button group",
-    title: "Button groups",
-    description: "Button groups organize related buttons, standard or connected.",
-    icon: ViewWeekIcon,
-  },
-  {
-    path: "/icon-buttons",
-    label: "Icon buttons",
-    title: "Icon buttons",
-    description: "Icon buttons help people take minor actions with one tap.",
-    icon: AppsIcon,
-  },
-  {
-    path: "/fab",
-    label: "FAB",
-    title: "Floating action button",
-    description: "FABs represent the most important action on a screen.",
-    icon: AddCircleIcon,
   },
   {
     path: "/checkbox",

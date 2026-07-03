@@ -14,9 +14,6 @@ import { ThemeToggle } from "./components/ThemeToggle";
 const PAGES: Record<string, React.ComponentType> = {
   "/": React.lazy(() => import("./pages/home")),
   "/buttons": React.lazy(() => import("./pages/buttons")),
-  "/button-group": React.lazy(() => import("./pages/button-group")),
-  "/icon-buttons": React.lazy(() => import("./pages/icon-buttons")),
-  "/fab": React.lazy(() => import("./pages/fab")),
   "/checkbox": React.lazy(() => import("./pages/checkbox")),
   "/radio": React.lazy(() => import("./pages/radio")),
   "/switch": React.lazy(() => import("./pages/switch")),
