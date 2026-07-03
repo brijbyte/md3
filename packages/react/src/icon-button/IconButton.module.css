@@ -12,7 +12,6 @@
     padding: 0;
     border: none;
     border-radius: var(--md-sys-shape-corner-full);
-    overflow: hidden;
     background: transparent;
     cursor: pointer;
     user-select: none;
@@ -27,11 +26,24 @@
     outline-offset: 2px;
   }
 
+  /* 48dp touch target (MD3): extends the hit area past the 40px container. */
+  .root::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--md3-touch-target-width, max(48px, 100%));
+    height: max(48px, 100%);
+  }
+
+  /* overflow clips the ripple here (not on .root, which would clip ::after). */
   .stateLayer {
     position: absolute;
     inset: 0;
     z-index: -1;
     border-radius: inherit;
+    overflow: hidden;
   }
 
   .stateLayer::before {

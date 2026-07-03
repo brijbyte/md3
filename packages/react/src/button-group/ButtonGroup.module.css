@@ -7,6 +7,12 @@
     gap: 12px;
   }
 
+  /* Packed siblings: a child's 48dp touch target must not bleed sideways
+     over its neighbors (a later child would steal the earlier one's edge). */
+  .root > * {
+    --md3-touch-target-width: 100%;
+  }
+
   .root[data-variant="connected"] {
     gap: 2px;
   }

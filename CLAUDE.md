@@ -106,8 +106,10 @@ padding-inline 16px/20px with 12px icon–label gap.
 MD3 universals: state layers (hover 8%, focus 10%, pressed 10% of the state color);
 disabled = 38% opacity content / 12% containers (checkbox outline/container disabled uses
 38%); focus indicator 3px `--md-sys-color-secondary` outline with 2px offset; ripple on
-press (see `src/ripple/`); touch targets 48dp (NOT yet implemented — current interactive
-roots are container-sized).
+press (see `src/ripple/`); touch targets 48dp via a `.root::after` hit-area pseudo
+(`max(48px, 100%)` each axis, so roots must NOT have `overflow: hidden` — ripple clipping
+lives on `.stateLayer` instead; Button/IconButton read `--md3-touch-target-width`, which
+ButtonGroup sets to 100% on children so targets don't bleed over packed siblings).
 
 ## Component conventions
 
@@ -166,8 +168,9 @@ outlined + toggle), FAB (small/medium/large, colors, lowered, extended), Checkbo
 corner morph in CSS, press width morph via rAF spring (MDC expressive
 fast-spatial: stiffness 800, damping 0.6) — specs from MDC Android
 `button_group_tokens.xml`, material-web has none); `@brijbyte/md3-icons` package; Base UI
-render/className/style pass-through; Tailwind v4 docs app (integration verified).
+render/className/style pass-through; Tailwind v4 docs app (integration verified); 48dp
+touch targets on all interactive components.
 
-Next candidates: 48dp touch targets, error states (checkbox), Chips, Cards, TextField,
+Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site
 content + deploy.

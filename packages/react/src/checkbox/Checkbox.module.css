@@ -24,6 +24,17 @@
     outline-offset: -1px;
   }
 
+  /* 48dp touch target (MD3): extends the hit area past the 40px container. */
+  .root::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(48px, 100%);
+    height: max(48px, 100%);
+  }
+
   /* State layer colors per selection state; ripple inherits via currentColor */
   .root[data-unchecked] {
     --md3-state-color: var(--md-sys-color-on-surface);
