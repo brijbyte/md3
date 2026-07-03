@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["vite/client", "@vitejs/plugin-rsc/types"],
     // Points at library source (not dist) for instant HMR and go-to-source;
     // Vite picks these up via vite-tsconfig-paths.
     "paths": {

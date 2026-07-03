@@ -9,6 +9,9 @@
     "browser": true
   },
   "ignorePatterns": ["dist", "src/generated", "*.module.css.d.ts"],
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  },
   "overrides": [
     {
       "files": ["**/vite.config.ts", "**/scripts/**"],

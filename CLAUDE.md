@@ -13,12 +13,29 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   `@material-symbols/svg-400` (npm mirror of Google Fonts SVGs) — per-icon `.js`/`.d.ts`
   emitted directly; only the shared `src/createIcon.jsx` helper is compiled (vite lib build).
   Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
-- `apps/docs` — Vite + React docs/demo app (future md3.brijbyte.com). Styled entirely with
-  Tailwind v4 (`@tailwindcss/vite`); doubles as the Tailwind-integration testbed. Layer order
-  is pinned by `src/layers.css` (`@layer theme, base, md3.tokens, md3.components, components,
-utilities;`) which must stay the first stylesheet loaded and in its own non-Tailwind file —
-  that slots md3 between preflight (can't break components) and utilities (can override them).
-  MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in `app.css`).
+- `apps/docs` — Vite RSC docs/demo app (future md3.brijbyte.com), built with
+  `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document,
+  sidebar nav, and routing (no index.html; routes/metadata in `src/nav.ts`, one server-
+  component page per component in `src/pages/`, each `React.lazy`-loaded inside `Suspense`
+  so only the active route's server chunk is imported); `src/framework/entry.{rsc,ssr,browser}.tsx`
+  are the three environment entries; the `md3:ssg` plugin in vite.config.ts prerenders every
+  `getStaticPaths()` route (slashless, e.g. `/buttons`) to `<path>/index.html` + a
+  `<path>.html` copy (hosts resolve the extensionless URL) **plus `<path>/index.rsc`**
+  (its RSC payload), so **`dist/client/` is the fully static deployable site** (`vite preview`
+  serves it with no server handler). Navigation is soft: `entry.browser.tsx` intercepts
+  same-origin left-clicks + popstate, fetches the target's static `index.rsc`, and swaps
+  the payload in a transition (full-reload fallback on fetch failure; modified/external
+  clicks untouched). The dev handler serves `…/index.rsc` requests from the same URL shape. Interactive code lives under `'use client'`
+  (`components/ThemeToggle.tsx`; library components are the client leaves) and hydrates from
+  the RSC payload inlined in the HTML. All icons come from `@brijbyte/md3-icons` — never
+  hand-write SVGs in docs. Styled entirely with Tailwind v4 (`@tailwindcss/vite`); doubles
+  as the Tailwind-integration testbed. Layer order (`@layer theme, base, md3.tokens,
+md3.components, components, utilities;`, `src/layers.css`) **cannot rely on stylesheet
+  link order** — React emits client-reference CSS `<link>`s before the server CSS — so
+  `entry.ssr.tsx` injects the pin as an inline `<style>` at the top of `<head>`
+  (`injectLayerPin`), guaranteeing it's the first layer declaration; that slots md3 between
+  preflight (can't break components) and utilities (can override them). MD3 tokens come from
+  the library's generated `tailwind-tokens.css` (imported in `app.css`).
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
 
 ## Architecture decisions (settled — don't relitigate)
