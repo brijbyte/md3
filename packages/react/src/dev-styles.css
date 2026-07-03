@@ -1,5 +1,5 @@
 /* Dev-only stand-in for the published styles.css: the docs app aliases
    '@brijbyte/md3-react/styles.css' here. Component CSS Modules are pulled in
-   by the components themselves under Vite dev. Not part of the build. */
+   by the components themselves under Vite dev (ripple via useRipple). Not part
+   of the build. */
 @import "./generated/tokens.css";
-@import "./ripple/ripple.css";

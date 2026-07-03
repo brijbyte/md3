@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import styles from "./ripple.module.css";
 
 // Constants and behavior mirror material-web's ripple
 // (ripple/internal/ripple.ts): grow from press point to center over 450ms,
@@ -26,7 +27,7 @@ export function useRipple() {
     let ripple = rippleRef.current;
     if (!ripple) {
       ripple = document.createElement("span");
-      ripple.className = "md3-ripple";
+      ripple.className = styles.root;
       container.appendChild(ripple);
       rippleRef.current = ripple;
     }

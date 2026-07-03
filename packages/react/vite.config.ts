@@ -70,16 +70,10 @@ function md3EmitCss(): Plugin {
         }
 
         const tokensCss = readFileSync(tokensCssPath, "utf8");
-        const rippleCss = readFileSync(abs("src/ripple/ripple.css"), "utf8");
         this.emitFile({
           type: "asset",
           fileName: "styles/tokens.css",
           source: tokensCss,
-        });
-        this.emitFile({
-          type: "asset",
-          fileName: "styles/ripple.css",
-          source: rippleCss,
         });
         // Tailwind-only theme file: shipped standalone, never in the aggregate
         // (raw @theme is only meaningful inside a consumer's Tailwind build).
@@ -90,7 +84,9 @@ function md3EmitCss(): Plugin {
         });
 
         // Tokens first to establish @layer order, ripple next, then components.
+        const rippleCss = componentCss.get("ripple") ?? "";
         const sortedComponentCss = [...componentCss.keys()]
+          .filter((name) => name !== "ripple")
           .toSorted()
           .map((name) => componentCss.get(name)!);
         this.emitFile({
