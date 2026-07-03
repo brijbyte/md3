@@ -1,4 +1,3 @@
-import * as React from "react";
 import { renderToReadableStream } from "@vitejs/plugin-rsc/rsc";
 import Root from "../Root";
 import { NAV } from "../nav";
