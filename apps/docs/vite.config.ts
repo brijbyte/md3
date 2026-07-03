@@ -1,7 +1,9 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
+import { transformerStyleToClass } from "@shikijs/transformers";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
@@ -44,6 +46,12 @@ export default defineConfig({
         ),
       },
       {
+        // Source css modules by path (demo.tsx imports these into the server graph
+        // so dev SSR links the code-showcase chrome css at first paint — no FOUC).
+        find: /^@brijbyte\/md3-react\/(.+\.module\.css)$/,
+        replacement: path.resolve(import.meta.dirname, "../../packages/react/src/$1"),
+      },
+      {
         find: /^@brijbyte\/md3-react\/(.+)$/,
         replacement: path.resolve(import.meta.dirname, "../../packages/react/src/$1/index.ts"),
       },
@@ -79,6 +87,23 @@ function mdxPlugin(): Plugin {
 // WCAG AA contrast on the surface-container background.
 const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
 
+// Token styles live in classes, not inline vars: transformerStyleToClass emits
+// content-hashed (build-stable) class names; the tiny generated stylesheet ships
+// as a React-hoistable <style href precedence> so identical palettes dedupe by
+// href across blocks/pages and survive SSG, streaming, and soft navigation.
+const shikiClassTransformer = () => transformerStyleToClass({ classPrefix: "sk-" });
+function shikiCssHref(css: string) {
+  return "shiki-" + createHash("sha256").update(css).digest("hex").slice(0, 8);
+}
+function shikiStyleNode(css: string) {
+  return {
+    type: "element" as const,
+    tagName: "style",
+    properties: { href: shikiCssHref(css), precedence: "md3-shiki" },
+    children: [{ type: "text" as const, value: css }],
+  };
+}
+
 // Compile-time syntax highlighting: replace fenced code blocks with Shiki's hast.
 // Dual themes emit --shiki-light/--shiki-dark vars per token; app.css picks one by
 // [data-theme]. Zero client JS. Inline code (no language- class) is left alone.
@@ -95,13 +120,18 @@ function shikiHastPlugin() {
           .find((c): c is string => typeof c === "string" && c.startsWith("language-"))
           ?.slice("language-".length);
         if (!lang) return;
+        const toClass = shikiClassTransformer();
         const hast = await codeToHast(ctx.textContent(code).replace(/\n$/, ""), {
           lang,
           themes: SHIKI_THEMES,
           defaultColor: false,
+          transformers: [toClass],
         });
         const pre = hast.children[0];
         if (pre.type === "element") pre.properties["data-language"] = lang;
+        // This block's class rules ride along as a hoistable style sibling.
+        const css = toClass.getCSS();
+        if (css) ctx.insertAfter(node, shikiStyleNode(css));
         return toReactProps(pre);
       },
     },
@@ -177,10 +207,12 @@ function demosPlugin(): Plugin {
           }
         }
         const abs = path.join(pagesDir, page.name, "demo", files.default);
+        // code memoizes its promise: DemoCodeLoader unwraps it with React.use, which
+        // wants a stable identity (dynamic import mints a new promise per call).
         entries.push(
           `  ${JSON.stringify(id)}: { title: ${JSON.stringify(pkg.description ?? id)}, ` +
             `load: () => import(${JSON.stringify(abs)}), ` +
-            `code: () => import(${JSON.stringify(DEMO_CODE + id)}) }`,
+            `code: (p => () => (p ??= import(${JSON.stringify(DEMO_CODE + id)})))() }`,
         );
       }
     }
@@ -292,6 +324,7 @@ function demosPlugin(): Plugin {
         // The entry tsx usually imports its css; add the manifest style if it didn't.
         const style = files.style?.replace(/^\.\//, "");
         if (style && !rels.includes(style)) rels.push(style);
+        const toClass = shikiClassTransformer(); // shared: one deduped sheet per demo
         const out = [];
         for (const rel of rels) {
           const abs = path.join(dir, rel);
@@ -304,10 +337,16 @@ function demosPlugin(): Plugin {
               lang: path.extname(rel).slice(1) as BundledLanguage,
               themes: SHIKI_THEMES,
               defaultColor: false,
+              transformers: [toClass],
             }),
           });
         }
-        return `export const FILES = ${JSON.stringify(out)};\n`;
+        const css = toClass.getCSS();
+        return (
+          `export const FILES = ${JSON.stringify(out)};\n` +
+          `export const CSS = ${JSON.stringify(css)};\n` +
+          `export const CSS_HREF = ${JSON.stringify(shikiCssHref(css))};\n`
+        );
       }
       if (id.startsWith(DEMO_CSS)) {
         const cssPath = id.slice(DEMO_CSS.length, -".js".length);
@@ -335,7 +374,9 @@ function demosPlugin(): Plugin {
         const isPkg = file.endsWith("package.json");
         if (!isPkg && !/[\\/]demo[\\/]/.test(file)) return;
         const page = path.relative(pagesDir, file).split(path.sep)[0];
-        const ids = [...(isPkg ? [RESOLVED] : []), ...codeIdsForPage(page)];
+        // Registry always invalidates too: its memoized code() promises would
+        // otherwise keep serving the stale module after a demo-file edit.
+        const ids = [RESOLVED, ...codeIdsForPage(page)];
         for (const env of Object.values(server.environments)) {
           for (const id of ids) {
             const mod = env.moduleGraph.getModuleById(id);

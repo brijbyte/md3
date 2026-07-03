@@ -3,8 +3,8 @@
 @import "@brijbyte/md3-react/tabs.css";
 
 .demo-secondary-tabs {
-  width: 100%;
-  max-width: 480px;
+  width: 480px;
+  max-width: 100%;
 }
 
 .demo-secondary-tabs .panel {
