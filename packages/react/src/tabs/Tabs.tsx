@@ -19,8 +19,34 @@ export interface TabListProps extends BaseTabs.List.Props {
   variant?: TabsVariant;
 }
 
+// Base UI's prehydration script bails (and never retries) when it executes inside
+// one of React streaming's hidden Suspense segments — offsetWidth is 0 there, so the
+// indicator stays [hidden] until hydration and pops in late. This companion script
+// re-runs it (a fresh element with the same text; cloneNode keeps already-started)
+// once the segment goes live. Reveals are async (React batches them past
+// DOMContentLoaded), so watch DOM mutations — the observer is a microtask, running
+// after the reveal but before its first paint. Hydration or success disconnects.
+const indicatorRetryScript =
+  "(function(){var s=document.currentScript,b=s&&s.previousElementSibling,i=b&&b.previousElementSibling;" +
+  "if(!i||!i.hasAttribute('hidden'))return;var l=i.closest('[role=\"tablist\"]');" +
+  "if(!l||l.offsetWidth>0)return;var o=new MutationObserver(function(){" +
+  "if(!i.hasAttribute('hidden')){o.disconnect();return}" +
+  "if(l.offsetWidth>0){o.disconnect();var n=document.createElement('script');" +
+  "n.textContent=b.textContent;b.replaceWith(n)}});" +
+  "o.observe(document.documentElement,{childList:true,subtree:true});" +
+  "setTimeout(function(){o.disconnect()},20000)})();";
+
+const noopSubscribe = () => () => {};
+
 export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function TabList(props, ref) {
   const { className, variant = "primary", activateOnFocus = true, children, ...rest } = props;
+  // True on the server and during the hydration pass only — mirrors Base UI's
+  // isHydrating gate so client-only mounts never execute the retry script.
+  const isHydrating = React.useSyncExternalStore(
+    noopSubscribe,
+    () => false,
+    () => true,
+  );
   return (
     <BaseTabs.List
       ref={ref}
@@ -31,6 +57,12 @@ export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function T
     >
       {children}
       <BaseTabs.Indicator className={styles.indicator} renderBeforeHydration />
+      {isHydrating && (
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: indicatorRetryScript }}
+        />
+      )}
     </BaseTabs.List>
   );
 });

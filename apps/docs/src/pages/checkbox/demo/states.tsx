@@ -4,7 +4,7 @@ import { Checkbox } from "@brijbyte/md3-react/checkbox";
 
 export default function CheckboxStatesDemo() {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+    <div className="demo-checkbox-states">
       <Checkbox aria-label="Unchecked" />
       <Checkbox aria-label="Checked" defaultChecked />
       <Checkbox aria-label="Indeterminate" indeterminate />

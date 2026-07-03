@@ -7,9 +7,7 @@ import { Tab, TabList, Tabs } from "@brijbyte/md3-react/tabs";
 
 export default function TabsWithIconsDemo() {
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%", maxWidth: 480 }}
-    >
+    <div className="demo-tabs-icons">
       {/* Primary: icon stacks above the label (64dp container) */}
       <Tabs defaultValue="flights">
         <TabList aria-label="Travel (primary)">

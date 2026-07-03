@@ -4,7 +4,7 @@ import { Switch } from "@brijbyte/md3-react/switch";
 
 export default function SwitchStatesDemo() {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+    <div className="demo-switch-states">
       <Switch aria-label="Off" />
       <Switch aria-label="On" defaultChecked />
       <Switch aria-label="Disabled off" disabled />

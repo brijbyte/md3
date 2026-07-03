@@ -1,16 +1,12 @@
-@import "@brijbyte/md3-react/tokens.css";
-@import "@brijbyte/md3-react/ripple.css";
-@import "@brijbyte/md3-react/radio.css";
-
-.demo-radio-row {
+.demo-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
-  padding-block: 8px;
+  padding-block: 12px;
 }
 
-.demo-radio-label {
+.demo-row-label {
   width: 90px;
   flex-shrink: 0;
   text-transform: capitalize;
@@ -20,9 +16,4 @@
   font-weight: 500;
   letter-spacing: var(--md-sys-typescale-label-large-tracking);
   color: var(--md-sys-color-on-surface-variant);
-}
-
-.demo-radio-group {
-  display: flex;
-  gap: 8px;
 }

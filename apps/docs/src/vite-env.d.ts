@@ -8,6 +8,8 @@ declare module "virtual:md3-demos" {
     {
       title: string;
       load: () => Promise<{ default: React.ComponentType }>;
+      // Shiki-highlighted demo sources (md3:demo-code virtual module).
+      code: () => Promise<{ FILES: { name: string; code: string; html: string }[] }>;
     }
   >;
 }

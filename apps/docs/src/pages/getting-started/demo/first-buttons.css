@@ -1,3 +1,10 @@
 @import "@brijbyte/md3-react/tokens.css";
 @import "@brijbyte/md3-react/ripple.css";
 @import "@brijbyte/md3-react/button.css";
+
+.demo-first-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}

@@ -28,14 +28,17 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   plugin-rsc's virtual ids ending in `.mdx`; MDX output is a server component, and Root's
   `mdxPage()` injects the MD3-styled markdown element
   map from `components/mdx-components.tsx`. Code blocks are highlighted at compile time by
-  Shiki via a Sätteri hast plugin (`shikiHastPlugin` in vite.config — dual material themes
-  as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]` CSS in app.css;
-  `data-language` on the `<pre>`; zero client JS).
+  Shiki via a Sätteri hast plugin (`shikiHastPlugin` in vite.config — dual themes
+  (`SHIKI_THEMES`: github-light-default + github-dark-dimmed; the material themes
+  failed WCAG contrast) as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]`
+  CSS in app.css; `data-language` on the `<pre>`; zero client JS).
   **Demos** are standalone drop-in packages: `src/pages/<page>/demo/` holds a
   `package.json` (name, `description` = demo title, real deps, and an `exports` map per
   demo — `{ "style": "./x.css", "default": "./x.tsx" }`, default export = the demo) plus
-  the demo files, which import the library only by published specifiers and use inline
-  token styles (no docs Tailwind classes), so a folder copies out of the repo verbatim.
+  the demo files, which import the library only by published specifiers and put layout
+  styles as token-based classes in the demo's own css file — never inline `style`
+  objects, never docs Tailwind classes; class names are demo-prefixed (`.demo-radio-row`)
+  since all demo css on a page is global — so a folder copies out of the repo verbatim.
   The `md3:demos` plugin (vite.config) scans those manifests into the `virtual:md3-demos`
   registry ("<page>/<export>" → title + lazy loader) consumed by the `Demo` server
   component (`components/demo.tsx`, renders a skeleton fallback); pages
@@ -44,9 +47,12 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   page. Each demo tsx imports its sibling css file (the stylesheets a consumer needs);
   in-app that resolves to a virtual JS module importing the equivalent library _source_
   css modules — putting them in the server graph so dev SSR links them in `<head>` at
-  first paint (no FOUC), deduping with the components' own css imports in build — and the
-  raw demo css (also linked by plugin-rsc's css-export transform in dev) gets its
-  consumer-only `@import "@brijbyte/md3-react/*.css"` lines stripped by the same plugin.
+  first paint (no FOUC), deduping with the components' own css imports in build — plus
+  the raw css file itself when it carries demo-own rules (skipped when import-only:
+  identical empty outputs across demos would dedupe into one asset and desync
+  plugin-rsc's manifest); the raw demo css (also linked by plugin-rsc's css-export
+  transform in dev) gets its consumer-only `@import "@brijbyte/md3-react/*.css"` lines
+  stripped by the same plugin.
   The demo playground `div.demo-surface` (unlayered rule in app.css) uses `all: initial`
   to sever inherited docs styles while `--md-sys-*` custom properties (exempt from `all`)
   flow through, so demos ignore host CSS but follow the theme toggle. `src/framework/entry.{rsc,ssr,browser}.tsx`
@@ -228,7 +234,27 @@ selected in CSS via the Badge's public `data-variant` — or inline after a text
 tokens verified identical to MDC Android `Widget.Material3.Badge`, but Android's built-in
 maxNumber=999 "999+" clamping is left to consumers, and its edge-based anchor offsets
 (badge center 6/12dp inside the top-end corner, ~3dp off material-web's) are not used;
-the tab-badge demo lives on the Tabs docs page, not Badge's).
+the tab-badge demo lives on the Tabs docs page, not Badge's); demo source tabs — every
+`<Demo>` shows its files below the playground in library primary Tabs with a CopyButton
+per panel (docs client component, IconButton + clipboard) and collapsed by default
+(`CodeCollapse` client component clamps the panels to a faded preview with a centered
+elevated "Show code" button; expanded is full height — no inner vertical scroll — with
+a text "Hide code" button below that collapses back); sources come from the
+`virtual:md3-demo-code:<page>/<export>` module (md3:demos plugin): entry tsx + relative
+imports (breadth-first, `collectDemoFiles`) + the manifest `style` css, Shiki-highlighted
+at compile time via `codeToHtml` (same `SHIKI_THEMES` pair, rendered with
+`dangerouslySetInnerHTML` — zero client JS for the code itself); Demo is now an async
+server component; the dev watcher invalidates a page's code modules on any demo-file edit
+(tsx rides plugin-rsc's server HMR; css/package.json force a full reload since css HMR
+won't re-render RSC); tabs indicator prehydration fix — Base UI's `renderBeforeHydration`
+script bails permanently when it executes inside one of React streaming's hidden Suspense
+segments (offsetWidth 0), so `TabList` renders a companion inline script (isHydrating-gated
+like Base UI's) that re-runs it via a MutationObserver once the segment reveals —
+reveals are batched past DOMContentLoaded, and the observer microtask fires before the
+revealed content's first paint, so the indicator is positioned with zero flicker and no
+hydration errors; md3-styled code-block scrollbars (`pre.shiki` in app.css — slim
+outline-variant pill via webkit pseudos, standard scrollbar-color scoped to non-WebKit
+engines since setting it in Chromium would disable the custom pseudos).
 
 Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site

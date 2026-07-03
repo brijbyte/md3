@@ -1,2 +1,8 @@
 @import "@brijbyte/md3-react/tokens.css";
 @import "@brijbyte/md3-react/badge.css";
+
+.demo-badge-variants {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}

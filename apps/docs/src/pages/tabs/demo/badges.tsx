@@ -8,9 +8,7 @@ import { Tab, TabList, Tabs } from "@brijbyte/md3-react/tabs";
 
 export default function BadgeInTabsDemo() {
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", gap: 24, width: "100%", maxWidth: 480 }}
-    >
+    <div className="demo-tabs-badges">
       <Tabs defaultValue="mail">
         <TabList aria-label="Inbox (primary)">
           <Tab

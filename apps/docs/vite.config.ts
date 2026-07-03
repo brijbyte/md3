@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { defineHastPlugin } from "satteri";
-import { codeToHast } from "shiki";
+import { type BundledLanguage, codeToHast, codeToHtml } from "shiki";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import satteri from "vite-plugin-satteri";
 
@@ -74,6 +74,11 @@ function mdxPlugin(): Plugin {
   };
 }
 
+// One theme pair for fenced MDX blocks and demo source tabs alike. Light is
+// github-light-default: material-theme-lighter's oranges/teals fall well below
+// WCAG AA contrast on the surface-container background.
+const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
+
 // Compile-time syntax highlighting: replace fenced code blocks with Shiki's hast.
 // Dual themes emit --shiki-light/--shiki-dark vars per token; app.css picks one by
 // [data-theme]. Zero client JS. Inline code (no language- class) is left alone.
@@ -92,7 +97,7 @@ function shikiHastPlugin() {
         if (!lang) return;
         const hast = await codeToHast(ctx.textContent(code).replace(/\n$/, ""), {
           lang,
-          themes: { light: "material-theme-lighter", dark: "material-theme-darker" },
+          themes: SHIKI_THEMES,
           defaultColor: false,
         });
         const pre = hast.children[0];
@@ -118,6 +123,25 @@ function toReactProps<T>(node: T): T {
     if ("children" in node && Array.isArray(node.children)) node.children.forEach(toReactProps);
   }
   return node;
+}
+
+// A demo's showable sources: the entry file plus its relative imports, breadth-first
+// (extensionless specifiers try .tsx/.ts; css imports are included verbatim).
+function collectDemoFiles(dir: string, entry: string) {
+  const files: string[] = [];
+  const queue = [entry];
+  while (queue.length) {
+    const rel = queue.shift()!;
+    if (files.includes(rel)) continue;
+    files.push(rel);
+    if (!/\.[jt]sx?$/.test(rel)) continue;
+    const src = fs.readFileSync(path.join(dir, rel), "utf8");
+    for (const m of src.matchAll(/(?:from|import)\s+["']\.\/([^"']+)["']/g)) {
+      const hit = [m[1], `${m[1]}.tsx`, `${m[1]}.ts`].find((f) => fs.existsSync(path.join(dir, f)));
+      if (hit) queue.push(hit);
+    }
+  }
+  return files;
 }
 
 // Standalone demos: each src/pages/<page>/demo/ folder is a drop-in package whose
@@ -155,12 +179,29 @@ function demosPlugin(): Plugin {
         const abs = path.join(pagesDir, page.name, "demo", files.default);
         entries.push(
           `  ${JSON.stringify(id)}: { title: ${JSON.stringify(pkg.description ?? id)}, ` +
-            `load: () => import(${JSON.stringify(abs)}) }`,
+            `load: () => import(${JSON.stringify(abs)}), ` +
+            `code: () => import(${JSON.stringify(DEMO_CODE + id)}) }`,
         );
       }
     }
     return `export const DEMOS = {\n${entries.join(",\n")}\n};\n`;
   }
+
+  // Per-demo source-code module: reads the demo's entry file, its relative imports,
+  // and the export's style css, Shiki-highlights each at compile time, and exports
+  // FILES = [{ name, code, html }] for the <Demo> code tabs. Zero client JS.
+  const DEMO_CODE = "virtual:md3-demo-code:";
+  const RESOLVED_CODE = "\0" + DEMO_CODE;
+  const codeIdsForPage = (page: string) => {
+    const pkgPath = path.join(pagesDir, page, "demo", "package.json");
+    if (!fs.existsSync(pkgPath)) return [];
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as {
+      exports?: Record<string, unknown>;
+    };
+    return Object.keys(pkg.exports ?? {}).map(
+      (sub) => RESOLVED_CODE + `${page}/${sub.replace(/^\.\//, "")}`,
+    );
+  };
 
   // Pages import Demo from "./demo" (the sibling demo folder): that resolves to
   // a generated page-scoped wrapper, so `of` is relative to the page —
@@ -189,6 +230,13 @@ function demosPlugin(): Plugin {
       if (!mod) throw new Error(`[md3:demos] no source css for import "${m[1]}.css" in ${cssPath}`);
       imports.push(`import ${JSON.stringify(path.join(dir, mod))};`);
     }
+    // A demo css can also carry its own layout rules; those must ship in every
+    // environment, so import the raw file too (the transform below strips its
+    // library @imports first). Skipped when import-only: identical empty outputs
+    // across demos would dedupe into one asset and desync plugin-rsc's manifest.
+    if (css.replace(/@import\s+["']@brijbyte\/md3-react\/[^"']+["'];?/g, "").trim()) {
+      imports.push(`import ${JSON.stringify(cssPath)};`);
+    }
     return imports.join("\n") + "\n";
   }
 
@@ -199,6 +247,7 @@ function demosPlugin(): Plugin {
     enforce: "pre",
     resolveId(id, importer) {
       if (id === VIRTUAL) return RESOLVED;
+      if (id.startsWith(DEMO_CODE)) return "\0" + id;
       if (!importer?.startsWith(pagesDir + path.sep)) return;
       if (
         id.startsWith("./") &&
@@ -226,8 +275,40 @@ function demosPlugin(): Plugin {
         return code.replace(/@import\s+["']@brijbyte\/md3-react\/[^"']+["'];?/g, "");
       }
     },
-    load(id) {
+    async load(id) {
       if (id === RESOLVED) return buildRegistry();
+      if (id.startsWith(RESOLVED_CODE)) {
+        const key = id.slice(RESOLVED_CODE.length);
+        const page = key.slice(0, key.indexOf("/"));
+        const sub = "./" + key.slice(key.indexOf("/") + 1);
+        const dir = path.join(pagesDir, page, "demo");
+        const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8")) as {
+          exports?: Record<string, string | { style?: string; default: string }>;
+        };
+        const target = pkg.exports?.[sub];
+        if (!target) throw new Error(`[md3:demos] no export "${sub}" in ${page}'s demo package`);
+        const files = typeof target === "string" ? { default: target } : target;
+        const rels = collectDemoFiles(dir, files.default.replace(/^\.\//, ""));
+        // The entry tsx usually imports its css; add the manifest style if it didn't.
+        const style = files.style?.replace(/^\.\//, "");
+        if (style && !rels.includes(style)) rels.push(style);
+        const out = [];
+        for (const rel of rels) {
+          const abs = path.join(dir, rel);
+          this.addWatchFile(abs);
+          const code = fs.readFileSync(abs, "utf8");
+          out.push({
+            name: rel,
+            code,
+            html: await codeToHtml(code.replace(/\n$/, ""), {
+              lang: path.extname(rel).slice(1) as BundledLanguage,
+              themes: SHIKI_THEMES,
+              defaultColor: false,
+            }),
+          });
+        }
+        return `export const FILES = ${JSON.stringify(out)};\n`;
+      }
       if (id.startsWith(DEMO_CSS)) {
         const cssPath = id.slice(DEMO_CSS.length, -".js".length);
         this.addWatchFile(cssPath);
@@ -244,15 +325,24 @@ function demosPlugin(): Plugin {
         );
       }
     },
-    // Dev: a demo manifest edit re-scans the registry in every RSC environment.
+    // Dev: a demo manifest edit re-scans the registry; any demo-file edit
+    // invalidates that page's code modules so the source tabs re-highlight
+    // (tsx edits ride plugin-rsc's own server HMR; css HMR wouldn't re-render
+    // RSC, so css/manifest changes force a full reload).
     configureServer(server) {
       server.watcher.on("all", (_event, file) => {
-        if (!file.startsWith(pagesDir) || !file.endsWith("package.json")) return;
+        if (!file.startsWith(pagesDir)) return;
+        const isPkg = file.endsWith("package.json");
+        if (!isPkg && !/[\\/]demo[\\/]/.test(file)) return;
+        const page = path.relative(pagesDir, file).split(path.sep)[0];
+        const ids = [...(isPkg ? [RESOLVED] : []), ...codeIdsForPage(page)];
         for (const env of Object.values(server.environments)) {
-          const mod = env.moduleGraph.getModuleById(RESOLVED);
-          if (mod) env.moduleGraph.invalidateModule(mod);
+          for (const id of ids) {
+            const mod = env.moduleGraph.getModuleById(id);
+            if (mod) env.moduleGraph.invalidateModule(mod);
+          }
         }
-        server.ws.send({ type: "full-reload" });
+        if (isPkg || file.endsWith(".css")) server.ws.send({ type: "full-reload" });
       });
     },
   };

@@ -6,7 +6,7 @@ import { Switch } from "@brijbyte/md3-react/switch";
 
 export default function BaseUiPropsDemo() {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+    <div className="demo-base-ui-props">
       <Checkbox defaultChecked aria-label="Demo checkbox" />
       <Switch defaultChecked aria-label="Demo switch" />
       <Button disabled>Disabled</Button>

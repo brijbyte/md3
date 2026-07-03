@@ -8,7 +8,7 @@ import AddIcon from "@brijbyte/md3-icons/outlined/add";
 // dep); being unlayered they win over the md3.components layer — no !important.
 export default function UtilityOverridesDemo() {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+    <div className="demo-utility-overrides">
       <Button className="rounded-lg">rounded-lg</Button>
       <Button className="bg-fuchsia-600">bg-fuchsia-600</Button>
       <Button variant="outlined" className="px-10">

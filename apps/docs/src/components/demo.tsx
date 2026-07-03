@@ -1,5 +1,8 @@
 import * as React from "react";
+import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
 import { DEMOS } from "virtual:md3-demos";
+import { CodeCollapse } from "./CodeCollapse";
+import { CopyButton } from "./CopyButton";
 
 // Server component rendering a standalone demo from the registry (see the
 // md3:demos plugin). `of` is "<page>/<export>"; a heading renders only when
@@ -25,7 +28,34 @@ function DemoSkeleton() {
   );
 }
 
-export function Demo({
+// Demo source tabs: one tab per file of the standalone demo package, panels hold
+// the compile-time Shiki html (see the md3:demo-code virtual module) + a copy button.
+function DemoCode({ files }: { files: { name: string; code: string; html: string }[] }) {
+  return (
+    <Tabs defaultValue={files[0].name} className="mt-5">
+      <TabList variant="primary" aria-label="Demo source files">
+        {files.map((f) => (
+          <Tab key={f.name} value={f.name}>
+            {f.name}
+          </Tab>
+        ))}
+      </TabList>
+      <CodeCollapse>
+        {files.map((f) => (
+          <TabPanel key={f.name} value={f.name} className="relative">
+            <CopyButton text={f.code} className="absolute top-2 right-2" />
+            <div
+              className="text-body-medium [&>pre]:overflow-x-auto [&>pre]:bg-surface-container [&>pre]:p-4"
+              dangerouslySetInnerHTML={{ __html: f.html }}
+            />
+          </TabPanel>
+        ))}
+      </CodeCollapse>
+    </Tabs>
+  );
+}
+
+export async function Demo({
   of,
   title,
   children,
@@ -37,6 +67,7 @@ export function Demo({
   const entry = DEMOS[of];
   if (!entry) throw new Error(`Unknown demo "${of}" — is it in its package.json exports?`);
   const Content = React.lazy(entry.load);
+  const { FILES } = await entry.code();
   return (
     <section className="my-6 rounded-extra-large bg-surface-container-low px-7 pt-6 pb-7">
       {title && <h2 className="mb-4 font-brand text-title-large">{title}</h2>}
@@ -48,6 +79,9 @@ export function Demo({
       {children != null && (
         <div className="mt-4 text-body-medium text-on-surface-variant">{children}</div>
       )}
+      <React.Suspense fallback={<DemoSkeleton />}>
+        <DemoCode files={FILES} />
+      </React.Suspense>
     </section>
   );
 }

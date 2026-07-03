@@ -1,3 +1,15 @@
 @import "@brijbyte/md3-react/tokens.css";
 @import "@brijbyte/md3-react/ripple.css";
 @import "@brijbyte/md3-react/tabs.css";
+
+.demo-primary-tabs {
+  width: 100%;
+  max-width: 480px;
+}
+
+.demo-primary-tabs .panel {
+  padding: 16px;
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-medium-weight) var(--md-sys-typescale-body-medium-size) /
+    var(--md-sys-typescale-body-medium-line-height) var(--md-sys-typescale-body-medium-font);
+}
