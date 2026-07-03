@@ -1,13 +1,13 @@
 import type * as React from "react";
-import ButtonsIcon from "@brijbyte/md3-icons/outlined/buttons-alt";
-import NotificationsIcon from "@brijbyte/md3-icons/outlined/notifications";
-import CheckBoxIcon from "@brijbyte/md3-icons/outlined/check-box";
-import HomeIcon from "@brijbyte/md3-icons/outlined/home";
-import PaletteIcon from "@brijbyte/md3-icons/outlined/palette";
-import RadioIcon from "@brijbyte/md3-icons/outlined/radio-button-checked";
-import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/rocket-launch";
-import TabIcon from "@brijbyte/md3-icons/outlined/tab";
-import ToggleOnIcon from "@brijbyte/md3-icons/outlined/toggle-on";
+import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
+import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
+import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
+import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
+import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
+import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
+import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
+import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
+import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
 
 export type NavItem = {
   // Slashless route ("/buttons"); SSG writes it as `<path>/index.html`.

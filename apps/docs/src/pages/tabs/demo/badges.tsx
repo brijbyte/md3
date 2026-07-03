@@ -1,8 +1,8 @@
 import "./badges.css";
 
-import ChatBubbleIcon from "@brijbyte/md3-icons/outlined/chat-bubble";
-import MailIcon from "@brijbyte/md3-icons/outlined/mail";
-import NotificationsIcon from "@brijbyte/md3-icons/outlined/notifications";
+import ChatBubbleIcon from "@brijbyte/md3-icons/outlined/ChatBubble";
+import MailIcon from "@brijbyte/md3-icons/outlined/Mail";
+import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import { Badge } from "@brijbyte/md3-react/badge";
 import { Tab, TabList, Tabs } from "@brijbyte/md3-react/tabs";
 

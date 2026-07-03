@@ -1,5 +1,5 @@
 import { Button } from "@brijbyte/md3-react/button";
-import ArrowForwardIcon from "@brijbyte/md3-icons/outlined/arrow-forward";
+import ArrowForwardIcon from "@brijbyte/md3-icons/outlined/ArrowForward";
 import { NAV } from "../nav";
 
 export default function HomePage() {

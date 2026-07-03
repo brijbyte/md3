@@ -3,9 +3,9 @@ import "./button-group-standard.css";
 import { Button } from "@brijbyte/md3-react/button";
 import { ButtonGroup } from "@brijbyte/md3-react/button-group";
 import { IconButton } from "@brijbyte/md3-react/icon-button";
-import BookmarkIcon from "@brijbyte/md3-icons/outlined/bookmark";
-import HeartIcon from "@brijbyte/md3-icons/outlined/favorite";
-import ShareIcon from "@brijbyte/md3-icons/outlined/share";
+import BookmarkIcon from "@brijbyte/md3-icons/outlined/Bookmark";
+import HeartIcon from "@brijbyte/md3-icons/outlined/Favorite";
+import ShareIcon from "@brijbyte/md3-icons/outlined/Share";
 import { Row } from "./row";
 
 export default function ButtonGroupStandardDemo() {

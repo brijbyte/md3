@@ -6,3 +6,4 @@ dist.old/
 .DS_Store
 packages/react/src/generated/
 *.module.css.d.ts
+.cache/

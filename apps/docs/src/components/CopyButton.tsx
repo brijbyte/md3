@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
-import CheckIcon from "@brijbyte/md3-icons/outlined/check";
-import ContentCopyIcon from "@brijbyte/md3-icons/outlined/content-copy";
+import CheckIcon from "@brijbyte/md3-icons/outlined/Check";
+import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import { IconButton } from "@brijbyte/md3-react/icon-button";
 
 // Copies `text` to the clipboard, flashing a check icon as confirmation.

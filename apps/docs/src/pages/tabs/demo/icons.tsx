@@ -1,8 +1,8 @@
 import "./icons.css";
 
-import ExploreIcon from "@brijbyte/md3-icons/outlined/explore";
-import FlightIcon from "@brijbyte/md3-icons/outlined/flight";
-import LuggageIcon from "@brijbyte/md3-icons/outlined/luggage";
+import ExploreIcon from "@brijbyte/md3-icons/outlined/Explore";
+import FlightIcon from "@brijbyte/md3-icons/outlined/Flight";
+import LuggageIcon from "@brijbyte/md3-icons/outlined/Luggage";
 import { Tab, TabList, Tabs } from "@brijbyte/md3-react/tabs";
 
 export default function TabsWithIconsDemo() {

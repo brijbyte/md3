@@ -4,7 +4,7 @@
 import "./app.css";
 
 import * as React from "react";
-import SpinnerIcon from "@brijbyte/md3-icons/outlined/progress-activity";
+import SpinnerIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import { NAV, type NavItem } from "./nav";
 import { MDX_COMPONENTS } from "./components/mdx-components";
 import { ThemeToggle } from "./components/ThemeToggle";

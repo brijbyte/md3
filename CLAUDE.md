@@ -12,10 +12,21 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - `packages/react` — the component library, published as `@brijbyte/md3-react` (placeholder name).
   No barrel export: consumers import per path (`@brijbyte/md3-react/button`, `/tokens`).
 - `packages/icons` — `@brijbyte/md3-icons`: Material Symbols (weight 400) as per-icon React
-  components. Fully generated into `dist/` by `scripts/build-icons.mjs` from
-  `@material-symbols/svg-400` (npm mirror of Google Fonts SVGs) — per-icon `.js`/`.d.ts`
-  emitted directly; only the shared `src/createIcon.jsx` helper is compiled (vite lib build).
-  Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
+  components. Fully generated into `dist/` by `scripts/build-icons.mjs`, which downloads
+  SVGs directly from Google Fonts
+  (`fonts.gstatic.com/s/i/short-term/release/materialsymbols<style>/<name>/<default|fill1>/24px.svg`;
+  name list from the
+  google/material-design-icons codepoints file — the fonts.google.com metadata API
+  serves the Symbols set only to its own web app) into a gitignored `.cache/svg/`
+  (only missing files are fetched; delete `.cache` for a full refresh) — per-icon
+  `.js` emitted directly (default export only; all icons share a single `dist/icon.d.ts`,
+  mapped by the package `exports` `./*` types condition); only the shared
+  `src/createIcon.jsx` helper is compiled (vite lib build). Icons render
+  `fill="currentColor"`, so they follow
+  `--md-sys-color-*` via whatever `color` the surrounding component/page sets.
+  Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<PascalName>[Fill]`
+  (digit-leading names get an `Icon` prefix; legacy alias names that collide
+  case-insensitively with a canonical name, e.g. `addchart` vs `add_chart`, are skipped).
 - `apps/docs` — Vite RSC docs/demo app (future md3.brijbyte.com), built with
   `@vitejs/plugin-rsc`: `src/Root.tsx` is a server component owning the `<html>` document
   and routing (routes/metadata in `src/nav.ts`; every docs route is an MDX page at
@@ -284,7 +295,11 @@ reveals are batched past DOMContentLoaded, and the observer microtask fires befo
 revealed content's first paint, so the indicator is positioned with zero flicker and no
 hydration errors; md3-styled code-block scrollbars (`pre.shiki` in app.css — slim
 outline-variant pill via webkit pseudos, standard scrollbar-color scoped to non-WebKit
-engines since setting it in Chromium would disable the custom pseudos).
+engines since setting it in Chromium would disable the custom pseudos); icons rebuilt
+straight from Google Fonts (gstatic per-icon SVGs into `.cache/`, dropped the
+`@material-symbols/svg-400` middleman — 4264 vs 3892 icons), PascalCase module paths
+(`outlined/ToggleOn`), default export only with one shared `dist/icon.d.ts` (halves dist
+file count; per-icon named exports gone), case-insensitive dedupe of legacy alias names.
 
 Next candidates: error states (checkbox), Chips, Cards, TextField,
 Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site

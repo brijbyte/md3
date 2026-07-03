@@ -3,9 +3,9 @@ import "./button-group-connected.css";
 import { Button } from "@brijbyte/md3-react/button";
 import { ButtonGroup } from "@brijbyte/md3-react/button-group";
 import { IconButton } from "@brijbyte/md3-react/icon-button";
-import FormatBoldIcon from "@brijbyte/md3-icons/outlined/format-bold";
-import FormatItalicIcon from "@brijbyte/md3-icons/outlined/format-italic";
-import FormatUnderlinedIcon from "@brijbyte/md3-icons/outlined/format-underlined";
+import FormatBoldIcon from "@brijbyte/md3-icons/outlined/FormatBold";
+import FormatItalicIcon from "@brijbyte/md3-icons/outlined/FormatItalic";
+import FormatUnderlinedIcon from "@brijbyte/md3-icons/outlined/FormatUnderlined";
 import { Row } from "./row";
 
 export default function ButtonGroupConnectedDemo() {

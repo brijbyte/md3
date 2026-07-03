@@ -1,8 +1,8 @@
 import "./icon-buttons.css";
 
 import { IconButton } from "@brijbyte/md3-react/icon-button";
-import AddIcon from "@brijbyte/md3-icons/outlined/add";
-import HeartIcon from "@brijbyte/md3-icons/outlined/favorite";
+import AddIcon from "@brijbyte/md3-icons/outlined/Add";
+import HeartIcon from "@brijbyte/md3-icons/outlined/Favorite";
 import { Row } from "./row";
 
 const variants = ["standard", "filled", "tonal", "outlined"] as const;

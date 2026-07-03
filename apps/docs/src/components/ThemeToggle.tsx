@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { IconButton } from "@brijbyte/md3-react/icon-button";
-import MoonIcon from "@brijbyte/md3-icons/outlined/dark-mode";
-import SunIcon from "@brijbyte/md3-icons/outlined/light-mode";
+import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
+import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 
 type Theme = "light" | "dark";
 

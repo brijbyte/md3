@@ -1,8 +1,8 @@
 import "./fabs.css";
 
 import { Fab } from "@brijbyte/md3-react/fab";
-import AddIcon from "@brijbyte/md3-icons/outlined/add";
-import EditIcon from "@brijbyte/md3-icons/outlined/edit";
+import AddIcon from "@brijbyte/md3-icons/outlined/Add";
+import EditIcon from "@brijbyte/md3-icons/outlined/Edit";
 import { Row } from "./row";
 
 const colors = ["primary", "secondary", "tertiary", "surface"] as const;

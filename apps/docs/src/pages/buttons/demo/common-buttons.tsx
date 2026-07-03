@@ -1,7 +1,7 @@
 import "./common-buttons.css";
 
 import { Button } from "@brijbyte/md3-react/button";
-import AddIcon from "@brijbyte/md3-icons/outlined/add";
+import AddIcon from "@brijbyte/md3-icons/outlined/Add";
 import { Row } from "./row";
 
 const variants = ["filled", "tonal", "outlined", "elevated", "text"] as const;
