@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Button, Checkbox, Fab, IconButton, Radio, RadioGroup, Switch } from "@brijbyte/md3-react";
+import { Button } from "@brijbyte/md3-react/button";
+import { Checkbox } from "@brijbyte/md3-react/checkbox";
+import { Fab } from "@brijbyte/md3-react/fab";
+import { IconButton } from "@brijbyte/md3-react/icon-button";
+import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
+import { Switch } from "@brijbyte/md3-react/switch";
+import PlusIcon from "@brijbyte/md3-icons/outlined/add";
+import HeartIcon from "@brijbyte/md3-icons/outlined/favorite";
+import MoonIcon from "@brijbyte/md3-icons/outlined/dark-mode";
+import SunIcon from "@brijbyte/md3-icons/outlined/light-mode";
 
 const buttonVariants = ["filled", "tonal", "outlined", "elevated", "text"] as const;
 const iconButtonVariants = ["standard", "filled", "tonal", "outlined"] as const;
@@ -142,37 +151,5 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
       <span className="row-label">{label}</span>
       {children}
     </div>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z" />
-    </svg>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 21q-3.75 0-6.375-2.625T3 12q0-3.75 2.625-6.375T12 3q.35 0 .688.025t.662.075q-1.025.725-1.638 1.888T11.1 7.5q0 2.25 1.575 3.825T16.5 12.9q1.375 0 2.525-.613T20.9 10.65q.05.325.075.662T21 12q0 3.75-2.625 6.375T12 21Z" />
-    </svg>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 17q-2.075 0-3.538-1.463T7 12q0-2.075 1.463-3.538T12 7q2.075 0 3.538 1.463T17 12q0 2.075-1.463 3.538T12 17ZM2 13q-.425 0-.713-.288T1 12q0-.425.288-.713T2 11h2q.425 0 .713.288T5 12q0 .425-.288.713T4 13H2Zm18 0q-.425 0-.713-.288T19 12q0-.425.288-.713T20 11h2q.425 0 .713.288T23 12q0 .425-.288.713T22 13h-2Zm-8-8q-.425 0-.713-.288T11 4V2q0-.425.288-.713T12 1q.425 0 .713.288T13 2v2q0 .425-.288.713T12 5Zm0 18q-.425 0-.713-.288T11 22v-2q0-.425.288-.713T12 19q.425 0 .713.288T13 20v2q0 .425-.288.713T12 23ZM5.65 7.05 4.575 6q-.3-.275-.288-.7t.288-.725q.3-.3.725-.3t.7.3L7.05 5.65q.275.3.275.7t-.275.7q-.275.3-.687.288t-.713-.288Zm12.7 12.725L17.3 18.7q-.275-.3-.275-.712t.275-.688q.275-.3.688-.287t.712.287L19.775 18q.3.275.288.7t-.288.725q-.3.3-.725.3t-.7-.3ZM16.95 7.05q-.3-.275-.288-.687t.288-.713L18 4.575q.275-.3.7-.288t.725.288q.3.3.3.725t-.3.7L18.35 7.05q-.3.275-.7.275t-.7-.275ZM4.575 19.425q-.3-.3-.3-.725t.3-.7l1.075-1.075q.3-.275.713-.275t.687.275q.3.275.288.688t-.288.712L6 19.425q-.275.3-.7.288t-.725-.288Z" />
-    </svg>
   );
 }

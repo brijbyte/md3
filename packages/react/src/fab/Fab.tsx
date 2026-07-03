@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Fab.module.css";
 
 export type FabSize = "small" | "medium" | "large";
@@ -36,7 +37,7 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
   return (
     <BaseButton
       ref={ref}
-      className={[styles.root, className].filter(Boolean).join(" ")}
+      className={mergeClassName(styles.root, className)}
       data-size={label ? "medium" : size}
       data-color={color}
       data-lowered={lowered ? "" : undefined}

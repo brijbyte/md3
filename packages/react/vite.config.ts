@@ -38,73 +38,66 @@ function md3Codegen(): Plugin {
 function md3EmitCss(): Plugin {
   return {
     name: "md3:emit-css",
-    generateBundle(_options, bundle) {
-      const tokensCss = readFileSync(tokensCssPath, "utf8");
-      const rippleCss = readFileSync(abs("src/ripple/ripple.css"), "utf8");
-      this.emitFile({
-        type: "asset",
-        fileName: "styles/tokens.css",
-        source: tokensCss,
-      });
-      this.emitFile({
-        type: "asset",
-        fileName: "styles/ripple.css",
-        source: rippleCss,
-      });
+    generateBundle: {
+      // Post-order: run after Vite's internal CSS plugin has finalized assets,
+      // so renames stick and the size report shows the final names.
+      order: "post",
+      handler(_options, bundle) {
+        // cssCodeSplit names extracted CSS after the source module (e.g.
+        // styles/button/Button.css). Flatten to styles/<component>.css.
+        // (Rolldown only supports deleting bundle entries, not adding — so
+        // re-emit under the new name instead of reassigning fileName.)
+        const componentCss = new Map<string, string>();
+        for (const chunk of Object.values(bundle)) {
+          if (chunk.type !== "chunk" || !chunk.viteMetadata) continue;
+          const component = chunk.name.split("/")[0];
+          for (const cssName of chunk.viteMetadata.importedCss) {
+            const asset = bundle[cssName];
+            if (!asset || asset.type !== "asset") continue;
+            delete bundle[cssName];
+            componentCss.set(component, String(asset.source));
+            this.emitFile({
+              type: "asset",
+              fileName: `styles/${component}.css`,
+              source: asset.source,
+            });
+          }
+        }
 
-      // Tokens first to establish @layer order, ripple next, then components.
-      const componentCss = Object.keys(bundle)
-        .filter((name) => name.endsWith(".css"))
-        .toSorted()
-        .map((name) => {
-          const asset = bundle[name];
-          return asset.type === "asset" ? asset.source : "";
+        const tokensCss = readFileSync(tokensCssPath, "utf8");
+        const rippleCss = readFileSync(abs("src/ripple/ripple.css"), "utf8");
+        this.emitFile({
+          type: "asset",
+          fileName: "styles/tokens.css",
+          source: tokensCss,
         });
-      this.emitFile({
-        type: "asset",
-        fileName: "index.css",
-        source: [tokensCss, rippleCss, ...componentCss].join("\n"),
-      });
-    },
-  };
-}
+        this.emitFile({
+          type: "asset",
+          fileName: "styles/ripple.css",
+          source: rippleCss,
+        });
 
-// Rollup strips module-level directives when bundling; strip them ourselves
-// (avoids the warning) and re-add 'use client' to chunks that need it for RSC.
-function preserveUseClient(): Plugin {
-  const clientModules = new Set<string>();
-  return {
-    name: "md3:preserve-use-client",
-    enforce: "pre",
-    transform(code, id) {
-      if (id.includes("/src/") && /^(['"])use client\1/.test(code)) {
-        clientModules.add(id);
-        return {
-          code: code.replace(/^(['"])use client\1;?\s*/, ""),
-          map: null,
-        };
-      }
-    },
-    renderChunk(code, chunk) {
-      if (chunk.moduleIds.some((id) => clientModules.has(id))) {
-        return { code: `'use client';\n${code}`, map: null };
-      }
+        // Tokens first to establish @layer order, ripple next, then components.
+        const sortedComponentCss = [...componentCss.keys()]
+          .toSorted()
+          .map((name) => componentCss.get(name)!);
+        this.emitFile({
+          type: "asset",
+          fileName: "index.css",
+          source: [tokensCss, rippleCss, ...sortedComponentCss].join("\n"),
+        });
+      },
     },
   };
 }
 
 export default defineConfig({
-  plugins: [
-    md3Codegen(),
-    preserveUseClient(),
-    react(),
-    dts({ tsconfigPath: "./tsconfig.lib.json" }),
-    md3EmitCss(),
-  ],
+  plugins: [md3Codegen(), react(), dts({ tsconfigPath: "./tsconfig.lib.json" }), md3EmitCss()],
   build: {
+    minify: false,
     lib: {
       entry: {
-        index: "src/index.ts",
+        "tokens/index": "src/tokens/index.ts",
         "button/index": "src/button/index.ts",
         "icon-button/index": "src/icon-button/index.ts",
         "fab/index": "src/fab/index.ts",
@@ -118,9 +111,12 @@ export default defineConfig({
     rollupOptions: {
       external: [/^react/, /^@base-ui\//],
       output: {
+        // Mirror src/ in dist/ (no bundling) so 'use client' is re-added per
+        // module — server-safe re-export index files stay directive-free.
+        preserveModules: true,
+        preserveModulesRoot: "src",
         assetFileNames: "styles/[name][extname]",
         entryFileNames: "[name].js",
-        chunkFileNames: "chunks/[name]-[hash].js",
       },
     },
   },

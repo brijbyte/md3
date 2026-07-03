@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Button.module.css";
 
 export type ButtonVariant = "filled" | "tonal" | "outlined" | "elevated" | "text";
@@ -20,7 +21,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   return (
     <BaseButton
       ref={ref}
-      className={[styles.root, className].filter(Boolean).join(" ")}
+      className={mergeClassName(styles.root, className)}
       data-variant={variant}
       onPointerDown={(event) => {
         ripple.onPointerDown(event);

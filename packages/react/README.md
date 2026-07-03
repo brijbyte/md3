@@ -33,7 +33,10 @@ import "@brijbyte/md3-react/button.css";
 ## Usage
 
 ```tsx
-import { Button, Checkbox, Fab, IconButton, Radio, RadioGroup, Switch } from "@brijbyte/md3-react";
+// No barrel export — import each component from its own path (better
+// tree-shaking and code-splitting by default):
+import { Button } from "@brijbyte/md3-react/button";
+import { Checkbox } from "@brijbyte/md3-react/checkbox";
 
 <Button variant="tonal" icon={<PlusIcon />}>
   Add

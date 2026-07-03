@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
 import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Checkbox.module.css";
 
 export interface CheckboxProps extends BaseCheckbox.Root.Props {}
@@ -14,7 +15,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     return (
       <BaseCheckbox.Root
         ref={ref}
-        className={[styles.root, className].filter(Boolean).join(" ")}
+        className={mergeClassName(styles.root, className)}
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);

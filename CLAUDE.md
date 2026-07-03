@@ -7,6 +7,12 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 ## Repo layout
 
 - `packages/react` — the component library, published as `@brijbyte/md3-react` (placeholder name).
+  No barrel export: consumers import per path (`@brijbyte/md3-react/button`, `/tokens`).
+- `packages/icons` — `@brijbyte/md3-icons`: Material Symbols (weight 400) as per-icon React
+  components. Fully generated into `dist/` by `scripts/build-icons.mjs` from
+  `@material-symbols/svg-400` (npm mirror of Google Fonts SVGs) — per-icon `.js`/`.d.ts`
+  emitted directly; only the shared `src/createIcon.jsx` helper is compiled (vite lib build).
+  Import per path: `@brijbyte/md3-icons/<outlined|rounded|sharp>/<kebab-name>[-fill]`.
 - `apps/docs` — Vite + React docs/demo app (future md3.brijbyte.com).
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
 
@@ -32,9 +38,10 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - **JS/CSS decoupled**: no CSS imports in published JS — consumers import stylesheets
   themselves (documented in `packages/react/README.md`). Keep it that way for standard
   npm-package behavior.
-- **RSC support**: every component source file starts with `'use client'`. The
-  `md3:preserve-use-client` plugin in vite.config re-adds the directive to built chunks
-  (Rollup strips module-level directives). New components must include it.
+- **RSC support**: every component source file starts with `'use client'`. New components
+  must include it. The build uses `preserveModules` (dist mirrors src, one file per module),
+  and Rolldown preserves the directive per module natively — so re-export `index.ts` files,
+  CSS-module maps, tokens, and utils stay directive-free/server-safe.
 
 ## Token pipeline
 
@@ -79,13 +86,17 @@ roots are container-sized).
 Each component lives in `src/<kebab-name>/` with `<Pascal>.tsx`, `<Pascal>.module.css`,
 `index.ts` (re-exports). Add new components to:
 
-1. `src/index.ts` (runtime export)
-2. `vite.config.ts` `build.lib.entry` (per-component entry → per-component CSS)
+1. `vite.config.ts` `build.lib.entry` (per-component entry → per-component CSS)
+
+No barrel export: consumers import per path (`@brijbyte/md3-react/button`); tokens via
+`@brijbyte/md3-react/tokens`. Docs tsconfig maps `@brijbyte/md3-react/*` to `src/*/index.ts`.
 
 Patterns:
 
-- Wrap the Base UI primitive, merge `className` via `[styles.x, className].filter(Boolean).join(' ')`,
-  forward refs, spread rest props last (except handlers we compose, e.g. `onPointerDown` for ripple).
+- Wrap the Base UI primitive, merge `className` via `mergeClassName(styles.x, className)`
+  (`src/utils/mergeClassName.ts` — preserves Base UI's callback `className` form), forward refs,
+  spread rest props last (except handlers we compose, e.g. `onPointerDown` for ripple). `render`
+  and `style` (incl. callback form) pass through to the Base UI root via rest — don't intercept them.
 - Variants → `data-variant` attribute styled as `.root[data-variant='filled']`.
 - State layer: dedicated `<span className={styles.stateLayer}>` (also the ripple container
   via `useRipple().containerRef`); hover/focus tint via `::before` with `currentColor` or
@@ -95,9 +106,12 @@ Patterns:
 
 ## Build / dev workflow
 
-- `pnpm --filter @brijbyte/md3-react build` — vite lib build; codegen (tokens, tcm CSS
-  typings) and CSS emission/aggregation happen via plugins in vite.config.ts
-  (`md3:codegen`, `md3:emit-css`). `pnpm dev` in the package = `vite build --watch`.
+- `pnpm --filter @brijbyte/md3-react build` — vite lib build with `preserveModules`
+  (dist mirrors src) and `minify: false` (all package dist output stays readable); codegen
+  (tokens, tcm CSS typings) and CSS emission/flattening/aggregation happen via plugins in
+  vite.config.ts (`md3:codegen`, `md3:emit-css`; the latter is post-order `generateBundle` —
+  Rolldown ignores additions to `bundle`, so it deletes + re-emits to rename CSS assets).
+  `pnpm dev` in the package = `vite build --watch`.
 - `pnpm dev` (root) — docs dev server. The docs Vite config **aliases the library to
   `packages/react/src`** so library edits HMR instantly without rebuilding
   (`styles.css` → `src/dev-styles.css`, a dev-only stand-in).

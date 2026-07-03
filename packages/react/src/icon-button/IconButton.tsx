@@ -3,6 +3,7 @@ import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { Toggle } from "@base-ui/react/toggle";
 import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./IconButton.module.css";
 
 export type IconButtonVariant = "standard" | "filled" | "tonal" | "outlined";
@@ -32,7 +33,8 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 
     const shared = {
       ref,
-      className: [styles.root, className].filter(Boolean).join(" "),
+      // Cast: className's state param is a Button/Toggle union; each branch narrows it.
+      className: mergeClassName<any>(styles.root, className) as string,
       "data-variant": variant,
       // Selected styles key off data-pressed; mark toggles so unselected
       // filled/tonal containers can differ from the non-toggle default.

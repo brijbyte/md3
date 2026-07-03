@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Switch as BaseSwitch } from "@base-ui/react/switch";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Switch.module.css";
 
 export interface SwitchProps extends BaseSwitch.Root.Props {}
@@ -11,11 +12,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(function 
   const { className, ...rest } = props;
 
   return (
-    <BaseSwitch.Root
-      ref={ref}
-      className={[styles.root, className].filter(Boolean).join(" ")}
-      {...rest}
-    >
+    <BaseSwitch.Root ref={ref} className={mergeClassName(styles.root, className)} {...rest}>
       <BaseSwitch.Thumb className={styles.thumb}>
         <span className={styles.stateLayer} aria-hidden />
       </BaseSwitch.Thumb>

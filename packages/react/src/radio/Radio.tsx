@@ -3,6 +3,7 @@ import * as React from "react";
 import { Radio as BaseRadio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Radio.module.css";
 
 export interface RadioProps extends BaseRadio.Root.Props {}
@@ -14,7 +15,7 @@ export const Radio = React.forwardRef<HTMLButtonElement, RadioProps>(function Ra
   return (
     <BaseRadio.Root
       ref={ref}
-      className={[styles.root, className].filter(Boolean).join(" ")}
+      className={mergeClassName(styles.root, className)}
       onPointerDown={(event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);

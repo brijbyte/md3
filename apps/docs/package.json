@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@brijbyte/md3-icons": "workspace:*",
     "@brijbyte/md3-react": "workspace:*",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
