@@ -26,6 +26,12 @@ export default defineConfig({
     ssgPlugin(),
     demosPlugin(),
   ],
+  css: {
+    modules: {
+      // To output the same class names as in the published package.
+      generateScopedName: "md3-[folder]-[local]",
+    },
+  },
   resolve: {
     tsconfigPaths: true,
     // tsconfigPaths only aliases imports from files the tsconfig covers — .mdx and
@@ -63,7 +69,7 @@ export default defineConfig({
 function mdxPlugin(): Plugin {
   const base = satteri({
     markdown: false,
-    features: { gfm: true, frontmatter: true },
+    features: { gfm: true, frontmatter: true, directive: true },
     hastPlugins: [headingIdsHastPlugin(), alertsHastPlugin(), shikiHastPlugin()],
   });
   const transform = base.transform as (
