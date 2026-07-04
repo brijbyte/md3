@@ -14,7 +14,10 @@
     --_label-tracking: var(--md-sys-typescale-label-large-tracking);
     --_shape-square: var(--md-sys-shape-corner-medium);
     --_shape-pressed: var(--md-sys-shape-corner-small);
-    --_radius: var(--md-sys-shape-corner-full);
+    /* Round = height/2, not corner-full: animating from 9999px keeps the rendered
+       radius clamped at height/2 for ~99% of the transition (morph reads as lag). */
+    --_shape-round: calc(var(--_container-height) / 2);
+    --_radius: var(--_shape-round);
 
     box-sizing: border-box;
     position: relative;
@@ -37,9 +40,11 @@
     line-height: var(--_label-line-height);
     font-weight: var(--_label-weight);
     letter-spacing: var(--_label-tracking);
+    /* Shape morph uses the expressive fast-spatial spring (800/0.6, same physics as
+       ButtonGroup's width morph) as a linear() curve parameterized for 350ms. */
     transition:
       box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
-      border-radius var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+      border-radius var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
   }
 
   /* Sizes (md.comp.button.<size>, MDC Android tokens.xml v34 / m3.material.io measurements) */
@@ -107,7 +112,7 @@
   }
 
   .root:where([data-toggle][data-pressed][data-shape="square"]) {
-    --_radius: var(--md-sys-shape-corner-full);
+    --_radius: var(--_shape-round);
   }
 
   .root:active:not(:disabled) {

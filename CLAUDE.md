@@ -249,6 +249,12 @@ Done: tokens pipeline, ripple, Button (5 variants; 5 expressive sizes via `size`
 `data-size`, private `--_*` vars in Button.module.css; `shape` round/square — square
 corners 12/12/16/28/28 by size, both morph to pressed corners 8/8/12/16/16 via
 `:active` on a `--_radius` var, shape rules use `:where()` so `:active` always wins;
+round rests at `calc(height/2)`, NOT `corner-full` — transitioning from 9999px keeps
+the rendered radius clamped at height/2 for ~99% of the duration so the morph reads as
+end-of-transition lag (ButtonGroup's inner corners still have this artifact, see
+scripts/TODOS.md); the morph animates with `--md-sys-motion-easing-fast-spatial`, the
+800/0.6 expressive spring exported from tokens.json as a 350ms-parameterized CSS
+`linear()` curve (pair it with `duration-medium3`);
 `toggle` prop renders Base UI Toggle — selected keys off `data-pressed`, flips shape
 round↔square and colors per variant (filled unselected surface-container/
 on-surface-variant → selected primary/on-primary; tonal → secondary/on-secondary;
