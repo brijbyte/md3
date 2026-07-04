@@ -1,12 +1,20 @@
 "use client";
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
+import { Button } from "../button/Button";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./SplitButton.module.css";
 
 export type SplitButtonVariant = "filled" | "tonal" | "outlined" | "elevated";
 export type SplitButtonSize = "xsmall" | "small" | "medium" | "large" | "xlarge";
+
+// Lets the group stamp variant/size onto both halves, whose chrome is Button's CSS.
+const SplitButtonContext = React.createContext<{
+  variant: SplitButtonVariant;
+  size: SplitButtonSize;
+}>({ variant: "filled", size: "small" });
 
 export interface SplitButtonProps extends React.ComponentPropsWithoutRef<"div"> {
   /** MD3 split button color variant (same schemes as common buttons). @default 'filled' */
@@ -19,16 +27,19 @@ export interface SplitButtonProps extends React.ComponentPropsWithoutRef<"div"> 
 export const SplitButton = React.forwardRef<HTMLDivElement, SplitButtonProps>(
   function SplitButton(props, ref) {
     const { variant = "filled", size = "small", className, ...rest } = props;
+    const context = React.useMemo(() => ({ variant, size }), [variant, size]);
     return (
-      <div
-        ref={ref}
-        role="group"
-        // Cast: className here is a plain string, never Base UI's callback form.
-        className={mergeClassName(styles.root, className) as string}
-        data-variant={variant}
-        data-size={size}
-        {...rest}
-      />
+      <SplitButtonContext.Provider value={context}>
+        <div
+          ref={ref}
+          role="group"
+          // Cast: className here is a plain string, never Base UI's callback form.
+          className={mergeClassName(styles.root, className) as string}
+          data-variant={variant}
+          data-size={size}
+          {...rest}
+        />
+      </SplitButtonContext.Provider>
     );
   },
 );
@@ -38,26 +49,19 @@ export interface SplitButtonActionProps extends BaseButton.Props {
   icon?: React.ReactNode;
 }
 
-/** The leading (primary action) button. */
+/** The leading (primary action) button: a Button with split geometry overrides. */
 export const SplitButtonAction = React.forwardRef<HTMLButtonElement, SplitButtonActionProps>(
   function SplitButtonAction(props, ref) {
-    const { icon, className, children, onPointerDown, ...rest } = props;
-    const ripple = useRipple();
-
+    const { className, ...rest } = props;
+    const { variant, size } = React.useContext(SplitButtonContext);
     return (
-      <BaseButton
+      <Button
         ref={ref}
+        variant={variant}
+        size={size}
         className={mergeClassName(styles.leading, className)}
-        onPointerDown={(event) => {
-          ripple.onPointerDown(event);
-          onPointerDown?.(event);
-        }}
         {...rest}
-      >
-        <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
-        {icon ? <span className={styles.icon}>{icon}</span> : null}
-        <span className={styles.label}>{children}</span>
-      </BaseButton>
+      />
     );
   },
 );
@@ -73,20 +77,27 @@ export interface SplitButtonMenuProps extends Omit<BaseButton.Props, "aria-label
 export const SplitButtonMenu = React.forwardRef<HTMLButtonElement, SplitButtonMenuProps>(
   function SplitButtonMenu(props, ref) {
     const { className, children, onPointerDown, ...rest } = props;
+    const { variant, size } = React.useContext(SplitButtonContext);
     const ripple = useRipple();
 
     return (
       <BaseButton
         ref={ref}
-        className={mergeClassName(styles.trailing, className)}
+        className={mergeClassName(`${buttonStyles.root} ${styles.trailing}`, className)}
+        // Button's variant/size/disabled CSS keys off these attrs on the element.
+        {...{ "data-variant": variant, "data-size": size }}
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
         }}
         {...rest}
       >
-        <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
-        <span className={styles.icon}>{children}</span>
+        <span
+          className={`${buttonStyles.stateLayer} ${styles.stateLayer}`}
+          ref={ripple.containerRef}
+          aria-hidden
+        />
+        <span className={`${buttonStyles.icon} ${styles.menuIcon}`}>{children}</span>
       </BaseButton>
     );
   },
