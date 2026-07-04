@@ -11,6 +11,7 @@ import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
 import { CodeCollapse } from "./CodeCollapse";
 import { CopyButton } from "./CopyButton";
+import { Typography } from "@brijbyte/md3-react/typography";
 
 // Loader for a demo's Shiki-highlighted sources, passed in by the md3:demos
 // facade (see vite.config.ts); memoized there for stable promise identity.
@@ -23,9 +24,8 @@ function DemoCode({ files }: { files: { name: string; code: string; html: string
     <Tabs defaultValue={files[0].name} className="mt-5">
       <TabList variant="primary" aria-label="Demo source files">
         {files.map((f) => (
-          // File names read as code — mono beats the tab's label-large face.
-          <Tab key={f.name} value={f.name} className="font-mono">
-            {f.name}
+          <Tab key={f.name} value={f.name} className="h-9.5">
+            <Typography variant="label-large">{f.name}</Typography>
           </Tab>
         ))}
       </TabList>
@@ -49,7 +49,7 @@ function DemoCode({ files }: { files: { name: string; code: string; html: string
 function DemoCodeSkeleton() {
   return (
     <div role="progressbar" aria-label="Loading demo source" className="mt-5 animate-pulse">
-      <div className="flex h-12 items-center gap-8 border-b border-outline-variant px-4">
+      <div className="flex h-9.5 items-center gap-8 border-b border-outline-variant px-4">
         <div className="h-3.5 w-24 rounded-full bg-surface-container-high" />
         <div className="h-3.5 w-24 rounded-full bg-surface-container-high" />
       </div>
