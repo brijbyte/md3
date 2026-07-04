@@ -7,6 +7,7 @@ import ButtonGroupStandard from "./demo/button-group-standard.tsx";
 import ButtonShapes from "./demo/button-shapes.tsx";
 import ButtonSizes from "./demo/button-sizes.tsx";
 import CommonButtons from "./demo/common-buttons.tsx";
+import FabPositioning from "./demo/fab-positioning.tsx";
 import Fabs from "./demo/fabs.tsx";
 import IconButtons from "./demo/icon-buttons.tsx";
 import IconButtonSizes from "./demo/icon-button-sizes.tsx";
@@ -82,6 +83,17 @@ the extended FAB at any size. Colors come in two families: soft `*-container` (d
 bold tone roles. The 40dp small FAB and surface colors are deprecated by the expressive update.
 
 <Fabs />
+
+### Positioning
+
+`Fab` only renders the button — it does not float by itself. Position it yourself, typically
+`position: fixed` in the bottom-right corner with the spec's 16dp margin from the screen edges
+(pass a `className` or `style`). Since the FAB covers whatever scrolls beneath it, also give
+the content enough bottom padding (FAB height + margins, ~88px for the baseline size) so the
+last elements can scroll up past it. Here the FAB is `position: absolute` inside the mock
+screen so it stays put while the content scrolls.
+
+<FabPositioning />
 
 ## Split buttons
 

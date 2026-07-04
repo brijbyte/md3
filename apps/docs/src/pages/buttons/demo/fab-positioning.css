@@ -1,0 +1,57 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/fab.css";
+
+/* Stand-in for the app screen; in a real app the FAB is usually position: fixed. */
+.demo-fab-screen {
+  position: relative;
+  width: min(360px, 100%);
+  height: 320px;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+/* The content scrolls; the FAB stays anchored to the screen. */
+.demo-fab-list {
+  height: 100%;
+  overflow-y: auto;
+  margin: 0;
+  padding: 8px;
+  /* FAB height (56px) + 16px margin on each side, so the last item can scroll past it. */
+  padding-block-end: 88px;
+  list-style: none;
+}
+
+.demo-fab-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+.demo-fab-subject {
+  font-family: var(--md-sys-typescale-title-small-font);
+  font-size: var(--md-sys-typescale-title-small-size);
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  font-weight: var(--md-sys-typescale-title-small-weight);
+  letter-spacing: var(--md-sys-typescale-title-small-tracking);
+  color: var(--md-sys-color-on-surface);
+}
+
+.demo-fab-preview {
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* MD3 spec: 16dp from the screen edges; inline offset widened to clear the scrollbar. */
+.demo-fab-fab {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline-end: 32px;
+}
