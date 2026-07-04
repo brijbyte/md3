@@ -7,6 +7,16 @@ import TabIcons from "./demo/icons.tsx";
 import PrimaryTabs from "./demo/primary.tsx";
 import SecondaryTabs from "./demo/secondary.tsx";
 
+```tsx
+import { Tabs, TabList, Tab, TabPanel } from "@brijbyte/md3-react/tabs";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/tabs.css";
+```
+
 ## Primary tabs
 
 The active indicator hugs the label and stretches elastically between tabs, per MDC Android. Arrow
@@ -28,6 +38,14 @@ Primary tabs stack the icon above the label (64dp); secondary tabs keep it inlin
 <TabIcons />
 
 ## With badges
+
+```tsx
+import { Badge } from "@brijbyte/md3-react/badge";
+```
+
+```css
+@import "@brijbyte/md3-react/badge.css";
+```
 
 Pass `badge` to a Tab: it anchors to the icon's top-right corner, or sits inline after the label
 on text-only tabs. Badges are visual — put the count in the tab's `aria-label` too.
