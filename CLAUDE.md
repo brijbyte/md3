@@ -123,6 +123,14 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - **Theming**: static token sets. Light is `:root` default; dark via `[data-theme="dark"]`
   with a `prefers-color-scheme` fallback (`:root:not([data-theme='light'])`). Dynamic
   color (Material You seed generation) is a possible later addition, not current scope.
+- **Units**: px everywhere (dp→CSS px is the canonical MD3 web mapping; page zoom scales
+  px, and the token pipeline emits px so structural dims and typescale stay in lockstep).
+  Never `em` (couples dimensions to each size's font). A possible future a11y upgrade —
+  respecting the browser font-size _preference_, which only reaches rem — must be
+  system-wide via the token pipeline (typescale sizes/line-heights in rem, à la
+  material-web's `0.875rem` defaults) AND replace fixed component heights with
+  padding-block-derived heights (MDC Android style — its tokens.xml has no heights) so
+  containers grow with the text instead of clipping. Piecemeal rem is worse than all-px.
 - **CSS distribution**: per-component files (`dist/styles/<component>.css`, plus
   `tokens.css`, `ripple.css`, and `tailwind-tokens.css`) AND an aggregated `dist/index.css`
   (exported as `@brijbyte/md3-react/styles.css`). Aggregate puts tokens first to establish
@@ -315,6 +323,10 @@ straight from Google Fonts (gstatic per-icon SVGs into `.cache/`, dropped the
 (`outlined/ToggleOn`), default export only with one shared `dist/icon.d.ts` (halves dist
 file count; per-icon named exports gone), case-insensitive dedupe of legacy alias names.
 
-Next candidates: error states (checkbox), Chips, Cards, TextField,
-Menu/Select, dynamic color theming, npm publish setup (finalize package name), docs site
+Next candidates: Button square shape + pressed/selected shape morph (the expressive
+companion to sizes; per-size corner values already in CLAUDE.md spec notes and
+tokens.xml); expressive sizes for IconButton/FAB (token sets exist:
+`m3_comp_icon_button_<size>_*`, `<Size>IconButtonTokens.kt`); error states (checkbox),
+Chips, Cards, TextField, Menu/Select, dynamic color theming, rem-based type scaling
+(see Units decision), npm publish setup (finalize package name), docs site
 content + deploy.
