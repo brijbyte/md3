@@ -87,7 +87,8 @@ function mdxPlugin(): Plugin {
   const base = satteri({
     markdown: false,
     features: { gfm: true, frontmatter: true, directive: true },
-    hastPlugins: [headingIdsHastPlugin(), alertsHastPlugin(), shikiHastPlugin()],
+    // headingIdsHastPlugin is passed as a factory so its slug stack resets per document.
+    hastPlugins: [headingIdsHastPlugin, alertsHastPlugin(), shikiHastPlugin()],
   });
   const transform = base.transform as (
     this: unknown,
@@ -102,7 +103,7 @@ function mdxPlugin(): Plugin {
       }
       const result = await transform.call(this, code, id);
       // Compiled MDX also exports its heading outline (for the floating TOC);
-      // ids match headingIdsHastPlugin — same slugify over the same text.
+      // ids match headingIdsHastPlugin — same slugify + id chain over the same text.
       if (result && id.endsWith(".mdx")) {
         result.code += `\nexport const toc = ${JSON.stringify(extractToc(code))};\n`;
       }
@@ -116,12 +117,25 @@ function mdxPlugin(): Plugin {
 // link syntax are unwrapped to their text.
 function extractToc(source: string) {
   const items: { depth: number; text: string; id: string }[] = [];
+  const chain = createIdChain();
   const body = source.replace(/^```[\s\S]*?^```/gm, "");
   for (const m of body.matchAll(/^(#{2,6})\s+(.+?)\s*$/gm)) {
     const text = m[2].replace(/`([^`]*)`/g, "$1").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
-    items.push({ depth: m[1].length, text, id: slugify(text) });
+    items.push({ depth: m[1].length, text, id: chain(m[1].length, slugify(text)) });
   }
   return items;
+}
+
+// Nested heading ids: a heading's id chains its ancestors' slugs with its own,
+// so an h3 under "Icon buttons" gets "icon-buttons-<h3-slug>". One chain per document.
+function createIdChain() {
+  const stack: string[] = []; // slug per depth, h2 at index 0
+  return (depth: number, slug: string) => {
+    const i = Math.max(0, depth - 2);
+    stack.length = i;
+    stack[i] = slug;
+    return stack.filter(Boolean).join("-");
+  };
 }
 
 // One theme pair for fenced MDX blocks and demo source tabs alike. Light is
@@ -140,14 +154,20 @@ function slugify(text: string) {
 }
 
 function headingIdsHastPlugin() {
+  const chain = createIdChain();
   return defineHastPlugin({
     name: "heading-ids",
     element: {
       filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
       visit(node, ctx) {
-        if (node.properties?.id) return;
-        const id = slugify(ctx.textContent(node));
-        if (id) ctx.setProperty(node, "id", id);
+        const depth = Number(node.tagName[1]);
+        // Explicit ids win but still enter the chain so descendants nest under them.
+        const own = node.properties?.id
+          ? String(node.properties.id)
+          : slugify(ctx.textContent(node));
+        if (!own) return;
+        const id = chain(depth, own);
+        if (!node.properties?.id) ctx.setProperty(node, "id", id);
       },
     },
   });
