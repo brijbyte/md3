@@ -48,9 +48,10 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   (`SHIKI_THEMES`: github-light-default + github-dark-dimmed; the material themes
   failed WCAG contrast) as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]`
   CSS in app.css; `data-language` on the `<pre>`; zero client JS). Token styles are
-  stock shiki inline `--shiki-*` style attrs (`toReactProps` converts the style
-  string to a React object on the MDX/hast path); deduplicating them into a static
-  class-based sheet is a TODO (scripts/TODOS.md).
+  stock shiki inline `--shiki-*` style attrs (on the MDX/hast path the style string
+  must be left as-is — Sätteri converts it to a JSX style object itself and silently
+  drops object values); deduplicating them into a static class-based sheet is a TODO
+  (scripts/TODOS.md).
   **Demos** are standalone drop-in packages: `src/pages/<page>/demo/` holds a
   `package.json` (name, `description` = demo title, real deps, and an `exports` map per
   demo — `{ "style": "./x.css", "default": "./x.tsx" }`, default export = the demo) plus

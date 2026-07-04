@@ -142,6 +142,8 @@ function shikiHastPlugin() {
 }
 
 // Shiki emits HTML attribute names; rename them so the compiled JSX gets React props.
+// `style` stays a string: Sätteri converts it to a JSX style object itself and
+// silently drops object values.
 function toReactProps<T>(node: T): T {
   if (node && typeof node === "object" && "properties" in node) {
     const props = node.properties as Record<string, unknown>;
@@ -152,19 +154,6 @@ function toReactProps<T>(node: T): T {
     if (props?.tabindex !== undefined) {
       props.tabIndex = props.tabindex;
       delete props.tabindex;
-    }
-    // React wants style objects; shiki's decls are all --shiki-* custom props
-    // (defaultColor: false), which React passes through verbatim.
-    if (typeof props?.style === "string") {
-      props.style = Object.fromEntries(
-        props.style
-          .split(";")
-          .filter((d) => d.includes(":"))
-          .map((d) => {
-            const i = d.indexOf(":");
-            return [d.slice(0, i).trim(), d.slice(i + 1).trim()];
-          }),
-      );
     }
     if ("children" in node && Array.isArray(node.children)) node.children.forEach(toReactProps);
   }
