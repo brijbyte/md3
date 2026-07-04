@@ -1,13 +1,27 @@
 @layer md3.components {
+  /* Size defaults = small (md.comp.button.small); overridden per data-size below. */
   .root {
+    --_container-height: 40px;
+    --_leading-space: 16px;
+    --_trailing-space: 16px;
+    --_icon-label-space: 8px;
+    --_icon-size: 20px;
+    --_outline-width: 1px;
+    --_label-font: var(--md-sys-typescale-label-large-font);
+    --_label-size: var(--md-sys-typescale-label-large-size);
+    --_label-line-height: var(--md-sys-typescale-label-large-line-height);
+    --_label-weight: var(--md-sys-typescale-label-large-weight);
+    --_label-tracking: var(--md-sys-typescale-label-large-tracking);
+
+    box-sizing: border-box;
     position: relative;
     isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    height: 40px;
-    padding-inline: 24px;
+    gap: var(--_icon-label-space);
+    height: var(--_container-height);
+    padding-inline: var(--_leading-space) var(--_trailing-space);
     border: none;
     border-radius: var(--md-sys-shape-corner-full);
     cursor: pointer;
@@ -15,16 +29,59 @@
     -webkit-tap-highlight-color: transparent;
     outline: none;
     text-decoration: none;
-    font-family: var(--md-sys-typescale-label-large-font);
-    font-size: var(--md-sys-typescale-label-large-size);
-    line-height: var(--md-sys-typescale-label-large-line-height);
-    font-weight: var(--md-sys-typescale-label-large-weight);
-    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+    font-family: var(--_label-font);
+    font-size: var(--_label-size);
+    line-height: var(--_label-line-height);
+    font-weight: var(--_label-weight);
+    letter-spacing: var(--_label-tracking);
     transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
-  .root:has(.icon) {
-    padding-inline-start: 16px;
+  /* Sizes (md.comp.button.<size>, MDC Android tokens.xml v34 / m3.material.io measurements) */
+  .root[data-size="xsmall"] {
+    --_container-height: 32px;
+    --_leading-space: 12px;
+    --_trailing-space: 12px;
+  }
+
+  .root[data-size="medium"] {
+    --_container-height: 56px;
+    --_leading-space: 24px;
+    --_trailing-space: 24px;
+    --_icon-size: 24px;
+    --_label-font: var(--md-sys-typescale-title-medium-font);
+    --_label-size: var(--md-sys-typescale-title-medium-size);
+    --_label-line-height: var(--md-sys-typescale-title-medium-line-height);
+    --_label-weight: var(--md-sys-typescale-title-medium-weight);
+    --_label-tracking: var(--md-sys-typescale-title-medium-tracking);
+  }
+
+  .root[data-size="large"] {
+    --_container-height: 96px;
+    --_leading-space: 48px;
+    --_trailing-space: 48px;
+    --_icon-label-space: 12px;
+    --_icon-size: 32px;
+    --_outline-width: 2px;
+    --_label-font: var(--md-sys-typescale-headline-small-font);
+    --_label-size: var(--md-sys-typescale-headline-small-size);
+    --_label-line-height: var(--md-sys-typescale-headline-small-line-height);
+    --_label-weight: var(--md-sys-typescale-headline-small-weight);
+    --_label-tracking: var(--md-sys-typescale-headline-small-tracking);
+  }
+
+  .root[data-size="xlarge"] {
+    --_container-height: 136px;
+    --_leading-space: 64px;
+    --_trailing-space: 64px;
+    --_icon-label-space: 16px;
+    --_icon-size: 40px;
+    --_outline-width: 3px;
+    --_label-font: var(--md-sys-typescale-headline-large-font);
+    --_label-size: var(--md-sys-typescale-headline-large-size);
+    --_label-line-height: var(--md-sys-typescale-headline-large-line-height);
+    --_label-weight: var(--md-sys-typescale-headline-large-weight);
+    --_label-tracking: var(--md-sys-typescale-headline-large-tracking);
   }
 
   /* 48dp touch target (MD3): extends the hit area past the 40px container. */
@@ -73,9 +130,9 @@
 
   .icon {
     display: inline-flex;
-    font-size: 18px;
-    inline-size: 18px;
-    block-size: 18px;
+    font-size: var(--_icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
   }
 
   .label {
@@ -104,7 +161,7 @@
   .root[data-variant="outlined"] {
     background: transparent;
     color: var(--md-sys-color-primary);
-    border: 1px solid var(--md-sys-color-outline);
+    border: var(--_outline-width) solid var(--md-sys-color-outline);
   }
 
   .root[data-variant="elevated"] {
@@ -120,11 +177,6 @@
   .root[data-variant="text"] {
     background: transparent;
     color: var(--md-sys-color-primary);
-    padding-inline: 12px;
-  }
-
-  .root[data-variant="text"]:has(.icon) {
-    padding-inline: 12px 16px;
   }
 
   /* Disabled */

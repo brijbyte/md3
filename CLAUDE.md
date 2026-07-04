@@ -166,9 +166,17 @@ Every component must follow the MD3 spec **exactly**. Authoritative sources, in 
    sass (e.g. `fab/internal/_shared.scss`) or m3.material.io `/components/<name>/specs`.
 4. Last resort: screenshot the spec page on m3.material.io with Playwright.
 
-Known hardcoded spacing values already verified: common buttons leading/trailing space
-24px (16px on the icon side when an icon is present; text button 12/16); extended FAB
-padding-inline 16px/20px with 12px icon–label gap.
+Known hardcoded spacing values already verified: common buttons use the expressive
+per-size token sets (`md.comp.button.<size>`; cross-checked across MDC Android
+`button/res/values/tokens.xml`, Compose `Button<Size>Tokens.kt`, and m3.material.io
+measurements) — height/pad/gap/icon/outline/typescale: xsmall 32/12/8/20/1/label-large,
+small (default) 40/16/8/20/1/label-large, medium 56/24/8/24/1/title-medium, large
+96/48/12/32/2/headline-small, xlarge 136/64/16/40/3/headline-large; paddings are
+symmetric and uniform across all five color variants (the classic v0_192 24px pad /
+18px icon / icon-side 16 / text 12-16 exceptions are superseded). One source conflict,
+resolved by 2-of-3 majority: xsmall leading/trailing 12 (site and MDC; Compose says 16),
+gap 8 (MDC and Compose; site diagram says 4). Extended FAB padding-inline 16px/20px with
+12px icon–label gap.
 
 MD3 universals: state layers (hover 8%, focus 10%, pressed 10% of the state color);
 disabled = 38% opacity content / 12% containers (checkbox outline/container disabled uses
@@ -229,7 +237,8 @@ Patterns:
 
 ## Current status / roadmap
 
-Done: tokens pipeline, ripple, Button (5 variants), IconButton (standard/filled/tonal/
+Done: tokens pipeline, ripple, Button (5 variants; 5 expressive sizes via `size` prop →
+`data-size`, private `--_*` vars in Button.module.css), IconButton (standard/filled/tonal/
 outlined + toggle), FAB (small/medium/large, colors, lowered, extended), Checkbox
 (+ indeterminate), Radio (+ RadioGroup), Switch, ButtonGroup (standard + connected;
 corner morph in CSS, press width morph via rAF spring (MDC expressive

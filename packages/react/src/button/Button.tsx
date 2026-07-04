@@ -6,16 +6,27 @@ import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Button.module.css";
 
 export type ButtonVariant = "filled" | "tonal" | "outlined" | "elevated" | "text";
+export type ButtonSize = "xsmall" | "small" | "medium" | "large" | "xlarge";
 
 export interface ButtonProps extends BaseButton.Props {
   /** MD3 common button variant. @default 'filled' */
   variant?: ButtonVariant;
-  /** Leading icon element, sized per MD3 spec (18dp). */
+  /** MD3 button size (md.comp.button.<size> token sets). @default 'small' */
+  size?: ButtonSize;
+  /** Leading icon element, sized per MD3 spec (20–40dp by size). */
   icon?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
-  const { variant = "filled", icon, className, children, onPointerDown, ...rest } = props;
+  const {
+    variant = "filled",
+    size = "small",
+    icon,
+    className,
+    children,
+    onPointerDown,
+    ...rest
+  } = props;
   const ripple = useRipple();
 
   return (
@@ -23,6 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
       ref={ref}
       className={mergeClassName(styles.root, className)}
       data-variant={variant}
+      data-size={size}
       onPointerDown={(event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);

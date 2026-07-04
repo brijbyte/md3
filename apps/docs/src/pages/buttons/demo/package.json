@@ -9,6 +9,10 @@
       "style": "./common-buttons.css",
       "default": "./common-buttons.tsx"
     },
+    "./button-sizes": {
+      "style": "./button-sizes.css",
+      "default": "./button-sizes.tsx"
+    },
     "./icon-buttons": {
       "style": "./icon-buttons.css",
       "default": "./icon-buttons.tsx"
