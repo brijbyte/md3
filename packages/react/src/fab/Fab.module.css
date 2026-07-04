@@ -26,12 +26,21 @@
     box-shadow: var(--md-sys-elevation-level4);
   }
 
+  /* Pressed returns to resting elevation (spec: pressed-container-elevation). */
+  .root:active:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+
   .root[data-lowered] {
     box-shadow: var(--md-sys-elevation-level1);
   }
 
   .root[data-lowered]:hover:not(:disabled) {
     box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .root[data-lowered]:active:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level1);
   }
 
   /* Sizes (small 40dp FAB is deprecated by the expressive update — not shipped) */
