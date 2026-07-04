@@ -23,7 +23,8 @@ function DemoCode({ files }: { files: { name: string; code: string; html: string
     <Tabs defaultValue={files[0].name} className="mt-5">
       <TabList variant="primary" aria-label="Demo source files">
         {files.map((f) => (
-          <Tab key={f.name} value={f.name}>
+          // File names read as code — mono beats the tab's label-large face.
+          <Tab key={f.name} value={f.name} className="font-mono">
             {f.name}
           </Tab>
         ))}

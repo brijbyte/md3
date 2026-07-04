@@ -109,6 +109,17 @@ html[data-navigating] body::after {
   size-adjust: 100.1106%;
 }
 
+/* Same trick for the brand face: Georgia is the closest local serif to Roboto
+   Slab (weighted lowercase advance 0.483em vs 0.523em → size-adjust 108%). */
+/* @font-face {
+  font-family: "Roboto Slab Fallback";
+  src: local("Georgia");
+  ascent-override: 96.6548%;
+  descent-override: 24.9969%;
+  line-gap-override: 0%;
+  size-adjust: 108.4118%;
+} */
+
 /* Same trick for code: Courier New's advance width is identical to Roboto
    Mono's (both 0.6em), so only vertical metrics need overriding — code lines
    occupy the same space before and after the swap. */
@@ -121,10 +132,13 @@ html[data-navigating] body::after {
   size-adjust: 100%;
 }
 
-/* Unlayered, so it wins over the theme-layer defaults ("Roboto", system-ui). */
+/* Unlayered, so it wins over the theme-layer defaults ("Roboto", system-ui).
+   Two distinct ref typefaces: Roboto carries the brand voice (headings, docs
+   title, nav — the display/headline/title-large variants route here via the
+   typescale tokens), Roboto Slab is the plain face for content. */
 :root {
   --md-ref-typeface-brand: "Roboto", "Roboto Fallback", system-ui, sans-serif;
-  --md-ref-typeface-plain: "Roboto", "Roboto Fallback", system-ui, sans-serif;
+  /* --md-ref-typeface-plain: "Roboto Slab", "Roboto Slab Fallback", Georgia, serif; */
 }
 
 /* Demo playground isolation: `all: initial` severs every inherited docs style at

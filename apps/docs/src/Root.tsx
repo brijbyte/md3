@@ -174,7 +174,7 @@ function DocsLayout({
               <Typography
                 as="span"
                 variant="title-small"
-                className="px-4 pt-5 pb-2 text-on-surface-variant"
+                className="px-4 pt-5 pb-2 font-brand text-on-surface-variant"
               >
                 {section.label}
               </Typography>
@@ -208,7 +208,7 @@ function DocsLayout({
                 key={item.path}
                 href={item.path}
                 aria-current={item.path === pathname ? "page" : undefined}
-                className={`flex h-10 shrink-0 items-center rounded-full px-4 ${
+                className={`flex h-10 shrink-0 items-center rounded-full px-4 font-brand ${
                   item.path === pathname
                     ? "bg-secondary-container text-on-secondary-container"
                     : "bg-surface-container-low text-on-surface-variant"
@@ -271,7 +271,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
       variant="label-large"
       href={item.path}
       aria-current={active ? "page" : undefined}
-      className={`flex h-14 items-center gap-3 rounded-full px-4 ${
+      className={`flex h-14 items-center gap-3 rounded-full px-4 font-brand ${
         active
           ? "bg-secondary-container text-on-secondary-container"
           : "text-on-surface-variant hover:bg-on-surface/8"

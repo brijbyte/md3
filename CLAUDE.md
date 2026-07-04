@@ -69,10 +69,16 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   in vite.config — tsconfigPaths does not apply to imports from `.mdx`/`.css` files, which
   would otherwise silently bundle a second copy from the built dist.
 - All icons come from `@brijbyte/md3-icons` — never hand-write SVGs in docs.
+- Docs fonts (app.css): brand = Roboto (headings, docs title, nav — nav items add the
+  `font-brand` utility since their variants default to plain), plain = Roboto Slab
+  (body/everything else), code = Roboto Mono via Tailwind `--font-mono` (preflight covers
+  all pre/code; demo source tabs add `font-mono`). Docs chrome text renders through the
+  library `Typography` component, not `text-*` utilities.
 - Dev-only gotchas: `framework/dev-css.ts` imports every library `.module.css` before
   hydration (add new components to that list); `md3:fix-rsc-dev-css-removal` patches
-  plugin-rsc's dev css-link removal to avoid a FOUC; app.css declares a metrics-adjusted
-  `"Roboto Fallback"` so the webfont swap is reflow-free.
+  plugin-rsc's dev css-link removal to avoid a FOUC; app.css declares metrics-adjusted
+  local fallbacks for each webfont (Roboto/Slab/Mono) so swaps are reflow-free — computed
+  from real font tables (capsize-style weighted advances), don't guess new ones.
 
 ## Architecture decisions (settled — don't relitigate)
 
