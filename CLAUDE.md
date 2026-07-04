@@ -203,7 +203,8 @@ toggle), FAB (expressive: baseline/medium/large, six color roles, lowered, exten
 SplitButton, ButtonGroup (standard + connected, corner/width press morphs), Checkbox
 (+ indeterminate), Radio (+ RadioGroup), Switch, Tabs (primary/secondary, icons, elastic
 indicator, prehydration fix), Badge (dot/numbered, server-safe, Tab `badge` prop),
-`@brijbyte/md3-icons`, Tailwind v4 docs app with SSG + soft navigation, standalone demo
+Typography (polymorphic `as`, 15 type-scale roles, server-safe; docs chrome uses it
+everywhere), `@brijbyte/md3-icons`, Tailwind v4 docs app with SSG + soft navigation, standalone demo
 packages with collapsed source tabs, 48dp touch targets everywhere. Implementation
 details and resolved gotchas live in the code and git history.
 

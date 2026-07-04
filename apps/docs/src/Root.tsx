@@ -4,6 +4,7 @@
 import "./app.css";
 
 import * as React from "react";
+import { Typography } from "@brijbyte/md3-react/typography";
 import SpinnerIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import { NAV, SECTIONS, type NavItem } from "./nav";
 import { MDX_COMPONENTS } from "./components/mdx-components";
@@ -43,6 +44,7 @@ const PAGES: Record<string, PageEntry> = {
   "/": { Page: React.lazy(() => import("./pages/home")) },
   "/overview/getting-started": mdxRoute(() => import("./pages/getting-started/page.mdx")),
   "/overview/integration": mdxRoute(() => import("./pages/integration/page.mdx")),
+  "/styles/typography": mdxRoute(() => import("./pages/typography/page.mdx")),
   "/components/buttons": mdxRoute(() => import("./pages/buttons/page.mdx")),
   "/components/badge": mdxRoute(() => import("./pages/badge/page.mdx")),
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
@@ -111,7 +113,7 @@ export default function Root({ url }: { url: URL }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
@@ -132,7 +134,9 @@ function LandingLayout({ Page }: { Page: React.ComponentType }) {
   return (
     <div className="mx-auto max-w-5xl px-6 pt-6 pb-24">
       <header className="flex items-center justify-between gap-4 pb-12">
-        <span className="font-brand text-title-large">MD3 React</span>
+        <Typography as="span" variant="title-large">
+          MD3 React
+        </Typography>
         <ThemeToggle />
       </header>
       <React.Suspense fallback={<PageFallback />}>
@@ -157,19 +161,23 @@ function DocsLayout({
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
       <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
-        <a href="/" className="px-4 pt-4 pb-2 font-brand text-title-large">
+        <Typography as="a" variant="title-large" href="/" className="px-4 pt-4 pb-2">
           MD3 React
-        </a>
-        <p className="px-4 pb-4 text-body-small text-on-surface-variant">
+        </Typography>
+        <Typography variant="body-small" className="px-4 pb-4 text-on-surface-variant">
           Material Design 3, on Base UI
-        </p>
+        </Typography>
         <nav className="flex flex-col" aria-label="Documentation">
           {SECTIONS.map((section) => (
             <React.Fragment key={section.label}>
               {/* MD3 nav-drawer section header. */}
-              <span className="px-4 pt-5 pb-2 text-title-small text-on-surface-variant">
+              <Typography
+                as="span"
+                variant="title-small"
+                className="px-4 pt-5 pb-2 text-on-surface-variant"
+              >
                 {section.label}
-              </span>
+              </Typography>
               <div className="flex flex-col gap-1">
                 {section.items.map((item) => (
                   <NavLink key={item.path} item={item} active={item.path === pathname} />
@@ -183,9 +191,9 @@ function DocsLayout({
       <div className="min-w-0 flex-1">
         <div className="mx-auto max-w-190 px-6 pt-6 pb-24">
           <header className="flex items-center justify-between gap-4 pb-4">
-            <a href="/" className="font-brand text-title-large md:hidden">
+            <Typography as="a" variant="title-large" href="/" className="md:hidden">
               MD3 React
-            </a>
+            </Typography>
             <span className="hidden md:block" aria-hidden />
             <ThemeToggle />
           </header>
@@ -194,28 +202,30 @@ function DocsLayout({
             aria-label="Documentation"
           >
             {SIDEBAR.map((item) => (
-              <a
+              <Typography
+                as="a"
+                variant="label-large"
                 key={item.path}
                 href={item.path}
                 aria-current={item.path === pathname ? "page" : undefined}
-                className={`flex h-10 shrink-0 items-center rounded-full px-4 text-label-large ${
+                className={`flex h-10 shrink-0 items-center rounded-full px-4 ${
                   item.path === pathname
                     ? "bg-secondary-container text-on-secondary-container"
                     : "bg-surface-container-low text-on-surface-variant"
                 }`}
               >
                 {item.label}
-              </a>
+              </Typography>
             ))}
           </nav>
           {route ? (
             <>
-              <h1 id="top" className="font-brand text-headline-large">
+              <Typography as="h1" variant="headline-large" id="top">
                 {route.title}
-              </h1>
-              <p className="mt-2 mb-8 text-body-large text-on-surface-variant">
+              </Typography>
+              <Typography className="mt-2 mb-8 text-on-surface-variant">
                 {route.description}
-              </p>
+              </Typography>
               {Page && (
                 // key: soft navigation swaps payloads in a transition, which never
                 // re-shows the fallback of an existing boundary; keying by route
@@ -227,14 +237,16 @@ function DocsLayout({
             </>
           ) : (
             <>
-              <h1 className="font-brand text-headline-large">Page not found</h1>
-              <p className="mt-2 text-body-large text-on-surface-variant">
+              <Typography as="h1" variant="headline-large">
+                Page not found
+              </Typography>
+              <Typography className="mt-2 text-on-surface-variant">
                 Nothing lives at {url.pathname}.{" "}
                 <a href="/" className="text-primary underline">
                   Back to the overview
                 </a>
                 .
-              </p>
+              </Typography>
             </>
           )}
         </div>
@@ -254,10 +266,12 @@ function DocsLayout({
 
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   return (
-    <a
+    <Typography
+      as="a"
+      variant="label-large"
       href={item.path}
       aria-current={active ? "page" : undefined}
-      className={`flex h-14 items-center gap-3 rounded-full px-4 text-label-large ${
+      className={`flex h-14 items-center gap-3 rounded-full px-4 ${
         active
           ? "bg-secondary-container text-on-secondary-container"
           : "text-on-surface-variant hover:bg-on-surface/8"
@@ -265,6 +279,6 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
     >
       <item.icon className="text-2xl" />
       {item.label}
-    </a>
+    </Typography>
   );
 }

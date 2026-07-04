@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Typography } from "@brijbyte/md3-react/typography";
 
 export type TocItem = { depth: number; text: string; id: string };
 
@@ -15,12 +16,14 @@ function TocList({ items }: { items: TocItem[] }) {
     <ul className="flex flex-col">
       {groups.map(({ item, children }) => (
         <li key={item.id}>
-          <a
+          <Typography
+            as="a"
+            variant="body-medium"
             href={`#${item.id}`}
-            className="block py-1.5 text-body-medium text-on-surface-variant hover:text-on-surface"
+            className="block py-1.5 text-on-surface-variant hover:text-on-surface"
           >
             {item.text}
-          </a>
+          </Typography>
           {children.length > 0 && (
             <div className="border-l border-outline-variant pl-3">
               <TocList items={children} />
@@ -37,9 +40,9 @@ export function Toc({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null;
   return (
     <nav aria-label="On this page">
-      <a className="block pb-2 text-title-small text-on-surface" href="#top">
+      <Typography as="a" variant="title-small" className="block pb-2 text-on-surface" href="#top">
         On this page
-      </a>
+      </Typography>
       <TocList items={items} />
     </nav>
   );

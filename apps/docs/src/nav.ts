@@ -1,5 +1,6 @@
 import type * as React from "react";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
+import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
@@ -47,6 +48,18 @@ export const SECTIONS: NavSection[] = [
         title: "Integration",
         description: "How to integrate MD3 React with your project.",
         icon: PaletteIcon,
+      },
+    ],
+  },
+  {
+    label: "Styles",
+    items: [
+      {
+        path: "/styles/typography",
+        label: "Typography",
+        title: "Typography",
+        description: "The MD3 type scale as a polymorphic Typography component.",
+        icon: FormatSizeIcon,
       },
     ],
   },

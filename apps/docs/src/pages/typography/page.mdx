@@ -1,0 +1,54 @@
+---
+title: Typography
+---
+
+import TypeScale from "./demo/scale.tsx";
+import Semantic from "./demo/semantic.tsx";
+
+```tsx
+import { Typography } from "@brijbyte/md3-react/typography";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/typography.css";
+```
+
+## Type scale
+
+MD3 defines [five roles](https://m3.material.io/styles/typography/overview) — display,
+headline, title, body, and label — in three sizes each. `variant` selects the role
+(default `body-large`); every value maps 1:1 to the `--md-sys-typescale-*` tokens, so
+retheming the tokens restyles every `Typography` in the app.
+
+<TypeScale />
+
+### Changing fonts
+
+Each variant reads its typeface from its own `--md-sys-typescale-<variant>-font` variable,
+so a plain CSS override retargets one role — or every role at once via the two ref
+typefaces they default to: `--md-ref-typeface-brand` (display, headline, and title-large)
+and `--md-ref-typeface-plain` (everything else).
+
+```css
+:root {
+  /* All brand-typeface variants at once… */
+  --md-ref-typeface-brand: "Google Sans", sans-serif;
+  /* …or just one variant. */
+  --md-sys-typescale-display-large-font: "Playfair Display", serif;
+}
+```
+
+The same pattern works for the other per-variant tokens: `-size`, `-line-height`,
+`-weight`, and `-tracking`.
+
+## Semantics
+
+`Typography` is polymorphic: it renders a `<p>` by default, and `as` swaps the underlying
+element (or component) without changing the style — pick the element for document
+semantics and SEO, and the variant for looks.
+
+<Semantic />
+
+Margins are reset to `0`; spacing between text blocks is yours to lay out (the demo above
+uses a flex column with a gap).

@@ -1,4 +1,5 @@
 import { Button } from "@brijbyte/md3-react/button";
+import { Typography } from "@brijbyte/md3-react/typography";
 import ArrowForwardIcon from "@brijbyte/md3-icons/outlined/ArrowForward";
 import { NAV } from "../nav";
 
@@ -6,13 +7,13 @@ export default function HomePage() {
   return (
     <>
       <section className="max-w-prose">
-        <h1 className="font-brand text-display-small">
+        <Typography as="h1" variant="display-small">
           Material Design 3 <span className="text-primary">for React</span>
-        </h1>
-        <p className="mt-4 text-body-large text-on-surface-variant">
+        </Typography>
+        <Typography className="mt-4 text-on-surface-variant">
           A React implementation of Google’s Material Design 3, built as a styled layer on top of
           the headless Base UI primitives. Pick a component to see every variant and state.
-        </p>
+        </Typography>
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <Button
             render={<a href="/overview/getting-started" />}
@@ -33,8 +34,12 @@ export default function HomePage() {
             <span className="flex size-12 items-center justify-center rounded-full bg-secondary-container text-2xl text-on-secondary-container">
               <item.icon />
             </span>
-            <span className="font-brand text-title-medium">{item.label}</span>
-            <span className="text-body-medium text-on-surface-variant">{item.description}</span>
+            <Typography as="span" variant="title-medium">
+              {item.label}
+            </Typography>
+            <Typography as="span" variant="body-medium" className="text-on-surface-variant">
+              {item.description}
+            </Typography>
           </a>
         ))}
       </div>
