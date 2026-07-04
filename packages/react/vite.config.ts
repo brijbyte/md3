@@ -116,6 +116,7 @@ export default defineConfig({
         "switch/index": "src/switch/index.ts",
         "tabs/index": "src/tabs/index.ts",
         "badge/index": "src/badge/index.ts",
+        "card/index": "src/card/index.ts",
         "typography/index": "src/typography/index.ts",
       },
       formats: ["es"],

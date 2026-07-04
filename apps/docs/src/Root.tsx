@@ -47,6 +47,7 @@ const PAGES: Record<string, PageEntry> = {
   "/styles/typography": mdxRoute(() => import("./pages/typography/page.mdx")),
   "/components/buttons": mdxRoute(() => import("./pages/buttons/page.mdx")),
   "/components/badge": mdxRoute(() => import("./pages/badge/page.mdx")),
+  "/components/card": mdxRoute(() => import("./pages/card/page.mdx")),
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
   "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),

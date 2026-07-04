@@ -1,0 +1,14 @@
+{
+  "name": "md3-demos-card",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Card",
+  "type": "module",
+  "dependencies": {
+    "@brijbyte/md3-icons": "latest",
+    "@brijbyte/md3-react": "latest"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

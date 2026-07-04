@@ -2,6 +2,7 @@ import type * as React from "react";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
 import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
+import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
@@ -79,6 +80,13 @@ export const SECTIONS: NavSection[] = [
         title: "Badge",
         description: "Badges show notifications, counts, or status information.",
         icon: NotificationsIcon,
+      },
+      {
+        path: "/components/card",
+        label: "Card",
+        title: "Card",
+        description: "Cards display content and actions about a single subject.",
+        icon: CardsIcon,
       },
       {
         path: "/components/checkbox",

@@ -207,8 +207,11 @@ Done: token pipeline, ripple, Button (5 variants, 5 expressive sizes, round/squa
 with pressed-corner morph, toggle), IconButton (variants + expressive sizes/widths/shape +
 toggle), FAB (expressive: baseline/medium/large, six color roles, lowered, extended),
 SplitButton, ButtonGroup (standard + connected, corner/width press morphs), Checkbox
-(+ indeterminate), Radio (+ RadioGroup), Switch, Tabs (primary/secondary, icons, elastic
+(+ indeterminate, error states), Radio (+ RadioGroup), Switch, Tabs (primary/secondary, icons, elastic
 indicator, prehydration fix), Badge (dot/numbered, server-safe, Tab `badge` prop),
+Card (elevated/filled/outlined, server-safe static container + CardMedia flush-media
+clipper; no other anatomy sub-components — deliberate, matches Google's platforms;
+actionable-card states not shipped),
 Typography (polymorphic `as`, 15 type-scale roles, server-safe; docs chrome uses it
 everywhere), `@brijbyte/md3-icons`, Tailwind v4 docs app with SSG + soft navigation, standalone demo
 packages with collapsed source tabs, 48dp touch targets everywhere. Implementation
@@ -222,6 +225,6 @@ tokens.json as a CSS `linear()` curve, pair with `duration-medium3`); `TabPanel`
 unstyled a11y wiring (MD3 specs only the tab bar); Badge leaves "999+" clamping to
 consumers.
 
-Next candidates: error states (checkbox), Chips, Cards, TextField, Menu/Select (then a
+Next candidates: Chips, TextField, Menu/Select (then a
 real SplitButton menu demo), dynamic color theming, rem-based type scaling (see Units
 decision), npm publish setup (finalize package name), docs site content + deploy.

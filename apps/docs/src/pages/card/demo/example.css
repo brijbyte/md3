@@ -1,0 +1,37 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/card.css";
+
+.demo-card-example {
+  max-width: 360px;
+}
+
+/* Placeholder media — a real app puts an <img> in CardMedia instead. */
+.demo-card-example-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 128px;
+  font-size: 48px;
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-card-example-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+/* Supporting text/subhead role color, per the anatomy on the docs page. */
+.demo-card-example-muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-card-example-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

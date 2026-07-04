@@ -1,0 +1,45 @@
+---
+title: Card
+---
+
+import CardVariants from "./demo/variants.tsx";
+import CardExample from "./demo/example.tsx";
+
+```tsx
+import { Card, CardMedia } from "@brijbyte/md3-react/card";
+```
+
+```css
+@import "@brijbyte/md3-react/card.css";
+```
+
+## Variants
+
+Elevated (the default), filled, and outlined. The card itself is a bare
+container — a flex column with no padding — so layout and spacing belong to
+your content.
+
+<CardVariants />
+
+## Composing content
+
+There are deliberately no `CardHeader` / `CardContent` / `CardFooter`
+sub-components — MD3 treats card anatomy as guidance, not API. Compose it
+from [Typography](/styles/typography), [buttons](/components/buttons), and
+your own markup. The
+[spec's numbered anatomy](https://m3.material.io/components/cards/guidelines#anatomy)
+maps directly:
+
+1. **Container** — `Card`, with `variant` picking elevated / filled / outlined
+2. **Media** — `CardMedia`
+3. **Buttons** — `Button`, right-aligned in a padded row
+4. **Supporting text** — `Typography` `body-medium` in `on-surface-variant`
+5. **Subhead** — `Typography`, e.g. `body-medium` or `title-medium`
+6. **Headline** — `Typography`, e.g. `title-large`
+
+The card doesn't clip its children, so flush media goes in `CardMedia`: it
+clips its content and rounds the corners that touch the card's edge — the top
+pair as the first child, the bottom pair as the last. A child `<img>` or
+`<video>` fills it edge-to-edge with `object-fit: cover`.
+
+<CardExample />

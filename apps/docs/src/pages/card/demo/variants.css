@@ -1,0 +1,22 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/card.css";
+
+.demo-card-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.demo-card-variants-card {
+  width: 192px;
+  gap: 4px;
+  padding: 16px;
+}
+
+.demo-card-variants-title {
+  text-transform: capitalize;
+}
+
+.demo-card-variants-blurb {
+  color: var(--md-sys-color-on-surface-variant);
+}
