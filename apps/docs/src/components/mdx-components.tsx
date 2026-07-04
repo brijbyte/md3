@@ -44,9 +44,11 @@ function Callout({
 
 export const MDX_COMPONENTS: Record<string, React.ElementType> = {
   h2: (props: Props<"h2">) => (
-    <h2 className="mt-10 mb-3 font-brand text-headline-small" {...props} />
+    <h2 className="mt-10 mb-3 scroll-mt-6 font-brand text-headline-small" {...props} />
   ),
-  h3: (props: Props<"h3">) => <h3 className="mt-8 mb-2 font-brand text-title-large" {...props} />,
+  h3: (props: Props<"h3">) => (
+    <h3 className="mt-8 mb-2 scroll-mt-6 font-brand text-title-large" {...props} />
+  ),
   p: (props: Props<"p">) => <p className="my-4" {...props} />,
   a: (props: Props<"a">) => <a className="text-primary underline" {...props} />,
   ul: (props: Props<"ul">) => <ul className="my-4 list-disc space-y-1 pl-6" {...props} />,

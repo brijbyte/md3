@@ -8,33 +8,47 @@ import SpinnerIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import { NAV, SECTIONS, type NavItem } from "./nav";
 import { MDX_COMPONENTS } from "./components/mdx-components";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { Toc, type TocItem } from "./components/toc";
+
+type MdxModule = {
+  default: React.ComponentType<{ components?: Record<string, React.ElementType> }>;
+  toc: TocItem[];
+};
+
+// One route entry per page: the page component plus (for MDX pages) its
+// floating table of contents, both lazy off the same module/chunk.
+type PageEntry = { Page: React.ComponentType; PageToc?: React.ComponentType };
 
 // MDX pages compile to plain server components; inject the MD3-styled
-// markdown element map here so .mdx files never have to.
-function mdxPage(
-  load: () => Promise<{
-    default: React.ComponentType<{ components?: Record<string, React.ElementType> }>;
-  }>,
-): React.ComponentType {
-  return React.lazy(async () => {
-    const { default: Content } = await load();
-    return { default: () => <Content components={MDX_COMPONENTS} /> };
-  });
+// markdown element map here so .mdx files never have to. The compiled module
+// also exports its heading outline (vite.config's mdxPlugin), rendered as the
+// TOC beside the page.
+function mdxRoute(load: () => Promise<MdxModule>): PageEntry {
+  return {
+    Page: React.lazy(async () => {
+      const { default: Content } = await load();
+      return { default: () => <Content components={MDX_COMPONENTS} /> };
+    }),
+    PageToc: React.lazy(async () => {
+      const { toc } = await load();
+      return { default: () => <Toc items={toc} /> };
+    }),
+  };
 }
 
 // React.lazy works in server components too: each page becomes its own server
 // chunk, loaded only when its route renders. During SSG, prerender() waits for
 // the lazy import to resolve, so the static HTML is still complete.
-const PAGES: Record<string, React.ComponentType> = {
-  "/": React.lazy(() => import("./pages/home")),
-  "/overview/getting-started": mdxPage(() => import("./pages/getting-started/page.mdx")),
-  "/overview/tailwind": mdxPage(() => import("./pages/tailwind/page.mdx")),
-  "/components/buttons": mdxPage(() => import("./pages/buttons/page.mdx")),
-  "/components/badge": mdxPage(() => import("./pages/badge/page.mdx")),
-  "/components/checkbox": mdxPage(() => import("./pages/checkbox/page.mdx")),
-  "/components/radio": mdxPage(() => import("./pages/radio/page.mdx")),
-  "/components/switch": mdxPage(() => import("./pages/switch/page.mdx")),
-  "/components/tabs": mdxPage(() => import("./pages/tabs/page.mdx")),
+const PAGES: Record<string, PageEntry> = {
+  "/": { Page: React.lazy(() => import("./pages/home")) },
+  "/overview/getting-started": mdxRoute(() => import("./pages/getting-started/page.mdx")),
+  "/overview/integration": mdxRoute(() => import("./pages/integration/page.mdx")),
+  "/components/buttons": mdxRoute(() => import("./pages/buttons/page.mdx")),
+  "/components/badge": mdxRoute(() => import("./pages/badge/page.mdx")),
+  "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
+  "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
+  "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
+  "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
 };
 
 // The landing page renders without the docs chrome; everything else gets the
@@ -73,7 +87,7 @@ export default function Root({ url }: { url: URL }) {
       ? url.pathname.slice(0, -1)
       : url.pathname;
   const route = NAV.find((item) => item.path === pathname);
-  const Page = PAGES[pathname];
+  const entry = PAGES[pathname];
 
   return (
     // data-theme is set by the inline script before hydration.
@@ -103,10 +117,10 @@ export default function Root({ url }: { url: URL }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
-        {pathname === "/" && Page ? (
-          <LandingLayout Page={Page} />
+        {pathname === "/" && entry ? (
+          <LandingLayout Page={entry.Page} />
         ) : (
-          <DocsLayout pathname={pathname} route={route} Page={Page} url={url} />
+          <DocsLayout pathname={pathname} route={route} entry={entry} url={url} />
         )}
       </body>
     </html>
@@ -131,14 +145,15 @@ function LandingLayout({ Page }: { Page: React.ComponentType }) {
 function DocsLayout({
   pathname,
   route,
-  Page,
+  entry,
   url,
 }: {
   pathname: string;
   route: NavItem | undefined;
-  Page: React.ComponentType | undefined;
+  entry: PageEntry | undefined;
   url: URL;
 }) {
+  const { Page, PageToc } = entry ?? {};
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
       <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
@@ -222,6 +237,15 @@ function DocsLayout({
           )}
         </div>
       </div>
+
+      {PageToc && (
+        <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pr-6 xl:block">
+          {/* The outline rides the page's own chunk; nothing to show meanwhile. */}
+          <React.Suspense>
+            <PageToc />
+          </React.Suspense>
+        </aside>
+      )}
     </div>
   );
 }

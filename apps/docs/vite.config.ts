@@ -64,7 +64,7 @@ function mdxPlugin(): Plugin {
   const base = satteri({
     markdown: false,
     features: { gfm: true, frontmatter: true },
-    hastPlugins: [alertsHastPlugin(), shikiHastPlugin()],
+    hastPlugins: [headingIdsHastPlugin(), alertsHastPlugin(), shikiHastPlugin()],
   });
   const transform = base.transform as (
     this: unknown,
@@ -73,19 +73,62 @@ function mdxPlugin(): Plugin {
   ) => Promise<{ code: string; map: null } | null>;
   return {
     ...base,
-    transform(code, id) {
+    async transform(code, id) {
       if (id.startsWith("\0") || id.includes("virtual:")) {
         return null;
       }
-      return transform.call(this, code, id);
+      const result = await transform.call(this, code, id);
+      // Compiled MDX also exports its heading outline (for the floating TOC);
+      // ids match headingIdsHastPlugin — same slugify over the same text.
+      if (result && id.endsWith(".mdx")) {
+        result.code += `\nexport const toc = ${JSON.stringify(extractToc(code))};\n`;
+      }
+      return result;
     },
   };
+}
+
+// Markdown heading outline (h2–h6) of an MDX source: fenced code blocks are
+// dropped first (a `# comment` in a sh block is not a heading), inline code and
+// link syntax are unwrapped to their text.
+function extractToc(source: string) {
+  const items: { depth: number; text: string; id: string }[] = [];
+  const body = source.replace(/^```[\s\S]*?^```/gm, "");
+  for (const m of body.matchAll(/^(#{2,6})\s+(.+?)\s*$/gm)) {
+    const text = m[2].replace(/`([^`]*)`/g, "$1").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
+    items.push({ depth: m[1].length, text, id: slugify(text) });
+  }
+  return items;
 }
 
 // One theme pair for fenced MDX blocks and demo source tabs alike. Light is
 // github-light-default: material-theme-lighter's oranges/teals fall well below
 // WCAG AA contrast on the surface-container background.
 const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
+
+// Heading anchor ids: lowercased text, punctuation stripped, whitespace runs
+// collapsed to a dash ("Shapes & toggle" → "shapes-toggle").
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
+
+function headingIdsHastPlugin() {
+  return defineHastPlugin({
+    name: "heading-ids",
+    element: {
+      filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+      visit(node, ctx) {
+        if (node.properties?.id) return;
+        const id = slugify(ctx.textContent(node));
+        if (id) ctx.setProperty(node, "id", id);
+      },
+    },
+  });
+}
 
 // GFM alert blocks (`> [!NOTE]` …): Sätteri's GFM doesn't parse them, so tag the
 // blockquote here; mdx-components renders [data-alert] blockquotes as callouts.
@@ -235,72 +278,43 @@ export default function RemoveDuplicateServerCss() {
   };
 }
 
-// Standalone demos: each src/pages/<page>/demo/ folder is a drop-in package whose
-// package.json `exports` lists the demo files (default export = the demo) and whose
-// `description` is the demo title. This plugin scans those manifests and serves them
-// as the `virtual:md3-demos` registry — "<page>/<export>" → { title, lazy loader } —
-// consumed by the <Demo of="…"> server component. Demo files import the library by
-// its published specifiers (incl. styles.css), so a folder copies out of the repo
-// verbatim; the docs aliases above just redirect those imports to library source.
+// Standalone demos: each src/pages/<page>/demo/ folder is a drop-in package (its
+// package.json declares the real deps) holding one tsx per demo. Pages import a
+// demo by its real path ("./demo/button-sizes.tsx" — clickable, typo = resolve
+// error) and render it directly; the import resolves to a facade that wraps the
+// component in the <Demo> chrome (playground surface + highlighted-source tabs).
+// Demo files import the library by its published specifiers (incl. styles.css),
+// so a folder copies out of the repo verbatim; the docs aliases above redirect
+// those to library source.
 function demosPlugin(): Plugin {
   const pagesDir = path.resolve(import.meta.dirname, "src/pages");
-  const VIRTUAL = "virtual:md3-demos";
-  const RESOLVED = "\0" + VIRTUAL;
 
-  function buildRegistry() {
-    const entries: string[] = [];
-    for (const page of fs.readdirSync(pagesDir, { withFileTypes: true })) {
-      if (!page.isDirectory()) continue;
-      const pkgPath = path.join(pagesDir, page.name, "demo", "package.json");
-      if (!fs.existsSync(pkgPath)) continue;
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as {
-        description?: string;
-        exports?: Record<string, string | { style?: string; default: string }>;
-      };
-      // Export values are conditional: `default` is the demo module, `style`
-      // its stylesheet (docs-resolved to the shared stub; see resolveId).
-      for (const [subpath, target] of Object.entries(pkg.exports ?? {})) {
-        const id = `${page.name}/${subpath.replace(/^\.\//, "")}`;
-        const files = typeof target === "string" ? { default: target } : target;
-        for (const file of Object.values(files)) {
-          if (!fs.existsSync(path.join(pagesDir, page.name, "demo", file))) {
-            throw new Error(`[md3:demos] ${pkgPath} export "${subpath}" points to missing ${file}`);
-          }
-        }
-        const abs = path.join(pagesDir, page.name, "demo", files.default);
-        // code memoizes its promise: DemoCodeLoader unwraps it with React.use, which
-        // wants a stable identity (dynamic import mints a new promise per call).
-        entries.push(
-          `  ${JSON.stringify(id)}: { title: ${JSON.stringify(pkg.description ?? id)}, ` +
-            `load: () => import(${JSON.stringify(abs)}), ` +
-            `code: (p => () => (p ??= import(${JSON.stringify(DEMO_CODE + id)})))() }`,
-        );
-      }
-    }
-    return `export const DEMOS = {\n${entries.join(",\n")}\n};\n`;
-  }
+  // A page's demo files, entries and helpers alike (invalidation over-approximates:
+  // ids that never resolved simply aren't in the module graph).
+  const demoNamesForPage = (page: string) => {
+    const dir = path.join(pagesDir, page, "demo");
+    if (!fs.existsSync(dir)) return [];
+    return fs
+      .readdirSync(dir)
+      .filter((f) => f.endsWith(".tsx"))
+      .map((f) => f.slice(0, -".tsx".length));
+  };
 
   // Per-demo source-code module: reads the demo's entry file, its relative imports,
-  // and the export's style css, Shiki-highlights each at compile time, and exports
+  // and its sibling css, Shiki-highlights each at compile time, and exports
   // FILES = [{ name, code, html }] for the <Demo> code tabs. Zero client JS.
   const DEMO_CODE = "virtual:md3-demo-code:";
   const RESOLVED_CODE = "\0" + DEMO_CODE;
-  const codeIdsForPage = (page: string) => {
-    const pkgPath = path.join(pagesDir, page, "demo", "package.json");
-    if (!fs.existsSync(pkgPath)) return [];
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as {
-      exports?: Record<string, unknown>;
-    };
-    return Object.keys(pkg.exports ?? {}).map(
-      (sub) => RESOLVED_CODE + `${page}/${sub.replace(/^\.\//, "")}`,
-    );
-  };
+  const codeIdsForPage = (page: string) =>
+    demoNamesForPage(page).map((name) => RESOLVED_CODE + `${page}/${name}`);
 
-  // Pages import Demo from "./demo" (the sibling demo folder): that resolves to
-  // a generated page-scoped wrapper, so `of` is relative to the page —
-  // <Demo of="states" /> inside pages/switch/ means "switch/states".
-  const SCOPED = "\0md3-demo-scope:";
+  // Facade for a demo entry imported from its page: the entry component wrapped
+  // in the <Demo> chrome (playground + code tabs) with its code loader, so pages
+  // render `<ButtonSizes />` directly — no manual Demo wrapper.
+  const FACADE = "\0md3-demo:";
   const demoComponent = path.resolve(import.meta.dirname, "src/components/demo.tsx");
+  const facadeIdsForPage = (page: string) =>
+    demoNamesForPage(page).map((name) => FACADE + `${page}/${name}`);
 
   // Each demo tsx imports a sibling css file listing the library stylesheets a
   // consumer needs (drop-in fidelity). In the docs app that css must not compile
@@ -335,11 +349,10 @@ function demosPlugin(): Plugin {
 
   return {
     name: "md3:demos",
-    // Pre: "./demo" is a real directory, so the default resolver would try (and
-    // fail) to resolve it as a package before this plugin gets a look.
+    // Pre: demo css imports and entry facades must be intercepted before the
+    // default resolver (and other plugins) resolve them to the raw files.
     enforce: "pre",
     resolveId(id, importer) {
-      if (id === VIRTUAL) return RESOLVED;
       if (id.startsWith(DEMO_CODE)) return "\0" + id;
       if (!importer?.startsWith(pagesDir + path.sep)) return;
       if (
@@ -351,10 +364,13 @@ function demosPlugin(): Plugin {
         // sniffers (tailwind's transform filter) must not treat the id as css.
         return DEMO_CSS + path.resolve(path.dirname(importer), id) + ".js";
       }
-      if (id === "./demo") {
+      // A page importing one of its demo files gets the facade. Demo-internal
+      // relative imports (helpers like ./row) resolve normally.
+      const entry = /^\.\/demo\/([\w-]+)\.tsx$/.exec(id);
+      if (entry && !importer.includes(`${path.sep}demo${path.sep}`)) {
         const page = path.relative(pagesDir, importer).split(path.sep)[0];
-        if (fs.existsSync(path.join(pagesDir, page, "demo", "package.json"))) {
-          return SCOPED + page;
+        if (fs.existsSync(path.join(pagesDir, page, "demo", `${entry[1]}.tsx`))) {
+          return FACADE + `${page}/${entry[1]}`;
         }
       }
     },
@@ -369,22 +385,33 @@ function demosPlugin(): Plugin {
       }
     },
     async load(id) {
-      if (id === RESOLVED) return buildRegistry();
+      if (id.startsWith(FACADE)) {
+        const key = id.slice(FACADE.length);
+        const page = key.slice(0, key.indexOf("/"));
+        const name = key.slice(key.indexOf("/") + 1);
+        const abs = path.join(pagesDir, page, "demo", `${name}.tsx`);
+        return (
+          `import * as React from "react";\n` +
+          `import { Demo } from ${JSON.stringify(demoComponent)};\n` +
+          `import Component from ${JSON.stringify(abs)};\n` +
+          // Memoized: DemoCodeLoader unwraps the promise with React.use, which
+          // wants a stable identity (dynamic import mints a new promise per call).
+          `let p;\n` +
+          `const code = () => (p ??= import(${JSON.stringify(DEMO_CODE + key)}));\n` +
+          `export default function WrappedDemo(props) {\n` +
+          `  return React.createElement(Demo, { code }, React.createElement(Component, props));\n` +
+          `}\n`
+        );
+      }
       if (id.startsWith(RESOLVED_CODE)) {
         const key = id.slice(RESOLVED_CODE.length);
         const page = key.slice(0, key.indexOf("/"));
-        const sub = "./" + key.slice(key.indexOf("/") + 1);
+        const name = key.slice(key.indexOf("/") + 1);
         const dir = path.join(pagesDir, page, "demo");
-        const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8")) as {
-          exports?: Record<string, string | { style?: string; default: string }>;
-        };
-        const target = pkg.exports?.[sub];
-        if (!target) throw new Error(`[md3:demos] no export "${sub}" in ${page}'s demo package`);
-        const files = typeof target === "string" ? { default: target } : target;
-        const rels = collectDemoFiles(dir, files.default.replace(/^\.\//, ""));
-        // The entry tsx usually imports its css; add the manifest style if it didn't.
-        const style = files.style?.replace(/^\.\//, "");
-        if (style && !rels.includes(style)) rels.push(style);
+        const rels = collectDemoFiles(dir, `${name}.tsx`);
+        // The entry tsx usually imports its sibling css; add it if it didn't.
+        const style = `${name}.css`;
+        if (!rels.includes(style) && fs.existsSync(path.join(dir, style))) rels.push(style);
         const out = [];
         for (const rel of rels) {
           const abs = path.join(dir, rel);
@@ -407,30 +434,19 @@ function demosPlugin(): Plugin {
         this.addWatchFile(cssPath);
         return demoCssToImports(cssPath);
       }
-      if (id.startsWith(SCOPED)) {
-        const page = id.slice(SCOPED.length);
-        return (
-          `import * as React from "react";\n` +
-          `import { Demo as Base } from ${JSON.stringify(demoComponent)};\n` +
-          `export function Demo({ of, ...props }) {\n` +
-          `  return React.createElement(Base, { of: ${JSON.stringify(page + "/")} + of, ...props });\n` +
-          `}\n`
-        );
-      }
     },
-    // Dev: a demo manifest edit re-scans the registry; any demo-file edit
-    // invalidates that page's code modules so the source tabs re-highlight
-    // (tsx edits ride plugin-rsc's own server HMR; css HMR wouldn't re-render
-    // RSC, so css/manifest changes force a full reload).
+    // Dev: any demo-file edit invalidates that page's code modules so the source
+    // tabs re-highlight (tsx edits ride plugin-rsc's own server HMR; css HMR
+    // wouldn't re-render RSC, so css/manifest changes force a full reload).
     configureServer(server) {
       server.watcher.on("all", (_event, file) => {
         if (!file.startsWith(pagesDir)) return;
         const isPkg = file.endsWith("package.json");
         if (!isPkg && !/[\\/]demo[\\/]/.test(file)) return;
         const page = path.relative(pagesDir, file).split(path.sep)[0];
-        // Registry always invalidates too: its memoized code() promises would
-        // otherwise keep serving the stale module after a demo-file edit.
-        const ids = [RESOLVED, ...codeIdsForPage(page)];
+        // Facades invalidate too: their memoized code promises would otherwise
+        // keep serving the stale module after a demo-file edit.
+        const ids = [...facadeIdsForPage(page), ...codeIdsForPage(page)];
         for (const env of Object.values(server.environments)) {
           for (const id of ids) {
             const mod = env.moduleGraph.getModuleById(id);

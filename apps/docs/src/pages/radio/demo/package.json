@@ -4,12 +4,6 @@
   "private": true,
   "description": "Radio button groups",
   "type": "module",
-  "exports": {
-    "./groups": {
-      "style": "./groups.css",
-      "default": "./groups.tsx"
-    }
-  },
   "dependencies": {
     "@brijbyte/md3-react": "workspace:*"
   },

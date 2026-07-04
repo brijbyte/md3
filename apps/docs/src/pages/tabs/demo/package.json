@@ -4,24 +4,6 @@
   "private": true,
   "description": "Tabs",
   "type": "module",
-  "exports": {
-    "./primary": {
-      "style": "./primary.css",
-      "default": "./primary.tsx"
-    },
-    "./secondary": {
-      "style": "./secondary.css",
-      "default": "./secondary.tsx"
-    },
-    "./icons": {
-      "style": "./icons.css",
-      "default": "./icons.tsx"
-    },
-    "./badges": {
-      "style": "./badges.css",
-      "default": "./badges.tsx"
-    }
-  },
   "dependencies": {
     "@brijbyte/md3-icons": "workspace:*",
     "@brijbyte/md3-react": "workspace:*"

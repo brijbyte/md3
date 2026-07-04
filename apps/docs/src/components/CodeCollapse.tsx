@@ -37,7 +37,7 @@ export function CodeCollapse({ children }: { children: React.ReactNode }) {
       {/* pointer-events-none keeps the copy button clickable under the fade */}
       <div className="pointer-events-none mb-2 absolute inset-0 flex items-end justify-center bg-linear-to-b from-transparent to-surface-container">
         <Button
-          variant="outlined"
+          variant="tonal"
           size="xsmall"
           className="pointer-events-auto"
           onClick={() => setExpanded(true)}

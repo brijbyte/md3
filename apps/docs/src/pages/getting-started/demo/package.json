@@ -4,16 +4,6 @@
   "private": true,
   "description": "Getting started",
   "type": "module",
-  "exports": {
-    "./first-buttons": {
-      "style": "./first-buttons.css",
-      "default": "./first-buttons.tsx"
-    },
-    "./base-ui-props": {
-      "style": "./base-ui-props.css",
-      "default": "./base-ui-props.tsx"
-    }
-  },
   "dependencies": {
     "@brijbyte/md3-icons": "workspace:*",
     "@brijbyte/md3-react": "workspace:*"

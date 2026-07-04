@@ -2,7 +2,8 @@
 title: Getting started
 ---
 
-import { Demo } from "./demo";
+import BaseUiProps from "./demo/base-ui-props.tsx";
+import FirstButtons from "./demo/first-buttons.tsx";
 
 ## Install
 
@@ -63,12 +64,12 @@ import "@brijbyte/md3-react/button.css";
 </Button>;
 ```
 
-<Demo of="first-buttons" />
+<FirstButtons />
 
 Props pass through to the underlying Base UI primitive, so everything it supports —
 `render`, `disabled`, event handlers — works unchanged:
 
-<Demo of="base-ui-props" />
+<BaseUiProps />
 
 ## Theming
 

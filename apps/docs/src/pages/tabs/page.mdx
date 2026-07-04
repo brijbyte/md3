@@ -2,22 +2,34 @@
 title: Tabs
 ---
 
-import { Demo } from "./demo";
+import TabBadges from "./demo/badges.tsx";
+import TabIcons from "./demo/icons.tsx";
+import PrimaryTabs from "./demo/primary.tsx";
+import SecondaryTabs from "./demo/secondary.tsx";
 
-<Demo of="primary" title="Primary tabs">
-  The active indicator hugs the label and stretches elastically between tabs, per MDC Android. Arrow
-  keys move focus and activate.
-</Demo>
+## Primary tabs
 
-<Demo of="secondary" title="Secondary tabs">
-  A flatter 2dp indicator spans the full tab width — for a second level of content within a page.
-</Demo>
+The active indicator hugs the label and stretches elastically between tabs, per MDC Android. Arrow
+keys move focus and activate.
 
-<Demo of="icons" title="With icons">
-  Primary tabs stack the icon above the label (64dp); secondary tabs keep it inline.
-</Demo>
+<PrimaryTabs />
 
-<Demo of="badges" title="With badges">
-  Pass `badge` to a Tab: it anchors to the icon's top-right corner, or sits inline after the label
-  on text-only tabs. Badges are visual — put the count in the tab's `aria-label` too.
-</Demo>
+## Secondary tabs
+
+A flatter 2dp indicator spans the full tab width — for a second level of content
+within a page.
+
+<SecondaryTabs />
+
+## With icons
+
+Primary tabs stack the icon above the label (64dp); secondary tabs keep it inline.
+
+<TabIcons />
+
+## With badges
+
+Pass `badge` to a Tab: it anchors to the icon's top-right corner, or sits inline after the label
+on text-only tabs. Badges are visual — put the count in the tab's `aria-label` too.
+
+<TabBadges />

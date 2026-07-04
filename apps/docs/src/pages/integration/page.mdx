@@ -2,9 +2,10 @@
 title: Tailwind integration
 ---
 
-import { Demo } from "./demo";
+import TokenUtilities from "./demo/token-utilities.js";
+import UtilityOverrides from "./demo/utility-overrides.js";
 
-## Setup
+## Tailwind v4
 
 Tailwind v4 and the library share one cascade. In your Tailwind entry CSS, pin the layer
 order on the first line, then import the shared layers, the components you actually use,
@@ -31,7 +32,7 @@ The pin slots the library's layers (`md3.tokens`, `md3.components`) between Tail
 `base` and `utilities`, so preflight can't break the components and any utility class
 outranks component styles — this page runs on exactly that setup.
 
-## Tokens as Tailwind utilities
+### Tokens as Tailwind utilities
 
 `@brijbyte/md3-react/tailwind-tokens.css` is a generated Tailwind v4 `@theme inline`
 block that maps every MD3 system token to a Tailwind theme namespace, giving you
@@ -57,9 +58,11 @@ needed, and any future dynamic-color theming picks up for free.
 </article>
 ```
 
-<Demo of="token-utilities" title="Tokens as utilities">
-  Toggle the docs theme — every class in this card is a token utility, so it follows.
-</Demo>
+### Tokens as utilities
+
+Toggle the docs theme — every class in this card is a token utility, so it follows.
+
+<TokenUtilities />
 
 > [!IMPORTANT]
 > `tailwind-tokens.css` only defines the theme mapping; the token values themselves come
@@ -71,7 +74,9 @@ needed, and any future dynamic-color theming picks up for free.
 Utility classes win over component styles: the `utilities` layer is declared after
 `md3.components`, so no `!important` is needed.
 
-<Demo of="utility-overrides" title="Utility overrides">
-  Utility classes win over component styles: the utilities layer is declared after md3.components,
-  so no !important is needed.
-</Demo>
+### Utility overrides
+
+Utility classes win over component styles: the `utilities` layer is declared after `md3.components`,
+so no `!important` is needed.
+
+<UtilityOverrides />

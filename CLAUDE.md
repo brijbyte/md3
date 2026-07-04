@@ -51,20 +51,27 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   stock shiki inline `--shiki-*` style attrs (on the MDX/hast path the style string
   must be left as-is — Sätteri converts it to a JSX style object itself and silently
   drops object values); deduplicating them into a static class-based sheet is a TODO
-  (scripts/TODOS.md).
+  (scripts/TODOS.md). Headings get slugified anchor `id`s (`headingIdsHastPlugin`), and
+  `mdxPlugin` appends `export const toc` (h2–h6 outline parsed from the MDX source,
+  fenced blocks skipped, same `slugify`) to each compiled page; Root's `mdxRoute()`
+  builds `{ Page, PageToc }` lazy pair off one module and `DocsLayout` renders the
+  sticky "On this page" right rail (`components/toc.tsx`, xl+ only, nested by depth).
   **Demos** are standalone drop-in packages: `src/pages/<page>/demo/` holds a
-  `package.json` (name, `description` = demo title, real deps, and an `exports` map per
-  demo — `{ "style": "./x.css", "default": "./x.tsx" }`, default export = the demo) plus
-  the demo files, which import the library only by published specifiers and put layout
-  styles as token-based classes in the demo's own css file — never inline `style`
-  objects, never docs Tailwind classes; class names are demo-prefixed (`.demo-radio-row`)
-  since all demo css on a page is global — so a folder copies out of the repo verbatim.
-  The `md3:demos` plugin (vite.config) scans those manifests into the `virtual:md3-demos`
-  registry ("<page>/<export>" → title + lazy loader) consumed by the `Demo` server
-  component (`components/demo.tsx`, renders a skeleton fallback); pages
-  `import { Demo } from "./demo"` — the plugin (enforce: pre, or the real directory wins
-  resolution) serves a page-scoped wrapper so `<Demo of="states" />` is relative to the
-  page. Each demo tsx imports its sibling css file (the stylesheets a consumer needs);
+  `package.json` (name + real deps; no `exports` map — the docs pipeline is
+  filename-driven) plus one `<demo>.tsx` per demo (default export = the demo, sibling
+  `<demo>.css` by convention), which import the library only by published specifiers
+  and put layout styles as token-based classes in the demo's own css file — never
+  inline `style` objects, never docs Tailwind classes; class names are demo-prefixed
+  (`.demo-radio-row`) since all demo css on a page is global — so a folder copies out
+  of the repo verbatim. Pages import each demo by its real path
+  (`import ButtonSizes from "./demo/button-sizes.tsx"` — clickable, typo = resolve error)
+  and render it directly (`<ButtonSizes />`): the `md3:demos` plugin (vite.config,
+  enforce: pre) resolves a page's `./demo/*.tsx` import to a facade module wrapping the
+  component in the `Demo` server component (`components/demo.tsx` — playground surface
+  and code tabs), passing a memoized loader for the demo's highlighted sources as Demo's
+  `code` prop. Pages never render Demo themselves; section titles and captions are
+  plain markdown (heading + prose above the demo tag). Demo-internal relative imports
+  (helpers like `./row`) resolve normally. Each demo tsx imports its sibling css file (the stylesheets a consumer needs);
   in-app that resolves to a virtual JS module importing the equivalent library _source_
   css modules — putting them in the server graph so dev SSR links them in `<head>` at
   first paint (no FOUC), deduping with the components' own css imports in build — plus
@@ -84,7 +91,8 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   `entry.browser.tsx` intercepts
   same-origin left-clicks + popstate, fetches the target's static `index.rsc`, and swaps
   the payload in a transition (full-reload fallback on fetch failure; modified/external
-  clicks untouched). The dev handler serves `…/index.rsc` requests from the same URL shape.
+  clicks untouched; hash-only moves — same-document anchors like the TOC, back/forward
+  between them — are left to the browser and never refetch). The dev handler serves `…/index.rsc` requests from the same URL shape.
   Interactive code lives under `'use client'`
   (`components/ThemeToggle.tsx`; library components are the client leaves) and hydrates from
   the RSC payload inlined in the HTML. All icons come from `@brijbyte/md3-icons` — never
@@ -315,17 +323,17 @@ itself renders centered in the surface via a
 `w-fit mx-auto flex-col gap-4` wrapper (whole block centered, internal left alignment
 kept — demo css should size fixed widths as `width: Npx; max-width: 100%`, not
 `width: 100%; max-width: Npx`, which collapses under fit-content); sources come from the
-`virtual:md3-demo-code:<page>/<export>` module (md3:demos plugin): entry tsx + relative
-imports (breadth-first, `collectDemoFiles`) + the manifest `style` css, Shiki-highlighted
+`virtual:md3-demo-code:<page>/<demo>` module (md3:demos plugin): entry tsx + relative
+imports (breadth-first, `collectDemoFiles`) + the sibling css, Shiki-highlighted
 at compile time via `codeToHtml` (same `SHIKI_THEMES` pair, rendered with
-`dangerouslySetInnerHTML` — zero client JS for the code itself); the registry's `code()`
-memoizes its dynamic-import promise (stable identity), Demo kicks it off in render and a
-`DemoCodeLoader` child unwraps it with `React.use` inside its own Suspense boundary
-(fallback: `DemoCodeSkeleton`, a code-playground-shaped placeholder), so the playground
-above never blocks on the code module; the dev watcher invalidates the registry plus a
-page's code modules on any demo-file edit — registry too, else its memoized promises
-serve stale code — (tsx rides plugin-rsc's server HMR; css/package.json force a full
-reload since css HMR won't re-render RSC); tabs indicator prehydration fix — Base UI's `renderBeforeHydration`
+`dangerouslySetInnerHTML` — zero client JS for the code itself); the facade's `code`
+loader memoizes its dynamic-import promise (stable identity), Demo kicks it off
+in render and a `DemoCodeLoader` child unwraps it with `React.use` inside its own
+Suspense boundary (fallback: `DemoCodeSkeleton`, a code-playground-shaped placeholder),
+so the playground above never blocks on the code module; the dev watcher invalidates a
+page's facades plus its code modules on any demo-file edit — facades too, else their
+memoized promises serve stale code — (tsx rides plugin-rsc's server HMR;
+css/package.json force a full reload since css HMR won't re-render RSC); tabs indicator prehydration fix — Base UI's `renderBeforeHydration`
 script bails permanently when it executes inside one of React streaming's hidden Suspense
 segments (offsetWidth 0), so `TabList` renders a companion inline script (isHydrating-gated
 like Base UI's) that re-runs it via a MutationObserver once the segment reveals —

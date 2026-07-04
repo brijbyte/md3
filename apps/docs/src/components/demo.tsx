@@ -1,9 +1,3 @@
-import * as React from "react";
-import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
-import { DEMOS } from "virtual:md3-demos";
-import { CodeCollapse } from "./CodeCollapse";
-import { CopyButton } from "./CopyButton";
-
 // The code-showcase chrome (tabs, copy/collapse buttons) is client css that dev
 // otherwise links only when the client chunks load (FOUC). Importing the source
 // css modules here puts them in the server graph — linked in <head> at first
@@ -13,29 +7,14 @@ import "@brijbyte/md3-react/ripple/ripple.module.css";
 import "@brijbyte/md3-react/button/Button.module.css";
 import "@brijbyte/md3-react/icon-button/IconButton.module.css";
 
-// Server component rendering a standalone demo from the registry (see the
-// md3:demos plugin). `of` is "<page>/<export>"; a heading renders only when
-// `title` is passed (the demo package's description stays available in the
-// registry as metadata). Children render as a caption below the playground.
-// The inner .demo-surface div (app.css, unlayered) severs all style
-// inheritance from the docs page while --md-sys-* tokens still flow through,
-// so demos follow the theme toggle.
-// Placeholder row while a demo's chunk loads. Rendered inside .demo-surface:
-// `all: initial` only severs inheritance at the boundary, so utility classes on
-// descendants still apply. Sized to a typical single-row demo to minimize shift.
-function DemoSkeleton() {
-  return (
-    <div
-      role="progressbar"
-      aria-label="Loading demo"
-      className="flex min-h-10 animate-pulse flex-wrap items-center gap-4"
-    >
-      <div className="h-10 w-28 rounded-full bg-surface-container-high" />
-      <div className="h-10 w-28 rounded-full bg-surface-container-high" />
-      <div className="size-10 rounded-full bg-surface-container-high" />
-    </div>
-  );
-}
+import * as React from "react";
+import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
+import { CodeCollapse } from "./CodeCollapse";
+import { CopyButton } from "./CopyButton";
+
+// Loader for a demo's Shiki-highlighted sources, passed in by the md3:demos
+// facade (see vite.config.ts); memoized there for stable promise identity.
+type DemoCode = () => Promise<{ FILES: { name: string; code: string; html: string }[] }>;
 
 // Demo source tabs: one tab per file of the standalone demo package, panels hold
 // the compile-time Shiki html (see the md3:demo-code virtual module) + a copy button.
@@ -86,40 +65,27 @@ function DemoCodeSkeleton() {
 
 // Suspends on the code module inside DemoCode's own boundary, so the playground
 // above never waits on it; `use` unwraps the promise kicked off in Demo's render.
-function DemoCodeLoader({ code }: { code: ReturnType<(typeof DEMOS)[string]["code"]> }) {
+function DemoCodeLoader({ code }: { code: ReturnType<DemoCode> }) {
   const { FILES } = React.use(code);
   return <DemoCode files={FILES} />;
 }
 
-export function Demo({
-  of,
-  title,
-  children,
-}: {
-  of: string;
-  title?: string;
-  children?: React.ReactNode;
-}) {
-  const entry = DEMOS[of];
-  if (!entry) throw new Error(`Unknown demo "${of}" — is it in its package.json exports?`);
-  const Content = React.lazy(entry.load);
+// Server component rendering a standalone demo: the entry element as children,
+// its code loader as a prop — both supplied by the md3:demos facade, which wraps
+// every demo entry a page imports, so pages never render Demo themselves. The
+// inner .demo-surface div (app.css, unlayered) severs all style inheritance from
+// the docs page while --md-sys-* tokens still flow through, so demos follow the
+// theme toggle.
+export function Demo({ code, children }: { code: DemoCode; children: React.ReactNode }) {
   return (
     <section className="rounded-large bg-surface-container-low pt-4 my-6">
-      {title && <h2 className="mb-4 px-4 font-brand text-title-large">{title}</h2>}
       <div className="demo-surface">
         {/* Center the demo as one block (fit-content, auto margins) so multi-row
             demos keep their internal left alignment; gap spaces stacked rows. */}
-        <div className="mx-auto flex w-fit max-w-full flex-col gap-4 py-2">
-          <React.Suspense fallback={<DemoSkeleton />}>
-            <Content />
-          </React.Suspense>
-        </div>
+        <div className="mx-auto flex w-fit max-w-full flex-col gap-4 py-2">{children}</div>
       </div>
-      {children != null && (
-        <div className="mt-4 px-4 text-body-medium text-on-surface-variant">{children}</div>
-      )}
       <React.Suspense fallback={<DemoCodeSkeleton />}>
-        <DemoCodeLoader code={entry.code()} />
+        <DemoCodeLoader code={code()} />
       </React.Suspense>
     </section>
   );

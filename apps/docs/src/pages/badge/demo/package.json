@@ -4,12 +4,6 @@
   "private": true,
   "description": "Badge",
   "type": "module",
-  "exports": {
-    "./variants": {
-      "style": "./variants.css",
-      "default": "./variants.tsx"
-    }
-  },
   "dependencies": {
     "@brijbyte/md3-react": "workspace:*"
   },

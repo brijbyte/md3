@@ -2,32 +2,50 @@
 title: Buttons
 ---
 
-import { Demo } from "./demo";
+import ButtonGroupConnected from "./demo/button-group-connected.tsx";
+import ButtonGroupStandard from "./demo/button-group-standard.tsx";
+import ButtonShapes from "./demo/button-shapes.tsx";
+import ButtonSizes from "./demo/button-sizes.tsx";
+import CommonButtons from "./demo/common-buttons.tsx";
+import Fabs from "./demo/fabs.tsx";
+import IconButtons from "./demo/icon-buttons.tsx";
 
-<Demo of="common-buttons" />
+<CommonButtons />
 
-<Demo of="button-sizes" title="Button sizes">
-  Five sizes (`xsmall`–`xlarge`) per the expressive spec; `small` is the default. Height, padding,
-  icon size, typescale, and outline width all scale together.
-</Demo>
+## Button sizes
 
-<Demo of="button-shapes" title="Shapes & toggle">
-  Round or `shape="square"`, morphing to a smaller radius while pressed. Toggle buttons (`toggle`,
-  Base UI Toggle underneath) flip shape and color when selected; there is no text-variant toggle.
-</Demo>
+Five sizes (`xsmall`–`xlarge`) per the expressive spec; `small` is the default. Height, padding,
+icon size, typescale, and outline width all scale together.
 
-<Demo of="icon-buttons" title="Icon buttons">
-  The middle two of each row are toggles — click them.
-</Demo>
+<ButtonSizes />
 
-<Demo of="fabs" title="Floating action buttons" />
+## Shapes & toggle
 
-<Demo of="button-group-standard" title="Button group — standard">
-  Related buttons with 12dp spacing; each keeps its own shape. Press and hold one — it grows 15%
-  wider while its neighbors compress to absorb the change.
-</Demo>
+Round or `shape="square"`, morphing to a smaller radius while pressed. Toggle buttons (`toggle`,
+Base UI Toggle underneath) flip shape and color when selected; there is no text-variant toggle.
 
-<Demo of="button-group-connected" title="Button group — connected">
-  Buttons fuse into a pill: 2dp gaps, 8dp inner corners, full outer corners. Selected toggles round
-  fully; press-and-hold a toggle to see the inner corners tighten.
-</Demo>
+<ButtonShapes />
+
+## Icon buttons
+
+The middle two of each row are toggles — click them.
+
+<IconButtons />
+
+## Floating action buttons
+
+<Fabs />
+
+## Button group — standard
+
+Related buttons with 12dp spacing; each keeps its own shape. Press and hold one — it grows 15%
+wider while its neighbors compress to absorb the change.
+
+<ButtonGroupStandard />
+
+## Button group — connected
+
+Buttons fuse into a pill: 2dp gaps, 8dp inner corners, full outer corners. Selected toggles round
+fully; press-and-hold a toggle to see the inner corners tighten.
+
+<ButtonGroupConnected />

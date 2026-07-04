@@ -66,20 +66,30 @@ async function main() {
 }
 
 // Intercept same-origin link clicks and history moves for soft navigation.
+// Hash-only moves (anchor clicks, back/forward between anchors) never refetch:
+// the document didn't change, and the browser handles the scrolling.
 function listenNavigation(onNavigation: () => void): () => void {
-  window.addEventListener("popstate", onNavigation);
+  let current = location.pathname + location.search;
+  const onDocumentChange = () => {
+    const next = location.pathname + location.search;
+    if (next === current) return;
+    current = next;
+    onNavigation();
+  };
+
+  window.addEventListener("popstate", onDocumentChange);
 
   const oldPushState = window.history.pushState;
   window.history.pushState = function (...args) {
     const res = oldPushState.apply(this, args);
-    onNavigation();
+    onDocumentChange();
     return res;
   };
 
   const oldReplaceState = window.history.replaceState;
   window.history.replaceState = function (...args) {
     const res = oldReplaceState.apply(this, args);
-    onNavigation();
+    onDocumentChange();
     return res;
   };
 
@@ -87,7 +97,7 @@ function listenNavigation(onNavigation: () => void): () => void {
 
   return () => {
     document.removeEventListener("click", onClick);
-    window.removeEventListener("popstate", onNavigation);
+    window.removeEventListener("popstate", onDocumentChange);
     window.history.pushState = oldPushState;
     window.history.replaceState = oldReplaceState;
   };
@@ -110,6 +120,11 @@ function onClick(e: MouseEvent) {
     !e.shiftKey &&
     !e.defaultPrevented
   ) {
+    // Same-document anchors (e.g. the TOC): default click scrolls to the target
+    // and records the hash entry — nothing to fetch.
+    if (link.pathname === location.pathname && link.search === location.search && link.hash) {
+      return;
+    }
     e.preventDefault();
     history.pushState(null, "", link.href);
     window.scrollTo(0, 0);
