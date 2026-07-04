@@ -88,7 +88,12 @@ function mdxPlugin(): Plugin {
     markdown: false,
     features: { gfm: true, frontmatter: true, directive: true },
     // headingIdsHastPlugin is passed as a factory so its slug stack resets per document.
-    hastPlugins: [headingIdsHastPlugin, alertsHastPlugin(), shikiHastPlugin()],
+    hastPlugins: [
+      headingIdsHastPlugin,
+      alertsHastPlugin(),
+      externalLinkHastPlugin(),
+      shikiHastPlugin(),
+    ],
   });
   const transform = base.transform as (
     this: unknown,
@@ -193,6 +198,23 @@ function alertsHastPlugin() {
         if (rest) ctx.replaceNode(text, { type: "text", value: rest });
         else ctx.removeChildAt(para, 0);
         ctx.setProperty(node, "data-alert", m[1].toLowerCase());
+      },
+    },
+  });
+}
+
+function externalLinkHastPlugin() {
+  return defineHastPlugin({
+    name: "external-links",
+    element: {
+      filter: ["a"],
+      visit(node, ctx) {
+        const href = node.properties?.href;
+        if (!href || typeof href !== "string") return;
+        if (href[0] === "#" || !href.match(/^https?:\/\//)) return;
+        ctx.setProperty(node, "target", "_blank");
+        ctx.setProperty(node, "rel", "noopener noreferrer");
+        ctx.setProperty(node, "data-external", "");
       },
     },
   });
