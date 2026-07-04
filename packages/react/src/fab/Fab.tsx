@@ -5,26 +5,34 @@ import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Fab.module.css";
 
-export type FabSize = "small" | "medium" | "large";
-export type FabColor = "primary" | "secondary" | "tertiary" | "surface";
+/** Baseline FAB (56dp) is the default; expressive medium/large are 80/96dp. */
+export type FabSize = "medium" | "large";
+/** Two families: bold tone colors and the softer *-container colors. */
+export type FabColor =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "primary-container"
+  | "secondary-container"
+  | "tertiary-container";
 
 export interface FabProps extends BaseButton.Props {
-  /** @default 'medium' */
+  /** Expressive size; omit for the baseline 56dp FAB. */
   size?: FabSize;
-  /** Container color role. @default 'primary' */
+  /** Container color role. @default 'primary-container' */
   color?: FabColor;
   /** Lowered elevation variant (level1 resting instead of level3). */
   lowered?: boolean;
   /** The FAB icon. */
   icon: React.ReactNode;
-  /** Label — renders the extended FAB (medium height only, per spec). */
+  /** Label — renders the extended FAB (any size, height matches the round FAB). */
   label?: React.ReactNode;
 }
 
 export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(props, ref) {
   const {
-    size = "medium",
-    color = "primary",
+    size,
+    color = "primary-container",
     lowered,
     icon,
     label,
@@ -38,7 +46,7 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
     <BaseButton
       ref={ref}
       className={mergeClassName(styles.root, className)}
-      data-size={label ? "medium" : size}
+      data-size={size}
       data-color={color}
       data-lowered={lowered ? "" : undefined}
       data-extended={label != null ? "" : undefined}

@@ -25,21 +25,28 @@
       var(--md-sys-motion-easing-standard);
   }
 
+  /* Full rounding uses the child's height-derived --md3-shape-round when it
+     publishes one: animating to/from corner-full (9999px) clamps at height/2 for
+     ~99% of the transition, so the round-out reads as a snap. */
+  .root[data-variant="connected"] > * {
+    --_full-corner: var(--md3-shape-round, var(--md-sys-shape-corner-full));
+  }
+
   /* Outer corners follow the container shape (full) in every state. */
   .root[data-variant="connected"] > :first-child {
-    border-start-start-radius: var(--md-sys-shape-corner-full);
-    border-end-start-radius: var(--md-sys-shape-corner-full);
+    border-start-start-radius: var(--_full-corner);
+    border-end-start-radius: var(--_full-corner);
   }
 
   .root[data-variant="connected"] > :last-child {
-    border-start-end-radius: var(--md-sys-shape-corner-full);
-    border-end-end-radius: var(--md-sys-shape-corner-full);
+    border-start-end-radius: var(--_full-corner);
+    border-end-end-radius: var(--_full-corner);
   }
 
   /* Selected toggles round fully; pressing a toggle tightens inner corners
      (checkable-only per spec — :active on [data-toggle] outranks [data-pressed]). */
   .root[data-variant="connected"] > [data-pressed] {
-    --_inner-corner: var(--md-sys-shape-corner-full);
+    --_inner-corner: var(--_full-corner);
   }
 
   .root[data-variant="connected"] > [data-toggle]:active {

@@ -1,24 +1,115 @@
-/* Spec: tokens/component-specs.json → icon-button, filled-icon-button,
-   filled-tonal-icon-button, outlined-icon-button */
+/* Spec: expressive md.comp.icon-button.<size> sets — MDC Android icon_btn_tokens.xml (v34)
+   + Compose <Size>IconButtonTokens.kt + m3.material.io corner/color tables (all agree).
+   Colors reuse the common-button expressive macros except standard's own set. */
 @layer md3.components {
+  /* Size defaults = small (40dp); overridden per data-size below. */
   .root {
+    --_container-height: 40px;
+    --_icon-size: 24px;
+    --_leading-space: 8px;
+    --_trailing-space: 8px;
+    --_narrow-space: 4px;
+    --_wide-space: 14px;
+    --_outline-width: 1px;
+    --_shape-square: var(--md-sys-shape-corner-medium);
+    --_shape-pressed: var(--md-sys-shape-corner-small);
+    /* Round = height/2, not corner-full (see Button.module.css); published as
+       --md3-shape-round so ButtonGroup's inner-corner morph can use it. */
+    --md3-shape-round: calc(var(--_container-height) / 2);
+    --_shape-round: var(--md3-shape-round);
+    --_radius: var(--_shape-round);
+
+    box-sizing: border-box;
     position: relative;
     isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: calc(var(--_icon-size) + var(--_leading-space) + var(--_trailing-space));
+    height: var(--_container-height);
     padding: 0;
     border: none;
-    border-radius: var(--md-sys-shape-corner-full);
+    border-radius: var(--_radius);
     background: transparent;
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     outline: none;
-    transition: background-color var(--md-sys-motion-duration-short2)
-      var(--md-sys-motion-easing-standard);
+    transition:
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      border-radius var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  /* Sizes (default width = container height; narrow/wide change padding only) */
+  .root[data-size="xsmall"] {
+    --_container-height: 32px;
+    --_icon-size: 20px;
+    --_leading-space: 6px;
+    --_trailing-space: 6px;
+    --_narrow-space: 4px;
+    --_wide-space: 10px;
+  }
+
+  .root[data-size="medium"] {
+    --_container-height: 56px;
+    --_leading-space: 16px;
+    --_trailing-space: 16px;
+    --_narrow-space: 12px;
+    --_wide-space: 24px;
+    --_shape-square: var(--md-sys-shape-corner-large);
+    --_shape-pressed: var(--md-sys-shape-corner-medium);
+  }
+
+  .root[data-size="large"] {
+    --_container-height: 96px;
+    --_icon-size: 32px;
+    --_leading-space: 32px;
+    --_trailing-space: 32px;
+    --_narrow-space: 16px;
+    --_wide-space: 48px;
+    --_outline-width: 2px;
+    --_shape-square: var(--md-sys-shape-corner-extra-large);
+    --_shape-pressed: var(--md-sys-shape-corner-large);
+  }
+
+  .root[data-size="xlarge"] {
+    --_container-height: 136px;
+    --_icon-size: 40px;
+    --_leading-space: 48px;
+    --_trailing-space: 48px;
+    --_narrow-space: 32px;
+    --_wide-space: 72px;
+    --_outline-width: 3px;
+    --_shape-square: var(--md-sys-shape-corner-extra-large);
+    --_shape-pressed: var(--md-sys-shape-corner-large);
+  }
+
+  .root[data-width="narrow"] {
+    --_leading-space: var(--_narrow-space);
+    --_trailing-space: var(--_narrow-space);
+  }
+
+  .root[data-width="wide"] {
+    --_leading-space: var(--_wide-space);
+    --_trailing-space: var(--_wide-space);
+  }
+
+  /* Shape: same semantics as Button — selected toggles flip round↔square,
+     pressing morphs to the smaller pressed radius (:where keeps :active winning). */
+  .root:where([data-shape="square"]) {
+    --_radius: var(--_shape-square);
+  }
+
+  .root:where([data-toggle][data-pressed]) {
+    --_radius: var(--_shape-square);
+  }
+
+  .root:where([data-toggle][data-pressed][data-shape="square"]) {
+    --_radius: var(--_shape-round);
+  }
+
+  .root:active:not(:disabled) {
+    --_radius: var(--_shape-pressed);
   }
 
   .root:focus-visible {
@@ -26,7 +117,7 @@
     outline-offset: 2px;
   }
 
-  /* 48dp touch target (MD3): extends the hit area past the 40px container. */
+  /* 48dp touch target (MD3): extends the hit area past small containers. */
   .root::after {
     content: "";
     position: absolute;
@@ -66,9 +157,9 @@
 
   .icon {
     display: inline-flex;
-    font-size: 24px;
-    inline-size: 24px;
-    block-size: 24px;
+    font-size: var(--_icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
   }
 
   .icon > * {
@@ -92,29 +183,29 @@
   }
 
   .root[data-variant="filled"][data-toggle]:not([data-pressed]) {
-    background: var(--md-sys-color-surface-container-highest);
-    color: var(--md-sys-color-primary);
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface-variant);
   }
 
-  /* Tonal: default secondary container */
+  /* Tonal: secondary-container; selected toggle flips to bold secondary */
   .root[data-variant="tonal"] {
     background: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
   }
 
-  .root[data-variant="tonal"][data-toggle]:not([data-pressed]) {
-    background: var(--md-sys-color-surface-container-highest);
-    color: var(--md-sys-color-on-surface-variant);
+  .root[data-variant="tonal"][data-toggle][data-pressed] {
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
   }
 
-  /* Outlined: unselected outlined, selected inverse-surface container */
+  /* Outlined: outline-variant border; selected fills inverse-surface, border transparent */
   .root[data-variant="outlined"] {
-    border: 1px solid var(--md-sys-color-outline);
+    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
     color: var(--md-sys-color-on-surface-variant);
   }
 
   .root[data-variant="outlined"][data-pressed] {
-    border: none;
+    border-color: transparent;
     background: var(--md-sys-color-inverse-surface);
     color: var(--md-sys-color-inverse-on-surface);
   }
@@ -141,12 +232,13 @@
     );
   }
 
+  /* Expressive: disabled outline stays outline-variant, undimmed (like Button). */
   .root[data-variant="outlined"]:disabled:not([data-pressed]) {
     background: transparent;
-    border-color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
-      transparent
-    );
+    border-color: var(--md-sys-color-outline-variant);
+  }
+
+  .root[data-variant="outlined"][data-pressed]:disabled {
+    border-color: transparent;
   }
 }

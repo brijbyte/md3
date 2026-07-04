@@ -1,0 +1,296 @@
+/* Spec: md.comp.split-button.<size> — MDC Android split_button_tokens.xml (v34),
+   Compose SplitButton<Size>Tokens.kt, m3.material.io split-button specs (all agree).
+   Colors are the common-button schemes; selection adds only a held state layer. */
+@layer md3.components {
+  /* Size defaults = small; overridden per data-size below. */
+  .root {
+    --_container-height: 40px;
+    --_leading-pad-start: 16px;
+    --_leading-pad-end: 12px;
+    --_trailing-pad: 13px;
+    --_icon-size: 20px;
+    --_menu-icon-size: 22px;
+    --_icon-label-space: 8px;
+    --_outline-width: 1px;
+    /* Inner corners: rest / hovered+pressed (identical tokens); outer stay full. */
+    --_inner-rest: var(--md-sys-shape-corner-extra-small);
+    --_inner-active: var(--md-sys-shape-corner-medium);
+    /* Menu icon optical offset toward the flat inner edge while closed. */
+    --_menu-icon-offset: -1px;
+    --_outer: calc(var(--_container-height) / 2);
+    --_label-font: var(--md-sys-typescale-label-large-font);
+    --_label-size: var(--md-sys-typescale-label-large-size);
+    --_label-line-height: var(--md-sys-typescale-label-large-line-height);
+    --_label-weight: var(--md-sys-typescale-label-large-weight);
+    --_label-tracking: var(--md-sys-typescale-label-large-tracking);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .root[data-size="xsmall"] {
+    --_container-height: 32px;
+    --_leading-pad-start: 12px;
+    --_leading-pad-end: 10px;
+    --_inner-active: var(--md-sys-shape-corner-small);
+  }
+
+  .root[data-size="medium"] {
+    --_container-height: 56px;
+    --_leading-pad-start: 24px;
+    --_leading-pad-end: 24px;
+    --_trailing-pad: 15px;
+    --_icon-size: 24px;
+    --_menu-icon-size: 26px;
+    --_menu-icon-offset: -2px;
+    --_label-font: var(--md-sys-typescale-title-medium-font);
+    --_label-size: var(--md-sys-typescale-title-medium-size);
+    --_label-line-height: var(--md-sys-typescale-title-medium-line-height);
+    --_label-weight: var(--md-sys-typescale-title-medium-weight);
+    --_label-tracking: var(--md-sys-typescale-title-medium-tracking);
+  }
+
+  .root[data-size="large"] {
+    --_container-height: 96px;
+    --_leading-pad-start: 48px;
+    --_leading-pad-end: 48px;
+    --_trailing-pad: 29px;
+    --_icon-size: 32px;
+    --_menu-icon-size: 38px;
+    --_icon-label-space: 12px;
+    --_outline-width: 2px;
+    --_inner-rest: var(--md-sys-shape-corner-small);
+    --_inner-active: var(--md-sys-shape-corner-large-increased);
+    --_menu-icon-offset: -3px;
+    --_label-font: var(--md-sys-typescale-headline-small-font);
+    --_label-size: var(--md-sys-typescale-headline-small-size);
+    --_label-line-height: var(--md-sys-typescale-headline-small-line-height);
+    --_label-weight: var(--md-sys-typescale-headline-small-weight);
+    --_label-tracking: var(--md-sys-typescale-headline-small-tracking);
+  }
+
+  .root[data-size="xlarge"] {
+    --_container-height: 136px;
+    --_leading-pad-start: 64px;
+    --_leading-pad-end: 64px;
+    --_trailing-pad: 43px;
+    --_icon-size: 40px;
+    --_menu-icon-size: 50px;
+    --_icon-label-space: 16px;
+    --_outline-width: 3px;
+    --_inner-rest: var(--md-sys-shape-corner-medium);
+    --_inner-active: var(--md-sys-shape-corner-large-increased);
+    --_menu-icon-offset: -6px;
+    --_label-font: var(--md-sys-typescale-headline-large-font);
+    --_label-size: var(--md-sys-typescale-headline-large-size);
+    --_label-line-height: var(--md-sys-typescale-headline-large-line-height);
+    --_label-weight: var(--md-sys-typescale-headline-large-weight);
+    --_label-tracking: var(--md-sys-typescale-headline-large-tracking);
+  }
+
+  /* Shared button chrome */
+  .leading,
+  .trailing {
+    --_inner: var(--_inner-rest);
+
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--_container-height);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition:
+      box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      border-radius var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .leading {
+    min-width: 48px;
+    gap: var(--_icon-label-space);
+    padding-inline: var(--_leading-pad-start) var(--_leading-pad-end);
+    border-start-start-radius: var(--_outer);
+    border-end-start-radius: var(--_outer);
+    border-start-end-radius: var(--_inner);
+    border-end-end-radius: var(--_inner);
+    font-family: var(--_label-font);
+    font-size: var(--_label-size);
+    line-height: var(--_label-line-height);
+    font-weight: var(--_label-weight);
+    letter-spacing: var(--_label-tracking);
+  }
+
+  .trailing {
+    min-width: 48px;
+    padding-inline: var(--_trailing-pad);
+    border-start-start-radius: var(--_inner);
+    border-end-start-radius: var(--_inner);
+    border-start-end-radius: var(--_outer);
+    border-end-end-radius: var(--_outer);
+  }
+
+  /* Inner corners morph per-button on hover and press (same token value). */
+  .leading:is(:hover, :active):not(:disabled),
+  .trailing:is(:hover, :active):not(:disabled) {
+    --_inner: var(--_inner-active);
+  }
+
+  /* Menu open: the trailing button rounds fully on all corners. */
+  .trailing:is([aria-expanded="true"], [data-popup-open]) {
+    border-radius: var(--_outer);
+  }
+
+  /* Ring reaches past the 2dp gap; paint the focused button above its sibling
+     (same fix as ButtonGroup — MDC draws the focused child last too). */
+  .leading:focus-visible,
+  .trailing:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+
+  /* 48dp touch target, clamped to own width so it can't bleed onto the sibling. */
+  .leading::after,
+  .trailing::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: max(48px, 100%);
+  }
+
+  /* overflow clips the ripple here (not on the button, which would clip ::after). */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    /* Hover/focus tint timing per material-web ripple spec */
+    transition: opacity 15ms linear;
+  }
+
+  .leading:hover .stateLayer::before,
+  .trailing:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .leading:focus-visible .stateLayer::before,
+  .trailing:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  /* While the menu is open the pressed state layer is held on. */
+  .trailing:is([aria-expanded="true"], [data-popup-open]) .stateLayer::before {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  .icon {
+    display: inline-flex;
+    font-size: var(--_icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /* Chevron: optically offset while closed (LTR px offsets from MDC/site), spins
+     180° and truly centers when open (200ms overshoot per MDC's chevron AVD). */
+  .trailing .icon {
+    font-size: var(--_menu-icon-size);
+    inline-size: var(--_menu-icon-size);
+    block-size: var(--_menu-icon-size);
+    transform: translateX(var(--_menu-icon-offset));
+    transition: transform 200ms var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .trailing:is([aria-expanded="true"], [data-popup-open]) .icon {
+    transform: translateX(0) rotate(180deg);
+  }
+
+  .label {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  /* Colors — same schemes as common buttons; selection never swaps roles. */
+  .root[data-variant="filled"] :is(.leading, .trailing) {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .root[data-variant="filled"] :is(.leading, .trailing):hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-variant="tonal"] :is(.leading, .trailing) {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .root[data-variant="tonal"] :is(.leading, .trailing):hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-variant="elevated"] :is(.leading, .trailing) {
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-primary);
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-variant="elevated"] :is(.leading, .trailing):hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  /* Expressive outlined colors (same resolution as Button). */
+  .root[data-variant="outlined"] :is(.leading, .trailing) {
+    color: var(--md-sys-color-on-surface-variant);
+    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
+  }
+
+  /* Disabled (per button) */
+  .root :is(.leading, .trailing):disabled {
+    cursor: default;
+    pointer-events: none;
+    box-shadow: none;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root:not([data-variant="outlined"]) :is(.leading, .trailing):disabled {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  /* Expressive: disabled outline stays outline-variant, undimmed. */
+  .root[data-variant="outlined"] :is(.leading, .trailing):disabled {
+    background: transparent;
+    border-color: var(--md-sys-color-outline-variant);
+  }
+}

@@ -108,6 +108,7 @@ export default defineConfig({
         "tokens/index": "src/tokens/index.ts",
         "button/index": "src/button/index.ts",
         "button-group/index": "src/button-group/index.ts",
+        "split-button/index": "src/split-button/index.ts",
         "icon-button/index": "src/icon-button/index.ts",
         "fab/index": "src/fab/index.ts",
         "checkbox/index": "src/checkbox/index.ts",

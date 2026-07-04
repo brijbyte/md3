@@ -9,6 +9,18 @@ import ButtonSizes from "./demo/button-sizes.tsx";
 import CommonButtons from "./demo/common-buttons.tsx";
 import Fabs from "./demo/fabs.tsx";
 import IconButtons from "./demo/icon-buttons.tsx";
+import IconButtonSizes from "./demo/icon-button-sizes.tsx";
+import SplitButtons from "./demo/split-buttons.tsx";
+
+```tsx
+import { Button } from "@brijbyte/md3-react/button";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+```
 
 <CommonButtons />
 
@@ -28,22 +40,83 @@ Base UI Toggle underneath) flip shape and color when selected; there is no text-
 
 ## Icon buttons
 
+```tsx
+import { IconButton } from "@brijbyte/md3-react/icon-button";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/icon-button.css";
+```
+
 The middle two of each row are toggles — click them.
 
 <IconButtons />
 
+### Sizes & widths
+
+Five expressive sizes with `narrow`/`default`/`wide` widths (padding only — height and icon are
+fixed per size); `shape="square"` and toggles morph like common buttons.
+
+<IconButtonSizes />
+
 ## Floating action buttons
+
+```tsx
+import { Fab } from "@brijbyte/md3-react/fab";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/fab.css";
+```
+
+Baseline 56dp plus the expressive `medium` (80dp) and `large` (96dp) sizes; a `label` renders
+the extended FAB at any size. Colors come in two families: soft `*-container` (default) and
+bold tone roles. The 40dp small FAB and surface colors are deprecated by the expressive update.
 
 <Fabs />
 
-## Button group — standard
+## Split buttons
+
+```tsx
+import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-react/split-button";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/split-button.css";
+```
+
+A leading action button fused with a trailing menu button (2dp gap). Inner corners morph on
+hover/press; click the chevron — the menu button rounds fully and the icon spins 180°.
+
+<SplitButtons />
+
+## Button group
+
+```tsx
+import { ButtonGroup } from "@brijbyte/md3-react/button-group";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button-group.css";
+/* plus the css of the children, e.g. button.css / icon-button.css */
+```
+
+### Standard
 
 Related buttons with 12dp spacing; each keeps its own shape. Press and hold one — it grows 15%
 wider while its neighbors compress to absorb the change.
 
 <ButtonGroupStandard />
 
-## Button group — connected
+### Connected
 
 Buttons fuse into a pill: 2dp gaps, 8dp inner corners, full outer corners. Selected toggles round
 fully; press-and-hold a toggle to see the inner corners tighten.

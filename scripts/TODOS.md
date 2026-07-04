@@ -11,8 +11,9 @@
       the fixed font-style universe), so it can be generated once at config time;
       a first attempt (`shikiClassTransformer` + `md3:shiki-css`) was reverted as
       too much machinery, see git history.
-- [ ] ButtonGroup connected inner corners have the same clamp artifact: selected/pressed
+- [x] ButtonGroup connected inner corners have the same clamp artifact: selected/pressed
       inner corner animates 8px↔`corner-full` (9999px), so the round-out snaps instead
-      of morphing. Needs a height-derived radius, but group children are arbitrary
-      components whose height the group CSS can't know — maybe have each button expose
-      its `--_shape-round` publicly (e.g. `--md3-shape-round`) for the group to consume.
+      of morphing. Fixed: Button publishes `--md3-shape-round` (= height/2) and the
+      group's full-corner values consume it via
+      `var(--md3-shape-round, var(--md-sys-shape-corner-full))` — children that don't
+      publish it (IconButton today) keep the old corner-full fallback.

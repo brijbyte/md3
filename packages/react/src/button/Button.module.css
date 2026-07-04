@@ -15,8 +15,10 @@
     --_shape-square: var(--md-sys-shape-corner-medium);
     --_shape-pressed: var(--md-sys-shape-corner-small);
     /* Round = height/2, not corner-full: animating from 9999px keeps the rendered
-       radius clamped at height/2 for ~99% of the transition (morph reads as lag). */
-    --_shape-round: calc(var(--_container-height) / 2);
+       radius clamped at height/2 for ~99% of the transition (morph reads as lag).
+       Published as --md3-shape-round so ButtonGroup's inner-corner morph can use it. */
+    --md3-shape-round: calc(var(--_container-height) / 2);
+    --_shape-round: var(--md3-shape-round);
     --_radius: var(--_shape-round);
 
     box-sizing: border-box;

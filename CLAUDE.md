@@ -70,7 +70,15 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   component in the `Demo` server component (`components/demo.tsx` — playground surface
   and code tabs), passing a memoized loader for the demo's highlighted sources as Demo's
   `code` prop. Pages never render Demo themselves; section titles and captions are
-  plain markdown (heading + prose above the demo tag). Demo-internal relative imports
+  plain markdown (heading + prose above the demo tag). Every component docs page opens
+  (after the MDX imports, before the first heading) with two fenced blocks stating the
+  consumer-facing imports even though the demo code repeats them: a `tsx` fence with the
+  component import (`import { X } from "@brijbyte/md3-react/<kebab>"`) and a `css` fence
+  with the required stylesheets, mirroring the demo css exactly (`tokens.css`,
+  `ripple.css` only if the component uses ripple, then `<kebab>.css`); a section that
+  introduces a second component (e.g. Badge on the Tabs page, ButtonGroup on Buttons)
+  repeats the pair under its own heading with just the additional imports.
+  Demo-internal relative imports
   (helpers like `./row`) resolve normally. Each demo tsx imports its sibling css file (the stylesheets a consumer needs);
   in-app that resolves to a virtual JS module importing the equivalent library _source_
   css modules — putting them in the server graph so dev SSR links them in `<head>` at
@@ -186,11 +194,26 @@ per-size token sets (`md.comp.button.<size>`; cross-checked across MDC Android
 measurements) — height/pad/gap/icon/outline/typescale: xsmall 32/12/8/20/1/label-large,
 small (default) 40/16/8/20/1/label-large, medium 56/24/8/24/1/title-medium, large
 96/48/12/32/2/headline-small, xlarge 136/64/16/40/3/headline-large; paddings are
-symmetric and uniform across all five color variants (the classic v0_192 24px pad /
+symmetric and uniform across all five color variants (the classic v0*192 24px pad /
 18px icon / icon-side 16 / text 12-16 exceptions are superseded). One source conflict,
 resolved by 2-of-3 majority: xsmall leading/trailing 12 (site and MDC; Compose says 16),
-gap 8 (MDC and Compose; site diagram says 4). Extended FAB padding-inline 16px/20px with
-12px icon–label gap.
+gap 8 (MDC and Compose; site diagram says 4). Expressive FAB/extended-FAB
+(`md.comp.[extended-]fab[.<size>]`, MDC fab/efab_tokens.xml + Compose
+FloatingActionButton.kt — Compose's own token \_files* carry values its component code
+marks `// TODO: incorrect`; trust the component code, which matches MDC): baseline/
+medium/large container 56/80/96, icon 24/28/36, radius 16/20(corner-large-increased)/28,
+no pressed shape morph; extended heights match, symmetric padding-inline 16/26/28,
+icon–label gap 8/12/16, typescale title-medium/title-large/headline-small (the old
+16/20 asymmetric pad + label-large extended FAB is the superseded pre-expressive set);
+small (40dp) and surface FABs are deprecated — not shipped. Expressive icon button
+(`md.comp.icon-button.<size>`, all sources agree): height 32/40/56/96/136, icon
+20/24/24/32/40, default pad 6/8/16/32/48, narrow 4/4/12/16/32, wide 10/14/24/48/72,
+outline 1/1/1/2/3, square corners 12/12/16/28/28, pressed 8/8/12/16/16, selected flips
+round↔square (same radii as Button). Split button (`md.comp.split-button.<size>`, all
+sources agree): height/leading pads as Button except xsmall inner pad 10, trailing pad
+13/13/15/29/43, menu icon 22/22/26/38/50, 2dp gap, inner corners rest 4/4/4/8/12 →
+hover/pressed 8/12/12/20/20, menu-open trailing goes full round + 180° chevron spin
+(200ms overshoot) + held 10% state layer; colors reuse the Button variant schemes.
 
 MD3 universals: state layers (hover 8%, focus 10%, pressed 10% of the state color);
 disabled = 38% opacity content / 12% containers (checkbox outline/container disabled uses
@@ -347,8 +370,23 @@ straight from Google Fonts (gstatic per-icon SVGs into `.cache/`, dropped the
 (`outlined/ToggleOn`), default export only with one shared `dist/icon.d.ts` (halves dist
 file count; per-icon named exports gone), case-insensitive dedupe of legacy alias names.
 
-Next candidates: expressive sizes for IconButton/FAB (token sets exist:
-`m3_comp_icon_button_<size>_*`, `<Size>IconButtonTokens.kt`); error states (checkbox),
-Chips, Cards, TextField, Menu/Select, dynamic color theming, rem-based type scaling
+Also done (button family finish-up): IconButton expressive sizes (`size` xsmall–xlarge,
+`width` narrow/default/wide — padding only, explicit `width: calc(icon + pads)` box —
+`shape` round/square with Button's morph semantics, expressive toggle colors: filled
+unselected surface-container/on-surface-variant, tonal selected secondary/on-secondary,
+outlined outline-variant border incl. disabled undimmed); FAB aligned to expressive
+(baseline default + `size` medium/large, six `color` roles in two families with
+`primary-container` default, extended FAB per-size, small/surface dropped); SplitButton
+(`split-button/` — SplitButton group div + SplitButtonAction leading + SplitButtonMenu
+trailing; open styling keys off `aria-expanded`/`data-popup-open` so a Base UI
+Menu.Trigger composes via `render`; first `'use client'` docs demo);
+ButtonGroup connected round-out snap fixed — Button/IconButton publish
+`--md3-shape-round` (= height/2) and the group's full-corner values consume it with a
+corner-full fallback. Segmented buttons deliberately skipped: deprecated by the
+expressive update in favor of connected ButtonGroup (decided 2026-07).
+
+Next candidates: error states (checkbox),
+Chips, Cards, TextField, Menu/Select (then a real SplitButton menu demo), dynamic color
+theming, rem-based type scaling
 (see Units decision), npm publish setup (finalize package name), docs site
 content + deploy.
