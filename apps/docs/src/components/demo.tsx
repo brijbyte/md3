@@ -25,7 +25,10 @@ function DemoCode({ files }: { files: { name: string; code: string; html: string
       <TabList variant="primary" aria-label="Demo source files">
         {files.map((f) => (
           <Tab key={f.name} value={f.name} className="h-9.5">
-            <Typography variant="label-large">{f.name}</Typography>
+            {/* File names read as code — mono beats the label-large face. */}
+            <Typography as="span" variant="label-large" className="font-mono">
+              {f.name}
+            </Typography>
           </Tab>
         ))}
       </TabList>
