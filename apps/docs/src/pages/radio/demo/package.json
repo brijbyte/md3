@@ -5,7 +5,7 @@
   "description": "Radio button groups",
   "type": "module",
   "dependencies": {
-    "@brijbyte/md3-react": "workspace:*"
+    "@brijbyte/md3-react": "latest"
   },
   "peerDependencies": {
     "react": "^18 || ^19"
