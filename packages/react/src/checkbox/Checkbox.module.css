@@ -128,6 +128,26 @@
     display: block;
   }
 
+  /* Error — state layer is error in every state (no pressed color flip).
+     data-invalid comes from Base UI Field validation; data-error from the prop. */
+  .root:is([data-error], [data-invalid]) {
+    --md3-state-color: var(--md-sys-color-error);
+    --md3-pressed-color: var(--md-sys-color-error);
+  }
+
+  .root:is([data-error], [data-invalid]) .box,
+  .root:is([data-error], [data-invalid]):hover .box,
+  .root:is([data-error], [data-invalid]):focus-visible .box,
+  .root:is([data-error], [data-invalid]):active .box {
+    border-color: var(--md-sys-color-error);
+  }
+
+  .root:is([data-error], [data-invalid])[data-checked] .box,
+  .root:is([data-error], [data-invalid])[data-indeterminate] .box {
+    background: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error);
+  }
+
   /* Disabled — checkbox uses 38% for both outline and container (not 12%) */
   .root[data-disabled] {
     cursor: default;

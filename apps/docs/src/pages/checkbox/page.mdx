@@ -3,6 +3,8 @@ title: Checkbox
 ---
 
 import CheckboxStates from "./demo/states.tsx";
+import CheckboxError from "./demo/error.tsx";
+import CheckboxFieldError from "./demo/field-error.tsx";
 
 ```tsx
 import { Checkbox } from "@brijbyte/md3-react/checkbox";
@@ -17,3 +19,23 @@ import { Checkbox } from "@brijbyte/md3-react/checkbox";
 ## States
 
 <CheckboxStates />
+
+## Error
+
+The `error` prop switches every color role to the error palette and sets `aria-invalid`.
+Disabled always takes precedence over error.
+
+<CheckboxError />
+
+### Form validation
+
+The same error styling applies automatically from native form validation: inside a
+[Base UI Field](https://base-ui.com/react/components/field), constraints like `required`
+mark the checkbox with `data-invalid`, which the stylesheet treats identically to the
+`error` prop. Uncheck the box below to trigger its `required` constraint.
+
+```tsx
+import { Field } from "@base-ui/react/field";
+```
+
+<CheckboxFieldError />

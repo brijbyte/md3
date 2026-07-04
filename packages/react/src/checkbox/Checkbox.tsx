@@ -5,17 +5,22 @@ import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Checkbox.module.css";
 
-export interface CheckboxProps extends BaseCheckbox.Root.Props {}
+export interface CheckboxProps extends BaseCheckbox.Root.Props {
+  /** MD3 error state: error-colored outline/container and sets `aria-invalid`. */
+  error?: boolean;
+}
 
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   function Checkbox(props, ref) {
-    const { className, onPointerDown, ...rest } = props;
+    const { className, onPointerDown, error, ...rest } = props;
     const ripple = useRipple();
 
     return (
       <BaseCheckbox.Root
         ref={ref}
         className={mergeClassName(styles.root, className)}
+        data-error={error || undefined}
+        aria-invalid={error || undefined}
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);

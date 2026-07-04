@@ -2,14 +2,14 @@
 @import "@brijbyte/md3-react/ripple.css";
 @import "@brijbyte/md3-react/checkbox.css";
 
-.demo-checkbox-states {
+.demo-checkbox-error {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 16px;
 }
 
-.demo-checkbox-item {
+.demo-checkbox-error-item {
   cursor: pointer;
   display: inline-flex;
   flex-direction: column;
@@ -19,8 +19,4 @@
   font-family: var(--md-sys-typescale-label-medium-font);
   font-size: var(--md-sys-typescale-label-medium-size);
   line-height: var(--md-sys-typescale-label-medium-line-height);
-}
-
-.demo-checkbox-item:has([data-disabled]) {
-  cursor: default;
 }

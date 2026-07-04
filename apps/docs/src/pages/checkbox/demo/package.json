@@ -5,7 +5,8 @@
   "description": "Checkbox states",
   "type": "module",
   "dependencies": {
-    "@brijbyte/md3-react": "workspace:*"
+    "@base-ui/react": "^1.6.0",
+    "@brijbyte/md3-react": "latest"
   },
   "peerDependencies": {
     "react": "^18 || ^19"
