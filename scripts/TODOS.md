@@ -9,10 +9,4 @@
       itself — SplitButton.tsx:77-104. When composed with Base UI Menu.Trigger this comes
       free, but standalone usage (as in the shipped demo) has no popup semantics until the
       consumer adds them. Minor; consider defaulting aria-haspopup.
-- [ ] Actionable card: a clickable/focusable Card mode (Compose ships `Card(onClick)`)
-      with ripple + state layer, focus ring, and the per-variant state tokens already
-      in component-specs.json — hover/pressed elevation shifts (elevated: level1→2),
-      outlined hover outline-variant, plus disabled (38% content / container opacity,
-      only meaningful here). Needs 'use client'; keep the static Card server-safe
-      (separate export or prop-gated wrapper). Dragged state optional (data-dragged
-      hook only). Selectable/checkable cards are a separate follow-up.
+- [ ] Selectable/checkable cards (follow-up to ActionableCard, shipped 2026-07).

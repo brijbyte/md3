@@ -86,7 +86,8 @@ export function Demo({ code, children }: { code: DemoCode; children: React.React
       <div className="demo-surface">
         {/* Center the demo as one block (fit-content, auto margins) so multi-row
             demos keep their internal left alignment; gap spaces stacked rows. */}
-        <div className="mx-auto flex w-fit max-w-full flex-col gap-4 py-2">{children}</div>
+        {/* px keeps full-width (wrapping) demos off the container's rounded edge. */}
+        <div className="mx-auto flex w-fit max-w-full flex-col gap-4 px-4 py-2">{children}</div>
       </div>
       <React.Suspense fallback={<DemoCodeSkeleton />}>
         <DemoCodeLoader code={code()} />

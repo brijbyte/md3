@@ -203,19 +203,8 @@ Patterns:
 
 ## Current status / roadmap
 
-Done: token pipeline, ripple, Button (5 variants, 5 expressive sizes, round/square shape
-with pressed-corner morph, toggle), IconButton (variants + expressive sizes/widths/shape +
-toggle), FAB (expressive: baseline/medium/large, six color roles, lowered, extended),
-SplitButton, ButtonGroup (standard + connected, corner/width press morphs), Checkbox
-(+ indeterminate, error states), Radio (+ RadioGroup), Switch, Tabs (primary/secondary, icons, elastic
-indicator, prehydration fix), Badge (dot/numbered, server-safe, Tab `badge` prop),
-Card (elevated/filled/outlined, server-safe static container + CardMedia flush-media
-clipper; no other anatomy sub-components — deliberate, matches Google's platforms;
-actionable-card states not shipped),
-Typography (polymorphic `as`, 15 type-scale roles, server-safe; docs chrome uses it
-everywhere), `@brijbyte/md3-icons`, Tailwind v4 docs app with SSG + soft navigation, standalone demo
-packages with collapsed source tabs, 48dp touch targets everywhere. Implementation
-details and resolved gotchas live in the code and git history.
+Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup , Checkbox,
+Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape

@@ -1,5 +1,5 @@
 /* Spec: tokens/component-specs.json → elevated-card / filled-card / outlined-card.
-   State tokens (hover/pressed/dragged) apply only to actionable cards — not shipped. */
+   State tokens (hover/pressed/dragged/disabled) apply via [data-actionable] (ActionableCard). */
 @layer components {
   .root {
     position: relative;
@@ -21,6 +21,110 @@
     background: var(--md-sys-color-surface);
     box-shadow: var(--md-sys-elevation-level0);
     border: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  /* Actionable card: interactive base. isolation lets .stateLayer sit at z -1
+     (above the container background, below content). */
+  .root[data-actionable] {
+    isolation: isolate;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  /* State layer: hover/focus tint + ripple host (all card variants tint with
+     on-surface). overflow clips the ripple to the card shape. */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .root:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .root[data-dragged] .stateLayer::before {
+    opacity: var(--md-sys-state-dragged-state-layer-opacity);
+  }
+
+  .root[data-actionable]:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  /* Elevation shifts: hover raises one level; pressed returns to rest. */
+  .root[data-actionable]:hover {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .root[data-actionable]:active {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-actionable][data-variant="filled"]:hover,
+  .root[data-actionable][data-variant="outlined"]:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-actionable][data-variant="filled"]:active,
+  .root[data-actionable][data-variant="outlined"]:active {
+    box-shadow: var(--md-sys-elevation-level0);
+  }
+
+  .root[data-actionable][data-variant="outlined"]:focus-visible {
+    border-color: var(--md-sys-color-on-surface);
+  }
+
+  /* Dragged: CSS hook only — consumers set data-dragged from their DnD state. */
+  .root[data-actionable][data-dragged] {
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+
+  .root[data-actionable][data-dragged]:is([data-variant="filled"], [data-variant="outlined"]) {
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+
+  /* Disabled (only meaningful on actionable cards): container color at 38%
+     (outline at 12%), content dimmed via opacity so media/explicit colors dim too. */
+  .root[data-actionable][data-disabled] {
+    cursor: default;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--md-sys-color-surface) 38%, transparent);
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-actionable][data-disabled][data-variant="filled"] {
+    background: color-mix(in srgb, var(--md-sys-color-surface-variant) 38%, transparent);
+    box-shadow: var(--md-sys-elevation-level0);
+  }
+
+  .root[data-actionable][data-disabled][data-variant="outlined"] {
+    background: var(--md-sys-color-surface);
+    border-color: color-mix(in srgb, var(--md-sys-color-outline) 12%, transparent);
+    box-shadow: var(--md-sys-elevation-level0);
+  }
+
+  .root[data-actionable][data-disabled] > :not(.stateLayer) {
+    opacity: var(--md-sys-state-disabled-content-opacity);
   }
 
   /* Media clips its content to the container corners it touches. */

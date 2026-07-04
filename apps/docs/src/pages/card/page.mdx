@@ -4,12 +4,14 @@ title: Card
 
 import CardVariants from "./demo/variants.tsx";
 import CardExample from "./demo/example.tsx";
+import CardActionable from "./demo/actionable.tsx";
 
 ```tsx
-import { Card, CardMedia } from "@brijbyte/md3-react/card";
+import { Card, CardMedia, ActionableCard } from "@brijbyte/md3-react/card";
 ```
 
 ```css
+@import "@brijbyte/md3-react/ripple.css"; /* For ActionableCard */
 @import "@brijbyte/md3-react/card.css";
 ```
 
@@ -43,3 +45,19 @@ pair as the first child, the bottom pair as the last. A child `<img>` or
 `<video>` fills it edge-to-edge with `object-fit: cover`.
 
 <CardExample />
+
+## Actionable
+
+`ActionableCard` makes the whole card the action — the same three variants,
+plus the spec's interaction states: a state layer with ripple, an elevation
+raise on hover, the focus ring (outlined cards also flip their border to
+`on-surface`), and `disabled`. By default it renders a `div` with
+`role="button"` and keyboard activation — not a native `<button>`, so the card
+can keep headings and other rich content valid. Pass `render` (e.g.
+`<a href>`) to navigate instead.
+
+A card with a primary action shouldn't contain further actions — nested
+buttons would activate the card too. For drag interactions, styling hooks off
+a `data-dragged` attribute you set from your own drag state.
+
+<CardActionable />
