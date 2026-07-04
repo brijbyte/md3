@@ -35,3 +35,11 @@ refs, spreads all SVG props, and defaults to `aria-hidden` — pass `aria-label`
 
 Icon names starting with a digit get an `Icon` prefix:
 `@brijbyte/md3-icons/outlined/Icon360`.
+
+## License
+
+The package code is [MIT](./LICENSE). The Material Symbols icon artwork is
+copyright Google LLC, licensed under the
+[Apache License 2.0](./LICENSE-APACHE-2.0) (upstream:
+[google/material-design-icons](https://github.com/google/material-design-icons/blob/master/LICENSE));
+the original SVGs are redistributed here converted into React components.

@@ -2,9 +2,10 @@
   "name": "@brijbyte/md3-icons",
   "version": "0.0.1",
   "description": "Google Material Symbols (weight 400) as per-icon React components",
-  "license": "MIT",
+  "license": "MIT AND Apache-2.0",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE-APACHE-2.0"
   ],
   "type": "module",
   "sideEffects": false,
