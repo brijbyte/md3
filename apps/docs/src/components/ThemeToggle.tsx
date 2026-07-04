@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { IconButton } from "@brijbyte/md3-react/icon-button";
+import { Fab } from "@brijbyte/md3-react/fab";
 import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
 import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 
@@ -30,13 +30,16 @@ export function ThemeToggle() {
   return (
     // Icons swap via CSS, not state: the static HTML is theme-agnostic,
     // so hydration matches whatever theme the inline script applied.
-    <IconButton
-      variant="tonal"
+    <Fab
+      className="fixed right-4 bottom-4 z-10"
       aria-label="Toggle theme"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-    >
-      <MoonIcon className="dark:hidden" />
-      <SunIcon className="hidden dark:inline" />
-    </IconButton>
+      icon={
+        <>
+          <MoonIcon className="dark:hidden" />
+          <SunIcon className="hidden dark:inline" />
+        </>
+      }
+    />
   );
 }

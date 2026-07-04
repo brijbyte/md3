@@ -210,7 +210,9 @@ function DocsLayout({
           </nav>
           {route ? (
             <>
-              <h1 className="font-brand text-headline-large">{route.title}</h1>
+              <h1 id="top" className="font-brand text-headline-large">
+                {route.title}
+              </h1>
               <p className="mt-2 mb-8 text-body-large text-on-surface-variant">
                 {route.description}
               </p>

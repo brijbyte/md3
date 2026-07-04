@@ -37,7 +37,9 @@ export function Toc({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null;
   return (
     <nav aria-label="On this page">
-      <span className="block pb-2 text-title-small text-on-surface">On this page</span>
+      <a className="block pb-2 text-title-small text-on-surface" href="#top">
+        On this page
+      </a>
       <TocList items={items} />
     </nav>
   );

@@ -13,7 +13,7 @@
     // Points at library source (not dist) for instant HMR and go-to-source;
     // Vite picks these up via vite-tsconfig-paths.
     "paths": {
-      "@brijbyte/md3-react/styles.css": ["../../packages/react/src/dev-styles.css"],
+      "@brijbyte/md3-react/tokens.css": ["../../packages/react/src/generated/tokens.css"],
       "@brijbyte/md3-react/tailwind-tokens.css": [
         "../../packages/react/src/generated/tailwind-tokens.css"
       ],

@@ -40,10 +40,6 @@ export default defineConfig({
     // component). Mirror the tsconfig paths here so all importers resolve to src.
     alias: [
       {
-        find: /^@brijbyte\/md3-react\/styles\.css$/,
-        replacement: path.resolve(import.meta.dirname, "../../packages/react/src/dev-styles.css"),
-      },
-      {
         find: /^@brijbyte\/md3-react\/tailwind-tokens\.css$/,
         replacement: path.resolve(
           import.meta.dirname,
