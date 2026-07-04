@@ -48,12 +48,9 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   (`SHIKI_THEMES`: github-light-default + github-dark-dimmed; the material themes
   failed WCAG contrast) as `--shiki-light/--shiki-dark` vars, switched by `[data-theme]`
   CSS in app.css; `data-language` on the `<pre>`; zero client JS). Token styles are
-  classes, not inline vars: `transformerStyleToClass` (content-hashed `sk-*` names,
-  build-stable) with the generated rules shipped as hoistable
-  `<style href="shiki-<hash>" precedence="md3-shiki">` — per code block in MDX
-  (inserted as a hast sibling), one shared sheet per demo in `md3:demo-code` (`CSS`/
-  `CSS_HREF` exports rendered by `DemoCode`) — deduped by href, delivered through
-  SSG, streaming, and soft nav alike.
+  stock shiki inline `--shiki-*` style attrs (`toReactProps` converts the style
+  string to a React object on the MDX/hast path); deduplicating them into a static
+  class-based sheet is a TODO (scripts/TODOS.md).
   **Demos** are standalone drop-in packages: `src/pages/<page>/demo/` holds a
   `package.json` (name, `description` = demo title, real deps, and an `exports` map per
   demo — `{ "style": "./x.css", "default": "./x.tsx" }`, default export = the demo) plus

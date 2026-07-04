@@ -39,24 +39,9 @@ function DemoSkeleton() {
 
 // Demo source tabs: one tab per file of the standalone demo package, panels hold
 // the compile-time Shiki html (see the md3:demo-code virtual module) + a copy button.
-// Token colors are classes (not inline vars); `css` carries the demo's class rules
-// as a hoistable style, deduped by content-hashed href.
-function DemoCode({
-  files,
-  css,
-  cssHref,
-}: {
-  files: { name: string; code: string; html: string }[];
-  css: string;
-  cssHref: string;
-}) {
+function DemoCode({ files }: { files: { name: string; code: string; html: string }[] }) {
   return (
     <Tabs defaultValue={files[0].name} className="mt-5">
-      {css && (
-        <style href={cssHref} precedence="md3-shiki">
-          {css}
-        </style>
-      )}
       <TabList variant="primary" aria-label="Demo source files">
         {files.map((f) => (
           <Tab key={f.name} value={f.name}>
@@ -102,8 +87,8 @@ function DemoCodeSkeleton() {
 // Suspends on the code module inside DemoCode's own boundary, so the playground
 // above never waits on it; `use` unwraps the promise kicked off in Demo's render.
 function DemoCodeLoader({ code }: { code: ReturnType<(typeof DEMOS)[string]["code"]> }) {
-  const { FILES, CSS, CSS_HREF } = React.use(code);
-  return <DemoCode files={FILES} css={CSS} cssHref={CSS_HREF} />;
+  const { FILES } = React.use(code);
+  return <DemoCode files={FILES} />;
 }
 
 export function Demo({

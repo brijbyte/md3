@@ -8,12 +8,9 @@ declare module "virtual:md3-demos" {
     {
       title: string;
       load: () => Promise<{ default: React.ComponentType }>;
-      // Shiki-highlighted demo sources (md3:demo-code virtual module). CSS holds
-      // the demo's token-class rules; CSS_HREF is its content hash for dedup.
+      // Shiki-highlighted demo sources (md3:demo-code virtual module).
       code: () => Promise<{
         FILES: { name: string; code: string; html: string }[];
-        CSS: string;
-        CSS_HREF: string;
       }>;
     }
   >;

@@ -1,9 +1,7 @@
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
-import { transformerStyleToClass } from "@shikijs/transformers";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
@@ -89,23 +87,6 @@ function mdxPlugin(): Plugin {
 // WCAG AA contrast on the surface-container background.
 const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
 
-// Token styles live in classes, not inline vars: transformerStyleToClass emits
-// content-hashed (build-stable) class names; the tiny generated stylesheet ships
-// as a React-hoistable <style href precedence> so identical palettes dedupe by
-// href across blocks/pages and survive SSG, streaming, and soft navigation.
-const shikiClassTransformer = () => transformerStyleToClass({ classPrefix: "sk-" });
-function shikiCssHref(css: string) {
-  return "shiki-" + createHash("sha256").update(css).digest("hex").slice(0, 8);
-}
-function shikiStyleNode(css: string) {
-  return {
-    type: "element" as const,
-    tagName: "style",
-    properties: { href: shikiCssHref(css), precedence: "md3-shiki" },
-    children: [{ type: "text" as const, value: css }],
-  };
-}
-
 // GFM alert blocks (`> [!NOTE]` …): Sätteri's GFM doesn't parse them, so tag the
 // blockquote here; mdx-components renders [data-alert] blockquotes as callouts.
 const ALERT_RE = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n?/;
@@ -147,18 +128,13 @@ function shikiHastPlugin() {
           .find((c): c is string => typeof c === "string" && c.startsWith("language-"))
           ?.slice("language-".length);
         if (!lang) return;
-        const toClass = shikiClassTransformer();
         const hast = await codeToHast(ctx.textContent(code).replace(/\n$/, ""), {
           lang,
           themes: SHIKI_THEMES,
           defaultColor: false,
-          transformers: [toClass],
         });
         const pre = hast.children[0];
         if (pre.type === "element") pre.properties["data-language"] = lang;
-        // This block's class rules ride along as a hoistable style sibling.
-        const css = toClass.getCSS();
-        if (css) ctx.insertAfter(node, shikiStyleNode(css));
         return toReactProps(pre);
       },
     },
@@ -176,6 +152,19 @@ function toReactProps<T>(node: T): T {
     if (props?.tabindex !== undefined) {
       props.tabIndex = props.tabindex;
       delete props.tabindex;
+    }
+    // React wants style objects; shiki's decls are all --shiki-* custom props
+    // (defaultColor: false), which React passes through verbatim.
+    if (typeof props?.style === "string") {
+      props.style = Object.fromEntries(
+        props.style
+          .split(";")
+          .filter((d) => d.includes(":"))
+          .map((d) => {
+            const i = d.indexOf(":");
+            return [d.slice(0, i).trim(), d.slice(i + 1).trim()];
+          }),
+      );
     }
     if ("children" in node && Array.isArray(node.children)) node.children.forEach(toReactProps);
   }
@@ -407,7 +396,6 @@ function demosPlugin(): Plugin {
         // The entry tsx usually imports its css; add the manifest style if it didn't.
         const style = files.style?.replace(/^\.\//, "");
         if (style && !rels.includes(style)) rels.push(style);
-        const toClass = shikiClassTransformer(); // shared: one deduped sheet per demo
         const out = [];
         for (const rel of rels) {
           const abs = path.join(dir, rel);
@@ -420,16 +408,10 @@ function demosPlugin(): Plugin {
               lang: path.extname(rel).slice(1) as BundledLanguage,
               themes: SHIKI_THEMES,
               defaultColor: false,
-              transformers: [toClass],
             }),
           });
         }
-        const css = toClass.getCSS();
-        return (
-          `export const FILES = ${JSON.stringify(out)};\n` +
-          `export const CSS = ${JSON.stringify(css)};\n` +
-          `export const CSS_HREF = ${JSON.stringify(shikiCssHref(css))};\n`
-        );
+        return `export const FILES = ${JSON.stringify(out)};\n`;
       }
       if (id.startsWith(DEMO_CSS)) {
         const cssPath = id.slice(DEMO_CSS.length, -".js".length);
