@@ -12,6 +12,9 @@
     --_label-line-height: var(--md-sys-typescale-label-large-line-height);
     --_label-weight: var(--md-sys-typescale-label-large-weight);
     --_label-tracking: var(--md-sys-typescale-label-large-tracking);
+    --_shape-square: var(--md-sys-shape-corner-medium);
+    --_shape-pressed: var(--md-sys-shape-corner-small);
+    --_radius: var(--md-sys-shape-corner-full);
 
     box-sizing: border-box;
     position: relative;
@@ -23,7 +26,7 @@
     height: var(--_container-height);
     padding-inline: var(--_leading-space) var(--_trailing-space);
     border: none;
-    border-radius: var(--md-sys-shape-corner-full);
+    border-radius: var(--_radius);
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
@@ -34,7 +37,9 @@
     line-height: var(--_label-line-height);
     font-weight: var(--_label-weight);
     letter-spacing: var(--_label-tracking);
-    transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+    transition:
+      box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      border-radius var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   /* Sizes (md.comp.button.<size>, MDC Android tokens.xml v34 / m3.material.io measurements) */
@@ -49,6 +54,8 @@
     --_leading-space: 24px;
     --_trailing-space: 24px;
     --_icon-size: 24px;
+    --_shape-square: var(--md-sys-shape-corner-large);
+    --_shape-pressed: var(--md-sys-shape-corner-medium);
     --_label-font: var(--md-sys-typescale-title-medium-font);
     --_label-size: var(--md-sys-typescale-title-medium-size);
     --_label-line-height: var(--md-sys-typescale-title-medium-line-height);
@@ -63,6 +70,8 @@
     --_icon-label-space: 12px;
     --_icon-size: 32px;
     --_outline-width: 2px;
+    --_shape-square: var(--md-sys-shape-corner-extra-large);
+    --_shape-pressed: var(--md-sys-shape-corner-large);
     --_label-font: var(--md-sys-typescale-headline-small-font);
     --_label-size: var(--md-sys-typescale-headline-small-size);
     --_label-line-height: var(--md-sys-typescale-headline-small-line-height);
@@ -77,11 +86,32 @@
     --_icon-label-space: 16px;
     --_icon-size: 40px;
     --_outline-width: 3px;
+    --_shape-square: var(--md-sys-shape-corner-extra-large);
+    --_shape-pressed: var(--md-sys-shape-corner-large);
     --_label-font: var(--md-sys-typescale-headline-large-font);
     --_label-size: var(--md-sys-typescale-headline-large-size);
     --_label-line-height: var(--md-sys-typescale-headline-large-line-height);
     --_label-weight: var(--md-sys-typescale-headline-large-weight);
     --_label-tracking: var(--md-sys-typescale-headline-large-tracking);
+  }
+
+  /* Shape: round (full) rests; square uses the per-size radius; selected toggles
+     flip round↔square; pressing morphs to the (smaller) pressed radius.
+     :where keeps these at (0,1,0) so the :active rule below always wins. */
+  .root:where([data-shape="square"]) {
+    --_radius: var(--_shape-square);
+  }
+
+  .root:where([data-toggle][data-pressed]) {
+    --_radius: var(--_shape-square);
+  }
+
+  .root:where([data-toggle][data-pressed][data-shape="square"]) {
+    --_radius: var(--md-sys-shape-corner-full);
+  }
+
+  .root:active:not(:disabled) {
+    --_radius: var(--_shape-pressed);
   }
 
   /* 48dp touch target (MD3): extends the hit area past the 40px container. */
@@ -158,10 +188,12 @@
     box-shadow: var(--md-sys-elevation-level1);
   }
 
+  /* Expressive outlined colors: on-surface-variant label, outline-variant border
+     (classic v0_192 primary/outline are superseded). */
   .root[data-variant="outlined"] {
     background: transparent;
-    color: var(--md-sys-color-primary);
-    border: var(--_outline-width) solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-on-surface-variant);
+    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
   }
 
   .root[data-variant="elevated"] {
@@ -177,6 +209,34 @@
   .root[data-variant="text"] {
     background: transparent;
     color: var(--md-sys-color-primary);
+  }
+
+  /* Toggle colors (md.comp.button.<variant> selected/unselected; no text toggle).
+     Unselected tonal/elevated/outlined match their non-toggle defaults. */
+  .root:where([data-toggle])[data-variant="filled"] {
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root:where([data-toggle][data-pressed])[data-variant="filled"] {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .root:where([data-toggle][data-pressed])[data-variant="tonal"] {
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+  }
+
+  .root:where([data-toggle][data-pressed])[data-variant="elevated"] {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .root:where([data-toggle][data-pressed])[data-variant="outlined"] {
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+    border-color: transparent;
   }
 
   /* Disabled */
@@ -199,8 +259,15 @@
     );
   }
 
+  /* Expressive: disabled outline stays outline-variant, undimmed. */
   .root[data-variant="outlined"]:disabled {
-    border-color: color-mix(
+    border-color: var(--md-sys-color-outline-variant);
+  }
+
+  /* Selected outlined toggle keeps its borderless filled look when disabled. */
+  .root:where([data-toggle][data-pressed])[data-variant="outlined"]:disabled {
+    border-color: transparent;
+    background: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
       transparent

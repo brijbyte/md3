@@ -13,6 +13,10 @@
       "style": "./button-sizes.css",
       "default": "./button-sizes.tsx"
     },
+    "./button-shapes": {
+      "style": "./button-shapes.css",
+      "default": "./button-shapes.tsx"
+    },
     "./icon-buttons": {
       "style": "./icon-buttons.css",
       "default": "./icon-buttons.tsx"

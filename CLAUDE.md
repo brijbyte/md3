@@ -246,7 +246,19 @@ Patterns:
 ## Current status / roadmap
 
 Done: tokens pipeline, ripple, Button (5 variants; 5 expressive sizes via `size` prop →
-`data-size`, private `--_*` vars in Button.module.css), IconButton (standard/filled/tonal/
+`data-size`, private `--_*` vars in Button.module.css; `shape` round/square — square
+corners 12/12/16/28/28 by size, both morph to pressed corners 8/8/12/16/16 via
+`:active` on a `--_radius` var, shape rules use `:where()` so `:active` always wins;
+`toggle` prop renders Base UI Toggle — selected keys off `data-pressed`, flips shape
+round↔square and colors per variant (filled unselected surface-container/
+on-surface-variant → selected primary/on-primary; tonal → secondary/on-secondary;
+elevated → primary/on-primary; outlined → inverse-surface/inverse-on-surface with
+transparent border, kept when disabled; no text toggle per spec); expressive colors
+adopted: outlined label/icon on-surface-variant + outline-variant border incl. disabled
+(undimmed), text stays primary (site+MDC majority; Compose's on-surface-variant and its
+elevated UnselectedIconColor=OnPrimary are outliers/generation bugs), disabled containers
+stay 12% per MDC `material_emphasis_disabled_background` vs Compose's 0.1),
+IconButton (standard/filled/tonal/
 outlined + toggle), FAB (small/medium/large, colors, lowered, extended), Checkbox
 (+ indeterminate), Radio (+ RadioGroup), Switch, ButtonGroup (standard + connected;
 corner morph in CSS, press width morph via rAF spring (MDC expressive
@@ -323,9 +335,7 @@ straight from Google Fonts (gstatic per-icon SVGs into `.cache/`, dropped the
 (`outlined/ToggleOn`), default export only with one shared `dist/icon.d.ts` (halves dist
 file count; per-icon named exports gone), case-insensitive dedupe of legacy alias names.
 
-Next candidates: Button square shape + pressed/selected shape morph (the expressive
-companion to sizes; per-size corner values already in CLAUDE.md spec notes and
-tokens.xml); expressive sizes for IconButton/FAB (token sets exist:
+Next candidates: expressive sizes for IconButton/FAB (token sets exist:
 `m3_comp_icon_button_<size>_*`, `<Size>IconButtonTokens.kt`); error states (checkbox),
 Chips, Cards, TextField, Menu/Select, dynamic color theming, rem-based type scaling
 (see Units decision), npm publish setup (finalize package name), docs site
