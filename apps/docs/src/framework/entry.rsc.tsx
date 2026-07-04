@@ -7,23 +7,6 @@ import type { RscPayload } from "./shared";
 // a plain static file after build, and a route the dev handler answers below.
 const RSC_EXT = ".rsc";
 
-// Cascade-layer order pin. plugin-rsc's stylesheet links are hoisted into <head>
-// in per-page-varying order, and the pin only holds if it's parsed before any
-// @layer block. As a hoistable <style> rendered before <Root>, its precedence
-// group is encountered first, so React places it above every stylesheet link.
-const LAYER_PIN = "@layer theme, base, components, utilities;";
-
-function App({ url }: { url: URL }) {
-  return (
-    <>
-      <style href="md3-layer-pin" precedence="md3-layer-pin">
-        {LAYER_PIN}
-      </style>
-      <Root url={url} />
-    </>
-  );
-}
-
 // Every route is prerendered at build time (see renderStatic in vite.config).
 export function getStaticPaths(): string[] {
   return NAV.map((item) => item.path);
@@ -39,7 +22,7 @@ export default async function handler(request: Request): Promise<Response> {
     if (url.pathname.endsWith("/index")) url.pathname = url.pathname.slice(0, -"index".length);
   }
 
-  const rscStream = renderToReadableStream<RscPayload>({ root: <App url={url} /> });
+  const rscStream = renderToReadableStream<RscPayload>({ root: <Root url={url} /> });
   if (isRsc) {
     return new Response(rscStream, {
       headers: { "content-type": "text/x-component;charset=utf-8" },
@@ -56,7 +39,7 @@ export async function handleSsg(request: Request): Promise<{
   rsc: ReadableStream<Uint8Array>;
 }> {
   const rscStream = renderToReadableStream<RscPayload>({
-    root: <App url={new URL(request.url)} />,
+    root: <Root url={new URL(request.url)} />,
   });
   const [forHtml, forFile] = rscStream.tee();
   const ssr = await import.meta.viteRsc.loadModule<typeof import("./entry.ssr")>("ssr", "index");

@@ -1,4 +1,3 @@
-@layer theme, base, components, utilities;
 @import "tailwindcss";
 
 /* MD3 system tokens as Tailwind theme values (bg-surface, text-title-large, …),

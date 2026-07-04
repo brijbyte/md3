@@ -1,6 +1,6 @@
 // Server component owning the HTML document (replaces index.html).
-// app.css is the single stylesheet: its first line pins the cascade-layer
-// order, and it @imports the library CSS so nothing depends on link order.
+// app.css @imports the library CSS; cascade-layer order is pinned by the
+// md3:layer-order plugin (vite.config), which prepends it to every stylesheet.
 import "./app.css";
 
 import * as React from "react";

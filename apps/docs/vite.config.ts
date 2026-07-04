@@ -12,6 +12,7 @@ import satteri from "vite-plugin-satteri";
 
 export default defineConfig({
   plugins: [
+    layerOrderPlugin(),
     mdxPlugin(),
     tailwindcss(),
     react(),
@@ -62,6 +63,26 @@ export default defineConfig({
     ],
   },
 });
+
+// Cascade-layer order pin. The first layer declaration the browser parses fixes
+// the order, and stylesheet order in <head> is not deterministic: plugin-rsc
+// preinits client-reference css during RSC deserialization, which can beat any
+// render-time hoistable (it did on the landing page, letting Tailwind preflight
+// override component styles). Prepending the statement to every css module makes
+// every parse order correct — repeats are no-ops once the order exists.
+const LAYER_ORDER = "@layer theme, base, components, utilities;\n";
+function layerOrderPlugin(): Plugin {
+  return {
+    name: "md3:layer-order",
+    transform: {
+      // Matches dev's query-suffixed requests too ("?direct").
+      filter: { id: /\.css(?:\?|$)/ },
+      handler(code) {
+        return { code: LAYER_ORDER + code, map: null };
+      },
+    },
+  };
+}
 
 // .mdx → server-safe JS (Sätteri, enforce pre — all RSC environments see plain modules).
 // Guard: plugin-rsc emits virtual ids ending in ".mdx" ("…facade:src/x.mdx") that satteri's
