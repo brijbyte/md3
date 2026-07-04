@@ -1,0 +1,398 @@
+@layer components {
+  /* Shared chrome for all four chip types (md.comp.*-chip, v0_192):
+     32px container, corner-small, label-large type, 18dp icons. */
+  .root {
+    --_container-height: 32px;
+    --_leading-space: 16px;
+    --_trailing-space: 16px;
+    --_icon-label-space: 8px;
+    --_icon-size: 18px;
+    /* Per-variant slots; disabled resets them to currentColor. */
+    --_leading-icon-color: currentColor;
+    --_pressed-state-layer-color: currentColor;
+
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_icon-label-space);
+    height: var(--_container-height);
+    padding-inline: var(--_leading-space) var(--_trailing-space);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-small);
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    text-decoration: none;
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+    /* padding animates the 16→8px leading inset when an icon-less filter chip
+       selects (checkmark slot), paired with the checkmark's spatial timing. */
+    transition:
+      box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      padding var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  /* Leading inset shrinks to 8px when an icon shows (or checkmark, below). */
+  .root[data-has-icon] {
+    --_leading-space: 8px;
+  }
+
+  /* 48dp touch target past the 32px container (single-button chips). */
+  .root:not([data-variant="input"])::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--md3-touch-target-width, max(48px, 100%));
+    height: max(48px, 100%);
+  }
+
+  /* State layer: hover/focus tint + ripple host (direct child of the chip
+     root in every type, so input chips tint/ripple across the full chip). */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  /* Pressed color can differ from hover (filter chips flip); the ripple
+     snapshots this computed color on pointerdown. */
+  .root:active .stateLayer {
+    color: var(--_pressed-state-layer-color);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .root:not([data-variant="input"]):hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root:not([data-variant="input"]):focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .root:not([data-variant="input"]):focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  /* Input chips: primary-action hover/focus drives the root-level layer. */
+  .root[data-variant="input"]:has(> .action:hover) .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root[data-variant="input"]:has(> .action:focus-visible) .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .root[data-variant="input"]:has(> .action:focus-visible) {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: var(--_icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+    color: var(--_leading-icon-color);
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .label {
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Elevated container (assist/suggestion/filter; input chips have none).
+     Before the variant colors so selected backgrounds override it. */
+  .root[data-elevated] {
+    border: none;
+    background: var(--md-sys-color-surface-container-low);
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-elevated]:hover:not(:disabled, [data-disabled]) {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  .root[data-elevated]:active {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  /* Assist: on-surface label, primary icon; state layers on-surface (= currentColor). */
+  .root[data-variant="assist"] {
+    color: var(--md-sys-color-on-surface);
+    --_leading-icon-color: var(--md-sys-color-primary);
+  }
+
+  /* Suggestion: on-surface-variant label, primary icon. */
+  .root[data-variant="suggestion"] {
+    color: var(--md-sys-color-on-surface-variant);
+    --_leading-icon-color: var(--md-sys-color-primary);
+  }
+
+  /* Filter, unselected. Pressed state layer flips to the *selected* color
+     (spec crossover: unselected pressed → on-secondary-container). */
+  .root[data-variant="filter"] {
+    color: var(--md-sys-color-on-surface-variant);
+    --_leading-icon-color: var(--md-sys-color-primary);
+    --_pressed-state-layer-color: var(--md-sys-color-on-secondary-container);
+  }
+
+  /* Filter checkmark replaces the leading icon while selected. Both animate as
+     collapsible slots: zero width plus a negative margin cancelling the flex gap
+     when hidden (the fast-spatial pairing matches Button's shape morph). With a
+     leading icon the two collapse inversely, so the swap crossfades in place. */
+  .checkmark,
+  .leading {
+    overflow: hidden;
+    transition:
+      inline-size var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      margin-inline-end var(--md-sys-motion-duration-medium3)
+        var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  /* Inner icon keeps its size so the slot reveals instead of squashing. */
+  .checkmark > *,
+  .leading > * {
+    flex: none;
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+  }
+
+  .checkmark,
+  .root[data-pressed] .leading {
+    inline-size: 0;
+    margin-inline-end: calc(-1 * var(--_icon-label-space));
+    opacity: 0;
+  }
+
+  .root[data-pressed] .checkmark {
+    inline-size: var(--_icon-size);
+    margin-inline-end: 0;
+    opacity: 1;
+  }
+
+  /* Filter, selected. :where keeps (0,2,0) so the disabled rules below win. */
+  .root[data-variant="filter"]:where([data-pressed]) {
+    --_leading-space: 8px;
+    background: var(--md-sys-color-secondary-container);
+    border-color: transparent;
+    color: var(--md-sys-color-on-secondary-container);
+    --_leading-icon-color: var(--md-sys-color-on-secondary-container);
+    --_pressed-state-layer-color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Flat selected filter lifts to level1 on hover, back down while pressed. */
+  .root[data-variant="filter"]:where([data-pressed]):not([data-elevated]):hover {
+    box-shadow: var(--md-sys-elevation-level1);
+  }
+
+  .root[data-variant="filter"]:where([data-pressed]):not([data-elevated]):active {
+    box-shadow: none;
+  }
+
+  /* Input: container div; paddings move to the primary action (gap 0 —
+     the action/remove spacing is handled by paddings and margins). */
+  .root[data-variant="input"] {
+    padding-inline: 0;
+    gap: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    --_leading-icon-color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-variant="input"]:where([data-selected]) {
+    background: var(--md-sys-color-secondary-container);
+    border-color: transparent;
+    color: var(--md-sys-color-on-secondary-container);
+    /* Spec: selected input leading icon stays primary. */
+    --_leading-icon-color: var(--md-sys-color-primary);
+  }
+
+  /* Avatar chips: fully rounded, 4px leading inset, 24dp round avatar. */
+  .root[data-variant="input"][data-avatar] {
+    --_leading-space: 4px;
+    border-radius: calc(var(--_container-height) / 2);
+  }
+
+  /* Remove button supplies its own trailing spacing. */
+  .root[data-variant="input"][data-removable] {
+    --_trailing-space: 0px;
+  }
+
+  .action {
+    box-sizing: border-box;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_icon-label-space);
+    min-width: 0;
+    height: 100%;
+    padding-block: 0;
+    padding-inline: var(--_leading-space) var(--_trailing-space);
+    border: none;
+    border-radius: inherit;
+    background: none;
+    outline: none;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .action::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(48px, 100%);
+    height: 48px;
+  }
+
+  .avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    inline-size: 24px;
+    block-size: 24px;
+    border-radius: var(--md-sys-shape-corner-full);
+    overflow: hidden;
+  }
+
+  .avatar > * {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* Trailing remove: 24dp circular action (18dp icon + 3dp ring), centered;
+     margins keep 8px between the label/chip edge and the icon itself. */
+  .trailing {
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    inline-size: calc(4 / 3 * var(--_icon-size));
+    block-size: calc(4 / 3 * var(--_icon-size));
+    margin-inline: calc(var(--_icon-label-space) - 3px) 5px;
+    padding: 0;
+    border: none;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: none;
+    outline: none;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .trailing::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+  }
+
+  .trailing:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .trailingStateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .trailingStateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .trailing:hover .trailingStateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .trailing:focus-visible .trailingStateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .trailingIcon {
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+  }
+
+  /* Disabled: 38% on-surface content, 12% on-surface outline/containers.
+     Input roots carry data-disabled (the root div is never :disabled). */
+  .root:is(:disabled, [data-disabled]) {
+    cursor: default;
+    pointer-events: none;
+    box-shadow: none;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    --_leading-icon-color: currentColor;
+  }
+
+  /* Elevated/selected containers dim to on-surface 12%, borderless. */
+  .root:is(:disabled, [data-disabled]):is(
+    [data-elevated],
+    [data-variant="filter"][data-pressed],
+    [data-variant="input"][data-selected]
+  ) {
+    border-color: transparent;
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .root:is(:disabled, [data-disabled]) .avatar {
+    opacity: var(--md-sys-state-disabled-content-opacity);
+  }
+}

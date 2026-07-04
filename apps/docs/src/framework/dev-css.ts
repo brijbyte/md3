@@ -9,6 +9,7 @@ import "@brijbyte/md3-react/button/Button.module.css";
 import "@brijbyte/md3-react/button-group/ButtonGroup.module.css";
 import "@brijbyte/md3-react/card/Card.module.css";
 import "@brijbyte/md3-react/checkbox/Checkbox.module.css";
+import "@brijbyte/md3-react/chip/Chip.module.css";
 import "@brijbyte/md3-react/fab/Fab.module.css";
 import "@brijbyte/md3-react/icon-button/IconButton.module.css";
 import "@brijbyte/md3-react/radio/Radio.module.css";

@@ -204,7 +204,8 @@ Patterns:
 ## Current status / roadmap
 
 Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup , Checkbox,
-Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, `@brijbyte/md3-icons`.
+Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
+FilterChip / InputChip / SuggestionChip), `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
@@ -212,8 +213,10 @@ rules use `:where()` so `:active` always wins; the corner morph uses
 `--md-sys-motion-easing-fast-spatial` (the 800/0.6 expressive spring exported from
 tokens.json as a CSS `linear()` curve, pair with `duration-medium3`); `TabPanel` is
 unstyled a11y wiring (MD3 specs only the tab bar); Badge leaves "999+" clamping to
-consumers.
+consumers; all four chip types share `chip/Chip.module.css` (InputChip's root is a
+non-interactive div — primary action and remove are separate buttons, driven via `:has()`);
+trailing icons on FilterChip and a ChipSet wrapper are deliberately out of v1 scope.
 
-Next candidates: Chips, TextField, Menu/Select (then a
+Next candidates: TextField, Menu/Select (then a
 real SplitButton menu demo), dynamic color theming, rem-based type scaling (see Units
 decision), npm publish setup (finalize package name), docs site content + deploy.

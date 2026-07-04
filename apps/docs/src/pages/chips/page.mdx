@@ -1,0 +1,61 @@
+---
+title: Chips
+---
+
+import AssistChips from "./demo/assist.tsx";
+import FilterChips from "./demo/filter.tsx";
+import InputChips from "./demo/input.tsx";
+import InputChipStates from "./demo/input-states.tsx";
+import SuggestionChips from "./demo/suggestion.tsx";
+
+```tsx
+import { AssistChip, FilterChip, InputChip, SuggestionChip } from "@brijbyte/md3-react/chip";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/chip.css";
+```
+
+Chips help people enter information, make selections, filter content, or trigger
+actions. All four MD3 chip types share the same 32px container and are outlined by
+default; assist, filter, and suggestion chips also take an `elevated` container.
+
+## Assist chip
+
+Assist chips represent smart or automated actions that appear dynamically and
+contextually — plain button semantics, usually with an 18dp leading `icon`.
+
+<AssistChips />
+
+## Filter chip
+
+Filter chips toggle a filter on or off. They render a toggle button
+(`aria-pressed`) built on [Base UI Toggle](https://base-ui.com/react/components/toggle) —
+control them with `pressed` / `defaultPressed` / `onPressedChange`. While selected, the
+container fills with `secondary-container` and a checkmark replaces any leading icon.
+
+<FilterChips />
+
+## Input chip
+
+Input chips represent discrete pieces of information a person entered, like contacts
+or tags. Passing `onRemove` adds a trailing remove button (its accessible name comes
+from `removeLabel`); the chip root is a plain container, so the primary action and the
+remove button are separate tab stops.
+
+A round 24dp `avatar` replaces the leading icon and makes the container fully rounded:
+
+<InputChips />
+
+Input chips also take an 18dp leading `icon` and a `selected` state:
+
+<InputChipStates />
+
+## Suggestion chip
+
+Suggestion chips offer dynamically generated predictions, like smart replies — plain
+button semantics, styled like assist chips but with an `on-surface-variant` label.
+
+<SuggestionChips />

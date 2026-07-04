@@ -4,6 +4,7 @@ import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
+import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
@@ -87,6 +88,13 @@ export const SECTIONS: NavSection[] = [
         title: "Card",
         description: "Cards display content and actions about a single subject.",
         icon: CardsIcon,
+      },
+      {
+        path: "/components/chips",
+        label: "Chips",
+        title: "Chips",
+        description: "Chips help people enter information, make selections, or filter content.",
+        icon: ChipsIcon,
       },
       {
         path: "/components/checkbox",

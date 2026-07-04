@@ -10,3 +10,8 @@
       free, but standalone usage (as in the shipped demo) has no popup semantics until the
       consumer adds them. Minor; consider defaulting aria-haspopup.
 - [ ] Selectable/checkable cards (follow-up to ActionableCard, shipped 2026-07).
+- [ ] Chips follow-ups (v1 shipped 2026-07): trailing/remove icon on FilterChip (material-web
+      `removable`, pairs with the future Menu for dropdown filter chips); a ChipSet wrapper
+      (layout + arrow-key nav across chips/actions, cf. material-web chip-set); InputChip
+      arrow-key nav between primary and remove actions (multi-action-chip.ts); consider a
+      `removeIcon` override slot on InputChip.
