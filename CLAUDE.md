@@ -385,6 +385,30 @@ ButtonGroup connected round-out snap fixed — Button/IconButton publish
 corner-full fallback. Segmented buttons deliberately skipped: deprecated by the
 expressive update in favor of connected ButtonGroup (decided 2026-07).
 
+Button-family CSS reuse (2026-07): Button.module.css is the family base — IconButton,
+FAB, and both SplitButton halves stack Button's `.root` class (and reuse its
+stateLayer/icon/label spans; `SplitButtonAction` renders `Button` directly, the
+SplitButton group passes variant/size to its halves via React context), so their own
+modules keep only deltas (IconButton: pads + explicit width, icon sizes, standard
+colors, no-elevation neutralizer; FAB: geometry/elevation/colors/extended; SplitButton:
+per-corner geometry, chevron, held-open layer). Heights, square/pressed radii, and
+outline widths are spec-identical across Button/IconButton, which is what makes the
+stacking work. Family overrides keep natural specificity — most tie with Button's rules
+(same @layer), so ties resolve by import order: **button.css must be imported before
+icon-button.css/fab.css/split-button.css** (documented in README + integration page;
+dist/index.css sorts components alphabetically, so the aggregate is always correct; no
+`.root.root`-style inflation — deliberately rejected). Where import order can't decide
+correctly — family color rules vs Button's disabled colors — the family rules carry
+`:not(:disabled, [data-disabled])` guards instead (icon-button standard colors, FAB
+data-color rules) so disabled always wins semantically. Button's disabled rules accept
+`[data-disabled]` (Base UI non-native disabled) and container dim is an opt-in variant
+list (filled/tonal/elevated) so container-less variants don't pick it up. Consequences:
+icon-button.css/fab.css/split-button.css all require button.css (docs css fences + demo
+css list it, in order); FABs gained the MD3 universal disabled treatment (38%
+content/12% container, shadow dropped — FAB's own disabled rule repeats box-shadow:none
+since [data-lowered] would tie-beat Button's) they previously lacked; Button's
+`.icon > *` now fills the icon box (moved up from IconButton/FAB).
+
 Next candidates: error states (checkbox),
 Chips, Cards, TextField, Menu/Select (then a real SplitButton menu demo), dynamic color
 theming, rem-based type scaling

@@ -3,8 +3,7 @@
 [Material Design 3](https://m3.material.io/) components for React, built on
 [Base UI](https://base-ui.com). Ships plain, precompiled CSS — no build-tool
 integration, CSS-in-JS runtime, or bundler plugin required. RSC-compatible:
-components are marked `'use client'`; import them directly in Server Component
-trees.
+import them directly in Server Component.
 
 ## Install
 
@@ -22,7 +21,14 @@ CSS payload stays minimal:
 import "@brijbyte/md3-react/tokens.css"; // required: design tokens + theming
 import "@brijbyte/md3-react/ripple.css"; // required by pressable components
 import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css"; // builds on button.css
 ```
+
+> [!IMPORTANT]
+> Import order matters: `tokens.css` first, and `button.css` before
+> `icon-button.css` / `fab.css` / `split-button.css` — the button family shares
+> Button's CSS as its base, and those files both require and override parts of
+> it. The aggregate bundle below orders everything itself.
 
 > [!NOTE]
 > An everything bundle exists — `@brijbyte/md3-react/styles.css` — but it ships

@@ -1,48 +1,31 @@
 /* Spec: expressive md.comp.icon-button.<size> sets — MDC Android icon_btn_tokens.xml (v34)
    + Compose <Size>IconButtonTokens.kt + m3.material.io corner/color tables (all agree).
-   Colors reuse the common-button expressive macros except standard's own set. */
+   Chrome, heights, shape/press morph, filled/tonal/outlined colors, and disabled all
+   come from Button.module.css (the root renders with Button's .root class stacked) —
+   heights, square/pressed radii, and outline widths are spec-identical. This file keeps
+   only what differs: paddings + explicit width, icon sizes, standard's colors, and the
+   no-elevation rule. Same @layer and equal specificity as button.css, so import order
+   matters: button.css MUST be imported before icon-button.css (documented in README +
+   docs; the aggregate index.css orders them correctly). */
 @layer md3.components {
   /* Size defaults = small (40dp); overridden per data-size below. */
   .root {
-    --_container-height: 40px;
     --_icon-size: 24px;
     --_leading-space: 8px;
     --_trailing-space: 8px;
     --_narrow-space: 4px;
     --_wide-space: 14px;
-    --_outline-width: 1px;
-    --_shape-square: var(--md-sys-shape-corner-medium);
-    --_shape-pressed: var(--md-sys-shape-corner-small);
-    /* Round = height/2, not corner-full (see Button.module.css); published as
-       --md3-shape-round so ButtonGroup's inner-corner morph can use it. */
-    --md3-shape-round: calc(var(--_container-height) / 2);
-    --_shape-round: var(--md3-shape-round);
-    --_radius: var(--_shape-round);
 
-    box-sizing: border-box;
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    /* Default width = container height; narrow/wide change padding only. */
     width: calc(var(--_icon-size) + var(--_leading-space) + var(--_trailing-space));
-    height: var(--_container-height);
     padding: 0;
-    border: none;
-    border-radius: var(--_radius);
-    background: transparent;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
+    /* No shape-morph lag on background flips (toggles); no elevation to animate. */
     transition:
       background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       border-radius var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
   }
 
-  /* Sizes (default width = container height; narrow/wide change padding only) */
   .root[data-size="xsmall"] {
-    --_container-height: 32px;
     --_icon-size: 20px;
     --_leading-space: 6px;
     --_trailing-space: 6px;
@@ -51,37 +34,26 @@
   }
 
   .root[data-size="medium"] {
-    --_container-height: 56px;
     --_leading-space: 16px;
     --_trailing-space: 16px;
     --_narrow-space: 12px;
     --_wide-space: 24px;
-    --_shape-square: var(--md-sys-shape-corner-large);
-    --_shape-pressed: var(--md-sys-shape-corner-medium);
   }
 
   .root[data-size="large"] {
-    --_container-height: 96px;
     --_icon-size: 32px;
     --_leading-space: 32px;
     --_trailing-space: 32px;
     --_narrow-space: 16px;
     --_wide-space: 48px;
-    --_outline-width: 2px;
-    --_shape-square: var(--md-sys-shape-corner-extra-large);
-    --_shape-pressed: var(--md-sys-shape-corner-large);
   }
 
   .root[data-size="xlarge"] {
-    --_container-height: 136px;
     --_icon-size: 40px;
     --_leading-space: 48px;
     --_trailing-space: 48px;
     --_narrow-space: 32px;
     --_wide-space: 72px;
-    --_outline-width: 3px;
-    --_shape-square: var(--md-sys-shape-corner-extra-large);
-    --_shape-pressed: var(--md-sys-shape-corner-large);
   }
 
   .root[data-width="narrow"] {
@@ -94,151 +66,24 @@
     --_trailing-space: var(--_wide-space);
   }
 
-  /* Shape: same semantics as Button — selected toggles flip round↔square,
-     pressing morphs to the smaller pressed radius (:where keeps :active winning). */
-  .root:where([data-shape="square"]) {
-    --_radius: var(--_shape-square);
+  /* Icon buttons never elevate — same specificity as Button's filled/tonal hover
+     shadow; wins by import order. */
+  .root:is([data-variant="filled"], [data-variant="tonal"]):hover:not(:disabled) {
+    box-shadow: none;
   }
 
-  .root:where([data-toggle][data-pressed]) {
-    --_radius: var(--_shape-square);
-  }
-
-  .root:where([data-toggle][data-pressed][data-shape="square"]) {
-    --_radius: var(--_shape-round);
-  }
-
-  .root:active:not(:disabled) {
-    --_radius: var(--_shape-pressed);
-  }
-
-  .root:focus-visible {
-    outline: 3px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
-  }
-
-  /* 48dp touch target (MD3): extends the hit area past small containers. */
-  .root::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--md3-touch-target-width, max(48px, 100%));
-    height: max(48px, 100%);
-  }
-
-  /* overflow clips the ripple here (not on .root, which would clip ::after). */
-  .stateLayer {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    overflow: hidden;
-  }
-
-  .stateLayer::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: currentColor;
-    opacity: 0;
-    /* Hover/focus tint timing per material-web ripple spec */
-    transition: opacity 15ms linear;
-  }
-
-  .root:hover .stateLayer::before {
-    opacity: var(--md-sys-state-hover-state-layer-opacity);
-  }
-
-  .root:focus-visible .stateLayer::before {
-    opacity: var(--md-sys-state-focus-state-layer-opacity);
-  }
-
-  .icon {
-    display: inline-flex;
-    font-size: var(--_icon-size);
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
-  }
-
-  .icon > * {
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  /* Standard: unselected on-surface-variant, selected primary */
+  /* Standard (Button has no such variant): unselected on-surface-variant, selected
+     primary. Color rules are :not(:disabled)-guarded so Button's disabled color
+     applies without out-specifying this later-imported file. */
   .root[data-variant="standard"] {
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  .root[data-variant="standard"][data-pressed] {
-    color: var(--md-sys-color-primary);
-  }
-
-  /* Filled: default (non-toggle) primary container */
-  .root[data-variant="filled"] {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-  }
-
-  .root[data-variant="filled"][data-toggle]:not([data-pressed]) {
-    background: var(--md-sys-color-surface-container);
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  /* Tonal: secondary-container; selected toggle flips to bold secondary */
-  .root[data-variant="tonal"] {
-    background: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-  }
-
-  .root[data-variant="tonal"][data-toggle][data-pressed] {
-    background: var(--md-sys-color-secondary);
-    color: var(--md-sys-color-on-secondary);
-  }
-
-  /* Outlined: outline-variant border; selected fills inverse-surface, border transparent */
-  .root[data-variant="outlined"] {
-    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  .root[data-variant="outlined"][data-pressed] {
-    border-color: transparent;
-    background: var(--md-sys-color-inverse-surface);
-    color: var(--md-sys-color-inverse-on-surface);
-  }
-
-  /* Disabled */
-  .root:disabled,
-  .root[data-disabled] {
-    cursor: default;
-    pointer-events: none;
-    color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
-      transparent
-    );
-  }
-
-  .root[data-variant="filled"]:disabled,
-  .root[data-variant="tonal"]:disabled,
-  .root[data-variant="outlined"][data-pressed]:disabled {
-    background: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
-      transparent
-    );
-  }
-
-  /* Expressive: disabled outline stays outline-variant, undimmed (like Button). */
-  .root[data-variant="outlined"]:disabled:not([data-pressed]) {
     background: transparent;
-    border-color: var(--md-sys-color-outline-variant);
   }
 
-  .root[data-variant="outlined"][data-pressed]:disabled {
-    border-color: transparent;
+  .root[data-variant="standard"]:not(:disabled, [data-disabled]) {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .root[data-variant="standard"][data-pressed]:not(:disabled, [data-disabled]) {
+    color: var(--md-sys-color-primary);
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Fab.module.css";
@@ -45,7 +46,8 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
   return (
     <BaseButton
       ref={ref}
-      className={mergeClassName(styles.root, className)}
+      // Chrome comes from Button's class; styles.root holds FAB overrides.
+      className={mergeClassName(`${buttonStyles.root} ${styles.root}`, className)}
       data-size={size}
       data-color={color}
       data-lowered={lowered ? "" : undefined}
@@ -56,9 +58,9 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
       }}
       {...rest}
     >
-      <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
-      <span className={styles.icon}>{icon}</span>
-      {label != null ? <span className={styles.label}>{label}</span> : null}
+      <span className={buttonStyles.stateLayer} ref={ripple.containerRef} aria-hidden />
+      <span className={buttonStyles.icon}>{icon}</span>
+      {label != null ? <span className={buttonStyles.label}>{label}</span> : null}
     </BaseButton>
   );
 });

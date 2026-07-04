@@ -1,26 +1,24 @@
 /* Spec: expressive md.comp.fab / md.comp.extended-fab per-size sets — MDC Android
    fab_tokens.xml + efab_tokens.xml (v34) cross-checked with Compose FloatingActionButton.kt
-   (its token files carry TODO-incorrect values; component code matches MDC). */
+   (its token files carry TODO-incorrect values; component code matches MDC).
+   Chrome and states come from Button.module.css (the root renders with Button's .root
+   class stacked); this file keeps FAB geometry, elevation, and colors. Button's
+   shape/press morph never fires (the radius here doesn't use its --_radius), matching
+   spec: FABs keep one radius. Same @layer and equal specificity as button.css, so
+   import order matters: button.css MUST be imported before fab.css (documented in
+   README + docs; the aggregate index.css orders them correctly). */
 @layer md3.components {
   /* Size defaults = baseline FAB (56dp); medium/large override below. */
   .root {
     --_container-size: 56px;
     --_icon-size: 24px;
 
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: var(--_container-size);
     height: var(--_container-size);
-    border: none;
+    padding: 0;
     border-radius: var(--md-sys-shape-corner-large);
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
     box-shadow: var(--md-sys-elevation-level3);
+    /* Only elevation animates (no shape morph). */
     transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
@@ -34,11 +32,6 @@
 
   .root[data-lowered]:hover:not(:disabled) {
     box-shadow: var(--md-sys-elevation-level2);
-  }
-
-  .root:focus-visible {
-    outline: 3px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
   }
 
   /* Sizes (small 40dp FAB is deprecated by the expressive update — not shipped) */
@@ -60,6 +53,7 @@
     min-width: var(--_container-size);
     padding-inline: 16px;
     gap: 8px;
+    white-space: nowrap;
     font-family: var(--md-sys-typescale-title-medium-font);
     font-size: var(--md-sys-typescale-title-medium-size);
     line-height: var(--md-sys-typescale-title-medium-line-height);
@@ -88,88 +82,49 @@
   }
 
   /* Colors — container family (pre-expressive defaults, renamed) + bold tone family.
-     Surface FABs are deprecated by the expressive update — not shipped. */
-  .root[data-color="primary-container"] {
+     Surface FABs are deprecated by the expressive update — not shipped.
+     :not(:disabled)-guarded so the disabled colors below and Button's 38% content
+     dim apply without out-specifying this later-imported file. */
+  .root[data-color="primary-container"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
   }
 
-  .root[data-color="secondary-container"] {
+  .root[data-color="secondary-container"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
   }
 
-  .root[data-color="tertiary-container"] {
+  .root[data-color="tertiary-container"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-tertiary-container);
     color: var(--md-sys-color-on-tertiary-container);
   }
 
-  .root[data-color="primary"] {
+  .root[data-color="primary"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
   }
 
-  .root[data-color="secondary"] {
+  .root[data-color="secondary"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-secondary);
     color: var(--md-sys-color-on-secondary);
   }
 
-  .root[data-color="tertiary"] {
+  .root[data-color="tertiary"]:not(:disabled, [data-disabled]) {
     background: var(--md-sys-color-tertiary);
     color: var(--md-sys-color-on-tertiary);
   }
 
-  /* 48dp touch target (MD3): all sizes are ≥56px, kept for parity with siblings. */
-  .root::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: max(48px, 100%);
-    height: max(48px, 100%);
-  }
-
-  /* overflow clips the ripple here (not on .root, which would clip ::after). */
-  .stateLayer {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    overflow: hidden;
-  }
-
-  .stateLayer::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: currentColor;
-    opacity: 0;
-    /* Hover/focus tint timing per material-web ripple spec */
-    transition: opacity 15ms linear;
-  }
-
-  .root:hover .stateLayer::before {
-    opacity: var(--md-sys-state-hover-state-layer-opacity);
-  }
-
-  .root:focus-visible .stateLayer::before {
-    opacity: var(--md-sys-state-focus-state-layer-opacity);
-  }
-
-  .icon {
-    display: inline-flex;
-    font-size: var(--_icon-size);
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
-  }
-
-  .icon > * {
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .label {
-    white-space: nowrap;
+  /* MD3 universal 12% disabled container (Button's list is per-variant; FAB has
+     data-color instead). Repeats box-shadow: none because [data-lowered] above
+     would otherwise tie-beat Button's disabled rule. Content dim/cursor come
+     from Button. */
+  .root:is(:disabled, [data-disabled]) {
+    box-shadow: none;
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
   }
 }

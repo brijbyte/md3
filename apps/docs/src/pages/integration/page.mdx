@@ -23,8 +23,10 @@ and the token→utility mapping:
 /* MD3 tokens as Tailwind utilities (see below) */
 @import "@brijbyte/md3-react/tailwind-tokens.css";
 
-/* only the components you use — keeps the CSS payload minimal */
+/* only the components you use — keeps the CSS payload minimal. Order matters:
+   button.css must precede icon-button.css/fab.css/split-button.css, which build on it */
 @import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
 @import "@brijbyte/md3-react/checkbox.css";
 ```
 
@@ -71,12 +73,46 @@ Toggle the docs theme — every class in this card is a token utility, so it fol
 
 ## Overriding component styles
 
+### Utility overrides
+
 Utility classes win over component styles: the `utilities` layer is declared after
 `md3.components`, so no `!important` is needed.
 
-### Utility overrides
-
-Utility classes win over component styles: the `utilities` layer is declared after `md3.components`,
-so no `!important` is needed.
-
 <UtilityOverrides />
+
+### Targeting variants and states
+
+The public styling contract is stable class names (`md3-<component>-<part>`, e.g.
+`.md3-button-root`) plus `data-*` attributes: `data-variant` / `data-size` / `data-color`
+mirror the component props, and Base UI's state attributes (`data-pressed`,
+`data-checked`, `data-disabled`, `data-popup-open`, …) mirror interaction state. Variants
+are never encoded in class names, so one attribute selector re-skins a single variant
+app-wide. Unlayered app CSS always beats the `md3.components` layer — no `!important`
+or specificity hacks:
+
+```css
+/* every outlined button in the app */
+.md3-button-root[data-variant="outlined"] {
+  border-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-primary);
+}
+
+/* large FABs only */
+.md3-fab-root[data-size="large"] {
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+/* selected (pressed) toggle icon buttons */
+.md3-icon-button-root[data-pressed] {
+  color: var(--md-sys-color-tertiary);
+}
+```
+
+The same attributes work as Tailwind data-attribute variants for one-off overrides,
+composing with the token utilities above:
+
+```tsx
+<Button variant="tonal" toggle className="data-pressed:bg-tertiary data-pressed:text-on-tertiary">
+  Mute
+</Button>
+```

@@ -172,6 +172,11 @@
     block-size: var(--_icon-size);
   }
 
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
   .label {
     position: relative;
   }
@@ -246,8 +251,10 @@
     border-color: transparent;
   }
 
-  /* Disabled */
-  .root:disabled {
+  /* Disabled ([data-disabled] covers Base UI's non-native disabled). Family CSS
+     (icon-button/fab stack this class) guards its color rules with :not(:disabled)
+     so these win there without extra specificity. */
+  .root:is(:disabled, [data-disabled]) {
     cursor: default;
     pointer-events: none;
     box-shadow: none;
@@ -258,7 +265,13 @@
     );
   }
 
-  .root:disabled:not([data-variant="text"]):not([data-variant="outlined"]) {
+  /* Container dim is opt-in per variant so container-less family variants
+     (e.g. icon-button standard) don't pick it up. */
+  .root:is(:disabled, [data-disabled]):is(
+    [data-variant="filled"],
+    [data-variant="tonal"],
+    [data-variant="elevated"]
+  ) {
     background: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
@@ -267,12 +280,12 @@
   }
 
   /* Expressive: disabled outline stays outline-variant, undimmed. */
-  .root[data-variant="outlined"]:disabled {
+  .root[data-variant="outlined"]:is(:disabled, [data-disabled]) {
     border-color: var(--md-sys-color-outline-variant);
   }
 
   /* Selected outlined toggle keeps its borderless filled look when disabled. */
-  .root:where([data-toggle][data-pressed])[data-variant="outlined"]:disabled {
+  .root:where([data-toggle][data-pressed])[data-variant="outlined"]:is(:disabled, [data-disabled]) {
     border-color: transparent;
     background: color-mix(
       in srgb,

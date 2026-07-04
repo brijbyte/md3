@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
 import { Toggle } from "@base-ui/react/toggle";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./IconButton.module.css";
@@ -52,8 +53,9 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 
     const shared = {
       ref,
+      // Chrome comes from Button's class; styles.root holds icon-button overrides.
       // Cast: className's state param is a Button/Toggle union; each branch narrows it.
-      className: mergeClassName<any>(styles.root, className) as string,
+      className: mergeClassName<any>(`${buttonStyles.root} ${styles.root}`, className) as string,
       "data-variant": variant,
       "data-size": size,
       "data-width": width,
@@ -67,8 +69,8 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       }) as NonNullable<BaseButton.Props["onPointerDown"]>,
       children: (
         <>
-          <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
-          <span className={styles.icon}>{children}</span>
+          <span className={buttonStyles.stateLayer} ref={ripple.containerRef} aria-hidden />
+          <span className={buttonStyles.icon}>{children}</span>
         </>
       ),
     };
