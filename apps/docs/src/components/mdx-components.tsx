@@ -4,6 +4,7 @@ import InfoIcon from "@brijbyte/md3-icons/outlined/Info";
 import LightbulbIcon from "@brijbyte/md3-icons/outlined/Lightbulb";
 import ReportIcon from "@brijbyte/md3-icons/outlined/Report";
 import WarningIcon from "@brijbyte/md3-icons/outlined/Warning";
+import { HeadingAnchor } from "./HeadingAnchor";
 
 // MD3-styled replacements for markdown elements, passed to every MDX page
 // via its `components` prop (see mdxPage in Root.tsx). Server-safe.
@@ -42,13 +43,19 @@ function Callout({
   );
 }
 
+// Heading with a hover-revealed copy-link anchor (ids come from the hast plugin).
+function heading(Tag: "h2" | "h3", className: string) {
+  return ({ id, children, ...props }: Props<"h2">) => (
+    <Tag id={id} className={`group ${className}`} {...props}>
+      {children}
+      {id && <HeadingAnchor id={id} />}
+    </Tag>
+  );
+}
+
 export const MDX_COMPONENTS: Record<string, React.ElementType> = {
-  h2: (props: Props<"h2">) => (
-    <h2 className="mt-10 mb-3 scroll-mt-6 font-brand text-headline-small" {...props} />
-  ),
-  h3: (props: Props<"h3">) => (
-    <h3 className="mt-8 mb-2 scroll-mt-6 font-brand text-title-large" {...props} />
-  ),
+  h2: heading("h2", "mt-10 mb-3 scroll-mt-6 font-brand text-headline-small"),
+  h3: heading("h3", "mt-8 mb-2 scroll-mt-6 font-brand text-title-large"),
   p: (props: Props<"p">) => <p className="my-4" {...props} />,
   a: (props: Props<"a">) => <a className="text-primary underline" {...props} />,
   ul: (props: Props<"ul">) => <ul className="my-4 list-disc space-y-1 pl-6" {...props} />,
