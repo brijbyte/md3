@@ -9,6 +9,9 @@
 
   .list {
     position: relative;
+    /* Contain the indicator's z-index: 1 — without a stacking context here it
+       would join the root context and paint over portalled popups (menus). */
+    isolation: isolate;
     display: flex;
     align-items: flex-end;
     overflow-x: auto;
