@@ -106,14 +106,15 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   the RSC payload inlined in the HTML. All icons come from `@brijbyte/md3-icons` — never
   hand-write SVGs in docs. Styled entirely with Tailwind v4 (`@tailwindcss/vite`); doubles
   as the Tailwind-integration testbed. Layer order
-  (`@layer theme, base, md3.tokens, md3.components, components, utilities;`) is pinned by
+  (`@layer theme, base, components, utilities;` — the stock Tailwind order; the library
+  shares Tailwind's layer names) is pinned by
   a hoistable `<style href precedence>` rendered in `entry.rsc.tsx`'s `App` wrapper before
   `<Root>` — plugin-rsc emits per-client-reference stylesheets whose head order varies per
   page (React streams precedence groups in first-encounter order), and rendering the pin
   first makes its precedence group sort above every stylesheet link, so it's parsed before
   any `@layer` block regardless of link order (app.css's first line repeats the pin);
-  that slots md3 between preflight (can't break components) and utilities (can override
-  them). `app.css` also `@import`s `@brijbyte/md3-react/styles.css`. MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in
+  that keeps md3 styles between preflight (can't break components) and utilities (can
+  override them). `app.css` also `@import`s `@brijbyte/md3-react/styles.css`. MD3 tokens come from the library's generated `tailwind-tokens.css` (imported in
   `app.css`). The library-source aliases live twice: tsconfig `paths` (for TS importers +
   editor) and mirrored `resolve.alias` regexes in vite.config — tsconfigPaths does not
   apply to imports from `.mdx`/`.css` files, which would otherwise silently bundle a second
@@ -130,8 +131,10 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - **Styling**: CSS Modules, precompiled at library build time so consumers get plain CSS with
   zero build-tool coupling. `generateScopedName: 'md3-[folder]-[local]'` produces stable,
   readable class names (`.md3-button-root`) — these are public API, don't rename casually.
-- **Cascade layers**: all library CSS lives in `@layer md3.tokens` / `@layer md3.components`
-  so unlayered consumer CSS always wins overrides.
+- **Cascade layers**: all library CSS lives in `@layer theme` (tokens) / `@layer components`
+  (component styles) — deliberately Tailwind v4's own layer names, even for non-Tailwind
+  consumers — so unlayered consumer CSS always wins overrides and Tailwind's standard
+  `@layer theme, base, components, utilities;` pin needs no extra layers.
 - **Public styling contract**: CSS custom properties (tokens) + `data-*` attributes
   (`data-variant`, Base UI state attrs). Never encode variants into class names.
 - **Theming**: static token sets. Light is `:root` default; dark via `[data-theme="dark"]`

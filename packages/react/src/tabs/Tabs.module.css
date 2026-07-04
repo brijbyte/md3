@@ -1,7 +1,7 @@
 /* Spec: tokens/component-specs.json → primary-navigation-tab / secondary-navigation-tab.
    Container 48 (64 primary stacked icon+label), label title-small, icon 24; padding
    0 16 and content gaps 8 (row) / 2 (stacked) from material-web tabs/internal. */
-@layer md3.components {
+@layer components {
   .root {
     display: flex;
     flex-direction: column;

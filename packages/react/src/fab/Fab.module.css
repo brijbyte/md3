@@ -7,7 +7,7 @@
    spec: FABs keep one radius. Same @layer and equal specificity as button.css, so
    import order matters: button.css MUST be imported before fab.css (documented in
    README + docs; the aggregate index.css orders them correctly). */
-@layer md3.components {
+@layer components {
   /* Size defaults = baseline FAB (56dp); medium/large override below. */
   .root {
     --_container-size: 56px;

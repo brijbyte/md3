@@ -36,16 +36,17 @@ import "@brijbyte/md3-react/icon-button.css"; // builds on button.css
 
 ## Tailwind CSS
 
-All library CSS lives in the `md3.tokens` / `md3.components` cascade layers, so
-Tailwind v4 integrates cleanly — pin the layer order once, before any stylesheet
-loads (its own file, not processed by Tailwind):
+All library CSS lives in Tailwind v4's own cascade layers — tokens in `theme`,
+component styles in `components` — so Tailwind integrates cleanly. Pin the
+standard Tailwind layer order once, before any stylesheet loads (its own file,
+not processed by Tailwind):
 
 ```css
 /* layers.css — must be the first stylesheet the app loads */
-@layer theme, base, md3.tokens, md3.components, components, utilities;
+@layer theme, base, components, utilities;
 ```
 
-This slots the components between Tailwind's `base` (preflight can't break
+This keeps the components between Tailwind's `base` (preflight can't break
 them) and `utilities` (utility classes override component styles without
 `!important`):
 
@@ -91,5 +92,5 @@ Dark mode: set `data-theme="dark"` on `<html>` (falls back to
 
 Customization: override CSS custom properties (`--md-sys-color-primary`, …) or
 target the stable class names (`.md3-button-root`) and data attributes
-(`[data-variant]`, `[data-checked]`). All library CSS lives in `@layer md3`,
-so unlayered app CSS wins without specificity hacks.
+(`[data-variant]`, `[data-checked]`). All library CSS lives in the `theme` /
+`components` layers, so unlayered app CSS wins without specificity hacks.

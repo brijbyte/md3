@@ -2,7 +2,7 @@
    Container 18x18 radius 2, icon 18, state layer 40 round.
    Note the pressed state-layer color flip: unselected pressed → primary,
    selected pressed → on-surface. */
-@layer md3.components {
+@layer components {
   .root {
     position: relative;
     display: inline-flex;

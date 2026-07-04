@@ -1,6 +1,6 @@
 /* Spec values from MDC Android button_group_tokens.xml + expressive state lists
    (material-components-android); material-web has no button-group tokens. */
-@layer md3.components {
+@layer components {
   .root {
     display: inline-flex;
     align-items: center;

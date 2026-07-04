@@ -4,7 +4,7 @@
    with Button's .root + data-variant/data-size, so this file holds only split
    geometry. Overrides are scoped under .root to out-specify button.css whatever
    order the two stylesheets are imported in (same @layer). */
-@layer md3.components {
+@layer components {
   /* Size defaults = small; overridden per data-size below. Vars inherit into the halves. */
   .root {
     --_leading-pad-start: 16px;

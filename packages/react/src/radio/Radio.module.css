@@ -1,7 +1,7 @@
 /* Spec: tokens/component-specs.json → radio-button.
    Icon 20x20 (2px ring), inner dot 10, state layer 40 round.
    Pressed state-layer colors flip like checkbox. */
-@layer md3.components {
+@layer components {
   .root {
     position: relative;
     display: inline-flex;

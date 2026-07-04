@@ -1,4 +1,4 @@
-@layer md3.components {
+@layer components {
   /* Size defaults = small (md.comp.button.small); overridden per data-size below. */
   .root {
     --_container-height: 40px;

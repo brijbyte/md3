@@ -11,7 +11,7 @@ const RSC_EXT = ".rsc";
 // in per-page-varying order, and the pin only holds if it's parsed before any
 // @layer block. As a hoistable <style> rendered before <Root>, its precedence
 // group is encountered first, so React places it above every stylesheet link.
-const LAYER_PIN = "@layer theme, base, md3.tokens, md3.components, components, utilities;";
+const LAYER_PIN = "@layer theme, base, components, utilities;";
 
 function App({ url }: { url: URL }) {
   return (

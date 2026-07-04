@@ -12,7 +12,7 @@ order on the first line, then import the shared layers, the components you actua
 and the token→utility mapping:
 
 ```css
-@layer theme, base, md3.tokens, md3.components, components, utilities;
+@layer theme, base, components, utilities;
 
 @import "tailwindcss";
 
@@ -30,9 +30,10 @@ and the token→utility mapping:
 @import "@brijbyte/md3-react/checkbox.css";
 ```
 
-The pin slots the library's layers (`md3.tokens`, `md3.components`) between Tailwind's
-`base` and `utilities`, so preflight can't break the components and any utility class
-outranks component styles — this page runs on exactly that setup.
+The library uses Tailwind's own layer names — tokens in `theme`, component styles in
+`components` — so the standard Tailwind pin is all you need: preflight can't break the
+components and any utility class outranks component styles. This page runs on exactly
+that setup.
 
 ### Tokens as Tailwind utilities
 
@@ -76,7 +77,7 @@ Toggle the docs theme — every class in this card is a token utility, so it fol
 ### Utility overrides
 
 Utility classes win over component styles: the `utilities` layer is declared after
-`md3.components`, so no `!important` is needed.
+`components`, so no `!important` is needed.
 
 <UtilityOverrides />
 
@@ -87,7 +88,7 @@ The public styling contract is stable class names (`md3-<component>-<part>`, e.g
 mirror the component props, and Base UI's state attributes (`data-pressed`,
 `data-checked`, `data-disabled`, `data-popup-open`, …) mirror interaction state. Variants
 are never encoded in class names, so one attribute selector re-skins a single variant
-app-wide. Unlayered app CSS always beats the `md3.components` layer — no `!important`
+app-wide. Unlayered app CSS always beats the `components` layer — no `!important`
 or specificity hacks:
 
 ```css

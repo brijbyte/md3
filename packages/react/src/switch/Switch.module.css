@@ -1,7 +1,7 @@
 /* Spec: tokens/component-specs.json → switch.
    Track 52x32 corner-full, outline 2 when unselected.
    Handle: 16 unselected / 24 selected / 28 pressed, state layer 40 on handle. */
-@layer md3.components {
+@layer components {
   .root {
     position: relative;
     display: inline-flex;

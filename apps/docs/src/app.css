@@ -1,4 +1,4 @@
-@layer theme, base, md3.tokens, md3.components, components, utilities;
+@layer theme, base, components, utilities;
 @import "tailwindcss";
 
 /* MD3 system tokens as Tailwind theme values (bg-surface, text-title-large, …),
@@ -102,7 +102,7 @@ html[data-navigating] body::after {
   size-adjust: 100.1106%;
 }
 
-/* Unlayered, so it wins over the md3.tokens defaults ("Roboto", system-ui). */
+/* Unlayered, so it wins over the theme-layer defaults ("Roboto", system-ui). */
 :root {
   --md-ref-typeface-brand: "Roboto", "Roboto Fallback", system-ui, sans-serif;
   --md-ref-typeface-plain: "Roboto", "Roboto Fallback", system-ui, sans-serif;

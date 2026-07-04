@@ -5,7 +5,7 @@ import { Fab } from "@brijbyte/md3-react/fab";
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
 
 // Utilities come from the consuming app's Tailwind build (hence the tailwindcss
-// dep); being unlayered they win over the md3.components layer — no !important.
+// dep); being unlayered they win over the components layer — no !important.
 export default function UtilityOverridesDemo() {
   return (
     <div className="demo-utility-overrides">

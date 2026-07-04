@@ -1,7 +1,7 @@
 /* Spec: tokens/component-specs.json → badge.
    Dot 6px / large 16px min-width with 4px label padding, corner-full, error
    colors, label-small (material-web labs/badge/internal/_badge.scss). */
-@layer md3.components {
+@layer components {
   .root {
     display: inline-flex;
     align-items: center;

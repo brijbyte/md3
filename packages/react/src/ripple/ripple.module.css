@@ -1,7 +1,7 @@
 /* Spec: material-web ripple/internal/_ripple.scss.
    Soft-edged press indicator; grow is animated from JS (useRipple),
    fade in 105ms / out 375ms linear via [data-pressed]. */
-@layer md3.components {
+@layer components {
   .root {
     position: absolute;
     top: 0;

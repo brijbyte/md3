@@ -7,7 +7,7 @@
    no-elevation rule. Same @layer and equal specificity as button.css, so import order
    matters: button.css MUST be imported before icon-button.css (documented in README +
    docs; the aggregate index.css orders them correctly). */
-@layer md3.components {
+@layer components {
   /* Size defaults = small (40dp); overridden per data-size below. */
   .root {
     --_icon-size: 24px;
