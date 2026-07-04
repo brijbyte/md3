@@ -12,7 +12,6 @@ import { type BundledLanguage, codeToHast, codeToHtml } from "shiki";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import satteri from "vite-plugin-satteri";
 
-// Library aliases live in tsconfig.json "paths" (single source of truth).
 export default defineConfig({
   plugins: [
     mdxPlugin(),
@@ -77,7 +76,9 @@ function mdxPlugin(): Plugin {
   return {
     ...base,
     transform(code, id) {
-      if (id.startsWith("\0") || id.includes("virtual:")) return null;
+      if (id.startsWith("\0") || id.includes("virtual:")) {
+        return null;
+      }
       return transform.call(this, code, id);
     },
   };

@@ -13,9 +13,10 @@ export function CodeCollapse({ children }: { children: React.ReactNode }) {
     return (
       <>
         {children}
-        <div className="mt-2 flex justify-center">
+        <div className="my-1 flex justify-center sticky bottom-1">
           <Button
-            variant="text"
+            variant="tonal"
+            size="xsmall"
             onClick={() => {
               setExpanded(false);
               // Long code puts the viewport far below the demo — bring it back.
@@ -34,9 +35,10 @@ export function CodeCollapse({ children }: { children: React.ReactNode }) {
     <div ref={collapsedRef} className="relative max-h-40 overflow-hidden rounded-b-large">
       {children}
       {/* pointer-events-none keeps the copy button clickable under the fade */}
-      <div className="pointer-events-none absolute inset-0 flex items-end justify-center bg-linear-to-b from-transparent to-surface-container">
+      <div className="pointer-events-none mb-2 absolute inset-0 flex items-end justify-center bg-linear-to-b from-transparent to-surface-container">
         <Button
-          variant="elevated"
+          variant="outlined"
+          size="xsmall"
           className="pointer-events-auto"
           onClick={() => setExpanded(true)}
         >

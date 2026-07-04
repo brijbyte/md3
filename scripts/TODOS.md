@@ -1,0 +1,1 @@
+- [] Work on the animation timing of morph expansion of toggle buttons. The morph animation starts after ripple animation leading to a visual delay.
