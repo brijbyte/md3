@@ -1,0 +1,179 @@
+@layer components {
+  .positioner {
+    outline: none;
+    /* Portalled to body-end, so DOM order beats z-auto content; the z-index
+       guards against consumer chrome with positive z (sticky headers etc.). */
+    z-index: var(--md3-popup-z-index, 20);
+  }
+
+  /* Container per md.comp.menu: surface-container, corner-extra-small, level2.
+     Metrics (112/280 width, 8px block padding) from the m3.material.io spec page. */
+  .popup {
+    box-sizing: border-box;
+    min-width: 112px;
+    max-width: 280px;
+    max-height: var(--available-height);
+    overflow-y: auto;
+    padding-block: 8px;
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level2);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    /* Enter: expressive scale-in + quick fade (Compose-style; material-web's
+       staggered height expand needs JS animation and was deliberately skipped). */
+    transition:
+      transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short1) linear;
+  }
+
+  .popup[data-starting-style] {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  /* Exit: 150ms fade, emphasized-accelerate (material-web close timing). */
+  .popup[data-ending-style] {
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short3)
+      var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+
+  /* Keyboard activation / dismissal / menubar sibling switches skip motion. */
+  .popup[data-instant] {
+    transition: none;
+  }
+
+  /* 48px row, 12px inline padding/gaps, label-large — spec-page metrics over
+     material-web's 56px list-item reuse (2-of-3 with Compose + published spec). */
+  .item {
+    --_icon-color: var(--md-sys-color-on-surface-variant);
+
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding-inline: 12px;
+    color: var(--md-sys-color-on-surface);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  /* State layer + ripple host. */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  /* data-highlighted covers pointer hover and keyboard highlight alike;
+     an open submenu keeps its trigger row tinted via data-popup-open. */
+  .item:is([data-highlighted], [data-popup-open]) .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  /* Spec: 3px secondary focus indicator, inset (offset −3) inside the row. */
+  .item:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -3px;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    inline-size: 24px;
+    block-size: 24px;
+    font-size: 24px;
+    color: var(--_icon-color);
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .label {
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trailing {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-inline-start: auto;
+  }
+
+  .trailingText {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Selected (radio/checkbox items): highlight only, no checkmark, per spec. */
+  .item[data-checked] {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    --_icon-color: currentColor;
+  }
+
+  .item[data-checked] .trailingText {
+    color: inherit;
+  }
+
+  /* Disabled: 38% on-surface label and icons. Last so it beats data-checked. */
+  .item[data-disabled] {
+    cursor: default;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    --_icon-color: currentColor;
+  }
+
+  .item[data-disabled] .trailingText {
+    color: inherit;
+  }
+
+  .groupLabel {
+    padding-block: 8px;
+    padding-inline: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  }
+
+  /* Divider: 1px outline-variant, 8px block spacing (material-web menu margin). */
+  .separator {
+    height: 1px;
+    margin-block: 8px;
+    background: var(--md-sys-color-outline-variant);
+  }
+}

@@ -118,6 +118,7 @@ export default defineConfig({
         "badge/index": "src/badge/index.ts",
         "card/index": "src/card/index.ts",
         "chip/index": "src/chip/index.ts",
+        "menu/index": "src/menu/index.ts",
         "typography/index": "src/typography/index.ts",
       },
       formats: ["es"],

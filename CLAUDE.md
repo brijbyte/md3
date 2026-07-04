@@ -205,7 +205,8 @@ Patterns:
 
 Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup , Checkbox,
 Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
-FilterChip / InputChip / SuggestionChip), `@brijbyte/md3-icons`.
+FilterChip / InputChip / SuggestionChip), Menu (Base UI Menu family incl. submenus,
+radio/checkbox items, groups), `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
@@ -215,8 +216,14 @@ tokens.json as a CSS `linear()` curve, pair with `duration-medium3`); `TabPanel`
 unstyled a11y wiring (MD3 specs only the tab bar); Badge leaves "999+" clamping to
 consumers; all four chip types share `chip/Chip.module.css` (InputChip's root is a
 non-interactive div — primary action and remove are separate buttons, driven via `:has()`);
-trailing icons on FilterChip and a ChipSet wrapper are deliberately out of v1 scope.
+trailing icons on FilterChip and a ChipSet wrapper are deliberately out of v1 scope;
+Menu deliberately uses the m3.material.io spec-page item metrics (48px rows, 12px inline
+padding/gaps, label-large) over material-web's 56px/16px/body-large list-item reuse
+(Compose + published spec agree), selection = secondary-container highlight with NO
+checkmark, and enter/exit is a CSS scale+fade — material-web's staggered height expand
+(JS-driven) was deliberately skipped.
 
-Next candidates: TextField, Menu/Select (then a
-real SplitButton menu demo), dynamic color theming, rem-based type scaling (see Units
+Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
+build after TextField; Base UI Select's `alignItemWithTrigger` must be false), a real
+SplitButton menu demo, dynamic color theming, rem-based type scaling (see Units
 decision), npm publish setup (finalize package name), docs site content + deploy.

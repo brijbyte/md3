@@ -6,6 +6,7 @@ import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
+import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
@@ -102,6 +103,13 @@ export const SECTIONS: NavSection[] = [
         title: "Checkbox",
         description: "Checkboxes let users select one or more items, or toggle an item.",
         icon: CheckBoxIcon,
+      },
+      {
+        path: "/components/menu",
+        label: "Menu",
+        title: "Menu",
+        description: "Menus display a list of choices on a temporary surface.",
+        icon: MenuIcon,
       },
       {
         path: "/components/radio",

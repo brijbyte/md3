@@ -50,6 +50,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/card": mdxRoute(() => import("./pages/card/page.mdx")),
   "/components/chips": mdxRoute(() => import("./pages/chips/page.mdx")),
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
+  "/components/menu": mdxRoute(() => import("./pages/menu/page.mdx")),
   "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),

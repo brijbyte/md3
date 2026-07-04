@@ -1,0 +1,87 @@
+---
+title: Menu
+---
+
+import BasicMenu from "./demo/basic.tsx";
+import ContextMenuDemo from "./demo/context-menu.tsx";
+import EditorMenu from "./demo/editor.tsx";
+import MenuIcons from "./demo/icons.tsx";
+import MenuSelection from "./demo/selection.tsx";
+import ScrollableMenu from "./demo/scrollable.tsx";
+import Submenu from "./demo/submenu.tsx";
+
+```tsx
+import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@brijbyte/md3-react/menu";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/menu.css";
+```
+
+Menus display a list of choices on a temporary surface, opened from a button, icon
+button, or any other control. Built on
+[Base UI Menu](https://base-ui.com/react/components/menu): `Menu` holds the open state,
+`MenuTrigger` usually `render`s an existing control, and `MenuContent` is the
+portalled surface — positioned below the anchor's start edge by default and
+repositioned automatically when it would be clipped (`side` / `align` to override).
+
+## Basic menu
+
+Items activate via `onClick` and close the menu; a `disabled` item stays visible but
+inert, per the spec's "disable, don't remove" guidance.
+
+<BasicMenu />
+
+## Icons and shortcuts
+
+Items take a 24dp `leadingIcon`, a `trailingIcon`, and `trailingText` for hints like
+keyboard shortcuts. Use `MenuSeparator` to divide groups — on web, MD3 recommends
+dividers over the expressive gap treatment.
+
+<MenuIcons />
+
+## Selection
+
+`MenuRadioGroup` with `MenuRadioItem` handles single-select, `MenuCheckboxItem`
+toggles independently — both stay open on activation and mark selection by filling
+the row with `secondary-container` (the spec uses the highlight alone, no checkmark).
+Control them with `value` / `onValueChange` and `checked` / `onCheckedChange`, or use
+the `default*` props as here.
+
+<MenuSelection />
+
+## Submenus and groups
+
+`MenuSubmenu` nests a `MenuSubmenuTrigger` (it gets a cascading arrow indicator
+automatically) and its own `MenuContent`, opened on hover or with the arrow keys.
+`MenuGroup` labels a section via the `label` prop.
+
+<Submenu />
+
+## A complex menu
+
+Everything composes: this text-editor formatting menu (after the
+[MD3 menu guidelines](https://m3.material.io/components/menus/guidelines)) mixes plain
+items, three cascading submenus — two carrying their own radio selection — keyboard
+shortcut hints, and dividers between logical groups.
+
+<EditorMenu />
+
+## Context menu
+
+`ContextMenu` + `ContextMenuTrigger` open the same menu surface from a secondary
+click (or long press on touch), positioned at the pointer. All the item components
+work unchanged inside it.
+
+<ContextMenuDemo />
+
+## Scrolling
+
+Long menus scroll within `max-height` — by default the popup caps itself to the
+available viewport space (`var(--available-height)`); this demo caps it lower via
+`className`. Per the guidelines, use dividers rather than gaps/groups in scrollable
+menus.
+
+<ScrollableMenu />

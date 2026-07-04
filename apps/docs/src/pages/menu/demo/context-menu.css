@@ -1,0 +1,23 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/menu.css";
+
+.demo-menu-context {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-menu-context-area {
+  display: grid;
+  place-items: center;
+  inline-size: min(320px, 100%);
+  block-size: 160px;
+  border: 1px dashed var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-medium);
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  user-select: none;
+}
