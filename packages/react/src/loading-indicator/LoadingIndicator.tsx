@@ -66,6 +66,16 @@ export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicat
     const determinate = progress != null;
     const clampedProgress = determinate ? Math.min(1, Math.max(0, progress)) : undefined;
 
+    // Renders synchronously (SSR-safe, no effect needed) so the indicator
+    // never flashes an empty path for the frame or two before the first
+    // rAF tick below takes over — matters most right after mount/hydration,
+    // when a network-throttled chunk load can stretch that gap noticeably.
+    const initialD =
+      clampedProgress != null
+        ? morphPathD(DETERMINATE_MORPH, clampedProgress === 1 ? 1 : clampedProgress % 1)
+        : morphPathD(INDETERMINATE_MORPHS[0], 0);
+    const initialRotation = clampedProgress != null ? -clampedProgress * 180 : 0;
+
     React.useEffect(() => {
       const path = pathRef.current;
       const group = groupRef.current;
@@ -125,8 +135,12 @@ export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicat
         {...rest}
       >
         <svg className={styles.svg} viewBox="0 0 100 100" aria-hidden="true">
-          <g ref={groupRef} className={styles.rotator}>
-            <path ref={pathRef} className={styles.path} />
+          <g
+            ref={groupRef}
+            className={styles.rotator}
+            style={{ transform: `rotate(${initialRotation}deg)` }}
+          >
+            <path ref={pathRef} className={styles.path} d={initialD} />
           </g>
         </svg>
       </span>

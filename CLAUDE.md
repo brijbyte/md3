@@ -233,13 +233,13 @@ a `--md3-slider-*` custom-property cascade set on `.root[data-size=...]` (inheri
 to track/thumb, no JS needed). `icon` (inset icon) only renders at `m`/`l`/`xl` — `xs`/`s`
 aren't tall enough per spec. The track fill is up to three independently-shaped
 `trackSegment` spans (before-tail / active / after-tail), not a single background with a
-notch cut into it — a thumb sitting in a gap needs a real rounded corner on *both* flanking
+notch cut into it — a thumb sitting in a gap needs a real rounded corner on _both_ flanking
 segments (per m3.material.io's slider spec imagery), which a flat cut can't produce. Each
 segment's corners are set inline per-boundary (`segmentStyle`): a boundary against another
 segment always rounds, at a smaller fixed-per-size `--md3-slider-gap-radius` (one shape
 step down from the track's own radius — e.g. `l`'s gap corner uses `corner-medium` while
 its track uses `corner-large`); a boundary at the track's true 0%/100% edge uses the full
-`--md3-slider-track-radius`, *unless* a thumb rests exactly there, in which case that
+`--md3-slider-track-radius`, _unless_ a thumb rests exactly there, in which case that
 corner squares off entirely (`trackFlatStart`/`trackFlatEnd` on `.track`) — a rounded
 corner must never visibly poke out past the 4px-wide thumb capping it. All of this is
 computed once per render from a single `Slider.Value` wrapping `Slider.Track` (not nested
@@ -262,7 +262,7 @@ ref move; a fresh virtual-element object each frame forces Floating UI to recomp
 `.thumb:focus-visible` CSS never matches, since the actually-focusable element is the
 visually-hidden native `<input>` Base UI nests inside the thumb div, not the div itself —
 use `.thumb:has(:focus-visible)` (same pattern as Tabs/Chip elsewhere in this repo).
-Base UI's own `data-dragging` is root-level (true while *any* thumb in a range slider
+Base UI's own `data-dragging` is root-level (true while _any_ thumb in a range slider
 drags), so a `data-pressed` attribute mirrors each thumb's own `pressed` state instead for
 the per-thumb pressed state layer. Demo containers must set an explicit `width` (e.g.
 `480px; max-width: 100%`), matching the Tabs demos' convention — the shared `Demo` wrapper
@@ -282,12 +282,12 @@ plugin) runs that port once and bakes the result into gitignored
 component itself only does a per-frame `lerp` between the two cubics plus a live CSS
 rotation — no geometry at runtime. `Morph`'s cut-and-shift step has one easy-to-miss edge
 case: the redistributed cubic that closes the loop back to the cut point must have its
-outline-progress *forced* to exactly `1`, not derived via `positiveModulo`, or it wraps to
+outline-progress _forced_ to exactly `1`, not derived via `positiveModulo`, or it wraps to
 ~0 and gets dropped by the zero-length-span filter, leaving a visible gap in the morphed
 path (caught by asserting every precomputed morph closes with zero gap at both t=0 and
 t=1). The indeterminate step easing samples Compose's actual
-`spring(dampingRatio=0.6, stiffness=200)` step-response formula over *real elapsed
-milliseconds* (not a normalized 0-1 progress) — for this damping/stiffness pair the spring
+`spring(dampingRatio=0.6, stiffness=200)` step-response formula over _real elapsed
+milliseconds_ (not a normalized 0-1 progress) — for this damping/stiffness pair the spring
 settles well under the fixed 650ms step interval, so this reproduces the same
 morph/overshoot/brief-hold cadence as the real Compose component without needing a full
 physics simulation loop. Snackbar is built on Base UI's `Toast` primitive
@@ -304,9 +304,9 @@ still hugs short content but forces `.text` to wrap once the unwrapped width wou
 the cap. `SnackbarProvider` renders `Toast.Provider` with `limit={1}` (MD3 only ever
 shows one snackbar — a new one replaces the current one, they never stack), which is why
 the CSS skips Base UI's whole `--toast-index`/peek/scale stacking transform story
-entirely — but `limit` only *marks* excess toasts `data-limited` rather than removing
+entirely — but `limit` only _marks_ excess toasts `data-limited` rather than removing
 them, so during a replacement there are briefly two `.root`s mounted at once (outgoing +
-incoming). Every `.root` is therefore `position: absolute`, anchored to the *same* spot
+incoming). Every `.root` is therefore `position: absolute`, anchored to the _same_ spot
 (bottom-leading-edge) via `inset-block-end`/`inset-inline-start` — not laid out as flex
 siblings of `.viewport` — so `[data-limited]` only needs `opacity: 0` to crossfade out in
 place; giving the outgoing toast its own different anchor (e.g. the trailing edge)
@@ -336,8 +336,8 @@ overlay on the button itself. Any demo that calls `useSnackbar()`/renders
 `Snackbar.tsx` itself is already marked client.
 
 Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
-build after TextField; Base UI Select's `alignItemWithTrigger` must be false), a real
-SplitButton menu demo, dynamic color theming, rem-based type scaling (see Units
-decision), npm publish setup (finalize package name), docs site content + deploy. Progress
-indicators (the classic linear/circular determinate bars, distinct from LoadingIndicator's
-shape-morph) are still unbuilt.
+build after TextField; Base UI Select's `alignItemWithTrigger` must be false), dynamic
+color theming, rem-based type scaling (see Units decision), npm publish setup (finalize
+package name), docs site content + deploy. Progress indicators (the classic
+linear/circular determinate bars, distinct from LoadingIndicator's shape-morph) are still
+unbuilt.
