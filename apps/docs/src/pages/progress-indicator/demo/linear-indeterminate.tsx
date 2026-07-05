@@ -6,6 +6,7 @@ export default function LinearProgressIndeterminateDemo() {
   return (
     <div className="demo-progress-indicator-linear">
       <LinearProgress aria-label="Loading" />
+      <LinearProgress aria-label="Loading" wavy />
     </div>
   );
 }

@@ -218,7 +218,7 @@ Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup 
 Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
 FilterChip / InputChip / SuggestionChip), Menu (Base UI Menu family incl. submenus,
 radio/checkbox items, groups), Slider (continuous/discrete/centered/range),
-LoadingIndicator (determinate/indeterminate, contained), Snackbar, LinearProgress /
+LoadingIndicator (indeterminate only, contained), Snackbar, LinearProgress /
 CircularProgress (determinate/indeterminate), `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
@@ -241,82 +241,73 @@ size) come straight off the m3.material.io/components/sliders/specs measurements
 classic spec. Handle width is 4px at rest at every size, narrowing to 2px (half, per Compose
 `SliderTokens.kt`'s `PressedHandleWidth` and MDC's `THUMB_WIDTH_PRESSED_RATIO`) while
 `data-pressed`; only height scales with size, driven by
-a `--md3-slider-*` custom-property cascade set on `.root[data-size=...]` (inherited down
-to track/thumb, no JS needed). `icon` (inset icon) only renders at `m`/`l`/`xl` — `xs`/`s`
-aren't tall enough per spec. The track fill is up to three independently-shaped
-`trackSegment` spans (before-tail / active / after-tail), not a single background with a
+a `--md3-slider-*`custom-property cascade set on`.root[data-size=...]`(inherited down
+to track/thumb, no JS needed).`icon`(inset icon) only renders at`m`/`l`/`xl`—`xs`/`s`aren't tall enough per spec. The track fill is up to three independently-shaped`trackSegment` spans (before-tail / active / after-tail), not a single background with a
 notch cut into it — a thumb sitting in a gap needs a real rounded corner on \_both* flanking
 segments (per m3.material.io's slider spec imagery), which a flat cut can't produce. Each
 segment's corners are set inline per-boundary (`segmentStyle`): a boundary against another
-segment always rounds, at a smaller fixed-per-size `--md3-slider-gap-radius` (one shape
-step down from the track's own radius — e.g. `l`'s gap corner uses `corner-medium` while
-its track uses `corner-large`); a boundary at the track's true 0%/100% edge uses the full
+segment always rounds, at a smaller fixed-per-size `--md3-slider-gap-radius`(one shape
+step down from the track's own radius — e.g.`l`'s gap corner uses `corner-medium`while
+its track uses`corner-large`); a boundary at the track's true 0%/100% edge uses the full
 `--md3-slider-track-radius`, _unless_ a thumb rests exactly there, in which case that
-corner squares off entirely (`trackFlatStart`/`trackFlatEnd` on `.track`) — a rounded
+corner squares off entirely (`trackFlatStart`/`trackFlatEnd`on`.track`) — a rounded
 corner must never visibly poke out past the 4px-wide thumb capping it. All of this is
-computed once per render from a single `Slider.Value` wrapping `Slider.Track` (not nested
-per-feature `Slider.Value`s), since ticks' active/inactive coloring needs the same
-active-start/active-end percents. `.track` itself has no fill color — it's `transparent`,
+computed once per render from a single `Slider.Value`wrapping`Slider.Track`(not nested
+per-feature`Slider.Value`s), since ticks' active/inactive coloring needs the same
+active-start/active-end percents. `.track`itself has no fill color — it's`transparent`,
 so the small gaps between segments read as a cut-through to whatever's behind the slider,
 not a second "inactive" layer; painting a matching-but-distinct surface color there
 produces a visible seam in dark mode instead. The value bubble is a Base UI `Tooltip`
-(`Root`/`Portal`/`Positioner`/`Popup`, no `Trigger` — anchored via a plain ref instead so
-hover never opens it) so it needs no layout space reserved in `.root`; it's open whenever
-the thumb is `focused` (keyboard tab, held for the whole focus duration, closing on blur)
-OR `pressed` (pointerdown until a window-level pointerup/pointercancel) — two separate
-booleans, not one, since `pressed` also drives the visual press state (narrow handle,
-state layer via `data-pressed`) and must reflect only an actual pointer drag, never mere
-keyboard focus. The anchor passed to `Tooltip.Positioner`
-is a virtual element re-measured every `requestAnimationFrame` while open, not the thumb
-ref directly — the thumb moves via inline `insetInlineStart`, which triggers neither
-ResizeObserver nor IntersectionObserver, so Base UI's `autoUpdate` never notices a plain
-ref move; a fresh virtual-element object each frame forces Floating UI to recompute. The
-`.thumb:focus-visible` CSS never matches, since the actually-focusable element is the
-visually-hidden native `<input>` Base UI nests inside the thumb div, not the div itself —
-use `.thumb:has(:focus-visible)` (same pattern as Tabs/Chip elsewhere in this repo).
-Base UI's own `data-dragging` is root-level (true while _any_ thumb in a range slider
-drags), so a `data-pressed` attribute mirrors each thumb's own `pressed` state instead for
-the per-thumb pressed state layer. Demo containers must set an explicit `width` (e.g.
-`480px; max-width: 100%`), matching the Tabs demos' convention — the shared `Demo` wrapper
-is deliberately `w-fit`, so a percentage width on the demo's own root contributes nothing
+(`Root`/`Portal`/`Positioner`/`Popup`, no `Trigger`— anchored via a plain ref instead so
+hover never opens it) so it needs no layout space reserved in`.root`; it's open whenever
+the thumb is `focused`(keyboard tab, held for the whole focus duration, closing on blur)
+OR`pressed`(pointerdown until a window-level pointerup/pointercancel) — two separate
+booleans, not one, since`pressed`also drives the visual press state (narrow handle,
+state layer via`data-pressed`) and must reflect only an actual pointer drag, never mere
+keyboard focus. The anchor passed to `Tooltip.Positioner`is a virtual element re-measured every`requestAnimationFrame`while open, not the thumb
+ref directly — the thumb moves via inline`insetInlineStart`, which triggers neither
+ResizeObserver nor IntersectionObserver, so Base UI's `autoUpdate`never notices a plain
+ref move; a fresh virtual-element object each frame forces Floating UI to recompute. The`.thumb:focus-visible`CSS never matches, since the actually-focusable element is the
+visually-hidden native`<input>`Base UI nests inside the thumb div, not the div itself —
+use`.thumb:has(:focus-visible)`(same pattern as Tabs/Chip elsewhere in this repo).
+Base UI's own`data-dragging`is root-level (true while _any_ thumb in a range slider
+drags), so a`data-pressed`attribute mirrors each thumb's own`pressed`state instead for
+the per-thumb pressed state layer. Demo containers must set an explicit`width`(e.g.`480px; max-width: 100%`), matching the Tabs demos' convention — the shared `Demo`wrapper
+is deliberately`w-fit`, so a percentage width on the demo's own root contributes nothing
 to that shrink-to-fit calculation and silently collapses to content size. LoadingIndicator
 has no Base UI primitive and no material-web scss (it's Compose-only, added after
-material-web's v0*192 snapshot) — its tokens came from `LoadingIndicatorTokens.kt`
-directly. Its indeterminate animation is a real shape-morph (SoftBurst → Cookie9Sided →
+material-web's v0*192 snapshot) — its tokens came from `LoadingIndicatorTokens.kt`directly. Its indeterminate animation is a real shape-morph (SoftBurst → Cookie9Sided →
 Pentagon → Pill → Sunny → Cookie4Sided → Oval, looping), not a spinning arc, which meant
-porting the relevant slice of Google's `androidx.graphics.shapes` (RoundedPolygon
-construction + the `Morph` vertex/feature-matching algorithm that pairs differently-sided
-polygons) into `packages/react/scripts/loading-indicator/` — a Node-only build-time
-module, not shipped to consumers. `pnpm build:shapes` (wired into the `md3:codegen` vite
-plugin) runs that port once and bakes the result into gitignored
-`src/generated/loading-indicator-shapes.ts`: for each shape transition, a list of matched
-`[cubicStart, cubicEnd]` pairs already centered/scaled into a shared 0-100 viewBox, so the
-component itself only does a per-frame `lerp` between the two cubics plus a live CSS
-rotation — no geometry at runtime. `Morph`'s cut-and-shift step has one easy-to-miss edge
+porting the relevant slice of Google's`androidx.graphics.shapes`(RoundedPolygon
+construction + the`Morph`vertex/feature-matching algorithm that pairs differently-sided
+polygons) into`packages/react/scripts/loading-indicator/`— a Node-only build-time
+module, not shipped to consumers.`pnpm build:shapes`(wired into the`md3:codegen`vite
+plugin) runs that port once and bakes the result into gitignored`src/generated/loading-indicator-shapes.ts`: for each shape transition, a list of matched
+`[cubicStart, cubicEnd]`pairs already centered/scaled into a shared 0-100 viewBox, so the
+component itself only does a per-frame`lerp`between the two cubics plus a live CSS
+rotation — no geometry at runtime.`Morph`'s cut-and-shift step has one easy-to-miss edge
 case: the redistributed cubic that closes the loop back to the cut point must have its
 outline-progress \_forced* to exactly `1`, not derived via `positiveModulo`, or it wraps to
 ~0 and gets dropped by the zero-length-span filter, leaving a visible gap in the morphed
 path (caught by asserting every precomputed morph closes with zero gap at both t=0 and
 t=1). The indeterminate step easing samples Compose's actual
-`spring(dampingRatio=0.6, stiffness=200)` step-response formula over _real elapsed
+`spring(dampingRatio=0.6, stiffness=200)`step-response formula over _real elapsed
 milliseconds_ (not a normalized 0-1 progress) — for this damping/stiffness pair the spring
 settles well under the fixed 650ms step interval, so this reproduces the same
 morph/overshoot/brief-hold cadence as the real Compose component without needing a full
-physics simulation loop. Snackbar is built on Base UI's `Toast` primitive
+physics simulation loop. Snackbar is built on Base UI's`Toast` primitive
 (`@base-ui/react/toast`) rather than a from-scratch implementation — material-web ships
-no `labs/snackbar` component to check against, only a `_md-comp-snackbar.scss` token
+no `labs/snackbar`component to check against, only a`_md-comp-snackbar.scss`token
 file, so the spacing constants (16dp text inset, 8dp button-side inset, 14dp vertical
-text padding) come from Compose's `Snackbar.kt` instead; the 48px/68px single/two-line
-container heights fall out of that 14dp padding plus 1 or 2 lines of body-medium, so
-`.text` just needs `line-clamp: 2` rather than an explicit height or a two-line/
-single-line prop. The desktop-width rule must be `width: fit-content(672px)`, not
-`width: max-content` — `max-content` sizes as if nothing ever wraps, so a message under
-~672px worth of unwrapped text never triggers the 2-line clamp at all; `fit-content()`
-still hugs short content but forces `.text` to wrap once the unwrapped width would exceed
-the cap. `SnackbarProvider` renders `Toast.Provider` with `limit={1}` (MD3 only ever
+text padding) come from Compose's`Snackbar.kt`instead; the 48px/68px single/two-line
+container heights fall out of that 14dp padding plus 1 or 2 lines of body-medium, so`.text`just needs`line-clamp: 2`rather than an explicit height or a two-line/
+single-line prop. The desktop-width rule must be`width: fit-content(672px)`, not
+`width: max-content`—`max-content`sizes as if nothing ever wraps, so a message under
+~672px worth of unwrapped text never triggers the 2-line clamp at all;`fit-content()`still hugs short content but forces`.text`to wrap once the unwrapped width would exceed
+the cap.`SnackbarProvider`renders`Toast.Provider`with`limit={1}`(MD3 only ever
 shows one snackbar — a new one replaces the current one, they never stack), which is why
-the CSS skips Base UI's whole `--toast-index`/peek/scale stacking transform story
-entirely — but `limit` only _marks_ excess toasts `data-limited` rather than removing
+the CSS skips Base UI's whole`--toast-index`/peek/scale stacking transform story
+entirely — but `limit` only \_marks_ excess toasts `data-limited` rather than removing
 them, so during a replacement there are briefly two `.root`s mounted at once (outgoing +
 incoming). Every `.root` is therefore `position: absolute`, anchored to the _same_ spot
 (bottom-leading-edge) via `inset-block-end`/`inset-inline-start` — not laid out as flex
@@ -375,6 +366,47 @@ one of them uses a non-linear easing on an actively-moving segment. CSS applies 
 keyframe's `animation-timing-function` to the segment leading _out_ of that keyframe —
 opposite of Compose's `keyframes { ... using ... }`, which applies to the segment leading
 _into_ it — a direction mismatch that's easy to get backwards when porting the timings.
+Both also ship a `wavy` variant (Compose's separate `WavyProgressIndicator.kt` /
+`*WavyProgressModifiers.kt` — the redesign's wavy indicator is a materially different
+implementation from the plain one, not a themed variant of it). Circular wavy reuses the
+exact `RoundedPolygon`/`Morph` port already built for LoadingIndicator (see below):
+Compose's `CircularShapes` morphs a `RoundedPolygon.circle` into a
+`RoundedPolygon.star(innerRadius=0.75, rounding=0.35/0.4, innerRounding=0.5)` with vertex
+count `round(2πr/wavelength)` — since our wavy container is a fixed 48px/4px-stroke/15dp-
+wavelength (WaveSize/ActiveThickness/ActiveWaveWavelength tokens), that count is a build-
+time constant (9), so `scripts/build-circular-progress-shapes.mjs` bakes the matched
+circle↔star cubics once into `src/generated/circular-progress-shapes.ts` exactly like
+`build-loading-indicator-shapes.mjs` does, and the component only does the same per-t
+lerp (factored out to `src/utils/morphPath.ts`, shared by both). Linear wavy has no
+material-web or existing-port equivalent, so its repeating quadratic-Bezier sine template
+(`buildWaveD`) is generated directly from `LinearProgressIndicatorTokens`: control-point Y
+of `height - strokeWidth` peaks at exactly half that at the curve's midpoint — which is
+where `ActiveWaveAmplitude` (3dp, for a 10dp-tall/4dp-stroke wavy track) comes from, a
+useful check when porting the formula. Both wavy shapes are drawn via `pathLength={100}` +
+`stroke-dasharray`/`stroke-dashoffset`, exactly like the plain circular indicator's
+determinate-circle trick — **critically**, the CSS `d` property (used to cross-fade
+between a flat/circle shape and a wavy/star one on amplitude changes, so the browser
+interpolates same-structure path commands smoothly) requires its value wrapped in
+`path("...")`; a bare path-data string is silently accepted as a string but never
+rendered (no error, path just has zero geometry — caught by checking `getBBox()`/
+`getTotalLength()` are non-zero, not by any visible error). Progress-fraction distances
+are converted to `pathLength`-normalized dasharray/dashoffset via a single proportional
+scale (position ÷ full extended-template width × 100) rather than true per-point arc-
+length — Compose's own `updateFullPaths`/`updateDrawPaths` do the exact same
+single-scalar approximation (a comment there even flags the mismatch), so this isn't a
+fidelity shortcut, it's matching upstream's own simplification. The "wave motion" (crests
+appear to travel while the drawn arc's start/end stay fixed) is a shift-then-correct
+trick in both shapes: sample the periodic template's geometry from a phase further along
+(`stroke-dashoffset`), then translate/rotate the whole element back by that same amount
+(`transform: translateX()` for linear, `rotate()` for circular) — mirroring Compose's own
+"extract shifted, translate back" step in `updateDrawPaths`. Linear's determinate wavy
+amplitude ramp and wave-phase motion are pure CSS (`@property`-registered custom
+properties + `calc()`, no rAF) since both are simple per-render or continuously-linear
+values; linear's _indeterminate_ wavy bars need a small `requestAnimationFrame` loop
+instead (mirroring LoadingIndicator's pattern) because their moving window itself
+(head/tail fractions) has to be recomputed every frame in JS to feed the `dasharray`
+math, not just a single continuously-interpolating CSS value like the rotation-only
+circular case.
 
 Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
 build after TextField; Base UI Select's `alignItemWithTrigger` must be false), dynamic

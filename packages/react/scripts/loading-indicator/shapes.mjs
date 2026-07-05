@@ -13,8 +13,6 @@ import {
   Unrounded,
 } from "./geometry.mjs";
 
-export const buildCircle = () => normalizePolygon(circlePolygon(10, 1, 0, 0));
-
 export const buildSoftBurst = () =>
   normalizePolygon(
     customPolygon(
@@ -78,11 +76,6 @@ export const buildCookie4Sided = () =>
 export const buildOval = () =>
   normalizePolygon(rotatePolygonDegrees(scalePolygon(circlePolygon(8, 1, 0, 0), 1, 0.64), -45));
 
-// Determinate's first shape: the normalized Circle, rotated an extra 360/20 =
-// 18° about its own center — a hand-tuned phase alignment for a smoother morph
-// into SoftBurst (code comment in LoadingIndicator.kt), not re-normalized after.
-export const buildDeterminateCircle = () => rotatePolygonDegrees(buildCircle(), 360 / 20);
-
 export const INDETERMINATE_SEQUENCE = () => [
   buildSoftBurst(),
   buildCookie9Sided(),
@@ -92,8 +85,6 @@ export const INDETERMINATE_SEQUENCE = () => [
   buildCookie4Sided(),
   buildOval(),
 ];
-
-export const DETERMINATE_SEQUENCE = () => [buildDeterminateCircle(), buildSoftBurst()];
 
 // LoadingIndicatorTokens.kt / LoadingIndicatorDefaults
 export const CONTAINER_SIZE = 48;

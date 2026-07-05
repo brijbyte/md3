@@ -17,6 +17,7 @@ export default function CircularProgressDeterminateDemo() {
   return (
     <div className="demo-progress-indicator-circular">
       <CircularProgress value={value} aria-label="Downloading" />
+      <CircularProgress value={value} aria-label="Downloading" wavy />
     </div>
   );
 }

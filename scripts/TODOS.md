@@ -15,3 +15,11 @@
       (layout + arrow-key nav across chips/actions, cf. material-web chip-set); InputChip
       arrow-key nav between primary and remove actions (multi-action-chip.ts); consider a
       `removeIcon` override slot on InputChip.
+- [ ] CircularProgress wavy variant still not right despite two rounds of fixes (baked
+      circle/star morph rotational alignment, then the missing `%` unit on the determinate
+      wave-phase `stroke-dashoffset` compensation — see git history on CircularProgress.tsx /
+      build-circular-progress-shapes.mjs). User remains unhappy with the visual result;
+      needs a fresh look, possibly reconsidering the whole dasharray/dashoffset + rotate
+      approach vs. something closer to Compose's actual PathMeasure-based
+      double-length-path + getSegment technique (see CircularWavyProgressModifiers.kt),
+      since the CSS approximation may inherently drift for a non-circular (star) path.

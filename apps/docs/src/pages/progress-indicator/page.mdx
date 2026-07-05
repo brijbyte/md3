@@ -30,7 +30,9 @@ indicators (omit `value`) express an unspecified wait time.
 
 <LinearProgressDeterminate />
 
-A small stop indicator marks the end of the track in determinate mode.
+A small stop indicator marks the end of the track in determinate mode. Pass `wavy` for
+the wavy variant — the active indicator amplitude ramps up just after the start and back
+down just before the end, flattening to a straight line at both ends.
 
 Omit `value` (or pass `null`) for the indeterminate animation — two independent bars
 travel along the track with no fixed track or stop indicator shown.
@@ -46,7 +48,8 @@ travel along the track with no fixed track or stop indicator shown.
 <CircularProgressDeterminate />
 
 Indeterminate circular progress spins continuously while its arc grows and shrinks,
-with no track visible.
+with no track visible. `wavy` morphs the active indicator between a plain ring and a
+many-pointed wavy star as its amplitude ramps.
 
 <CircularProgressIndeterminate />
 

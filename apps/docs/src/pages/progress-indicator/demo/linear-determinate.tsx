@@ -17,6 +17,7 @@ export default function LinearProgressDeterminateDemo() {
   return (
     <div className="demo-progress-indicator-linear">
       <LinearProgress value={value} aria-label="Downloading" />
+      <LinearProgress value={value} aria-label="Downloading" wavy />
     </div>
   );
 }

@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.mjs",
-    "build:shapes": "node scripts/build-loading-indicator-shapes.mjs",
+    "build:shapes": "node scripts/build-loading-indicator-shapes.mjs && node scripts/build-circular-progress-shapes.mjs",
     "typegen:css": "tcm --pattern 'src/**/*.module.css'",
     "build": "vite build",
     "dev": "vite build --watch",

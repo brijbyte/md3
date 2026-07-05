@@ -1,8 +1,0 @@
-@import "@brijbyte/md3-react/tokens.css";
-@import "@brijbyte/md3-react/loading-indicator.css";
-
-.demo-loading-indicator-determinate {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}

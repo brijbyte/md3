@@ -16,6 +16,12 @@
   initial-value: 10;
 }
 
+@property --md3-circular-progress-wave-phase {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 .root {
   display: inline-flex;
   width: 40px;
@@ -67,6 +73,21 @@
   stroke-dasharray: var(--md3-circular-progress-sweep)
     calc(100 - var(--md3-circular-progress-sweep));
   transition: none;
+}
+
+/* Wave motion: the star repeats every 360/numVertices degrees, so sampling a
+   different rotation phase reads as crests sliding along the ring. Countering
+   with the same shift in stroke-dashoffset keeps the visible arc's start/end
+   anchored despite the rotation — same shift-then-correct trick as the
+   indeterminate linear bars' inset-inline-start/width keyframes. */
+.indicatorWavy {
+  animation: md3-circular-progress-wave-phase 1000ms linear infinite;
+}
+
+@keyframes md3-circular-progress-wave-phase {
+  to {
+    --md3-circular-progress-wave-phase: 1;
+  }
 }
 
 /* Global continuous spin: seamless since 1080deg % 360 === 0deg. */

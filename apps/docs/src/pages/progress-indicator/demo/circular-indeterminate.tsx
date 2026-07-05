@@ -6,6 +6,7 @@ export default function CircularProgressIndeterminateDemo() {
   return (
     <div className="demo-progress-indicator-circular">
       <CircularProgress aria-label="Loading" />
+      <CircularProgress aria-label="Loading" wavy />
     </div>
   );
 }

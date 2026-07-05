@@ -1,34 +1,16 @@
 "use client";
 import * as React from "react";
 import {
-  DETERMINATE_MORPH,
   GLOBAL_ROTATION_DURATION_MS,
   INDETERMINATE_MORPHS,
   MORPH_INTERVAL_MS,
-  type Morph,
 } from "../generated/loading-indicator-shapes";
+import { morphPathD } from "../utils/morphPath";
 import styles from "./LoadingIndicator.module.css";
 
 export interface LoadingIndicatorProps extends React.ComponentPropsWithoutRef<"span"> {
-  /** 0-1. Omit for the indeterminate (looping) animation. */
-  progress?: number;
   /** Contained variant: shape sits inside a colored pill container. */
   contained?: boolean;
-}
-
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-// Bakes a Morph + progress (per-control-point lerp, matching Morph.asCubics)
-// into an SVG path `d`. Precomputed morphs already close exactly at every
-// integer progress (see build-loading-indicator-shapes.mjs), so a plain lerp
-// + Z close needs no extra seam-snapping.
-function morphPathD(morph: Morph, t: number): string {
-  const [firstStart, firstEnd] = morph[0];
-  let d = `M${lerp(firstStart[0], firstEnd[0], t)},${lerp(firstStart[1], firstEnd[1], t)}`;
-  for (const [cs, ce] of morph) {
-    d += `C${lerp(cs[2], ce[2], t)},${lerp(cs[3], ce[3], t)} ${lerp(cs[4], ce[4], t)},${lerp(cs[5], ce[5], t)} ${lerp(cs[6], ce[6], t)},${lerp(cs[7], ce[7], t)}`;
-  }
-  return `${d}Z`;
 }
 
 // Compose's spring(dampingRatio=0.6, stiffness=200) step response — critically
@@ -59,34 +41,21 @@ function usePrefersReducedMotion() {
 
 export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicatorProps>(
   function LoadingIndicator(props, ref) {
-    const { className, progress, contained, "aria-label": ariaLabel, ...rest } = props;
+    const { className, contained, "aria-label": ariaLabel, ...rest } = props;
     const pathRef = React.useRef<SVGPathElement>(null);
     const groupRef = React.useRef<SVGGElement>(null);
     const reducedMotion = usePrefersReducedMotion();
-    const determinate = progress != null;
-    const clampedProgress = determinate ? Math.min(1, Math.max(0, progress)) : undefined;
 
     // Renders synchronously (SSR-safe, no effect needed) so the indicator
     // never flashes an empty path for the frame or two before the first
     // rAF tick below takes over — matters most right after mount/hydration,
     // when a network-throttled chunk load can stretch that gap noticeably.
-    const initialD =
-      clampedProgress != null
-        ? morphPathD(DETERMINATE_MORPH, clampedProgress === 1 ? 1 : clampedProgress % 1)
-        : morphPathD(INDETERMINATE_MORPHS[0], 0);
-    const initialRotation = clampedProgress != null ? -clampedProgress * 180 : 0;
+    const initialD = morphPathD(INDETERMINATE_MORPHS[0], 0);
 
     React.useEffect(() => {
       const path = pathRef.current;
       const group = groupRef.current;
       if (!path || !group) return;
-
-      if (clampedProgress != null) {
-        const t = clampedProgress === 1 ? 1 : clampedProgress % 1;
-        path.setAttribute("d", morphPathD(DETERMINATE_MORPH, t));
-        group.style.transform = `rotate(${-clampedProgress * 180}deg)`;
-        return;
-      }
 
       if (reducedMotion) {
         path.setAttribute("d", morphPathD(INDETERMINATE_MORPHS[0], 1));
@@ -120,7 +89,7 @@ export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicat
         cancelled = true;
         cancelAnimationFrame(raf);
       };
-    }, [clampedProgress, reducedMotion]);
+    }, [reducedMotion]);
 
     return (
       <span
@@ -129,17 +98,10 @@ export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicat
         data-contained={contained ? "" : undefined}
         role="progressbar"
         aria-label={ariaLabel ?? "Loading"}
-        aria-valuemin={0}
-        aria-valuemax={1}
-        aria-valuenow={clampedProgress}
         {...rest}
       >
         <svg className={styles.svg} viewBox="0 0 100 100" aria-hidden="true">
-          <g
-            ref={groupRef}
-            className={styles.rotator}
-            style={{ transform: `rotate(${initialRotation}deg)` }}
-          >
+          <g ref={groupRef} className={styles.rotator}>
             <path ref={pathRef} className={styles.path} d={initialD} />
           </g>
         </svg>

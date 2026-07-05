@@ -11,6 +11,7 @@ import {
   tokensJsonPath,
 } from "./scripts/build-tokens.mjs";
 import { buildLoadingIndicatorShapes } from "./scripts/build-loading-indicator-shapes.mjs";
+import { buildCircularProgressShapes } from "./scripts/build-circular-progress-shapes.mjs";
 
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -30,6 +31,7 @@ function md3Codegen(): Plugin {
     async buildStart() {
       buildTokens();
       buildLoadingIndicatorShapes();
+      buildCircularProgressShapes();
       this.addWatchFile(tokensJsonPath);
       await Promise.all(globSync(abs("src/**/*.module.css")).map(genCssTypes));
     },

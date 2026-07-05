@@ -84,6 +84,53 @@
   }
 }
 
+@property --md3-linear-progress-wave-phase {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.wavySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wavyTrack {
+  stroke: var(--md-sys-color-secondary-container);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  transition: stroke-dasharray var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.wavyStop {
+  fill: var(--md-sys-color-primary);
+}
+
+.wavyIndicator {
+  fill: none;
+  stroke: var(--md-sys-color-primary);
+  stroke-width: 4px;
+  stroke-linecap: round;
+}
+
+/* Wave motion: shifting which portion of the periodic template is revealed
+   (dashoffset) while translating the whole path back by the same amount
+   keeps the visible bar's start/end fixed even as the crests appear to
+   travel — same shift-then-correct trick as CircularProgress's wavy mode. */
+.wavyIndicatorMoving {
+  animation: md3-linear-progress-wave-phase 1000ms linear infinite;
+}
+
+@keyframes md3-linear-progress-wave-phase {
+  to {
+    --md3-linear-progress-wave-phase: 1;
+  }
+}
+
 @keyframes md3-linear-progress-bar2 {
   0%,
   37.1429% {
