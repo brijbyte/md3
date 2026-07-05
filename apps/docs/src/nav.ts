@@ -10,6 +10,7 @@ import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
+import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
 
@@ -117,6 +118,13 @@ export const SECTIONS: NavSection[] = [
         title: "Radio button",
         description: "Radio buttons let people select one option from a set.",
         icon: RadioIcon,
+      },
+      {
+        path: "/components/slider",
+        label: "Slider",
+        title: "Slider",
+        description: "Sliders let people select a value from a range of values.",
+        icon: SlidersIcon,
       },
       {
         path: "/components/switch",

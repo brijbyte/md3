@@ -206,7 +206,8 @@ Patterns:
 Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup , Checkbox,
 Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
 FilterChip / InputChip / SuggestionChip), Menu (Base UI Menu family incl. submenus,
-radio/checkbox items, groups), `@brijbyte/md3-icons`.
+radio/checkbox items, groups), Slider (continuous/discrete/centered/range),
+`@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
@@ -221,7 +222,49 @@ Menu deliberately uses the m3.material.io spec-page item metrics (48px rows, 12p
 padding/gaps, label-large) over material-web's 56px/16px/body-large list-item reuse
 (Compose + published spec agree), selection = secondary-container highlight with NO
 checkmark, and enter/exit is a CSS scale+fade — material-web's staggered height expand
-(JS-driven) was deliberately skipped.
+(JS-driven) was deliberately skipped. Slider's 5 sizes (`size`: xs default/s/m/l/xl) and
+their exact dp values (track height, handle height, track corner radius, inset-icon
+size) come straight off the m3.material.io/components/sliders/specs measurements table
+— not material-web's stale v0_192 scss, which only has the old 4px-track/circular-handle
+classic spec. Handle width is a constant 4px at every size; only height scales, driven by
+a `--md3-slider-*` custom-property cascade set on `.root[data-size=...]` (inherited down
+to track/thumb, no JS needed). `icon` (inset icon) only renders at `m`/`l`/`xl` — `xs`/`s`
+aren't tall enough per spec. The track fill is up to three independently-shaped
+`trackSegment` spans (before-tail / active / after-tail), not a single background with a
+notch cut into it — a thumb sitting in a gap needs a real rounded corner on *both* flanking
+segments (per m3.material.io's slider spec imagery), which a flat cut can't produce. Each
+segment's corners are set inline per-boundary (`segmentStyle`): a boundary against another
+segment always rounds, at a smaller fixed-per-size `--md3-slider-gap-radius` (one shape
+step down from the track's own radius — e.g. `l`'s gap corner uses `corner-medium` while
+its track uses `corner-large`); a boundary at the track's true 0%/100% edge uses the full
+`--md3-slider-track-radius`, *unless* a thumb rests exactly there, in which case that
+corner squares off entirely (`trackFlatStart`/`trackFlatEnd` on `.track`) — a rounded
+corner must never visibly poke out past the 4px-wide thumb capping it. All of this is
+computed once per render from a single `Slider.Value` wrapping `Slider.Track` (not nested
+per-feature `Slider.Value`s), since ticks' active/inactive coloring needs the same
+active-start/active-end percents. `.track` itself has no fill color — it's `transparent`,
+so the small gaps between segments read as a cut-through to whatever's behind the slider,
+not a second "inactive" layer; painting a matching-but-distinct surface color there
+produces a visible seam in dark mode instead. The value bubble is a Base UI `Tooltip`
+(`Root`/`Portal`/`Positioner`/`Popup`, no `Trigger` — anchored via a plain ref instead so
+hover never opens it) so it needs no layout space reserved in `.root`; it opens on
+pointerdown/keydown, and closes on a window-level pointerup/pointercancel immediately for
+drags, but on keyup only after a 1s deferred timeout (cancelled by the next keydown/
+pointerdown/blur) — a single keyboard nudge fires keydown-then-keyup almost instantly, so
+closing right on keyup just flashes the bubble. The anchor passed to `Tooltip.Positioner`
+is a virtual element re-measured every `requestAnimationFrame` while open, not the thumb
+ref directly — the thumb moves via inline `insetInlineStart`, which triggers neither
+ResizeObserver nor IntersectionObserver, so Base UI's `autoUpdate` never notices a plain
+ref move; a fresh virtual-element object each frame forces Floating UI to recompute. The
+`.thumb:focus-visible` CSS never matches, since the actually-focusable element is the
+visually-hidden native `<input>` Base UI nests inside the thumb div, not the div itself —
+use `.thumb:has(:focus-visible)` (same pattern as Tabs/Chip elsewhere in this repo).
+Base UI's own `data-dragging` is root-level (true while *any* thumb in a range slider
+drags), so a `data-pressed` attribute mirrors each thumb's own tooltip-open state instead
+for the per-thumb pressed state layer. Demo containers must set an explicit `width` (e.g.
+`480px; max-width: 100%`), matching the Tabs demos' convention — the shared `Demo` wrapper
+is deliberately `w-fit`, so a percentage width on the demo's own root contributes nothing
+to that shrink-to-fit calculation and silently collapses to content size.
 
 Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
 build after TextField; Base UI Select's `alignItemWithTrigger` must be false), a real

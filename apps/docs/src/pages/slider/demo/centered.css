@@ -1,0 +1,7 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/slider.css";
+
+.demo-slider-centered {
+  width: 480px;
+  max-width: 100%;
+}

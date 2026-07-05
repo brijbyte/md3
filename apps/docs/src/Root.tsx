@@ -52,6 +52,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
   "/components/menu": mdxRoute(() => import("./pages/menu/page.mdx")),
   "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
+  "/components/slider": mdxRoute(() => import("./pages/slider/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
 };

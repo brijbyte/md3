@@ -1,0 +1,59 @@
+---
+title: Slider
+---
+
+import SliderStates from "./demo/states.tsx";
+import SliderRange from "./demo/range.tsx";
+import SliderCentered from "./demo/centered.tsx";
+import SliderSizes from "./demo/sizes.tsx";
+import SliderIcons from "./demo/icons.tsx";
+
+```tsx
+import { Slider } from "@brijbyte/md3-react/slider";
+```
+
+```css
+@import "@brijbyte/md3-react/slider.css";
+```
+
+Material Design 3 defines four slider configurations: continuous, discrete, centered,
+and range.
+
+## States
+
+Continuous sliders (the default) select any value in the range. Discrete sliders show
+tick marks and snap to `step` — pass `ticks` to render them.
+
+<SliderStates />
+
+## Range
+
+Passing an array to `value`/`defaultValue` renders one thumb per entry. Use
+`getAriaLabel` to label each thumb individually.
+
+<SliderRange />
+
+## Centered
+
+Use `centered` when the meaningful origin is the midpoint of the range rather than
+`min` — balance, brightness offset, and similar positive/negative controls. The active
+track grows from the midpoint toward the thumb instead of from the start.
+
+<SliderCentered />
+
+## Sizes
+
+`size` picks one of the five track/handle sizes from the spec table — `xs` (the
+default), `s`, `m`, `l`, `xl`. Track height, handle height, and track corner radius all
+scale together; handle width stays 4px at every size. `m`, `l`, and `xl` are tall enough
+to take an `icon`, inset into the track's leading end — `xs`/`s` ignore it.
+
+<SliderSizes />
+
+## Adjacent icons
+
+Sliders can also be flanked by icons that reflect the value's intensity, smallest value
+on the left and largest on the right. This is a layout composition, not a component
+prop — compare to the inset `icon` prop above.
+
+<SliderIcons />

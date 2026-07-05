@@ -1,0 +1,281 @@
+/* Spec: m3.material.io/components/sliders/specs measurements table (5 sizes, XS
+   default) cross-checked against Compose Material3 SliderTokens.kt for the
+   expressive redesign (handle width stays 4px at every size; only its height, the
+   track height/corner, and the inset-icon size scale). 6px handle-adjacent gap is
+   an approximation — the spec table doesn't list a per-size gap token. */
+@layer components {
+  .root {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 120px;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+
+    --md3-slider-track-height: 16px;
+    --md3-slider-handle-height: 44px;
+    --md3-slider-track-radius: var(--md-sys-shape-corner-small);
+    /* Handle-adjacent gap corners round at one shape step smaller than the track's own
+       true-edge radius, scaling with size the same way the track radius itself does. */
+    --md3-slider-gap-radius: var(--md-sys-shape-corner-extra-small);
+  }
+
+  .root[data-size="s"] {
+    --md3-slider-track-height: 24px;
+  }
+
+  .root[data-size="m"] {
+    --md3-slider-track-height: 40px;
+    --md3-slider-handle-height: 52px;
+    --md3-slider-track-radius: var(--md-sys-shape-corner-medium);
+    --md3-slider-icon-size: 24px;
+  }
+
+  .root[data-size="l"] {
+    --md3-slider-track-height: 56px;
+    --md3-slider-handle-height: 68px;
+    --md3-slider-track-radius: var(--md-sys-shape-corner-large);
+    --md3-slider-icon-size: 24px;
+  }
+
+  .root[data-size="xl"] {
+    --md3-slider-track-height: 96px;
+    --md3-slider-handle-height: 108px;
+    --md3-slider-track-radius: var(--md-sys-shape-corner-extra-large);
+    --md3-slider-icon-size: 32px;
+  }
+
+  .control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: max(48px, var(--md3-slider-track-height));
+    outline: none;
+  }
+
+  /* No fill of its own — it's only ever visible in the small gaps between track segments
+     (see .trackSegment), which should read as a cut-through to whatever's behind the
+     slider, not a second "inactive" layer with its own color. */
+  .track {
+    position: relative;
+    width: 100%;
+    height: var(--md3-slider-track-height);
+    border-radius: var(--md3-slider-track-radius);
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* A thumb sitting at min/max is only 4px wide — far narrower than the track's own
+     corner radius at m/l/xl — so the rounded corner would otherwise visibly bulge past
+     the thumb instead of being capped by it. */
+  .trackFlatStart {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  .trackFlatEnd {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .insetIcon {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    inset-inline-start: 8px;
+    transform: translateY(-50%);
+    width: var(--md3-slider-icon-size, 24px);
+    height: var(--md3-slider-icon-size, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .insetIcon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* One of up to three independent, individually-rounded shapes (a tail on either side
+     of the active fill, plus the fill itself) — never a single background with a flat
+     notch cut into it, so a boundary next to a thumb always rounds like a real corner
+     instead of just exposing a flat-cut edge. Radius is set inline per boundary
+     (segmentStyle) since which corners round depends on the live value. */
+  .trackSegment {
+    position: absolute;
+    background: var(--md-sys-color-secondary-container);
+  }
+
+  .trackSegmentActive {
+    background: var(--md-sys-color-primary);
+  }
+
+  .valueCalc {
+    display: contents;
+  }
+
+  .centerMark {
+    position: absolute;
+    inset-inline-start: 50%;
+    top: 50%;
+    width: 2px;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    background: var(--md-sys-color-surface);
+  }
+
+  /* Accessibility aid marking the track's fixed ends (spec: 4dp size, full opacity),
+     rendered before the indicator/ticks so it's covered once the value reaches it. Only
+     ever visible over the inactive region (once active fill covers it, it's hidden), so
+     it doesn't need the active/inactive color switch ticks do. */
+  .stopIndicator {
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    transform: translate(-50%, -50%);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-on-secondary-container);
+  }
+
+  /* Discrete tick marks: nearly fill the track height (small margin each side),
+     scaling with size; both active and inactive stay at 0.38 opacity — only the
+     color switches. */
+  .tick {
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    transform: translate(-50%, -50%);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-on-surface-variant);
+    opacity: 0.38;
+  }
+
+  .tickActive {
+    background: var(--md-sys-color-on-primary);
+  }
+
+  .thumb {
+    width: 4px;
+    height: var(--md3-slider-handle-height);
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary);
+    box-shadow: var(--md-sys-elevation-level1);
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* The focusable element is the visually-hidden native input nested inside the thumb
+     div, not the div itself, so :focus-visible on .thumb never matches directly. */
+  .thumb:has(:focus-visible) {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  /* 40px hover/focus/pressed state layer centered on the handle */
+  .stateLayer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-sys-shape-corner-full);
+    transform: translate(-50%, -50%);
+    background: var(--md-sys-color-primary);
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .thumb:hover .stateLayer {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .thumb:has(:focus-visible) .stateLayer {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .thumb[data-pressed] .stateLayer {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  .positioner {
+    outline: none;
+    z-index: var(--md3-popup-z-index, 20);
+  }
+
+  /* Portalled (Base UI Tooltip), so the root never needs padding reserved for it.
+     Font is a spec-only combination (14/20/400/0.5) that doesn't match any named
+     typescale entry — body-medium's size/line-height/weight plus label-medium's
+     tracking, which happen to coincide with it. */
+  .valueLabel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 44px;
+    padding-inline: 8px;
+    box-sizing: border-box;
+    border-radius: var(--md-sys-shape-corner-medium);
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transform-origin: bottom center;
+    transition:
+      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      opacity var(--md-sys-motion-duration-short1) linear;
+  }
+
+  .valueLabel[data-starting-style],
+  .valueLabel[data-ending-style] {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  .valueLabel[data-instant] {
+    transition: none;
+  }
+
+  /* Disabled */
+  .track[data-disabled] .trackSegment {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .track[data-disabled] .trackSegmentActive {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .thumb[data-disabled] {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    box-shadow: var(--md-sys-elevation-level0);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .track[data-disabled] .insetIcon {
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+}
