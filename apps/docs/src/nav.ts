@@ -8,6 +8,7 @@ import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
+import ProgressActivityIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
 import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
@@ -104,6 +105,13 @@ export const SECTIONS: NavSection[] = [
         title: "Checkbox",
         description: "Checkboxes let users select one or more items, or toggle an item.",
         icon: CheckBoxIcon,
+      },
+      {
+        path: "/components/loading-indicator",
+        label: "Loading indicator",
+        title: "Loading indicator",
+        description: "Loading indicators show that content or a process is loading.",
+        icon: ProgressActivityIcon,
       },
       {
         path: "/components/menu",

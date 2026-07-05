@@ -1,0 +1,40 @@
+---
+title: Loading indicator
+---
+
+import LoadingIndicatorVariants from "./demo/variants.tsx";
+import LoadingIndicatorDeterminate from "./demo/determinate.tsx";
+
+```tsx
+import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
+```
+
+```css
+@import "@brijbyte/md3-react/loading-indicator.css";
+```
+
+Loading indicators show that content or a process is loading, with an indeterminate
+shape-morphing animation — the indicator cycles through a sequence of shapes, morphing
+between each one, while spinning continuously.
+
+## Variants
+
+The default indicator draws its active shape directly on the surface behind it. The
+`contained` variant draws it inside a colored pill container instead.
+
+<LoadingIndicatorVariants />
+
+## Determinate
+
+Pass `progress` (0-1) for a determinate indicator that morphs from a circle to a
+soft-burst shape as progress advances, instead of looping indefinitely.
+
+<LoadingIndicatorDeterminate />
+
+## Accessibility
+
+The root renders `role="progressbar"` with `aria-valuemin`/`aria-valuemax` fixed at `0`/`1`;
+a determinate indicator also sets `aria-valuenow` to the current `progress`. Pass
+`aria-label` to describe what's loading — it defaults to `"Loading"`. The shape-morph and
+spin animation is skipped (frozen on a resting shape) when the user has requested reduced
+motion.

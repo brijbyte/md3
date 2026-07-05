@@ -762,6 +762,15 @@
     "list-item-two-line-container-height": "72px",
     "list-item-unselected-trailing-icon-color": "md-sys-color.on-surface"
   },
+  "loading-indicator": {
+    "active-indicator-color": "md-sys-color.primary",
+    "active-indicator-size": "38px",
+    "contained-active-indicator-color": "md-sys-color.on-primary-container",
+    "contained-container-color": "md-sys-color.primary-container",
+    "container-height": "48px",
+    "container-shape": "md-sys-shape.corner-full",
+    "container-width": "48px"
+  },
   "menu": {
     "container-color": "md-sys-color.surface-container",
     "container-elevation": "md-sys-elevation.level2",

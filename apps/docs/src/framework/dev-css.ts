@@ -12,6 +12,7 @@ import "@brijbyte/md3-react/checkbox/Checkbox.module.css";
 import "@brijbyte/md3-react/chip/Chip.module.css";
 import "@brijbyte/md3-react/fab/Fab.module.css";
 import "@brijbyte/md3-react/icon-button/IconButton.module.css";
+import "@brijbyte/md3-react/loading-indicator/LoadingIndicator.module.css";
 import "@brijbyte/md3-react/menu/Menu.module.css";
 import "@brijbyte/md3-react/radio/Radio.module.css";
 import "@brijbyte/md3-react/ripple/ripple.module.css";

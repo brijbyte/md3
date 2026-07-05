@@ -10,6 +10,7 @@ import {
   tokensCssPath,
   tokensJsonPath,
 } from "./scripts/build-tokens.mjs";
+import { buildLoadingIndicatorShapes } from "./scripts/build-loading-indicator-shapes.mjs";
 
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -28,6 +29,7 @@ function md3Codegen(): Plugin {
     name: "md3:codegen",
     async buildStart() {
       buildTokens();
+      buildLoadingIndicatorShapes();
       this.addWatchFile(tokensJsonPath);
       await Promise.all(globSync(abs("src/**/*.module.css")).map(genCssTypes));
     },
@@ -119,6 +121,7 @@ export default defineConfig({
         "card/index": "src/card/index.ts",
         "chip/index": "src/chip/index.ts",
         "menu/index": "src/menu/index.ts",
+        "loading-indicator/index": "src/loading-indicator/index.ts",
         "slider/index": "src/slider/index.ts",
         "typography/index": "src/typography/index.ts",
       },
