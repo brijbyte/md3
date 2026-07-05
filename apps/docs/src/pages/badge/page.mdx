@@ -19,16 +19,18 @@ import { Badge } from "@brijbyte/md3-react/badge";
 
 ## Variants
 
-A small badge is a 6dp dot; give it children and it becomes the large badge
-(16dp, label-small). Overflow formatting like "999+" is up to you. Badges also attach to tab items
+A badge draws attention to an unread count or status change without competing with the
+icon it sits on. Leave it empty for a 6dp dot, or pass children for the large badge (16dp,
+label-small); formatting overflow like "999+" is up to you. Badges attach to tab items too
 — see [Tabs](/components/tabs).
 
 <BadgeVariants />
 
 ## Accessibility
 
-Per the MD3 spec, a badge's accessible label reads _after_ the destination it decorates, so
-nest it inside the labelled control (icon button, tab, nav item) rather than placing it
-elsewhere in the DOM. A numbered badge needs no extra label — its visible text ("5", "999+")
-is what's announced. A dot badge has no visible text, so it defaults `aria-label` to "New
-notification"; pass your own `aria-label` (or `aria-labelledby`) to override it.
+Nest a badge inside the control it decorates (icon button, tab, nav item) and screen
+readers announce it in the right order automatically — after the destination's own label,
+matching the MD3 spec. A numbered badge needs no extra work: its visible text ("5", "999+")
+is what gets read aloud. A dot badge has no visible text, so it falls back to an
+`aria-label` of "New notification"; pass your own `aria-label` (or `aria-labelledby`) when
+you need something more specific.

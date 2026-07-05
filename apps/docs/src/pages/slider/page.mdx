@@ -25,51 +25,56 @@ import { Slider } from "@brijbyte/md3-react/slider";
   ]}
 />
 
-Material Design 3 defines four slider configurations: continuous, discrete, centered,
-and range.
+One component covers every slider configuration Material Design 3 defines — continuous,
+discrete, centered, and range — instead of reaching for a different library each time
+the interaction changes.
 
 ## States
 
-Continuous sliders (the default) select any value in the range. Discrete sliders show
-tick marks and snap to `step` — pass `ticks` to render them.
+Switch between free-form and stepped input without swapping components. Continuous
+sliders (the default) accept any value in the range; discrete sliders snap to `step`
+and show tick marks once you pass `ticks`.
 
 <SliderStates />
 
 ## Range
 
-Passing an array to `value`/`defaultValue` renders one thumb per entry. Use
-`getAriaLabel` to label each thumb individually.
+Get a min/max range input for free — pass an array to `value`/`defaultValue` and the
+slider renders one thumb per entry. `getAriaLabel` keeps each thumb individually
+announced to assistive tech.
 
 <SliderRange />
 
 ## Centered
 
-Use `centered` when the meaningful origin is the midpoint of the range rather than
-`min` — balance, brightness offset, and similar positive/negative controls. The active
-track grows from the midpoint toward the thumb instead of from the start.
+For balance, brightness offset, and other positive/negative controls, the meaningful
+origin is the midpoint, not `min`. Set `centered` and the active track grows from that
+midpoint toward the thumb instead of from the start.
 
 <SliderCentered />
 
 ## Sizes
 
-`size` picks one of the five track/handle sizes from the spec table — `xs` (the
-default), `s`, `m`, `l`, `xl`. Track height, handle height, and track corner radius all
-scale together; handle width stays 4px at every size. `m`, `l`, and `xl` are tall enough
-to take an `icon`, inset into the track's leading end — `xs`/`s` ignore it.
+Match a slider's presence to its context without hand-tuning dimensions: `size` picks
+one of the five track/handle sizes straight off the spec table — `xs` (the default),
+`s`, `m`, `l`, `xl`. Track height, handle height, and track corner radius scale
+together, while handle width stays 4px at every size. `m`, `l`, and `xl` are tall enough
+to take an inset `icon`; `xs` and `s` ignore it.
 
 <SliderSizes />
 
 ## Adjacent icons
 
-Sliders can also be flanked by icons that reflect the value's intensity, smallest value
-on the left and largest on the right. This is a layout composition, not a component
-prop — compare to the inset `icon` prop above.
+When a slider's value needs to read at a glance, flank it with icons that scale in
+intensity from smallest on the left to largest on the right. This is plain layout
+composition, not a component prop — compare it to the inset `icon` prop above.
 
 <SliderIcons />
 
 ## Vertical
 
-A vertical `xl` slider with an inset `icon`, composed inside a card with its own live
-value readout next to the thumb — a real-world layout built entirely from public props.
+A vertical `xl` slider with an inset `icon`, set inside a card with its own live value
+readout next to the thumb, shows how far the public props alone take you in a real
+layout.
 
 <SliderSmartHome />

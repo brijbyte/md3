@@ -5,6 +5,9 @@ title: Getting started
 import BaseUiProps from "./demo/base-ui-props.tsx";
 import FirstButtons from "./demo/first-buttons.tsx";
 
+From `npm install` to a rendered, on-spec Button — this page gets you there in about five
+minutes, nothing skipped.
+
 ## Install
 
 ```sh
@@ -13,15 +16,16 @@ npm install @brijbyte/md3-react
 pnpm add @brijbyte/md3-react
 ```
 
-The library is a styled layer over [Base UI](https://base-ui.com): majority of the component
-wraps a headless Base UI primitive, so behavior, accessibility, and keyboard handling come from
-Base UI while the visuals follow the [Material Design 3](https://m3.material.io/) spec.
+Most components wrap a headless [Base UI](https://base-ui.com) primitive, so you get correct
+behavior, accessibility, and keyboard handling for free — the library's job is just making it
+look exactly like the [Material Design 3](https://m3.material.io/) spec, not reinventing how it
+works.
 
 ## Load the styles
 
-JavaScript and CSS are decoupled — importing a component does **not** pull in its styles.
-Import the shared layers plus only the components you use, so the CSS payload stays
-minimal. Add these imports to your entry-point css file (e.g. `index.css`):
+JavaScript and CSS are decoupled — importing a component does **not** pull in its styles, so
+your CSS payload only ever grows with what you actually use, never the whole library. Add
+these imports to your entry-point css file (e.g. `index.css`):
 
 ```css
 /* required: tokens + theming */
@@ -95,15 +99,16 @@ import "@brijbyte/md3-react/button.css";
 
 <FirstButtons />
 
-Props pass through to the underlying Base UI primitive, so everything it supports —
-`render`, `disabled`, event handlers — works unchanged:
+Nothing is hidden behind the wrapper: every Base UI prop — `render`, `disabled`, event
+handlers — passes straight through and works exactly as its own docs describe:
 
 <BaseUiProps />
 
 ## Theming
 
-Colors are CSS custom properties (`--md-sys-color-*`). Light is the default; dark kicks in
-via `prefers-color-scheme`, or explicitly with a `data-theme` attribute on `<html>`:
+Dark mode isn't an afterthought bolted onto light-mode colors — every color is a CSS custom
+property (`--md-sys-color-*`) with its own dark value baked in. It kicks in automatically via
+`prefers-color-scheme`, or force it with a `data-theme` attribute on `<html>`:
 
 ```html
 <html data-theme="dark"></html>
@@ -111,8 +116,8 @@ via `prefers-color-scheme`, or explicitly with a `data-theme` attribute on `<htm
 
 ## Tailwind CSS
 
-All library CSS lives in the `theme` / `components` cascade layers (Tailwind v4's own
-layer names), so unlayered consumer CSS — including Tailwind utilities — always wins
-overrides. See
+No specificity fights: the library's CSS lives in the `theme` / `components` cascade
+layers (Tailwind v4's own layer names), so any unlayered Tailwind utility you write beats
+it automatically — no `!important`, no `.root.root` hacks. See
 [Tailwind overrides](/overview/integration) for the full setup, including using MD3 tokens as
 Tailwind utilities (`bg-primary`, `text-title-large`, `shadow-level1`, …).

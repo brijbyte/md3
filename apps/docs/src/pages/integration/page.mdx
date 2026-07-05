@@ -7,9 +7,10 @@ import UtilityOverrides from "./demo/utility-overrides.js";
 
 ## Tailwind v4
 
-Tailwind v4 and the library share one cascade. In your Tailwind entry CSS, pin the layer
-order on the first line, then import the shared layers, the components you actually use,
-and the token→utility mapping:
+Tailwind v4 and the library share one cascade, so there's no separate "component library
+CSS" to reason about — just one layer order to pin once. In your Tailwind entry CSS, pin it
+on the first line, then import the shared layers, the components you actually use, and the
+token→utility mapping:
 
 ```css
 @layer theme, base, components, utilities;
@@ -33,14 +34,15 @@ and the token→utility mapping:
 
 The library uses Tailwind's own layer names — tokens in `theme`, component styles in
 `components` — so the standard Tailwind pin is all you need: preflight can't break the
-components and any utility class outranks component styles. This page runs on exactly
-that setup.
+components, and any utility class you write outranks component styles without a fight.
+This page runs on exactly that setup.
 
 ### Tokens as Tailwind utilities
 
-`@brijbyte/md3-react/tailwind-tokens.css` is a generated Tailwind v4 `@theme inline`
-block that maps every MD3 system token to a Tailwind theme namespace, giving you
-token-backed utility classes with the token's own name:
+Forget maintaining a parallel color palette in `tailwind.config` — MD3's own tokens
+already are your design system. `@brijbyte/md3-react/tailwind-tokens.css` maps every
+system token to a Tailwind theme namespace, so `bg-primary` or `text-title-large` just
+work, spelled the way the tokens already are:
 
 | MD3 tokens                 | Utilities                                                                                         |
 | -------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -52,8 +54,8 @@ token-backed utility classes with the token's own name:
 
 Because the mapping is `@theme inline`, each utility resolves to `var(--md-sys-*)` at
 runtime rather than a frozen value — so `bg-background` follows the active theme
-(`data-theme="dark"` or `prefers-color-scheme`) automatically. No `dark:` variants
-needed, and any future dynamic-color theming picks up for free.
+automatically. No `dark:` variants to write or maintain, and any future dynamic-color
+theming picks up for free, everywhere you already used a token utility.
 
 ```tsx
 <article className="rounded-large bg-surface-container-high p-6 shadow-level1">
@@ -77,20 +79,22 @@ Toggle the docs theme — every class in this card is a token utility, so it fol
 
 ### Utility overrides
 
-Utility classes win over component styles: the `utilities` layer is declared after
-`components`, so no `!important` is needed.
+Need one button a different shade? Just add a class — no fighting the library's own
+CSS. Utility classes win over component styles because the `utilities` layer is declared
+after `components`, so you never reach for `!important`.
 
 <UtilityOverrides />
 
 ### Targeting variants and states
 
-The public styling contract is stable class names (`md3-<component>-<part>`, e.g.
-`.md3-button-root`) plus `data-*` attributes: `data-variant` / `data-size` / `data-color`
-mirror the component props, and Base UI's state attributes (`data-pressed`,
-`data-checked`, `data-disabled`, `data-popup-open`, …) mirror interaction state. Variants
-are never encoded in class names, so one attribute selector re-skins a single variant
-app-wide. Unlayered app CSS always beats the `components` layer — no `!important`
-or specificity hacks:
+Want to re-skin every outlined button in the app, or recolor a toggle only while it's
+pressed? One selector does it — the styling contract is stable class names
+(`md3-<component>-<part>`, e.g. `.md3-button-root`) plus `data-*` attributes:
+`data-variant` / `data-size` / `data-color` mirror the component props, and Base UI's
+state attributes (`data-pressed`, `data-checked`, `data-disabled`, `data-popup-open`, …)
+mirror interaction state. Variants are never baked into class names, so the selector
+below re-skins a variant globally, and unlayered app CSS always beats the `components`
+layer — no `!important` or specificity hacks:
 
 ```css
 /* every outlined button in the app */
@@ -110,8 +114,8 @@ or specificity hacks:
 }
 ```
 
-The same attributes work as Tailwind data-attribute variants for one-off overrides,
-composing with the token utilities above:
+The same attributes double as Tailwind data-attribute variants for one-off overrides,
+composing directly with the token utilities above — no separate CSS file needed:
 
 ```tsx
 <Button variant="tonal" toggle className="data-pressed:bg-tertiary data-pressed:text-on-tertiary">

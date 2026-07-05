@@ -28,8 +28,8 @@ import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@brijby
   ]}
 />
 
-Menus display a list of choices on a temporary surface, opened from a button, icon
-button, or any other control. Built on
+Attach a list of choices to any control — a button, icon button, or table row —
+without hand-rolling positioning or collision logic. It's built on
 [Base UI Menu](https://base-ui.com/react/components/menu): `Menu` holds the open state,
 `MenuTrigger` usually `render`s an existing control, and `MenuContent` is the
 portalled surface — positioned below the anchor's start edge by default and
@@ -37,22 +37,26 @@ repositioned automatically when it would be clipped (`side` / `align` to overrid
 
 ## Basic menu
 
-Items activate via `onClick` and close the menu; a `disabled` item stays visible but
-inert, per the spec's "disable, don't remove" guidance.
+Items close the menu automatically on `onClick`, so you don't wire up dismissal
+yourself. A `disabled` item stays visible but inert, per the spec's "disable, don't
+remove" guidance — users see the full option set even when some aren't currently
+available.
 
 <BasicMenu />
 
 ## Icons and shortcuts
 
-Items take a 24dp `leadingIcon`, a `trailingIcon`, and `trailingText` for hints like
-keyboard shortcuts. Use `MenuSeparator` to divide groups — on web, MD3 recommends
-dividers over the expressive gap treatment.
+Give users a visual head start on scanning long lists: items take a 24dp
+`leadingIcon`, a `trailingIcon`, and `trailingText` for hints like keyboard shortcuts.
+Use `MenuSeparator` to divide groups — on web, MD3 recommends dividers over the
+expressive gap treatment.
 
 <MenuIcons />
 
 ## Selection
 
-`MenuRadioGroup` with `MenuRadioItem` handles single-select, `MenuCheckboxItem`
+Let users pick several options in one visit instead of reopening the menu after every
+click: `MenuRadioGroup` with `MenuRadioItem` handles single-select, `MenuCheckboxItem`
 toggles independently — both stay open on activation and mark selection by filling
 the row with `secondary-container` (the spec uses the highlight alone, no checkmark).
 Control them with `value` / `onValueChange` and `checked` / `onCheckedChange`, or use
@@ -62,34 +66,36 @@ the `default*` props as here.
 
 ## Submenus and groups
 
-`MenuSubmenu` nests a `MenuSubmenuTrigger` (it gets a cascading arrow indicator
-automatically) and its own `MenuContent`, opened on hover or with the arrow keys.
-`MenuGroup` labels a section via the `label` prop.
+Nest deeper option sets without abandoning keyboard or hover flow: `MenuSubmenu`
+wraps a `MenuSubmenuTrigger` (it gets a cascading arrow indicator automatically) and
+its own `MenuContent`, opened on hover or with the arrow keys. `MenuGroup` labels a
+section via the `label` prop.
 
 <Submenu />
 
 ## A complex menu
 
-Everything composes: this text-editor formatting menu (after the
-[MD3 menu guidelines](https://m3.material.io/components/menus/guidelines)) mixes plain
-items, three cascading submenus — two carrying their own radio selection — keyboard
-shortcut hints, and dividers between logical groups.
+Every piece above composes without extra glue code: this text-editor formatting menu
+(after the [MD3 menu guidelines](https://m3.material.io/components/menus/guidelines))
+mixes plain items, three cascading submenus — two carrying their own radio
+selection — keyboard shortcut hints, and dividers between logical groups.
 
 <EditorMenu />
 
 ## Context menu
 
-`ContextMenu` + `ContextMenuTrigger` open the same menu surface from a secondary
-click (or long press on touch), positioned at the pointer. All the item components
-work unchanged inside it.
+Add right-click actions without building a second menu component: `ContextMenu` +
+`ContextMenuTrigger` open the same menu surface from a secondary click (or long press
+on touch), positioned at the pointer. All the item components work unchanged inside
+it.
 
 <ContextMenuDemo />
 
 ## Scrolling
 
-Long menus scroll within `max-height` — by default the popup caps itself to the
-available viewport space (`var(--available-height)`); this demo caps it lower via
-`className`. Per the guidelines, use dividers rather than gaps/groups in scrollable
-menus.
+A menu with dozens of items never pushes past the viewport or gets clipped: it
+scrolls within `max-height`, which by default caps itself to the available viewport
+space (`var(--available-height)`); this demo caps it lower via `className`. Per the
+guidelines, use dividers rather than gaps/groups in scrollable menus.
 
 <ScrollableMenu />

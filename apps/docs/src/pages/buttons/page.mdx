@@ -33,15 +33,17 @@ import { Button } from "@brijbyte/md3-react/button";
 
 ## Button sizes
 
-Five sizes (`xsmall`–`xlarge`) per the expressive spec; `small` is the default. Height, padding,
-icon size, typescale, and outline width all scale together.
+Pick a size and every dimension follows: height, padding, icon size, typescale, and outline
+width all scale together, so you never hand-tune one property and leave the rest mismatched.
+Five sizes (`xsmall`–`xlarge`) cover the expressive spec; `small` is the default.
 
 <ButtonSizes />
 
 ## Shapes & toggle
 
-Round or `shape="square"`, morphing to a smaller radius while pressed. Toggle buttons (`toggle`,
-Base UI Toggle underneath) flip shape and color when selected; there is no text-variant toggle.
+The press feedback is built in: any button morphs to a smaller radius while pressed, whether
+it's round or `shape="square"`. Toggle buttons (`toggle`, Base UI Toggle underneath) flip shape
+and color on selection to make the state obvious at a glance; there is no text-variant toggle.
 
 <ButtonShapes />
 
@@ -63,20 +65,24 @@ import { IconButton } from "@brijbyte/md3-react/icon-button";
   ]}
 />
 
-The middle two of each row are toggles — click them.
+Same component, no separate toggle variant to import — the middle two of each row are toggles,
+so click them to see the state change in place.
 
 <IconButtons />
 
 ### Sizes & widths
 
-Five expressive sizes with `narrow`/`default`/`wide` widths (padding only — height and icon are
-fixed per size); `shape="square"` and toggles morph like common buttons.
+Need a denser toolbar or a roomier tap target without changing the icon size? Adjust the width
+independently of size: `narrow`/`default`/`wide` change padding only (height and icon stay fixed
+per size), across five expressive sizes. `shape="square"` and toggles morph the same way common
+buttons do.
 
 <IconButtonSizes />
 
 ## Floating action buttons
 
-Also called FABs, these are the only buttons that float above the surface.
+For the one action a screen can't let you miss, FABs (floating action buttons) sit above the
+surface instead of inline with the rest of the content.
 
 ```tsx
 import { Fab } from "@brijbyte/md3-react/fab";
@@ -96,20 +102,23 @@ import { Fab } from "@brijbyte/md3-react/fab";
   ]}
 />
 
-Baseline 56dp plus the expressive `medium` (80dp) and `large` (96dp) sizes; a `label` renders
-the extended FAB at any size. Colors come in two families: soft `*-container` (default) and
-bold tone roles. The 40dp small FAB and surface colors are deprecated by the expressive update.
+Add a `label` and any size becomes an extended FAB, no separate component to swap in. Sizes run
+from the 56dp baseline up to the expressive `medium` (80dp) and `large` (96dp), and colors come
+in two families — soft `*-container` (default) or bold tone roles — so you can match how much
+visual weight the action deserves. The 40dp small FAB and surface colors are deprecated by the
+expressive update.
 
 <Fabs />
 
 ### Positioning
 
-`Fab` only renders the button — it does not float by itself. Position it yourself, typically
-`position: fixed` in the bottom-right corner with the spec's 16dp margin from the screen edges
-(pass a `className` or `style`). Since the FAB covers whatever scrolls beneath it, also give
-the content enough bottom padding (FAB height + margins, ~88px for the baseline size) so the
-last elements can scroll up past it. Here the FAB is `position: absolute` inside the mock
-screen so it stays put while the content scrolls.
+`Fab` renders only the button, so you keep full control over where it sits — position it
+yourself, typically `position: fixed` in the bottom-right corner with the spec's 16dp margin
+from the screen edges (pass a `className` or `style`). One thing easy to miss: since the FAB
+covers whatever scrolls beneath it, give the content enough bottom padding (FAB height +
+margins, ~88px for the baseline size) so the last elements can still scroll up past it. Here
+the FAB is `position: absolute` inside the mock screen so it stays put while the content
+scrolls.
 
 <FabPositioning />
 
@@ -128,10 +137,11 @@ import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-r
   links={[{ label: "MD3 spec", href: "https://m3.material.io/components/split-button/overview" }]}
 />
 
-A leading action button fused with a trailing menu button (2dp gap). Inner corners morph on
-hover/press; click the chevron — the menu button rounds fully and the icon spins 180°, opening
-a real [Menu](/components/menu) anchored to it (`Menu` > `MenuTrigger render={<SplitButtonMenu />}` >
-`MenuContent`).
+Pair a primary action with a set of related ones without cluttering the UI: a leading action
+button fuses with a trailing menu button (2dp gap), and clicking the chevron opens a real
+[Menu](/components/menu) anchored to it (`Menu` > `MenuTrigger render={<SplitButtonMenu />}` >
+`MenuContent`) — so you get full menu behavior, not a custom dropdown. Inner corners morph on
+hover/press, and the menu button rounds fully with a 180° icon spin when open.
 
 <SplitButtons />
 
@@ -152,14 +162,16 @@ import { ButtonGroup } from "@brijbyte/md3-react/button-group";
 
 ### Standard
 
-Related buttons with 12dp spacing; each keeps its own shape. Press and hold one — it grows 15%
-wider while its neighbors compress to absorb the change.
+Group related buttons without losing each one's individual shape: 12dp spacing keeps them
+visually tied while staying separate elements. Press and hold one and it grows 15% wider, with
+its neighbors compressing to absorb the change.
 
 <ButtonGroupStandard />
 
 ### Connected
 
-Buttons fuse into a pill: 2dp gaps, 8dp inner corners, full outer corners. Selected toggles round
-fully; press-and-hold a toggle to see the inner corners tighten.
+For a tighter, single-control look, buttons fuse into one pill: 2dp gaps, 8dp inner corners, full
+outer corners. Selected toggles round fully, and press-and-hold a toggle to see the inner corners
+tighten.
 
 <ButtonGroupConnected />

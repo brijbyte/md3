@@ -20,19 +20,20 @@ import { Typography } from "@brijbyte/md3-react/typography";
 
 ## Type scale
 
-MD3 defines [five roles](https://m3.material.io/styles/typography/overview) — display,
-headline, title, body, and label — in three sizes each. `variant` selects the role
-(default `body-large`); every value maps 1:1 to the `--md-sys-typescale-*` tokens, so
-retheming the tokens restyles every `Typography` in the app.
+Stop guessing font sizes. MD3 defines [five roles](https://m3.material.io/styles/typography/overview)
+— display, headline, title, body, and label — in three sizes each, and `variant` picks the
+role directly (default `body-large`). Every value maps 1:1 to the `--md-sys-typescale-*`
+tokens, so retheming the tokens restyles every `Typography` in the app at once.
 
 <TypeScale />
 
 ### Changing fonts
 
-Each variant reads its typeface from its own `--md-sys-typescale-<variant>-font` variable,
-so a plain CSS override retargets one role — or every role at once via the two ref
-typefaces they default to: `--md-ref-typeface-brand` (display, headline, and title-large)
-and `--md-ref-typeface-plain` (everything else).
+Swap your brand typeface once and it propagates everywhere — no hunting down every
+heading in the app. Each variant reads its typeface from its own
+`--md-sys-typescale-<variant>-font` variable, so a plain CSS override retargets one role,
+or every role at once via the two ref typefaces they default to: `--md-ref-typeface-brand`
+(display, headline, and title-large) and `--md-ref-typeface-plain` (everything else).
 
 ```css
 :root {
@@ -49,18 +50,18 @@ The same pattern works for the other per-variant tokens: `-size`, `-line-height`
 
 ## Semantics
 
-`Typography` is polymorphic: `variant` picks the style, and each variant defaults to a
-semantic element so a plain `<Typography variant="headline-large">` already renders
-sensible HTML — `display-*`/`headline-*` render `h1`, `title-*` render `h3`–`h6`,
-`body-*` render `p`, and `label-*` render `span`. Pass `as` to override the default when
-you need different semantics (or SEO), without changing the style.
+Style and markup are two different decisions, and `Typography` never confuses them:
+`variant` picks the visual style, and it defaults to sensible HTML for that style, so a
+plain `<Typography variant="headline-large">` already renders `h1` — `title-*` renders
+`h3`–`h6`, `body-*` renders `p`, and `label-*` renders `span`. Need a `display-large` look
+on an `h2` for SEO, or any other mismatch? Pass `as` and only the markup changes.
 
 <Semantic />
 
-`label-*` defaults to `span`, not `<label>` — the type scale is used for lots of non-form
-UI text (buttons, tabs, chips, badges), and a real `<label>` element carries form-control
-association semantics that would be wrong most of the time. Pass `as="label"` explicitly
-when a `label-*` variant is actually captioning a form field.
+One deliberate exception: `label-*` defaults to `span`, not `<label>`. The type scale gets
+reused for lots of non-form UI text (buttons, tabs, chips, badges), and a real `<label>`
+carries form-control association semantics that would be wrong most of the time. Pass
+`as="label"` explicitly when a `label-*` variant is actually captioning a form field.
 
 Margins are reset to `0`; spacing between text blocks is yours to lay out (the demo above
 uses a flex column with a gap).

@@ -25,18 +25,20 @@ import { Card, CardMedia, ActionableCard } from "@brijbyte/md3-react/card";
 
 ## Variants
 
-Elevated (the default), filled, and outlined. The card itself is a bare
-container — a flex column with no padding — so layout and spacing belong to
-your content.
+Pick elevated (the default), filled, or outlined and get the right shadow,
+fill, and border for free. The card itself stays a bare container — a flex
+column with no padding — so you control layout and spacing instead of
+fighting preset ones.
 
 <CardVariants />
 
 ## Composing content
 
-There are deliberately no `CardHeader` / `CardContent` / `CardFooter`
-sub-components — MD3 treats card anatomy as guidance, not API. Compose it
-from [Typography](/styles/typography), [buttons](/components/buttons), and
-your own markup. The
+A card's contents vary too much for a fixed set of sub-components to cover
+without getting in the way, so there's no `CardHeader` / `CardContent` /
+`CardFooter` — MD3 treats card anatomy as guidance, not API. Compose it from
+[Typography](/styles/typography), [buttons](/components/buttons), and your
+own markup. The
 [spec's numbered anatomy](https://m3.material.io/components/cards/guidelines#anatomy)
 maps directly:
 
@@ -47,25 +49,27 @@ maps directly:
 5. **Subhead** — `Typography`, e.g. `body-medium` or `title-medium`
 6. **Headline** — `Typography`, e.g. `title-large`
 
-The card doesn't clip its children, so flush media goes in `CardMedia`: it
-clips its content and rounds the corners that touch the card's edge — the top
-pair as the first child, the bottom pair as the last. A child `<img>` or
-`<video>` fills it edge-to-edge with `object-fit: cover`.
+Edge-to-edge images need clipping and corner-rounding that the card itself
+skips, so that work lives in `CardMedia` instead: it clips its content and
+rounds whichever corners touch the card's edge — the top pair as the first
+child, the bottom pair as the last. A child `<img>` or `<video>` fills it
+edge-to-edge with `object-fit: cover`.
 
 <CardExample />
 
 ## Actionable
 
-`ActionableCard` makes the whole card the action — the same three variants,
-plus the spec's interaction states: a state layer with ripple, an elevation
-raise on hover, the focus ring (outlined cards also flip their border to
-`on-surface`), and `disabled`. By default it renders a `div` with
-`role="button"` and keyboard activation — not a native `<button>`, so the card
-can keep headings and other rich content valid. Pass `render` (e.g.
-`<a href>`) to navigate instead.
+When the whole card should be clickable, `ActionableCard` gets you there
+without hand-rolling hover, focus, and press states — the same three
+variants, plus the spec's interaction states: a state layer with ripple, an
+elevation raise on hover, the focus ring (outlined cards also flip their
+border to `on-surface`), and `disabled`. By default it renders a `div` with
+`role="button"` and keyboard activation, not a native `<button>`, since cards
+often need headings and other content a `<button>` can't legally contain.
+Pass `render` (e.g. `<a href>`) to navigate instead.
 
-A card with a primary action shouldn't contain further actions — nested
-buttons would activate the card too. For drag interactions, styling hooks off
-a `data-dragged` attribute you set from your own drag state.
+Keep a card's primary action singular — nested buttons inside it would fire
+their own click and the card's at once. For drag interactions, style off a
+`data-dragged` attribute you set from your own drag state.
 
 <CardActionable />

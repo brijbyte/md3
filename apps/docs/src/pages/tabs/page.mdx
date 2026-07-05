@@ -25,21 +25,23 @@ import { Tabs, TabList, Tab, TabPanel } from "@brijbyte/md3-react/tabs";
 
 ## Primary tabs
 
-The active indicator hugs the label and stretches elastically between tabs, per MDC Android. Arrow
-keys move focus and activate.
+Switching tabs feels physical, not instant: the active indicator stretches to reach the next
+label before snapping to its width, matching MDC Android's motion exactly. Arrow keys move focus
+and activate, so keyboard users get the same behavior for free.
 
 <PrimaryTabs />
 
 ## Secondary tabs
 
-A flatter 2dp indicator spans the full tab width — for a second level of content
-within a page.
+Nest a second level of navigation inside a page without competing with the primary tabs above
+it: a flatter 2dp indicator spans the full tab width instead of hugging the label.
 
 <SecondaryTabs />
 
 ## With icons
 
-Primary tabs stack the icon above the label (64dp); secondary tabs keep it inline.
+Add an icon without reworking spacing yourself: primary tabs stack it above the label at 64dp,
+while secondary tabs keep it inline, matching each variant's spec height.
 
 <TabIcons />
 
@@ -53,7 +55,8 @@ import { Badge } from "@brijbyte/md3-react/badge";
 @import "@brijbyte/md3-react/badge.css";
 ```
 
-Pass `badge` to a Tab: it anchors to the icon's top-right corner, or sits inline after the label
-on text-only tabs. Badges are visual — put the count in the tab's `aria-label` too.
+Surface a count or a "new content" dot without hand-positioning it: pass `badge` to a Tab and it
+anchors to the icon's top-right corner, or sits inline after the label on text-only tabs. Badges
+are visual only, so put the count in the tab's `aria-label` too if it's meaningful.
 
 <TabBadges />

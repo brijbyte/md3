@@ -23,11 +23,17 @@ import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
 
 ## States
 
+Reach for radio, not [Switch](/components/switch), whenever a person can pick exactly one
+option from a visible set — the group enforces that automatically, so there's no state to
+sync by hand. `RadioGroup` wraps Base UI's Radio Group, giving you roving-tabindex keyboard
+navigation and the correct `aria-checked` wiring out of the box.
+
 <RadioGroups />
 
 ## With labels
 
-Radio has no built-in label — wrap it and the label text in a `<label>` element, same as
-the native `<input type="radio">` pattern.
+Get a clickable label and correct screen reader association without extra wiring: wrap
+Radio and its label text in a native `<label>` element, the same pattern you already use
+for `<input type="radio">`.
 
 <RadioLabels />

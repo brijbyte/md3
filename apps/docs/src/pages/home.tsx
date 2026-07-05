@@ -9,13 +9,14 @@ export default function HomePage() {
     <>
       <section className="max-w-prose">
         <Typography as="h1" variant="display-large" className="font-bold">
-          Material Design,
+          Material Design 3,
           <br />
-          <span className="text-primary">for React</span>
+          <span className="text-primary">built right for React</span>
         </Typography>
         <Typography variant="title-large" className="mt-6 text-on-surface-variant">
-          A React implementation of Google’s Material Design 3, built as a styled layer on top of
-          the headless Base UI primitives. Pick a component to see every variant and state.
+          Every component matches Google's own Compose Material3 implementation — spacing,
+          motion, and all. Accessibility and keyboard handling come from Base UI, so you get it
+          right for free.
         </Typography>
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Button
