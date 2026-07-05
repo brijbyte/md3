@@ -166,6 +166,12 @@
     box-shadow: var(--md-sys-elevation-level1);
     cursor: pointer;
     outline: none;
+    transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* Pressed/dragging handle narrows to half its resting width (spec ratio, height unchanged). */
+  .thumb[data-pressed] {
+    width: 2px;
   }
 
   /* The focusable element is the visually-hidden native input nested inside the thumb

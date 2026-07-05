@@ -58,10 +58,10 @@ function segmentStyle(
   };
 }
 
-// The value bubble is a Base UI Tooltip. It shows only while actively dragging or nudging
-// with the keyboard, not for the whole time the thumb happens to be focused — so it opens on
-// pointerdown/keydown and closes on pointerup/keyup/blur, rather than mirroring focus state
-// directly.
+// The value bubble is a Base UI Tooltip. It shows while the thumb is focused (keyboard tab,
+// held for the whole focus duration) or while actively dragging, and hides on blur/release.
+// Kept separate from `pressed`, which drives the visual press state (narrow handle, state
+// layer) and should only reflect an actual pointer drag — not mere keyboard focus.
 function SliderThumbLabel({
   index,
   ...thumbProps
@@ -72,18 +72,9 @@ function SliderThumbLabel({
   getAriaLabel: ((index: number) => string) | undefined;
   getAriaValueText: ((formattedValue: string, value: number, index: number) => string) | undefined;
 }) {
-  const [open, setOpen] = React.useState(false);
-  // A keyboard nudge (single press) fires keydown then keyup almost instantly, so closing
-  // right on keyup just flashes the bubble — give it a moment to actually be readable
-  // before it goes away. A drag has continuous pointermove feedback instead, so it still
-  // closes the instant the pointer lets go.
-  const keyCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const clearKeyCloseTimeout = () => {
-    if (keyCloseTimeoutRef.current != null) {
-      clearTimeout(keyCloseTimeoutRef.current);
-      keyCloseTimeoutRef.current = null;
-    }
-  };
+  const [focused, setFocused] = React.useState(false);
+  const [pressed, setPressed] = React.useState(false);
+  const open = focused || pressed;
   // The thumb moves via inline `insetInlineStart`, which doesn't resize or scroll
   // anything, so Base UI's autoUpdate (ResizeObserver/IntersectionObserver-based)
   // never notices — a virtual anchor re-measured fresh every frame does.
@@ -91,13 +82,18 @@ function SliderThumbLabel({
   const anchorElRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!open) return;
-    const close = () => {
-      clearKeyCloseTimeout();
-      setOpen(false);
+    if (!pressed) return;
+    const release = () => setPressed(false);
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+    return () => {
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
     };
-    window.addEventListener("pointerup", close);
-    window.addEventListener("pointercancel", close);
+  }, [pressed]);
+
+  React.useEffect(() => {
+    if (!open) return;
     const measure = () => {
       const el = anchorElRef.current;
       if (el) setAnchor({ getBoundingClientRect: () => el.getBoundingClientRect() });
@@ -107,14 +103,8 @@ function SliderThumbLabel({
       measure();
       frame = requestAnimationFrame(loop);
     });
-    return () => {
-      window.removeEventListener("pointerup", close);
-      window.removeEventListener("pointercancel", close);
-      cancelAnimationFrame(frame);
-    };
+    return () => cancelAnimationFrame(frame);
   }, [open]);
-
-  React.useEffect(() => clearKeyCloseTimeout, []);
 
   return (
     <Tooltip.Root open={open}>
@@ -123,25 +113,10 @@ function SliderThumbLabel({
         index={index}
         className={styles.thumb}
         {...thumbProps}
-        // Base UI's own `data-dragging` is root-level (true while ANY thumb drags), so
-        // it's shared across every thumb in a range slider. `data-pressed` mirrors this
-        // thumb's own tooltip-open state instead, which is already tracked per-thumb.
-        data-pressed={open || undefined}
-        onPointerDown={() => {
-          clearKeyCloseTimeout();
-          setOpen(true);
-        }}
-        onKeyDown={() => {
-          clearKeyCloseTimeout();
-          setOpen(true);
-        }}
-        onKeyUp={() => {
-          keyCloseTimeoutRef.current = setTimeout(() => setOpen(false), 1000);
-        }}
-        onBlur={() => {
-          clearKeyCloseTimeout();
-          setOpen(false);
-        }}
+        data-pressed={pressed || undefined}
+        onPointerDown={() => setPressed(true)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       >
         <span className={styles.stateLayer} aria-hidden />
       </BaseSlider.Thumb>
@@ -198,7 +173,6 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
       min={min}
       max={max}
       step={step}
-      thumbCollisionBehavior="swap"
       {...rest}
     >
       <BaseSlider.Control className={styles.control}>
