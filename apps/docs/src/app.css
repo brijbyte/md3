@@ -96,17 +96,18 @@ html[data-navigating] body::after {
   }
 }
 
-/* Roboto arrives late from Google Fonts (display=swap) and its widths differ
-   enough from system-ui that text visibly shifts on swap (the code-showcase tab
-   labels made it obvious). This Arial-based fallback carries Roboto's metrics
-   (fontaine/next-font values), so pre-swap text occupies the same space. */
+/* Google Sans arrives late from Google Fonts (display=swap) and its widths
+   differ enough from system-ui that text visibly shifts on swap (the
+   code-showcase tab labels made it obvious). This Arial-based fallback
+   carries Google Sans's metrics (fontaine/capsize values), so pre-swap text
+   occupies the same space. */
 @font-face {
-  font-family: "Roboto Fallback";
+  font-family: "Google Sans Fallback";
   src: local("Arial");
-  ascent-override: 92.7734%;
-  descent-override: 24.4141%;
+  ascent-override: 95.6986%;
+  descent-override: 28.3331%;
   line-gap-override: 0%;
-  size-adjust: 100.1106%;
+  size-adjust: 100.9419%;
 }
 
 /* Same trick for the brand face: Georgia is the closest local serif to Roboto
@@ -133,11 +134,11 @@ html[data-navigating] body::after {
 }
 
 /* Unlayered, so it wins over the theme-layer defaults ("Roboto", system-ui).
-   Two distinct ref typefaces: Roboto carries the brand voice (headings, docs
-   title, nav — the display/headline/title-large variants route here via the
-   typescale tokens), Roboto Slab is the plain face for content. */
+   Two distinct ref typefaces: Google Sans carries the brand voice (headings,
+   docs title, nav — the display/headline/title-large variants route here via
+   the typescale tokens), Roboto is the plain face for content. */
 :root {
-  --md-ref-typeface-brand: "Roboto", "Roboto Fallback", system-ui, sans-serif;
+  --md-ref-typeface-brand: "Google Sans", "Google Sans Fallback", system-ui, sans-serif;
   /* --md-ref-typeface-plain: "Roboto Slab", "Roboto Slab Fallback", Georgia, serif; */
 }
 
