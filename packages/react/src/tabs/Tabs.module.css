@@ -133,13 +133,21 @@
   /* Active indicator: Base UI positions it via --active-tab-* vars (scroll-aware
      tab box). Primary hugs the label: the tab's 16px padding is subtracted per
      side — exact while tabs keep their intrinsic width (the MD3 default here).
-     Both edges are insets so they can ease independently (elastic, below). */
+     Both edges are insets so they can ease independently (elastic, below).
+     `right` is NOT Base UI's own --active-tab-right — that's computed against
+     scrollWidth, but a CSS `right` inset resolves against the containing
+     block's clientWidth. Those only match when the list has no overflow; once
+     the file tabs overflow (our case — .list is overflow-x: auto), trusting
+     --active-tab-right pushes the indicator's right edge past the visible box,
+     collapsing it to zero width until the next scroll-triggered repaint. Derive
+     `right` from --active-tab-left + --active-tab-width against 100% instead,
+     which is scroll-width-agnostic. */
   .indicator {
     position: absolute;
     z-index: 1;
     bottom: 0;
     left: calc(var(--active-tab-left) + 16px);
-    right: calc(var(--active-tab-right) + 16px);
+    right: calc(100% - var(--active-tab-left) - var(--active-tab-width) + 16px);
     height: 3px;
     border-radius: 3px 3px 0 0;
     background: var(--md-sys-color-primary);
@@ -184,7 +192,7 @@
   /* Secondary: 2px square indicator spanning the whole tab */
   .list[data-variant="secondary"] .indicator {
     left: var(--active-tab-left);
-    right: var(--active-tab-right);
+    right: calc(100% - var(--active-tab-left) - var(--active-tab-width));
     height: 2px;
     border-radius: 0;
   }
