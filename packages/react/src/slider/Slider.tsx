@@ -173,7 +173,7 @@ function SliderThumbLabel({
       <Tooltip.Portal>
         <Tooltip.Positioner
           anchor={anchor}
-          side={vertical ? "right" : "top"}
+          side={vertical ? "left" : "top"}
           sideOffset={12}
           className={styles.positioner}
         >

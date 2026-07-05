@@ -277,7 +277,7 @@
     height: 44px;
     padding-inline: 8px;
     box-sizing: border-box;
-    border-radius: var(--md-sys-shape-corner-medium);
+    border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-inverse-surface);
     color: var(--md-sys-color-inverse-on-surface);
     font-family: var(--md-sys-typescale-body-medium-font);
@@ -292,9 +292,9 @@
       opacity var(--md-sys-motion-duration-short1) linear;
   }
 
-  /* Vertical sliders anchor the value bubble to the thumb's right side instead of above it. */
-  .valueLabel[data-side="right"] {
-    transform-origin: center left;
+  /* Vertical sliders anchor the value bubble to the thumb's left side instead of above it. */
+  .valueLabel[data-side="left"] {
+    transform-origin: center right;
   }
 
   .valueLabel[data-starting-style],

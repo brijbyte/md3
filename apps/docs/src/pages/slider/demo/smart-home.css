@@ -1,0 +1,28 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/slider.css";
+
+.demo-slider-smart-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 280px;
+  max-width: 100%;
+  padding: 32px 24px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+}
+
+.demo-slider-smart-home-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-slider-smart-home-control {
+  position: relative;
+  display: flex;
+  height: 320px;
+  margin-block-start: 24px;
+}
