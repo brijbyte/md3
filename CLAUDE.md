@@ -226,7 +226,9 @@ checkmark, and enter/exit is a CSS scale+fade — material-web's staggered heigh
 their exact dp values (track height, handle height, track corner radius, inset-icon
 size) come straight off the m3.material.io/components/sliders/specs measurements table
 — not material-web's stale v0_192 scss, which only has the old 4px-track/circular-handle
-classic spec. Handle width is a constant 4px at every size; only height scales, driven by
+classic spec. Handle width is 4px at rest at every size, narrowing to 2px (half, per Compose
+`SliderTokens.kt`'s `PressedHandleWidth` and MDC's `THUMB_WIDTH_PRESSED_RATIO`) while
+`data-pressed`; only height scales with size, driven by
 a `--md3-slider-*` custom-property cascade set on `.root[data-size=...]` (inherited down
 to track/thumb, no JS needed). `icon` (inset icon) only renders at `m`/`l`/`xl` — `xs`/`s`
 aren't tall enough per spec. The track fill is up to three independently-shaped
@@ -247,11 +249,12 @@ so the small gaps between segments read as a cut-through to whatever's behind th
 not a second "inactive" layer; painting a matching-but-distinct surface color there
 produces a visible seam in dark mode instead. The value bubble is a Base UI `Tooltip`
 (`Root`/`Portal`/`Positioner`/`Popup`, no `Trigger` — anchored via a plain ref instead so
-hover never opens it) so it needs no layout space reserved in `.root`; it opens on
-pointerdown/keydown, and closes on a window-level pointerup/pointercancel immediately for
-drags, but on keyup only after a 1s deferred timeout (cancelled by the next keydown/
-pointerdown/blur) — a single keyboard nudge fires keydown-then-keyup almost instantly, so
-closing right on keyup just flashes the bubble. The anchor passed to `Tooltip.Positioner`
+hover never opens it) so it needs no layout space reserved in `.root`; it's open whenever
+the thumb is `focused` (keyboard tab, held for the whole focus duration, closing on blur)
+OR `pressed` (pointerdown until a window-level pointerup/pointercancel) — two separate
+booleans, not one, since `pressed` also drives the visual press state (narrow handle,
+state layer via `data-pressed`) and must reflect only an actual pointer drag, never mere
+keyboard focus. The anchor passed to `Tooltip.Positioner`
 is a virtual element re-measured every `requestAnimationFrame` while open, not the thumb
 ref directly — the thumb moves via inline `insetInlineStart`, which triggers neither
 ResizeObserver nor IntersectionObserver, so Base UI's `autoUpdate` never notices a plain
@@ -260,8 +263,8 @@ ref move; a fresh virtual-element object each frame forces Floating UI to recomp
 visually-hidden native `<input>` Base UI nests inside the thumb div, not the div itself —
 use `.thumb:has(:focus-visible)` (same pattern as Tabs/Chip elsewhere in this repo).
 Base UI's own `data-dragging` is root-level (true while *any* thumb in a range slider
-drags), so a `data-pressed` attribute mirrors each thumb's own tooltip-open state instead
-for the per-thumb pressed state layer. Demo containers must set an explicit `width` (e.g.
+drags), so a `data-pressed` attribute mirrors each thumb's own `pressed` state instead for
+the per-thumb pressed state layer. Demo containers must set an explicit `width` (e.g.
 `480px; max-width: 100%`), matching the Tabs demos' convention — the shared `Demo` wrapper
 is deliberately `w-fit`, so a percentage width on the demo's own root contributes nothing
 to that shrink-to-fit calculation and silently collapses to content size.
