@@ -44,11 +44,18 @@ The same pattern works for the other per-variant tokens: `-size`, `-line-height`
 
 ## Semantics
 
-`Typography` is polymorphic: it renders a `<p>` by default, and `as` swaps the underlying
-element (or component) without changing the style — pick the element for document
-semantics and SEO, and the variant for looks.
+`Typography` is polymorphic: `variant` picks the style, and each variant defaults to a
+semantic element so a plain `<Typography variant="headline-large">` already renders
+sensible HTML — `display-*`/`headline-*` render `h1`, `title-*` render `h3`–`h6`,
+`body-*` render `p`, and `label-*` render `span`. Pass `as` to override the default when
+you need different semantics (or SEO), without changing the style.
 
 <Semantic />
+
+`label-*` defaults to `span`, not `<label>` — the type scale is used for lots of non-form
+UI text (buttons, tabs, chips, badges), and a real `<label>` element carries form-control
+association semantics that would be wrong most of the time. Pass `as="label"` explicitly
+when a `label-*` variant is actually captioning a form field.
 
 Margins are reset to `0`; spacing between text blocks is yours to lay out (the demo above
 uses a flex column with a gap).
