@@ -4,6 +4,7 @@
 import "./app.css";
 
 import * as React from "react";
+import { AssistChip } from "@brijbyte/md3-react/chip";
 import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
 import { Typography } from "@brijbyte/md3-react/typography";
 import { NAV, SECTIONS, type NavItem } from "./nav";
@@ -204,28 +205,25 @@ function DocsLayout({
             aria-label="Documentation"
           >
             {SIDEBAR.map((item) => (
-              <Typography
-                as="a"
-                variant="label-large"
+              <AssistChip
                 key={item.path}
-                href={item.path}
+                render={<a href={item.path} />}
+                nativeButton={false}
                 aria-current={item.path === pathname ? "page" : undefined}
-                className={`flex h-10 shrink-0 items-center rounded-full px-4 font-brand ${
-                  item.path === pathname
-                    ? "bg-secondary-container text-on-secondary-container"
-                    : "bg-surface-container-low text-on-surface-variant"
+                className={`shrink-0 font-brand ${
+                  item.path === pathname ? "bg-secondary-container text-on-secondary-container" : ""
                 }`}
               >
                 {item.label}
-              </Typography>
+              </AssistChip>
             ))}
           </nav>
           {route ? (
             <>
-              <Typography as="h1" variant="headline-large" id="top">
+              <Typography as="h1" variant="display-small" className="font-bold" id="top">
                 {route.title}
               </Typography>
-              <Typography className="mt-2 mb-8 text-on-surface-variant">
+              <Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
                 {route.description}
               </Typography>
               {Page && (
@@ -239,7 +237,7 @@ function DocsLayout({
             </>
           ) : (
             <>
-              <Typography as="h1" variant="headline-large">
+              <Typography as="h1" variant="display-small" className="font-bold">
                 Page not found
               </Typography>
               <Typography className="mt-2 text-on-surface-variant">
