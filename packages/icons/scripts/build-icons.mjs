@@ -35,8 +35,11 @@ const VIEWBOX = "0 -960 960 960";
 // the Symbols set to its own web app; this codepoints file is the same source of truth).
 const CODEPOINTS_URL =
   "https://raw.githubusercontent.com/google/material-design-icons/master/variablefont/MaterialSymbolsOutlined%5BFILL%2CGRAD%2Copsz%2Cwght%5D.codepoints";
-const svgUrl = (style, name, variant) =>
-  `https://fonts.gstatic.com/s/i/short-term/release/materialsymbols${style}/${name}/${variant}/24px.svg`;
+const svgUrl = (
+  /** @type {string} */ style,
+  /** @type {string} */ name,
+  /** @type {string} */ variant,
+) => `https://fonts.gstatic.com/s/i/short-term/release/materialsymbols${style}/${name}/${variant}/24px.svg`;
 
 const CONCURRENCY = 32;
 const RETRIES = 3;
@@ -49,7 +52,8 @@ const fetchText = async (/** @type {string} */ url) => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.text();
     } catch (err) {
-      if (attempt >= RETRIES) throw new Error(`${url}: ${err.message ?? err}`, { cause: err });
+      const message = err instanceof Error ? err.message : String(err);
+      if (attempt >= RETRIES) throw new Error(`${url}: ${message}`, { cause: err });
       await new Promise((r) => setTimeout(r, 500 * attempt));
     }
   }
@@ -57,14 +61,18 @@ const fetchText = async (/** @type {string} */ url) => {
 
 // Icon name list: fetch fresh, fall back to the cached copy when offline.
 const codepointsCache = path.join(cacheDir, "codepoints.txt");
+/** @type {string} */
 let codepoints;
 try {
-  codepoints = await fetchText(CODEPOINTS_URL);
+  const fetched = await fetchText(CODEPOINTS_URL);
+  if (fetched === null) throw new Error(`${CODEPOINTS_URL}: 404`);
+  codepoints = fetched;
   mkdirSync(cacheDir, { recursive: true });
   writeFileSync(codepointsCache, codepoints);
 } catch (err) {
   if (!existsSync(codepointsCache)) throw err;
-  console.warn(`Fetching icon list failed (${err.message}); using cached list.`);
+  const message = err instanceof Error ? err.message : String(err);
+  console.warn(`Fetching icon list failed (${message}); using cached list.`);
   codepoints = readFileSync(codepointsCache, "utf8");
 }
 const names = codepoints
@@ -74,6 +82,7 @@ const names = codepoints
 console.log(`${names.length} icon names.`);
 
 // Download every missing style×variant SVG into the cache (concurrency-limited pool).
+/** @type {{ url: string, file: string }[]} */
 const jobs = [];
 for (const style of STYLES) {
   mkdirSync(path.join(cacheDir, "svg", style), { recursive: true });
@@ -87,6 +96,7 @@ for (const style of STYLES) {
 if (jobs.length > 0) {
   console.log(`Downloading ${jobs.length} SVGs from fonts.gstatic.com…`);
   let done = 0;
+  /** @type {string[]} */
   const missing = [];
   const next = async () => {
     for (let job; (job = jobs.pop()); ) {

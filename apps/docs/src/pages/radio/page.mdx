@@ -3,6 +3,7 @@ title: Radio button
 ---
 
 import RadioGroups from "./demo/groups.tsx";
+import RadioLabels from "./demo/labels.tsx";
 
 ```tsx
 import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
@@ -15,3 +16,10 @@ import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
 ## States
 
 <RadioGroups />
+
+## With labels
+
+Radio has no built-in label — wrap it and the label text in a `<label>` element, same as
+the native `<input type="radio">` pattern.
+
+<RadioLabels />

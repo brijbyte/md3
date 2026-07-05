@@ -26,7 +26,4 @@ Per the MD3 spec, a badge's accessible label reads _after_ the destination it de
 nest it inside the labelled control (icon button, tab, nav item) rather than placing it
 elsewhere in the DOM. A numbered badge needs no extra label — its visible text ("5", "999+")
 is what's announced. A dot badge has no visible text, so it defaults `aria-label` to "New
-notification"; pass your own `aria-label` (or `aria-labelledby`) to override it. Stick to the
-default token colors — they're already tuned for the spec's 3:1 container/label contrast
-minimum, which a custom color pairing could break. Hiding the badge once its notification is
-addressed is an app-level concern (not something the component can infer).
+notification"; pass your own `aria-label` (or `aria-labelledby`) to override it.
