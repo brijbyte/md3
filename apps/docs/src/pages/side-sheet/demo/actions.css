@@ -1,0 +1,34 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/side-sheet.css";
+@import "@brijbyte/md3-react/switch.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-side-sheet-actions {
+  width: 360px;
+  padding-bottom: 8px;
+}
+
+.demo-side-sheet-actions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px 12px 24px;
+}
+
+.demo-side-sheet-actions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.demo-side-sheet-actions-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  cursor: pointer;
+}

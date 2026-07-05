@@ -1,0 +1,46 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/chip.css";
+@import "@brijbyte/md3-react/side-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-side-sheet-filter {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-side-sheet-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px 12px 24px;
+}
+
+.demo-side-sheet-filter-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 24px 16px;
+}
+
+.demo-side-sheet-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 72dp bottom action row per the MD3 side-sheet spec: divider above, actions left-aligned. */
+.demo-side-sheet-filter-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  min-height: 72px;
+  align-items: center;
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}

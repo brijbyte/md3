@@ -49,6 +49,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/buttons": mdxRoute(() => import("./pages/buttons/page.mdx")),
   "/components/badge": mdxRoute(() => import("./pages/badge/page.mdx")),
   "/components/bottom-sheet": mdxRoute(() => import("./pages/bottom-sheet/page.mdx")),
+  "/components/side-sheet": mdxRoute(() => import("./pages/side-sheet/page.mdx")),
   "/components/card": mdxRoute(() => import("./pages/card/page.mdx")),
   "/components/chips": mdxRoute(() => import("./pages/chips/page.mdx")),
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
@@ -164,14 +165,11 @@ function DocsLayout({
   const { Page, PageToc } = entry ?? {};
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
-      <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col overflow-y-auto p-3 md:flex">
-        <Typography as="a" variant="title-large" href="/" className="px-4 pt-4 pb-2">
+      <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col p-3 md:flex">
+        <Typography as="a" variant="title-large" href="/" className="shrink-0 px-4 pt-4 pb-2">
           MD3 React
         </Typography>
-        <Typography variant="body-small" className="px-4 pb-4 text-on-surface-variant">
-          Material Design 3, on Base UI
-        </Typography>
-        <nav className="flex flex-col" aria-label="Documentation">
+        <nav className="docs-nav-scroll flex flex-col overflow-y-auto" aria-label="Documentation">
           {SECTIONS.map((section) => (
             <React.Fragment key={section.label}>
               {/* MD3 nav-drawer section header. */}

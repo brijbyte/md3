@@ -1,0 +1,13 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/side-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-side-sheet-anchor-left {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+}

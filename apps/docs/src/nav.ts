@@ -13,6 +13,7 @@ import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
 import DonutLargeIcon from "@brijbyte/md3-icons/outlined/DonutLarge";
 import ProgressActivityIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
+import RightPanelOpenIcon from "@brijbyte/md3-icons/outlined/RightPanelOpen";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
 import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
@@ -94,6 +95,13 @@ export const SECTIONS: NavSection[] = [
         title: "Bottom sheet",
         description: "A modal surface anchored to the bottom edge, dismissed by drag or scrim.",
         icon: BottomSheetsIcon,
+      },
+      {
+        path: "/components/side-sheet",
+        label: "Side sheet",
+        title: "Side sheet",
+        description: "A surface anchored to a screen edge for supplementary content or tasks.",
+        icon: RightPanelOpenIcon,
       },
       {
         path: "/components/card",

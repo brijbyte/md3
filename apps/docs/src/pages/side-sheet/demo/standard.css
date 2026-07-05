@@ -1,0 +1,61 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/side-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-side-sheet-standard {
+  position: relative;
+  isolation: isolate;
+  /* Re-establishes the containing block for the sheet's `position: fixed` — see the
+     component comment. Any transform value works; translateZ(0) is a no-op visually. */
+  transform: translateZ(0);
+  width: 640px;
+  max-width: 100%;
+  height: 360px;
+  overflow: hidden;
+  display: flex;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-lowest);
+}
+
+.demo-side-sheet-standard-scroller {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.demo-side-sheet-standard-files {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-side-sheet-standard-file {
+  padding: 10px 8px;
+  border-radius: var(--md-sys-shape-corner-small);
+}
+
+.demo-side-sheet-standard-content {
+  width: 320px;
+}
+
+.demo-side-sheet-standard-panel {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 16px;
+}
+
+.demo-side-sheet-standard-meta {
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 16px;
+}
+
+.demo-side-sheet-standard-preview {
+  height: 140px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-primary-container);
+}

@@ -1,0 +1,107 @@
+/* Spec: m3.material.io/components/side-sheets (specs/guidelines) — no Compose reference
+   implementation exists yet (androidx material3 ships no SideSheet.kt), so cross-checked
+   against material-web's tokens/_md-comp-sheet-side.scss instead. Standard (docked):
+   surface, corner-none, elevation level0, divider on the content-facing edge. Modal
+   (docked-modal per material-web — same layout, different color/elevation/shape):
+   surface-container-low, elevation level1, rounded only on the content-facing edge
+   (corner-large-start), square against the screen edge it's flush with. Width defaults to
+   the 256dp docked reference, capped at the spec's 400dp max via --md3-side-sheet-width.
+   Scrim reuses the universal 32% modal-surface value (bottom sheet, nav drawer, dialogs). */
+@layer components {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: var(--md-sys-color-scrim);
+    opacity: 0.32;
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  }
+
+  .backdrop[data-starting-style],
+  .backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .viewport {
+    position: fixed;
+    inset: 0;
+    z-index: 1201;
+    display: flex;
+    align-items: stretch;
+    pointer-events: none;
+  }
+
+  .viewport[data-anchor="right"] {
+    justify-content: flex-end;
+  }
+
+  .viewport[data-anchor="left"] {
+    justify-content: flex-start;
+  }
+
+  /* No backdrop of its own to sit above — pitched below the modal stack (1200) so an
+     actual dialog/modal sheet still wins, but above ordinary page content. */
+  .viewport[data-variant="standard"] {
+    z-index: 500;
+  }
+
+  .popup {
+    box-sizing: border-box;
+    width: var(--md3-side-sheet-width, 256px);
+    max-width: min(400px, 100%);
+    height: 100%;
+    overflow-y: auto;
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level1);
+    outline: none;
+    pointer-events: auto;
+    /* Rest position tracks live swipe drag; enter/exit add the offscreen offset on top
+       of it so a sheet dragged partway still slides the rest of the way out. */
+    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+    transition: transform var(--md-sys-motion-duration-medium3)
+      var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .popup[data-variant="standard"] {
+    background: var(--md-sys-color-surface);
+    box-shadow: none;
+  }
+
+  .popup[data-anchor="right"] {
+    border-radius: var(--md-sys-shape-corner-large) 0 0 var(--md-sys-shape-corner-large);
+  }
+
+  .popup[data-variant="standard"][data-anchor="right"] {
+    border-radius: 0;
+    border-left: 1px solid var(--md-sys-color-outline);
+  }
+
+  .popup[data-anchor="left"] {
+    border-radius: 0 var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0;
+  }
+
+  .popup[data-variant="standard"][data-anchor="left"] {
+    border-radius: 0;
+    border-right: 1px solid var(--md-sys-color-outline);
+  }
+
+  .popup[data-anchor="right"][data-starting-style],
+  .popup[data-anchor="right"][data-ending-style] {
+    transform: translateX(calc(100% + var(--drawer-swipe-movement-x, 0px)));
+    transition: transform var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+
+  .popup[data-anchor="left"][data-starting-style],
+  .popup[data-anchor="left"][data-ending-style] {
+    transform: translateX(calc(-100% + var(--drawer-swipe-movement-x, 0px)));
+    transition: transform var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+
+  /* Follow the pointer 1:1 while dragging — no eased catch-up. */
+  .popup[data-swiping] {
+    transition: none;
+  }
+}
