@@ -1,0 +1,86 @@
+/* Spec: Compose Material3 ModalBottomSheet.kt / SheetDefaults.kt / tokens/
+   SheetBottomTokens.kt, ScrimTokens.kt (material-web ships no bottom sheet to
+   cross-check — deprecated-era gap). Container: surface-container-low, corner-extra-large
+   top corners only (bottom stays square — the sheet is always flush with the screen's
+   bottom edge), elevation level1 (same for modal/standard per tokens). Scrim: 32% opacity.
+   Drag handle: 32x4dp pill, on-surface-variant, 22dp vertical padding (22+4+22=48dp, a
+   full touch target). Max width 640dp on large screens, centered by the flex viewport. */
+@layer components {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: var(--md-sys-color-scrim);
+    opacity: 0.32;
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  }
+
+  .backdrop[data-starting-style],
+  .backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .viewport {
+    position: fixed;
+    inset: 0;
+    z-index: 1201;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  /* No backdrop of its own to sit above — pitched below the modal stack (1200) so an
+     actual dialog/modal sheet still wins, but above ordinary page content. */
+  .viewport[data-variant="standard"] {
+    z-index: 500;
+  }
+
+  .popup {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 640px;
+    max-height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level1);
+    outline: none;
+    pointer-events: auto;
+    /* Rest position tracks live swipe drag; enter/exit add the offscreen offset on top
+       of it so a sheet dragged partway still slides the rest of the way out. */
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+    transition: transform var(--md-sys-motion-duration-medium3)
+      var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .popup[data-starting-style],
+  .popup[data-ending-style] {
+    transform: translateY(calc(100% + var(--drawer-swipe-movement-y, 0px)));
+    transition: transform var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+
+  /* Follow the pointer 1:1 while dragging — no eased catch-up. */
+  .popup[data-swiping] {
+    transition: none;
+  }
+
+  .handleRow {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    padding-block: 22px;
+    touch-action: none;
+  }
+
+  .handle {
+    width: 32px;
+    height: 4px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-on-surface-variant);
+  }
+}

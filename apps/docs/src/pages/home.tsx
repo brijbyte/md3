@@ -14,9 +14,9 @@ export default function HomePage() {
           <span className="text-primary">built right for React</span>
         </Typography>
         <Typography variant="title-large" className="mt-6 text-on-surface-variant">
-          Every component matches Google's own Compose Material3 implementation — spacing,
-          motion, and all. Accessibility and keyboard handling come from Base UI, so you get it
-          right for free.
+          Every component matches Google's own Compose Material3 implementation — spacing, motion,
+          and all. Accessibility and keyboard handling come from Base UI, so you get it right for
+          free.
         </Typography>
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Button

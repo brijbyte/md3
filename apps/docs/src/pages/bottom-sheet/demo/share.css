@@ -1,0 +1,47 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/chip.css";
+@import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-bottom-sheet-share {
+  padding: 0 24px 24px;
+}
+
+.demo-bottom-sheet-share-chips {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 20px;
+}
+
+.demo-bottom-sheet-share-grid {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.demo-bottom-sheet-share-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.demo-bottom-sheet-share-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+}
+
+.demo-bottom-sheet-share-app-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-high);
+}

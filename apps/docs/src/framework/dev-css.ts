@@ -5,6 +5,7 @@
 // styles exist before any link can be retired — no unstyled window, and library
 // css HMR keeps working natively on these copies. Add new components here.
 import "@brijbyte/md3-react/badge/Badge.module.css";
+import "@brijbyte/md3-react/bottom-sheet/BottomSheet.module.css";
 import "@brijbyte/md3-react/button/Button.module.css";
 import "@brijbyte/md3-react/button-group/ButtonGroup.module.css";
 import "@brijbyte/md3-react/card/Card.module.css";

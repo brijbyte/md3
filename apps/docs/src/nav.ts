@@ -1,4 +1,5 @@
 import type * as React from "react";
+import BottomSheetsIcon from "@brijbyte/md3-icons/outlined/BottomSheets";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
 import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
@@ -86,6 +87,13 @@ export const SECTIONS: NavSection[] = [
         title: "Badge",
         description: "Surface a count or status without stealing focus from the icon under it.",
         icon: NotificationsIcon,
+      },
+      {
+        path: "/components/bottom-sheet",
+        label: "Bottom sheet",
+        title: "Bottom sheet",
+        description: "A modal surface anchored to the bottom edge, dismissed by drag or scrim.",
+        icon: BottomSheetsIcon,
       },
       {
         path: "/components/card",

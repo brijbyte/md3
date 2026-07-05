@@ -115,6 +115,7 @@ export default defineConfig({
         "split-button/index": "src/split-button/index.ts",
         "icon-button/index": "src/icon-button/index.ts",
         "fab/index": "src/fab/index.ts",
+        "bottom-sheet/index": "src/bottom-sheet/index.ts",
         "checkbox/index": "src/checkbox/index.ts",
         "radio/index": "src/radio/index.ts",
         "switch/index": "src/switch/index.ts",

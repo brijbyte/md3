@@ -1,0 +1,20 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-bottom-sheet-snap-points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 24px 24px;
+}
+
+.demo-bottom-sheet-snap-points-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
