@@ -1,0 +1,7 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/linear-progress.css";
+
+.demo-progress-indicator-linear {
+  width: 320px;
+  max-width: 100%;
+}

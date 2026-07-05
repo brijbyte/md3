@@ -1,0 +1,105 @@
+.root {
+  --md3-linear-progress-thickness: 4px;
+  --md3-linear-progress-gap: 4px;
+  --md3-linear-progress-stop-size: 4px;
+
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--md3-linear-progress-thickness);
+}
+
+.indicator,
+.track,
+.stop,
+.indeterminateBar1,
+.indeterminateBar2 {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+.indicator {
+  inset-inline-start: 0;
+  background: var(--md-sys-color-primary);
+  transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.track {
+  /* --md3-linear-progress-percent is set inline per render (JS-computed, not
+     expressible as a static token cascade like Slider's per-size vars). */
+  inset-inline-start: calc(
+    var(--md3-linear-progress-percent) * 1% + var(--md3-linear-progress-gap) +
+      var(--md3-linear-progress-thickness)
+  );
+  inset-inline-end: 0;
+  background: var(--md-sys-color-secondary-container);
+  transition: inset-inline-start var(--md-sys-motion-duration-medium2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.stop {
+  inset-inline-end: 0;
+  top: 50%;
+  width: var(--md3-linear-progress-stop-size);
+  height: var(--md3-linear-progress-stop-size);
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+}
+
+/* Indeterminate: two independent pill bars, no track/stop (matches Compose —
+   the indeterminate overload never draws a track or stop indicator). Each
+   bar's inset-inline-start/width keyframes are precomputed head/tail
+   percentages sampled at every kink of Compose's piecewise-linear motion
+   spec, so plain linear interpolation between stops reproduces it exactly. */
+.indeterminateBar1 {
+  background: var(--md-sys-color-primary);
+  animation: md3-linear-progress-bar1 1750ms linear infinite;
+}
+
+.indeterminateBar2 {
+  background: var(--md-sys-color-primary);
+  animation: md3-linear-progress-bar2 1750ms linear infinite;
+}
+
+@keyframes md3-linear-progress-bar1 {
+  0% {
+    inset-inline-start: 0%;
+    width: 0%;
+  }
+  14.2857% {
+    inset-inline-start: 0%;
+    width: 25%;
+  }
+  57.1429% {
+    inset-inline-start: 75%;
+    width: 25%;
+  }
+  71.4286%,
+  100% {
+    inset-inline-start: 100%;
+    width: 0%;
+  }
+}
+
+@keyframes md3-linear-progress-bar2 {
+  0%,
+  37.1429% {
+    inset-inline-start: 0%;
+    width: 0%;
+  }
+  51.4286% {
+    inset-inline-start: 0%;
+    width: 29.4118%;
+  }
+  85.7143% {
+    inset-inline-start: 70.5882%;
+    width: 29.4118%;
+  }
+  100% {
+    inset-inline-start: 100%;
+    width: 0%;
+  }
+}

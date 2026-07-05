@@ -9,6 +9,7 @@ import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
+import DonutLargeIcon from "@brijbyte/md3-icons/outlined/DonutLarge";
 import ProgressActivityIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
@@ -113,6 +114,13 @@ export const SECTIONS: NavSection[] = [
         title: "Loading indicator",
         description: "Loading indicators show that content or a process is loading.",
         icon: ProgressActivityIcon,
+      },
+      {
+        path: "/components/progress-indicator",
+        label: "Progress indicator",
+        title: "Progress indicator",
+        description: "Progress indicators express an unspecified wait time or show progress.",
+        icon: DonutLargeIcon,
       },
       {
         path: "/components/menu",

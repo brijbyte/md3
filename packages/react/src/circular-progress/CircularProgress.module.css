@@ -1,0 +1,130 @@
+@property --md3-circular-progress-global-rotation {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --md3-circular-progress-step-rotation {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --md3-circular-progress-sweep {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 10;
+}
+
+.root {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+}
+
+.svg,
+.svgIndeterminate {
+  width: 100%;
+  height: 100%;
+}
+
+.svg {
+  transform: rotate(-90deg);
+}
+
+.svgIndeterminate {
+  transform: rotate(
+    calc(
+      -90deg + var(--md3-circular-progress-global-rotation) +
+        var(--md3-circular-progress-step-rotation)
+    )
+  );
+  animation:
+    md3-circular-progress-global-rotate 6000ms linear infinite,
+    md3-circular-progress-step-rotate 6000ms infinite,
+    md3-circular-progress-sweep 6000ms infinite;
+}
+
+.track,
+.indicator {
+  fill: none;
+  stroke-width: 4px;
+  stroke-linecap: round;
+  transition:
+    stroke-dasharray var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.track {
+  stroke: var(--md-sys-color-secondary-container);
+}
+
+.indicator {
+  stroke: var(--md-sys-color-primary);
+}
+
+.svgIndeterminate .indicator {
+  stroke-dasharray: var(--md3-circular-progress-sweep)
+    calc(100 - var(--md3-circular-progress-sweep));
+  transition: none;
+}
+
+/* Global continuous spin: seamless since 1080deg % 360 === 0deg. */
+@keyframes md3-circular-progress-global-rotate {
+  to {
+    --md3-circular-progress-global-rotation: 1080deg;
+  }
+}
+
+/* Stepped rotation: 90deg hops every 1.5s, each hop eased-decelerate over
+   300ms then held. CSS applies a keyframe's timing-function to the segment
+   leading OUT of it (opposite of Compose's `using`, which applies to the
+   segment leading in) — so the easing is set on each hop's starting keyframe. */
+@keyframes md3-circular-progress-step-rotate {
+  0% {
+    --md3-circular-progress-step-rotation: 0deg;
+    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+  5% {
+    --md3-circular-progress-step-rotation: 90deg;
+  }
+  25% {
+    --md3-circular-progress-step-rotation: 90deg;
+    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+  30% {
+    --md3-circular-progress-step-rotation: 180deg;
+  }
+  50% {
+    --md3-circular-progress-step-rotation: 180deg;
+    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+  55% {
+    --md3-circular-progress-step-rotation: 270deg;
+  }
+  75% {
+    --md3-circular-progress-step-rotation: 270deg;
+    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+  80%,
+  100% {
+    --md3-circular-progress-step-rotation: 360deg;
+  }
+}
+
+/* Arc length oscillates 10%-87%: eased-standard growing (0-3s), linear
+   shrinking (3-6s) — matches CircularProgressEasing being applied only to
+   the growth segment in the Compose source. */
+@keyframes md3-circular-progress-sweep {
+  0% {
+    --md3-circular-progress-sweep: 10;
+    animation-timing-function: var(--md-sys-motion-easing-standard);
+  }
+  50% {
+    --md3-circular-progress-sweep: 87;
+    animation-timing-function: linear;
+  }
+  100% {
+    --md3-circular-progress-sweep: 10;
+  }
+}

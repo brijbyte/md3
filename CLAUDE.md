@@ -138,14 +138,25 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 
 Every component must follow the MD3 spec **exactly**. Authoritative sources, in order:
 
-1. `packages/react/tokens/component-specs.json` — component token maps extracted from
-   Google's material-web repo (`tokens/versions/v0_192/_md-comp-*.scss`). Check here first.
-2. For components not yet in that file: `pnpm refresh:specs <component-name>`
+1. **Android Compose Material3** (`androidx.compose.material3`, `androidx-main` branch of
+   `github.com/androidx/androidx`) is the primary reference — it receives spec updates
+   first and is the only implementation some redesigns (e.g. progress indicators' gap +
+   stop-indicator treatment) have landed in. Fetch the component's `*.kt` source
+   (implementation, not just the `tokens/*Tokens.kt` token object) and read the actual
+   non-deprecated overload — Compose keeps old behavior around behind
+   `@Deprecated(level = HIDDEN)` shims, which must not be mistaken for the current spec.
+2. `packages/react/tokens/component-specs.json` — component token maps extracted from
+   Google's **material-web** repo (`tokens/versions/v0_192/_md-comp-*.scss`). material-web
+   is effectively deprecated (no expressive-era component updates, e.g. it never picked up
+   progress indicators' gap/stop-indicator redesign) — treat it as a **backup/cross-check**
+   source, useful mainly for spacing/color tokens that haven't changed, not as the primary
+   reference for current behavior.
+3. For components not yet in that file: `pnpm refresh:specs <component-name>`
    (`scripts/refresh-specs.mjs`) fetches + merges the material-web token scss; no args
    re-fetches everything. List `tokens/versions/v0_192/` via the GitHub API if unsure.
-3. Spacing tokens not in the token files (padding, gaps): material-web component sass
+4. Spacing tokens not in the token files (padding, gaps): material-web component sass
    (e.g. `fab/internal/_shared.scss`) or m3.material.io `/components/<name>/specs`.
-4. Last resort: screenshot the spec page on m3.material.io with Playwright.
+5. Last resort: screenshot the spec page on m3.material.io with Playwright.
 
 Cross-check expressive values against MDC Android `res/values/tokens.xml` and Compose
 `*Tokens.kt`, resolving conflicts by 2-of-3 majority; Compose's token _files_ sometimes
@@ -207,7 +218,8 @@ Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup 
 Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
 FilterChip / InputChip / SuggestionChip), Menu (Base UI Menu family incl. submenus,
 radio/checkbox items, groups), Slider (continuous/discrete/centered/range),
-LoadingIndicator (determinate/indeterminate, contained), Snackbar, `@brijbyte/md3-icons`.
+LoadingIndicator (determinate/indeterminate, contained), Snackbar, LinearProgress /
+CircularProgress (determinate/indeterminate), `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
@@ -225,7 +237,7 @@ checkmark, and enter/exit is a CSS scale+fade — material-web's staggered heigh
 (JS-driven) was deliberately skipped. Slider's 5 sizes (`size`: xs default/s/m/l/xl) and
 their exact dp values (track height, handle height, track corner radius, inset-icon
 size) come straight off the m3.material.io/components/sliders/specs measurements table
-— not material-web's stale v0_192 scss, which only has the old 4px-track/circular-handle
+— not material-web's stale v0*192 scss, which only has the old 4px-track/circular-handle
 classic spec. Handle width is 4px at rest at every size, narrowing to 2px (half, per Compose
 `SliderTokens.kt`'s `PressedHandleWidth` and MDC's `THUMB_WIDTH_PRESSED_RATIO`) while
 `data-pressed`; only height scales with size, driven by
@@ -233,7 +245,7 @@ a `--md3-slider-*` custom-property cascade set on `.root[data-size=...]` (inheri
 to track/thumb, no JS needed). `icon` (inset icon) only renders at `m`/`l`/`xl` — `xs`/`s`
 aren't tall enough per spec. The track fill is up to three independently-shaped
 `trackSegment` spans (before-tail / active / after-tail), not a single background with a
-notch cut into it — a thumb sitting in a gap needs a real rounded corner on _both_ flanking
+notch cut into it — a thumb sitting in a gap needs a real rounded corner on \_both* flanking
 segments (per m3.material.io's slider spec imagery), which a flat cut can't produce. Each
 segment's corners are set inline per-boundary (`segmentStyle`): a boundary against another
 segment always rounds, at a smaller fixed-per-size `--md3-slider-gap-radius` (one shape
@@ -269,7 +281,7 @@ the per-thumb pressed state layer. Demo containers must set an explicit `width` 
 is deliberately `w-fit`, so a percentage width on the demo's own root contributes nothing
 to that shrink-to-fit calculation and silently collapses to content size. LoadingIndicator
 has no Base UI primitive and no material-web scss (it's Compose-only, added after
-material-web's v0_192 snapshot) — its tokens came from `LoadingIndicatorTokens.kt`
+material-web's v0*192 snapshot) — its tokens came from `LoadingIndicatorTokens.kt`
 directly. Its indeterminate animation is a real shape-morph (SoftBurst → Cookie9Sided →
 Pentagon → Pill → Sunny → Cookie4Sided → Oval, looping), not a spinning arc, which meant
 porting the relevant slice of Google's `androidx.graphics.shapes` (RoundedPolygon
@@ -282,7 +294,7 @@ plugin) runs that port once and bakes the result into gitignored
 component itself only does a per-frame `lerp` between the two cubics plus a live CSS
 rotation — no geometry at runtime. `Morph`'s cut-and-shift step has one easy-to-miss edge
 case: the redistributed cubic that closes the loop back to the cut point must have its
-outline-progress _forced_ to exactly `1`, not derived via `positiveModulo`, or it wraps to
+outline-progress \_forced* to exactly `1`, not derived via `positiveModulo`, or it wraps to
 ~0 and gets dropped by the zero-length-span filter, leaving a visible gap in the morphed
 path (caught by asserting every precomputed morph closes with zero gap at both t=0 and
 t=1). The indeterminate step easing samples Compose's actual
@@ -333,11 +345,38 @@ span-based state layer, the action's hover/focus/pressed tint has to be a `::bef
 overlay on the button itself. Any demo that calls `useSnackbar()`/renders
 `SnackbarProvider` needs its own top-level `"use client"` — the RSC docs app throws
 "client reference export is called on server" if a demo module omits it, even though
-`Snackbar.tsx` itself is already marked client.
+`Snackbar.tsx` itself is already marked client. LinearProgress/CircularProgress are built
+against Compose's **current** (non-deprecated) `ProgressIndicator.kt` API, not
+material-web's older flush-track version (material-web never picked up this redesign —
+see the MD3 spec fidelity section on Android vs. material-web priority): a rounded active
+indicator, a 4px gap, then a rounded track, ending (linear only) in a small 4px stop dot —
+not material-web's classic adjoining track with no gap. Both indicators skip
+material-web-only features not present in the current Compose API: no `four-color` mode,
+no linear `buffer`. Neither the linear nor circular indicator animates its own determinate
+transitions in Compose (the caller is expected to animate the `value` prop itself via
+`ProgressAnimationSpec`) — since a web consumer can't easily do that, both add a plain CSS
+`transition` on the rendered width/dasharray instead, a deliberate web-side adaptation, not
+a spec deviation. Indeterminate linear renders two independently-animated pill bars (no
+track, no stop dot, matching Compose exactly) via `inset-inline-start`/`width` keyframes
+rather than `transform: translateX()/scaleX()` (material-web's approach) — animating real
+layout properties keeps each bar's rounded end a true semicircle at every width, whereas
+scaling a border-radius element would visibly squash its caps into an ellipse. Every
+keyframe stop sits at an exact kink of Compose's piecewise-linear head/tail motion spec
+(computed from its delay/duration constants), so CSS's default linear interpolation
+between stops reproduces the curve exactly with no extra sampling needed. Indeterminate
+circular combines three independently-eased animations — a linear 1080deg/6s global spin,
+a 90deg-per-1.5s stepped rotation (each hop eased via
+`--md-sys-motion-easing-emphasized-decelerate`), and a 10%-87% sweep oscillation (eased
+growth, linear shrink) — driven through three `@property`-registered custom properties
+(`inherits: true`, animated independently so each keeps its own per-segment easing) summed
+via a single static `transform: rotate(calc(...))`; this avoids the alternative of trying
+to bake all three into one hand-merged keyframe animation, which isn't possible once any
+one of them uses a non-linear easing on an actively-moving segment. CSS applies a
+keyframe's `animation-timing-function` to the segment leading _out_ of that keyframe —
+opposite of Compose's `keyframes { ... using ... }`, which applies to the segment leading
+_into_ it — a direction mismatch that's easy to get backwards when porting the timings.
 
 Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
 build after TextField; Base UI Select's `alignItemWithTrigger` must be false), dynamic
 color theming, rem-based type scaling (see Units decision), npm publish setup (finalize
-package name), docs site content + deploy. Progress indicators (the classic
-linear/circular determinate bars, distinct from LoadingIndicator's shape-morph) are still
-unbuilt.
+package name), docs site content + deploy.

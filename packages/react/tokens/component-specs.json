@@ -127,6 +127,16 @@
     "unselected-pressed-state-layer-color": "md-sys-color.primary",
     "unselected-pressed-state-layer-opacity": "md-sys-state.pressed-state-layer-opacity"
   },
+  "circular-progress-indicator": {
+    "active-indicator-color": "md-sys-color.primary",
+    "active-indicator-shape": "md-sys-shape.corner-none",
+    "active-indicator-width": "4px",
+    "four-color-active-indicator-four-color": "md-sys-color.tertiary-container",
+    "four-color-active-indicator-one-color": "md-sys-color.primary",
+    "four-color-active-indicator-three-color": "md-sys-color.tertiary",
+    "four-color-active-indicator-two-color": "md-sys-color.primary-container",
+    "size": "48px"
+  },
   "elevated-button": {
     "container-color": "md-sys-color.surface-container-low",
     "container-elevation": "md-sys-elevation.level1",
@@ -669,6 +679,18 @@
     "with-trailing-icon-unselected-hover-trailing-icon-color": "md-sys-color.on-surface-variant",
     "with-trailing-icon-unselected-pressed-trailing-icon-color": "md-sys-color.on-surface-variant",
     "with-trailing-icon-unselected-trailing-icon-color": "md-sys-color.on-surface-variant"
+  },
+  "linear-progress-indicator": {
+    "active-indicator-color": "md-sys-color.primary",
+    "active-indicator-height": "4px",
+    "active-indicator-shape": "md-sys-shape.corner-none",
+    "four-color-active-indicator-four-color": "md-sys-color.tertiary-container",
+    "four-color-active-indicator-one-color": "md-sys-color.primary",
+    "four-color-active-indicator-three-color": "md-sys-color.tertiary",
+    "four-color-active-indicator-two-color": "md-sys-color.primary-container",
+    "track-color": "md-sys-color.surface-container-highest",
+    "track-height": "4px",
+    "track-shape": "md-sys-shape.corner-none"
   },
   "list": {
     "divider-leading-space": "16px",

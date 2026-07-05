@@ -40,13 +40,42 @@ and then import the component css you need wherever required:
 > There's also an everything bundle — `@import "@brijbyte/md3-react/styles.css"` — but it
 > ships every component's CSS whether you use it or not; prefer the per-component imports.
 
-The typescale expects Roboto; load it however you prefer, for example:
+## Load a font
+
+Every typescale role resolves to `--md-ref-typeface-brand` (display/headline/title-large)
+or `--md-ref-typeface-plain` (body/label/title-medium/title-small), both of which default
+to `"Roboto", system-ui, sans-serif` in `tokens.css`. The typescale only ever uses weights
+**400** and **500**, so that's all you need to load:
 
 ```html
 <link
-  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
   rel="stylesheet"
 />
+```
+
+Or self-host via [Fontsource](https://fontsource.org/fonts/roboto) instead of Google's CDN:
+
+```sh
+npm install @fontsource/roboto
+```
+
+```ts
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+```
+
+To use a different typeface (or Google's variable Roboto Flex), override the two ref
+tokens after importing `tokens.css` — both roles can point at the same font, or you can
+split brand vs. plain to mix a display face with a text face:
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+
+:root {
+  --md-ref-typeface-brand: "Google Sans", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Roboto", system-ui, sans-serif;
+}
 ```
 
 ## Use a component

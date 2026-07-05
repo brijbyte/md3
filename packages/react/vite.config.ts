@@ -122,6 +122,8 @@ export default defineConfig({
         "chip/index": "src/chip/index.ts",
         "menu/index": "src/menu/index.ts",
         "loading-indicator/index": "src/loading-indicator/index.ts",
+        "linear-progress/index": "src/linear-progress/index.ts",
+        "circular-progress/index": "src/circular-progress/index.ts",
         "slider/index": "src/slider/index.ts",
         "snackbar/index": "src/snackbar/index.ts",
         "typography/index": "src/typography/index.ts",

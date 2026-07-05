@@ -1,0 +1,58 @@
+---
+title: Progress indicator
+---
+
+import LinearProgressDeterminate from "./demo/linear-determinate.tsx";
+import LinearProgressIndeterminate from "./demo/linear-indeterminate.tsx";
+import CircularProgressDeterminate from "./demo/circular-determinate.tsx";
+import CircularProgressIndeterminate from "./demo/circular-indeterminate.tsx";
+
+```tsx
+import { LinearProgress } from "@brijbyte/md3-react/linear-progress";
+import { CircularProgress } from "@brijbyte/md3-react/circular-progress";
+```
+
+```css
+@import "@brijbyte/md3-react/linear-progress.css";
+@import "@brijbyte/md3-react/circular-progress.css";
+```
+
+Progress indicators express an unspecified wait time or display the duration of a
+process — a rounded active indicator separated from its track by a small gap.
+Determinate indicators show how much of a process has completed; indeterminate
+indicators (omit `value`) express an unspecified wait time.
+
+## Linear
+
+```tsx
+<LinearProgress value={42} aria-label="Downloading" />
+```
+
+<LinearProgressDeterminate />
+
+A small stop indicator marks the end of the track in determinate mode.
+
+Omit `value` (or pass `null`) for the indeterminate animation — two independent bars
+travel along the track with no fixed track or stop indicator shown.
+
+<LinearProgressIndeterminate />
+
+## Circular
+
+```tsx
+<CircularProgress value={42} aria-label="Downloading" />
+```
+
+<CircularProgressDeterminate />
+
+Indeterminate circular progress spins continuously while its arc grows and shrinks,
+with no track visible.
+
+<CircularProgressIndeterminate />
+
+## Accessibility
+
+Both components render `role="progressbar"` (via Base UI's `Progress.Root`) with
+`aria-valuemin`/`aria-valuemax`/`aria-valuenow` wired automatically from `value`/`max`;
+omitting `value` marks the indicator indeterminate for assistive tech. Pass `aria-label`
+to describe what's in progress.
