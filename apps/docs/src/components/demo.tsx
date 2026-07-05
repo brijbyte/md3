@@ -34,7 +34,7 @@ function DemoCode({ files }: { files: { name: string; code: string; html: string
       </TabList>
       <CodeCollapse>
         {files.map((f) => (
-          <TabPanel key={f.name} value={f.name} className="relative">
+          <TabPanel key={f.name} value={f.name} className="relative" tabIndex={-1}>
             <CopyButton text={f.code} className="absolute top-2 right-2" />
             <div
               className="text-body-medium [&>pre]:overflow-x-auto [&>pre]:bg-surface-container [&>pre]:p-4"
