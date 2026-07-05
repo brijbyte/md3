@@ -9,7 +9,7 @@ export default function HomePage() {
     <>
       <section className="max-w-prose">
         <Typography as="h1" variant="display-large" className="font-bold">
-          Material Design
+          Material Design,
           <br />
           <span className="text-primary">for React</span>
         </Typography>
@@ -33,7 +33,6 @@ export default function HomePage() {
             key={item.path}
             render={<a href={item.path} />}
             nativeButton={false}
-            variant="filled"
             className="flex flex-col gap-3 p-6"
           >
             <span className="flex size-12 items-center justify-center rounded-full bg-secondary-container text-2xl text-on-secondary-container">

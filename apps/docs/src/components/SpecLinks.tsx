@@ -12,6 +12,7 @@ export function SpecLinks({ links }: { links: SpecLink[] }) {
         <AssistChip
           key={link.href}
           icon={<OpenInNewIcon />}
+          nativeButton={false}
           render={<a href={link.href} target="_blank" rel="noopener noreferrer" />}
         >
           {link.label}

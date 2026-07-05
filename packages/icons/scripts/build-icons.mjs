@@ -39,7 +39,8 @@ const svgUrl = (
   /** @type {string} */ style,
   /** @type {string} */ name,
   /** @type {string} */ variant,
-) => `https://fonts.gstatic.com/s/i/short-term/release/materialsymbols${style}/${name}/${variant}/24px.svg`;
+) =>
+  `https://fonts.gstatic.com/s/i/short-term/release/materialsymbols${style}/${name}/${variant}/24px.svg`;
 
 const CONCURRENCY = 32;
 const RETRIES = 3;
