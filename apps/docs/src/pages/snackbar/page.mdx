@@ -5,6 +5,7 @@ title: Snackbar
 import BasicSnackbar from "./demo/basic.tsx";
 import UndoSnackbar from "./demo/undo.tsx";
 import TwoLineSnackbar from "./demo/two-line.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
 
 ```tsx
 import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
@@ -13,6 +14,13 @@ import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
 ```css
 @import "@brijbyte/md3-react/snackbar.css";
 ```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Toast", href: "https://base-ui.com/react/components/toast" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/snackbar/overview" },
+  ]}
+/>
 
 Snackbars show brief, low-emphasis messages about app processes at the bottom of the
 screen. Only one snackbar is shown at a time — a new one replaces whatever's currently

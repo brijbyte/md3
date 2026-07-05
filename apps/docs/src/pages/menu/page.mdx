@@ -9,6 +9,7 @@ import MenuIcons from "./demo/icons.tsx";
 import MenuSelection from "./demo/selection.tsx";
 import ScrollableMenu from "./demo/scrollable.tsx";
 import Submenu from "./demo/submenu.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
 
 ```tsx
 import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@brijbyte/md3-react/menu";
@@ -19,6 +20,13 @@ import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@brijby
 @import "@brijbyte/md3-react/ripple.css";
 @import "@brijbyte/md3-react/menu.css";
 ```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Menu", href: "https://base-ui.com/react/components/menu" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/menus/overview" },
+  ]}
+/>
 
 Menus display a list of choices on a temporary surface, opened from a button, icon
 button, or any other control. Built on

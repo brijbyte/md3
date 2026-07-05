@@ -3,6 +3,7 @@ title: Loading indicator
 ---
 
 import LoadingIndicatorVariants from "./demo/variants.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
 
 ```tsx
 import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
@@ -11,6 +12,12 @@ import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
 ```css
 @import "@brijbyte/md3-react/loading-indicator.css";
 ```
+
+<SpecLinks
+  links={[
+    { label: "MD3 spec", href: "https://m3.material.io/components/loading-indicator/overview" },
+  ]}
+/>
 
 Loading indicators show that content or a process is loading, with an indeterminate
 shape-morphing animation — the indicator cycles through a sequence of shapes, morphing

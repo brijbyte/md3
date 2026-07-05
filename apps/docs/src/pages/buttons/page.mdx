@@ -12,6 +12,7 @@ import Fabs from "./demo/fabs.tsx";
 import IconButtons from "./demo/icon-buttons.tsx";
 import IconButtonSizes from "./demo/icon-button-sizes.tsx";
 import SplitButtons from "./demo/split-buttons.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
 
 ```tsx
 import { Button } from "@brijbyte/md3-react/button";
@@ -20,6 +21,13 @@ import { Button } from "@brijbyte/md3-react/button";
 ```css
 @import "@brijbyte/md3-react/button.css";
 ```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Button", href: "https://base-ui.com/react/components/button" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/buttons/overview" },
+  ]}
+/>
 
 <CommonButtons />
 
@@ -48,6 +56,13 @@ import { IconButton } from "@brijbyte/md3-react/icon-button";
 @import "@brijbyte/md3-react/icon-button.css";
 ```
 
+<SpecLinks
+  links={[
+    { label: "Base UI Button", href: "https://base-ui.com/react/components/button" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/icon-buttons/overview" },
+  ]}
+/>
+
 The middle two of each row are toggles — click them.
 
 <IconButtons />
@@ -71,6 +86,15 @@ import { Fab } from "@brijbyte/md3-react/fab";
 @import "@brijbyte/md3-react/button.css";
 @import "@brijbyte/md3-react/fab.css";
 ```
+
+<SpecLinks
+  links={[
+    {
+      label: "MD3 spec",
+      href: "https://m3.material.io/components/floating-action-button/overview",
+    },
+  ]}
+/>
 
 Baseline 56dp plus the expressive `medium` (80dp) and `large` (96dp) sizes; a `label` renders
 the extended FAB at any size. Colors come in two families: soft `*-container` (default) and
@@ -100,6 +124,10 @@ import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-r
 @import "@brijbyte/md3-react/split-button.css";
 ```
 
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/split-button/overview" }]}
+/>
+
 A leading action button fused with a trailing menu button (2dp gap). Inner corners morph on
 hover/press; click the chevron — the menu button rounds fully and the icon spins 180°, opening
 a real [Menu](/components/menu) anchored to it (`Menu` > `MenuTrigger render={<SplitButtonMenu />}` >
@@ -117,6 +145,10 @@ import { ButtonGroup } from "@brijbyte/md3-react/button-group";
 @import "@brijbyte/md3-react/button-group.css";
 /* plus the css of the children, e.g. button.css / icon-button.css */
 ```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/button-groups/overview" }]}
+/>
 
 ### Standard
 
