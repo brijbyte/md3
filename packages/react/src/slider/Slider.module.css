@@ -46,12 +46,27 @@
     --md3-slider-icon-size: 32px;
   }
 
+  .root[data-orientation="vertical"] {
+    width: fit-content;
+    min-width: unset;
+    height: 100%;
+    min-height: 120px;
+  }
+
   .control {
     position: relative;
     display: flex;
     align-items: center;
     min-height: max(48px, var(--md3-slider-track-height));
     outline: none;
+  }
+
+  .control[data-orientation="vertical"] {
+    flex-direction: column;
+    align-items: center;
+    width: max(48px, var(--md3-slider-track-height));
+    min-height: unset;
+    height: 100%;
   }
 
   /* No fill of its own — it's only ever visible in the small gaps between track segments
@@ -66,17 +81,34 @@
     background: transparent;
   }
 
+  .track[data-orientation="vertical"] {
+    width: var(--md3-slider-track-height);
+    height: 100%;
+  }
+
   /* A thumb sitting at min/max is only 4px wide — far narrower than the track's own
      corner radius at m/l/xl — so the rounded corner would otherwise visibly bulge past
-     the thumb instead of being capped by it. */
-  .trackFlatStart {
+     the thumb instead of being capped by it. Min sits at the track's start (left for
+     horizontal, bottom for vertical), so which physical corners flatten flips with
+     orientation. */
+  .track[data-orientation="horizontal"].trackFlatStart {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
   }
 
-  .trackFlatEnd {
+  .track[data-orientation="horizontal"].trackFlatEnd {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
+  }
+
+  .track[data-orientation="vertical"].trackFlatStart {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .track[data-orientation="vertical"].trackFlatEnd {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
   }
 
   .insetIcon {
@@ -91,6 +123,14 @@
     align-items: center;
     justify-content: center;
     color: var(--md-sys-color-on-primary);
+  }
+
+  /* Icon insets into the track's leading (min) end — bottom for a vertical slider. */
+  .track[data-orientation="vertical"] .insetIcon {
+    top: auto;
+    inset-inline-start: 50%;
+    inset-block-end: 8px;
+    transform: translateX(-50%);
   }
 
   .insetIcon svg {
@@ -112,18 +152,22 @@
     background: var(--md-sys-color-primary);
   }
 
-  .valueCalc {
-    display: contents;
-  }
-
   .centerMark {
     position: absolute;
     inset-inline-start: 50%;
-    top: 50%;
+    top: 0;
     width: 2px;
     height: 100%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     background: var(--md-sys-color-surface);
+  }
+
+  .track[data-orientation="vertical"] .centerMark {
+    inset-inline-start: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
   }
 
   /* Accessibility aid marking the track's fixed ends (spec: 4dp size, full opacity),
@@ -132,10 +176,8 @@
      it doesn't need the active/inactive color switch ticks do. */
   .stopIndicator {
     position: absolute;
-    top: 50%;
     width: 4px;
     height: 4px;
-    transform: translate(-50%, -50%);
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-on-secondary-container);
   }
@@ -145,10 +187,8 @@
      color switches. */
   .tick {
     position: absolute;
-    top: 50%;
     width: 4px;
     height: 4px;
-    transform: translate(-50%, -50%);
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--md-sys-color-on-surface-variant);
     opacity: 0.38;
@@ -169,9 +209,22 @@
     transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   }
 
+  /* The handle always crosses perpendicular to the direction of travel — a vertical
+     slider needs it rotated 90°, not just repositioned. */
+  .thumb[data-orientation="vertical"] {
+    width: var(--md3-slider-handle-height);
+    height: 4px;
+    transition: height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
   /* Pressed/dragging handle narrows to half its resting width (spec ratio, height unchanged). */
   .thumb[data-pressed] {
     width: 2px;
+  }
+
+  .thumb[data-orientation="vertical"][data-pressed] {
+    width: var(--md3-slider-handle-height);
+    height: 2px;
   }
 
   /* The focusable element is the visually-hidden native input nested inside the thumb
@@ -237,6 +290,11 @@
     transition:
       transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       opacity var(--md-sys-motion-duration-short1) linear;
+  }
+
+  /* Vertical sliders anchor the value bubble to the thumb's right side instead of above it. */
+  .valueLabel[data-side="right"] {
+    transform-origin: center left;
   }
 
   .valueLabel[data-starting-style],
