@@ -35,11 +35,30 @@ type TypographyImplProps = TypographyOwnProps<React.ElementType> & {
   className?: string;
 } & Record<string, unknown>;
 
+// Semantic default per variant, used when the consumer doesn't pass `as`.
+const variantElement: Record<TypographyVariant, React.ElementType> = {
+  "display-large": "h1",
+  "display-medium": "h1",
+  "display-small": "h1",
+  "headline-large": "h2",
+  "headline-medium": "h3",
+  "headline-small": "h4",
+  "title-large": "h5",
+  "title-medium": "h6",
+  "title-small": "h6",
+  "body-large": "p",
+  "body-medium": "p",
+  "body-small": "p",
+  "label-large": "span",
+  "label-medium": "span",
+  "label-small": "span",
+};
+
 // Purely presentational: no 'use client', renders server-side.
 export const Typography = React.forwardRef<Element, TypographyImplProps>(
   function Typography(props, ref) {
     const { as, variant = "body-large", className, ...rest } = props;
-    const Component = (as ?? "p") as React.ElementType;
+    const Component = (as ?? variantElement[variant]) as React.ElementType;
     return (
       <Component
         ref={ref}
