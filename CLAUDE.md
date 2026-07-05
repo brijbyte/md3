@@ -207,7 +207,7 @@ Done: token pipeline, ripple, Button, IconButton, FAB, SplitButton, ButtonGroup 
 Radio (+ RadioGroup), Switch, Tabs, Badge, Card, Typography, Chips (AssistChip /
 FilterChip / InputChip / SuggestionChip), Menu (Base UI Menu family incl. submenus,
 radio/checkbox items, groups), Slider (continuous/discrete/centered/range),
-LoadingIndicator (determinate/indeterminate, contained), `@brijbyte/md3-icons`.
+LoadingIndicator (determinate/indeterminate, contained), Snackbar, `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
 `corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
@@ -290,7 +290,50 @@ t=1). The indeterminate step easing samples Compose's actual
 milliseconds* (not a normalized 0-1 progress) — for this damping/stiffness pair the spring
 settles well under the fixed 650ms step interval, so this reproduces the same
 morph/overshoot/brief-hold cadence as the real Compose component without needing a full
-physics simulation loop.
+physics simulation loop. Snackbar is built on Base UI's `Toast` primitive
+(`@base-ui/react/toast`) rather than a from-scratch implementation — material-web ships
+no `labs/snackbar` component to check against, only a `_md-comp-snackbar.scss` token
+file, so the spacing constants (16dp text inset, 8dp button-side inset, 14dp vertical
+text padding) come from Compose's `Snackbar.kt` instead; the 48px/68px single/two-line
+container heights fall out of that 14dp padding plus 1 or 2 lines of body-medium, so
+`.text` just needs `line-clamp: 2` rather than an explicit height or a two-line/
+single-line prop. The desktop-width rule must be `width: fit-content(672px)`, not
+`width: max-content` — `max-content` sizes as if nothing ever wraps, so a message under
+~672px worth of unwrapped text never triggers the 2-line clamp at all; `fit-content()`
+still hugs short content but forces `.text` to wrap once the unwrapped width would exceed
+the cap. `SnackbarProvider` renders `Toast.Provider` with `limit={1}` (MD3 only ever
+shows one snackbar — a new one replaces the current one, they never stack), which is why
+the CSS skips Base UI's whole `--toast-index`/peek/scale stacking transform story
+entirely — but `limit` only *marks* excess toasts `data-limited` rather than removing
+them, so during a replacement there are briefly two `.root`s mounted at once (outgoing +
+incoming). Every `.root` is therefore `position: absolute`, anchored to the *same* spot
+(bottom-leading-edge) via `inset-block-end`/`inset-inline-start` — not laid out as flex
+siblings of `.viewport` — so `[data-limited]` only needs `opacity: 0` to crossfade out in
+place; giving the outgoing toast its own different anchor (e.g. the trailing edge)
+instead of the same one is exactly what produces a toast that visibly teleports across
+the screen before fading, since `position`/`inset` aren't (and shouldn't be)
+transitioned, only `opacity`/`transform` are. `useSnackbar()`'s `showSnackbar()` is a thin
+MD3-shaped wrapper over `toastManager.add()` (`message`/`action`/`closable`/`duration` →
+`description`/`actionProps`/`data.closable`/`timeout`) — deliberately hides the generic
+toast API so the library-consumer surface reads as "snackbar", not "toast"; it also takes
+a plain string as shorthand for `{ message }`. Per MDC spec, clicking the action button
+always dismisses the snackbar (in addition to running the consumer's `onClick`), same as
+the close button — Base UI's own docs bake this into the action's `onClick` by hand (see
+their "Undo action" example), so `showSnackbar` wraps `action.onClick` in a callback that
+also calls `manager.close(id)`, rather than leaving every call site to remember it. Base
+UI's Toast already solves the MD3 a11y requirements for free: toasts default to
+`priority: 'low'` (`aria-live="polite"`, alert-but-not-disrupt) and pause/resume their
+auto-dismiss timer on hover/focus (WCAG timing-adjustable) with no extra wiring. Matching
+every other icon-taking component, Snackbar doesn't bundle a close icon —
+`SnackbarProvider` takes a `closeIcon` prop (falls back to a plain "×" glyph) rather than
+importing `@brijbyte/md3-icons` from inside the library, which no other component does
+either. The action button's label comes from Base UI's `toast.actionProps.children`
+(opaque text, not JSX children we render ourselves), so unlike the close button's
+span-based state layer, the action's hover/focus/pressed tint has to be a `::before`
+overlay on the button itself. Any demo that calls `useSnackbar()`/renders
+`SnackbarProvider` needs its own top-level `"use client"` — the RSC docs app throws
+"client reference export is called on server" if a demo module omits it, even though
+`Snackbar.tsx` itself is already marked client.
 
 Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
 build after TextField; Base UI Select's `alignItemWithTrigger` must be false), a real

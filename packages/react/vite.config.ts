@@ -123,6 +123,7 @@ export default defineConfig({
         "menu/index": "src/menu/index.ts",
         "loading-indicator/index": "src/loading-indicator/index.ts",
         "slider/index": "src/slider/index.ts",
+        "snackbar/index": "src/snackbar/index.ts",
         "typography/index": "src/typography/index.ts",
       },
       formats: ["es"],

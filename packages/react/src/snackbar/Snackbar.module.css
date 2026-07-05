@@ -1,0 +1,219 @@
+/* Spec: tokens/component-specs.json → snackbar (material-web v0_192) +
+   Compose Material3 Snackbar.kt (HorizontalSpacing 16dp, HorizontalSpacingButtonSide
+   8dp, SnackbarVerticalPadding 14dp — the 48px/68px container heights fall out of
+   14px text padding + 1 or 2 lines of body-medium, so line-clamp:2 needs no explicit
+   height). Container min/max width (344/672px) from the web spec + Angular Material's
+   MD3 implementation; material-web ships no labs/snackbar component to check against. */
+@layer components {
+  .viewport {
+    position: fixed;
+    z-index: 1000;
+    inset: auto 0 0 0;
+    padding: 8px;
+    pointer-events: none;
+  }
+
+  /* Every toast (including an outgoing `data-limited` one — see below) is
+     absolutely positioned at this same anchor, rather than laid out by the
+     viewport as flex siblings: with `limit={1}` there's briefly an outgoing +
+     incoming toast at once, and flex would sit them side by side. Anchoring
+     both to one spot makes the swap a plain crossfade instead of a jump. */
+  .root {
+    box-sizing: border-box;
+    position: absolute;
+    inset-block-end: 8px;
+    inset-inline-start: 50%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: calc(100% - 16px);
+    max-width: 672px;
+    padding-inline: 16px 8px;
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    background: var(--md-sys-color-inverse-surface);
+    box-shadow: var(--md-sys-elevation-level3);
+    pointer-events: auto;
+    transform: translateX(-50%);
+    transition:
+      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* MD3: full-width + centered on compact screens, a fixed-width card anchored
+     to the leading edge (not centered) on larger ones. */
+  @media (min-width: 600px) {
+    .root {
+      inset-inline-start: 8px;
+      /* Hugs content up to 672px (so a short message doesn't span the whole
+         viewport), but — unlike `max-content`, which sizes as if nothing ever
+         wraps — still forces `.text` to wrap at that width instead of growing
+         past it. */
+      width: fit-content(672px);
+      min-width: 344px;
+      transform: none;
+    }
+  }
+
+  .root[data-starting-style],
+  .root[data-ending-style] {
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+  }
+
+  @media (min-width: 600px) {
+    .root[data-starting-style],
+    .root[data-ending-style] {
+      transform: translateY(16px);
+    }
+  }
+
+  /* Provider `limit`: toasts beyond it are marked `data-limited` instead of
+     removed. MD3 only ever shows one snackbar (`limit={1}`), so a limited
+     toast is just the previous one being replaced — since it shares the same
+     anchor as the incoming toast, fading it out here is a plain crossfade. */
+  .root[data-limited] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .text {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding-block: 14px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    color: var(--md-sys-color-inverse-on-surface);
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line-height);
+    font-weight: var(--md-sys-typescale-body-medium-weight);
+    letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  }
+
+  .action {
+    box-sizing: border-box;
+    position: relative;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: none;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: none;
+    cursor: pointer;
+    color: var(--md-sys-color-inverse-primary);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  }
+
+  /* Action's label comes from actionProps.children (plain text), so there's no
+     child span to host a ripple container — a ::before tint stands in, same as
+     the component-conventions fallback for state layers. */
+  .action::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .action:hover::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .action:focus-visible::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .action:active::before {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  .action:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .close {
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 24px;
+    block-size: 24px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    color: var(--md-sys-color-inverse-on-surface);
+  }
+
+  .close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+  }
+
+  .close:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .closeStateLayer {
+    position: absolute;
+    inset: -12px;
+    z-index: -1;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .closeStateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .close:hover .closeStateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .close:focus-visible .closeStateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .close:active .closeStateLayer::before {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  .closeIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 24px;
+    block-size: 24px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .closeIcon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+}

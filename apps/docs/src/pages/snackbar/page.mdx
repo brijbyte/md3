@@ -1,0 +1,73 @@
+---
+title: Snackbar
+---
+
+import BasicSnackbar from "./demo/basic.tsx";
+import UndoSnackbar from "./demo/undo.tsx";
+import TwoLineSnackbar from "./demo/two-line.tsx";
+
+```tsx
+import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
+```
+
+```css
+@import "@brijbyte/md3-react/snackbar.css";
+```
+
+Snackbars show brief, low-emphasis messages about app processes at the bottom of the
+screen. Only one snackbar is shown at a time — a new one replaces whatever's currently
+displayed rather than stacking. Mount a single `SnackbarProvider` near the root of your
+app, then call `useSnackbar()` from anywhere inside it to trigger one:
+
+```tsx
+const { showSnackbar } = useSnackbar();
+
+showSnackbar({
+  message: "Conversation archived",
+  action: { label: "Undo", onClick: undoArchive },
+});
+```
+
+`showSnackbar` returns the toast's id, which you can pass to `closeSnackbar` to dismiss
+it early (for example when the state it refers to becomes stale). For a plain message
+with no action, `showSnackbar("Conversation archived")` is shorthand for the object form.
+
+## Message only
+
+The simplest snackbar: a message with no action, auto-dismissing after a short delay.
+Adding `closable` shows a dismiss icon, and `action` adds a text button — hovering or
+focusing the snackbar pauses its auto-dismiss timer. Per spec, clicking `action` always
+dismisses the snackbar in addition to running its `onClick`, same as the close icon.
+Like every other icon-taking component in this library, the close icon isn't bundled —
+pass one via `SnackbarProvider`'s `closeIcon` prop (`@brijbyte/md3-icons/outlined/Close`
+here).
+
+<BasicSnackbar />
+
+## Two-line
+
+Longer messages wrap up to two lines before truncating; the action stays inline,
+vertically centered against the wrapped text.
+
+<TwoLineSnackbar />
+
+## Undo pattern
+
+The most common real use of a snackbar's action: confirm a destructive change happened,
+and offer a brief window to reverse it.
+
+<UndoSnackbar />
+
+## Accessibility
+
+Per the MD3 spec, people should be alerted to a snackbar without being disrupted, so
+snackbars announce politely (`aria-live="polite"`, [Base UI Toast](https://base-ui.com/react/components/toast)'s
+default `low` priority) rather than interrupting whatever the user is already doing —
+never make a snackbar `role="alert"` or otherwise assertive. An actionable snackbar still
+needs to be reachable from the keyboard without stealing focus on arrival: pressing
+
+<kbd>F6</kbd> jumps focus into the toast viewport landmark, from which `Tab` reaches the action and
+close buttons like any other control. `duration` should give people enough time to read the message
+and react — avoid setting it so short that an action becomes impractical to use, and prefer
+`closable` over a very long timeout when a message needs to stay put until the user dismisses it
+explicitly.

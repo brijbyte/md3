@@ -2,6 +2,7 @@ import type * as React from "react";
 import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
 import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
+import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
@@ -133,6 +134,14 @@ export const SECTIONS: NavSection[] = [
         title: "Slider",
         description: "Sliders let people select a value from a range of values.",
         icon: SlidersIcon,
+      },
+      {
+        path: "/components/snackbar",
+        label: "Snackbar",
+        title: "Snackbar",
+        description:
+          "Snackbars show brief messages about app processes at the bottom of the screen.",
+        icon: CampaignIcon,
       },
       {
         path: "/components/switch",

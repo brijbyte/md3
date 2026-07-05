@@ -4,8 +4,8 @@
 import "./app.css";
 
 import * as React from "react";
+import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
 import { Typography } from "@brijbyte/md3-react/typography";
-import SpinnerIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import { NAV, SECTIONS, type NavItem } from "./nav";
 import { MDX_COMPONENTS } from "./components/mdx-components";
 import { ThemeToggle } from "./components/ThemeToggle";
@@ -54,6 +54,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/menu": mdxRoute(() => import("./pages/menu/page.mdx")),
   "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
   "/components/slider": mdxRoute(() => import("./pages/slider/page.mdx")),
+  "/components/snackbar": mdxRoute(() => import("./pages/snackbar/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
 };
@@ -75,13 +76,8 @@ document.documentElement.dataset.theme =
 
 function PageFallback() {
   return (
-    <div
-      className="flex min-h-96 items-center justify-center"
-      role="progressbar"
-      aria-label="Loading page"
-    >
-      {/* MD3 circular indicator: 48dp, primary color. */}
-      <SpinnerIcon className="animate-spin text-5xl text-primary" />
+    <div className="flex min-h-96 items-center justify-center">
+      <LoadingIndicator aria-label="Loading page" />
     </div>
   );
 }
