@@ -68,12 +68,6 @@
     opacity: 0;
   }
 
-  /* Delay-grouped instant reopen/dismiss skips motion. */
-  .plainPopup[data-instant],
-  .richPopup[data-instant] {
-    transition: none;
-  }
-
   /* Subhead: title-small, on-surface-variant. Top spacing approximates Compose's
      28dp baseline-to-first-line (HeightToSubheadFirstLine). */
   .subhead {
