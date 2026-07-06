@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { flushSync } from "react-dom";
+import { Button } from "@brijbyte/md3-react/button";
 import { AssistChip, FilterChip } from "@brijbyte/md3-react/chip";
 import { Checkbox } from "@brijbyte/md3-react/checkbox";
 import { Fab } from "@brijbyte/md3-react/fab";
@@ -13,6 +15,15 @@ import {
   BottomSheetTitle,
   BottomSheetClose,
 } from "@brijbyte/md3-react/bottom-sheet";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeadline,
+  DialogActions,
+  DialogClose,
+} from "@brijbyte/md3-react/dialog";
+import { TextField } from "@brijbyte/md3-react/text-field";
 import { Typography } from "@brijbyte/md3-react/typography";
 
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
@@ -21,7 +32,95 @@ import CloseIcon from "@brijbyte/md3-icons/outlined/Close";
 import DeleteIcon from "@brijbyte/md3-icons/outlined/Delete";
 
 import { PriorityChip } from "./PriorityChip";
-import { INITIAL_TASKS, type Priority, type Task } from "./types";
+import { INITIAL_TASKS, PRIORITY_LABEL, type Priority, type Task } from "./types";
+
+const PRIORITIES: Priority[] = ["high", "medium", "low"];
+
+function AddTaskDialog({ onAdd }: { onAdd: (task: Omit<Task, "id" | "done">) => void }) {
+  const [open, setOpen] = React.useState(false);
+  const [priority, setPriority] = React.useState<Priority>("medium");
+
+  // MD3 container transform: FAB ↔ dialog share a view-transition-name (one at a
+  // time), and the open flip is committed synchronously inside the transition so
+  // the browser morphs between the two snapshots. Plain state change elsewhere.
+  function setOpenWithMorph(nextOpen: boolean) {
+    if (
+      !document.startViewTransition ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setOpen(nextOpen);
+      return;
+    }
+    // Direction hook for the morph CSS (the collapse carries the FAB's radius).
+    document.documentElement.dataset.addTaskMorph = nextOpen ? "open" : "close";
+    const transition = document.startViewTransition(() => {
+      flushSync(() => setOpen(nextOpen));
+    });
+    // An aborted morph (e.g. rapid toggling) should degrade silently, not throw.
+    transition.finished
+      .catch(() => {})
+      .finally(() => {
+        delete document.documentElement.dataset.addTaskMorph;
+      });
+  }
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen) setPriority("medium");
+    setOpenWithMorph(nextOpen);
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const title = String(data.get("title") ?? "").trim();
+    if (!title) return;
+    onAdd({ title, detail: String(data.get("detail") ?? "").trim(), priority });
+    setOpenWithMorph(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger
+        render={
+          <Fab
+            aria-label="Add task"
+            icon={<AddIcon />}
+            className={`sticky bottom-6 float-right mt-6 ${open ? "" : "[view-transition-name:add-task]"}`}
+          />
+        }
+      />
+      <DialogContent className="team-tasks-add-morph w-full">
+        <DialogHeadline>New task</DialogHeadline>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <TextField name="title" label="Title" variant="outlined" required />
+          <TextField name="detail" label="Detail" variant="outlined" multiline rows={2} />
+          <div>
+            <Typography variant="label-large" as="p" className="mb-2">
+              Priority
+            </Typography>
+            <div className="flex flex-wrap gap-2">
+              {PRIORITIES.map((p) => (
+                <FilterChip
+                  key={p}
+                  pressed={priority === p}
+                  onPressedChange={(pressed) => pressed && setPriority(p)}
+                >
+                  {PRIORITY_LABEL[p]}
+                </FilterChip>
+              ))}
+            </div>
+          </div>
+          <DialogActions>
+            <DialogClose render={<Button variant="text" />}>Cancel</DialogClose>
+            <Button type="submit" variant="text">
+              Add task
+            </Button>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => void }) {
   return (
@@ -104,6 +203,11 @@ export function BoardPanel() {
     }
   }
 
+  function addTask(task: Omit<Task, "id" | "done">) {
+    setTasks((current) => [...current, { ...task, id: crypto.randomUUID(), done: false }]);
+    showSnackbar({ message: `"${task.title}" added` });
+  }
+
   const visible = tasks.filter(
     (task) => activeFilters.size === 0 || activeFilters.has(task.priority),
   );
@@ -144,7 +248,7 @@ export function BoardPanel() {
         )}
       </ul>
 
-      <Fab aria-label="Add task" icon={<AddIcon />} className="sticky bottom-6 float-right mt-6" />
+      <AddTaskDialog onAdd={addTask} />
     </div>
   );
 }

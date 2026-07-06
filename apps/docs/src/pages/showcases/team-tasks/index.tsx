@@ -1,5 +1,7 @@
 "use client";
 
+import "./team-tasks.css";
+
 import { SnackbarProvider } from "@brijbyte/md3-react/snackbar";
 import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
 
