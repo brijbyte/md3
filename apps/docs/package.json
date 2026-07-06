@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:color-themes": "esbuild scripts/build-color-themes.mjs --bundle --platform=node --format=esm --outfile=scripts/.build-color-themes.bundle.mjs && node scripts/.build-color-themes.bundle.mjs && rm scripts/.build-color-themes.bundle.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -17,10 +18,12 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@material/material-color-utilities": "^0.4.0",
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-rsc": "^0.5.27",
+    "esbuild": "^0.28.1",
     "rsc-html-stream": "^0.0.7",
     "satteri": "^0.9.4",
     "shiki": "^4.3.0",

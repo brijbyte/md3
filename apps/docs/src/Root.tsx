@@ -60,6 +60,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/snackbar": mdxRoute(() => import("./pages/snackbar/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
+  "/components/text-field": mdxRoute(() => import("./pages/text-field/page.mdx")),
   "/components/tooltip": mdxRoute(() => import("./pages/tooltip/page.mdx")),
   "/showcase/team-tasks": {
     Page: React.lazy(() => import("./pages/showcases/team-tasks/index")),
@@ -79,6 +80,7 @@ document.documentElement.dataset.theme =
     : matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
+document.documentElement.dataset.colorTheme = localStorage.getItem("color-theme") ?? "default";
 `;
 
 function PageFallback() {
@@ -103,13 +105,14 @@ export default function Root({ url }: { url: URL }) {
   const isLanding = pathname === "/" || pathname.startsWith("/showcase/");
 
   return (
-    // data-theme is set by the inline script before hydration.
+    // data-theme / data-color-theme are set by the inline script before hydration.
     // scrollbar-gutter must live on <html>: browsers propagate it to the
     // viewport only from the root element (body would only affect body's box).
     <html
       lang="en"
       suppressHydrationWarning
       data-theme="dark"
+      data-color-theme="default"
       className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable"
     >
       <head>
