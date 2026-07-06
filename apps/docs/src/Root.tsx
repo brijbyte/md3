@@ -4,7 +4,6 @@
 import "./app.css";
 
 import * as React from "react";
-import { AssistChip } from "@brijbyte/md3-react/chip";
 import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
 import { Typography } from "@brijbyte/md3-react/typography";
 import { NAV, SECTIONS, type NavItem } from "./nav";
@@ -200,23 +199,32 @@ function DocsLayout({
             <ThemeToggle />
           </header>
           <nav
-            className="-mx-6 mb-6 flex gap-2 overflow-x-auto px-6 md:hidden"
+            className="docs-mobile-tabs -mx-6 mb-6 flex overflow-x-auto px-6 md:hidden"
             aria-label="Documentation"
           >
             {SIDEBAR.map((item) => (
-              <AssistChip
+              <a
                 key={item.path}
-                render={<a href={item.path} />}
-                nativeButton={false}
+                href={item.path}
                 aria-current={item.path === pathname ? "page" : undefined}
-                className={`shrink-0 font-brand ${
-                  item.path === pathname ? "bg-secondary-container text-on-secondary-container" : ""
-                }`}
+                data-active={item.path === pathname ? "" : undefined}
+                className="docs-mobile-tab font-brand"
               >
+                <item.icon className="docs-mobile-tab-icon" />
                 {item.label}
-              </AssistChip>
+              </a>
             ))}
           </nav>
+          {/* Full-page loads render the active tab wherever it falls in the
+              overflow row; nudge it into view once (scrollIntoView only
+              affects this row's own scroll container, block: "nearest"
+              keeps the page's vertical scroll untouched). */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                "document.querySelector('.docs-mobile-tabs [data-active]')?.scrollIntoView({inline:'center',block:'nearest'});",
+            }}
+          />
           {route ? (
             <>
               <Typography as="h1" variant="display-small" className="font-bold" id="top">

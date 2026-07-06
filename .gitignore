@@ -7,3 +7,6 @@ dist.old/
 packages/react/src/generated/
 *.module.css.d.ts
 .cache/
+.agents/
+.claude
+skills-lock.json

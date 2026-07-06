@@ -6,6 +6,7 @@ import {
   MORPH_INTERVAL_MS,
 } from "../generated/loading-indicator-shapes";
 import { morphPathD } from "../utils/morphPath";
+import { usePrefersReducedMotion } from "../utils/usePrefersReducedMotion";
 import styles from "./LoadingIndicator.module.css";
 
 export interface LoadingIndicatorProps extends React.ComponentPropsWithoutRef<"span"> {
@@ -27,18 +28,6 @@ function springValue(elapsedMs: number): number {
   return 1 - decay * (Math.cos(omegaD * t) + ((zeta * omega) / omegaD) * Math.sin(omegaD * t));
 }
 
-function usePrefersReducedMotion() {
-  const [reduced, setReduced] = React.useState(false);
-  React.useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(query.matches);
-    const onChange = () => setReduced(query.matches);
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, []);
-  return reduced;
-}
-
 export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicatorProps>(
   function LoadingIndicator(props, ref) {
     const { className, contained, "aria-label": ariaLabel, ...rest } = props;
@@ -48,8 +37,7 @@ export const LoadingIndicator = React.forwardRef<HTMLSpanElement, LoadingIndicat
 
     // Renders synchronously (SSR-safe, no effect needed) so the indicator
     // never flashes an empty path for the frame or two before the first
-    // rAF tick below takes over — matters most right after mount/hydration,
-    // when a network-throttled chunk load can stretch that gap noticeably.
+    // rAF tick below takes over.
     const initialD = morphPathD(INDETERMINATE_MORPHS[0], 0);
 
     React.useEffect(() => {

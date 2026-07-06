@@ -8,7 +8,11 @@ export default function HomePage() {
   return (
     <>
       <section className="max-w-prose">
-        <Typography as="h1" variant="display-large" className="font-bold">
+        <Typography
+          as="h1"
+          variant="display-large"
+          className="font-bold text-display-medium md:text-display-large"
+        >
           Material Design 3,
           <br />
           <span className="text-primary">built right for React</span>
