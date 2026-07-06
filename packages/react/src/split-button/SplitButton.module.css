@@ -66,7 +66,7 @@
 
   /* Asymmetric pads + per-corner radii. Outer corners use Button's published
      --md3-shape-round (height/2); the longhands fully override Button's
-     border-radius shorthand, so its --_radius press morph is inert here. */
+     border-radius shorthand, so its --_radius (toggle shape morph) is inert here. */
   .root .leading {
     padding-inline: var(--_leading-pad-start) var(--_leading-pad-end);
     border-start-start-radius: var(--md3-shape-round);

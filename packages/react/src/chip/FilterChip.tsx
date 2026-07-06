@@ -15,7 +15,7 @@ export interface FilterChipProps extends Toggle.Props {
 /** MD3 filter chip: a toggleable filter (aria-pressed semantics, checkmark when selected). */
 export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
   function FilterChip(props, ref) {
-    const { elevated = false, icon, className, children, onPointerDown, ...rest } = props;
+    const { elevated = false, icon, className, children, onPointerDown, onClick, ...rest } = props;
     const ripple = useRipple();
 
     return (
@@ -28,6 +28,10 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >

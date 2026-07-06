@@ -39,6 +39,7 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
       style,
       children,
       onPointerDown,
+      onClick,
       ...rest
     } = props;
     const ripple = useRipple();
@@ -65,6 +66,10 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
             ripple.onPointerDown(event);
             onPointerDown?.(event);
           }}
+          onClick={(event) => {
+            ripple.onClick();
+            onClick?.(event);
+          }}
           {...rest}
         >
           {avatar != null ? (
@@ -79,7 +84,10 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
             className={styles.trailing}
             disabled={disabled}
             aria-label={removeLabel}
-            onClick={onRemove}
+            onClick={(event) => {
+              removeRipple.onClick();
+              onRemove?.(event);
+            }}
             onPointerDown={removeRipple.onPointerDown}
           >
             <span

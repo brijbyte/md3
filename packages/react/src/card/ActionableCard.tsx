@@ -21,6 +21,7 @@ export const ActionableCard = React.forwardRef<HTMLElement, ActionableCardProps>
       className,
       children,
       onPointerDown,
+      onClick,
       render,
       nativeButton = false,
       ...rest
@@ -38,6 +39,10 @@ export const ActionableCard = React.forwardRef<HTMLElement, ActionableCardProps>
       onPointerDown: (event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);
+      },
+      onClick: (event) => {
+        ripple.onClick();
+        onClick?.(event);
       },
       children: (
         <>

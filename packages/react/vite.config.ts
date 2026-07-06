@@ -12,6 +12,7 @@ import {
 } from "./scripts/build-tokens.mjs";
 import { buildLoadingIndicatorShapes } from "./scripts/build-loading-indicator-shapes.mjs";
 import { buildCircularProgressShapes } from "./scripts/build-circular-progress-shapes.mjs";
+import { buildCssManifest } from "./scripts/build-css-manifest.mjs";
 
 const abs = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -97,6 +98,13 @@ function md3EmitCss(): Plugin {
           type: "asset",
           fileName: "index.css",
           source: [tokensCss, rippleCss, ...sortedComponentCss].join("\n"),
+        });
+
+        // Component -> required css files map, consumed by the `md3 alias` CLI.
+        this.emitFile({
+          type: "asset",
+          fileName: "css-manifest.json",
+          source: `${JSON.stringify(buildCssManifest(), null, 2)}\n`,
         });
       },
     },

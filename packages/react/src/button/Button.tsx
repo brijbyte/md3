@@ -42,6 +42,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     className,
     children,
     onPointerDown,
+    onClick,
     ...rest
   } = props;
   const ripple = useRipple();
@@ -60,6 +61,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
       ripple.onPointerDown(event);
       onPointerDown?.(event);
     }) as NonNullable<BaseButton.Props["onPointerDown"]>,
+    onClick: ((event) => {
+      ripple.onClick();
+      onClick?.(event);
+    }) as NonNullable<BaseButton.Props["onClick"]>,
     children: (
       <>
         <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />

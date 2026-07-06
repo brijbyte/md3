@@ -12,16 +12,32 @@ export default function IconButtonsDemo() {
     <>
       {variants.map((variant) => (
         <Row key={variant} label={variant}>
-          <IconButton variant={variant} aria-label="Add">
+          <IconButton title={`${variant} variant`} variant={variant} aria-label="Add">
             <AddIcon />
           </IconButton>
-          <IconButton variant={variant} aria-label="Favorite" toggle>
+          <IconButton
+            title={`${variant} variant toggleable`}
+            variant={variant}
+            aria-label="Favorite"
+            toggle
+          >
             <HeartIcon />
           </IconButton>
-          <IconButton variant={variant} aria-label="Favorite" toggle defaultPressed>
+          <IconButton
+            title={`${variant} variant toggleable pressed`}
+            variant={variant}
+            aria-label="Favorite"
+            toggle
+            defaultPressed
+          >
             <HeartIcon />
           </IconButton>
-          <IconButton variant={variant} aria-label="Add" disabled>
+          <IconButton
+            title={`${variant} variant disabled`}
+            variant={variant}
+            aria-label="Add"
+            disabled
+          >
             <AddIcon />
           </IconButton>
         </Row>

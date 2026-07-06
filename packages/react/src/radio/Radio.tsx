@@ -9,7 +9,7 @@ import styles from "./Radio.module.css";
 export interface RadioProps extends BaseRadio.Root.Props {}
 
 export const Radio = React.forwardRef<HTMLButtonElement, RadioProps>(function Radio(props, ref) {
-  const { className, onPointerDown, ...rest } = props;
+  const { className, onPointerDown, onClick, ...rest } = props;
   const ripple = useRipple();
 
   return (
@@ -19,6 +19,10 @@ export const Radio = React.forwardRef<HTMLButtonElement, RadioProps>(function Ra
       onPointerDown={(event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);
+      }}
+      onClick={(event) => {
+        ripple.onClick();
+        onClick?.(event);
       }}
       {...rest}
     >

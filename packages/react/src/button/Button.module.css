@@ -13,7 +13,6 @@
     --_label-weight: var(--md-sys-typescale-label-large-weight);
     --_label-tracking: var(--md-sys-typescale-label-large-tracking);
     --_shape-square: var(--md-sys-shape-corner-medium);
-    --_shape-pressed: var(--md-sys-shape-corner-small);
     /* Round = height/2, not corner-full: animating from 9999px keeps the rendered
        radius clamped at height/2 for ~99% of the transition (morph reads as lag).
        Published as --md3-shape-round so ButtonGroup's inner-corner morph can use it. */
@@ -62,7 +61,6 @@
     --_trailing-space: 24px;
     --_icon-size: 24px;
     --_shape-square: var(--md-sys-shape-corner-large);
-    --_shape-pressed: var(--md-sys-shape-corner-medium);
     --_label-font: var(--md-sys-typescale-title-medium-font);
     --_label-size: var(--md-sys-typescale-title-medium-size);
     --_label-line-height: var(--md-sys-typescale-title-medium-line-height);
@@ -78,7 +76,6 @@
     --_icon-size: 32px;
     --_outline-width: 2px;
     --_shape-square: var(--md-sys-shape-corner-extra-large);
-    --_shape-pressed: var(--md-sys-shape-corner-large);
     --_label-font: var(--md-sys-typescale-headline-small-font);
     --_label-size: var(--md-sys-typescale-headline-small-size);
     --_label-line-height: var(--md-sys-typescale-headline-small-line-height);
@@ -94,7 +91,6 @@
     --_icon-size: 40px;
     --_outline-width: 3px;
     --_shape-square: var(--md-sys-shape-corner-extra-large);
-    --_shape-pressed: var(--md-sys-shape-corner-large);
     --_label-font: var(--md-sys-typescale-headline-large-font);
     --_label-size: var(--md-sys-typescale-headline-large-size);
     --_label-line-height: var(--md-sys-typescale-headline-large-line-height);
@@ -103,8 +99,8 @@
   }
 
   /* Shape: round (full) rests; square uses the per-size radius; selected toggles
-     flip round↔square; pressing morphs to the (smaller) pressed radius.
-     :where keeps these at (0,1,0) so the :active rule below always wins. */
+     flip round↔square. :where keeps these at (0,1,0)
+     so a later, more specific rule (e.g. disabled color guards) can still win. */
   .root:where([data-shape="square"]) {
     --_radius: var(--_shape-square);
   }
@@ -115,10 +111,6 @@
 
   .root:where([data-toggle][data-pressed][data-shape="square"]) {
     --_radius: var(--_shape-round);
-  }
-
-  .root:active:not(:disabled) {
-    --_radius: var(--_shape-pressed);
   }
 
   /* 48dp touch target (MD3): extends the hit area past the 40px container. */

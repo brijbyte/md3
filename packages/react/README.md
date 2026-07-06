@@ -34,6 +34,26 @@ import "@brijbyte/md3-react/icon-button.css"; // builds on button.css
 > An everything bundle exists — `@brijbyte/md3-react/styles.css` — but it ships
 > every component's CSS whether you use it or not; prefer per-component imports.
 
+## CLI
+
+`md3 alias <component> [<component>...] --dir <dir>` writes a re-export file
+per component under `<dir>` that imports its required CSS in the right order,
+so you can import from your own path without tracking stylesheets by hand:
+
+```bash
+npx md3 alias icon-button --dir src/ui
+```
+
+```tsx
+// src/ui/icon-button.tsx
+import "@brijbyte/md3-react/tokens.css";
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+
+export * from "@brijbyte/md3-react/icon-button";
+```
+
 ## Tailwind CSS
 
 All library CSS lives in Tailwind v4's own cascade layers — tokens in `theme`,

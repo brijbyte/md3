@@ -19,6 +19,10 @@ export function useRipple() {
   const containerRef = React.useRef<HTMLSpanElement>(null);
   const rippleRef = React.useRef<HTMLSpanElement | null>(null);
   const growAnimation = React.useRef<Animation | null>(null);
+  // Tracks whether the pending/next click was preceded by a pointerdown we
+  // already rippled for, so keyboard-activated clicks (no pointer event) can
+  // still get a quick ripple of their own.
+  const hadPointerDown = React.useRef(false);
 
   const startPress = React.useCallback((x: number, y: number) => {
     const container = containerRef.current;
@@ -80,6 +84,7 @@ export function useRipple() {
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent) => {
       if (event.button !== 0 && event.pointerType !== "touch") return;
+      hadPointerDown.current = true;
       const { clientX, clientY, pointerType } = event;
       const release = new AbortController();
 
@@ -127,5 +132,19 @@ export function useRipple() {
     [startPress, endPress],
   );
 
-  return { containerRef, onPointerDown };
+  // Keyboard activation (Space/Enter) fires click with no pointerdown; play
+  // a quick centered ripple to match material-web's synthesized-click case.
+  const onClick = React.useCallback(() => {
+    if (hadPointerDown.current) {
+      hadPointerDown.current = false;
+      return;
+    }
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    startPress(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    endPress();
+  }, [startPress, endPress]);
+
+  return { containerRef, onPointerDown, onClick };
 }

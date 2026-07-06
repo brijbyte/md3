@@ -39,6 +39,7 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
     label,
     className,
     onPointerDown,
+    onClick,
     ...rest
   } = props;
   const ripple = useRipple();
@@ -55,6 +56,10 @@ export const Fab = React.forwardRef<HTMLButtonElement, FabProps>(function Fab(pr
       onPointerDown={(event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);
+      }}
+      onClick={(event) => {
+        ripple.onClick();
+        onClick?.(event);
       }}
       {...rest}
     >

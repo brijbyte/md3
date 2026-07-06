@@ -137,8 +137,16 @@ export interface MenuItemProps extends BaseMenu.Item.Props, MenuItemSlots {}
 
 export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
   function MenuItem(props, ref) {
-    const { className, leadingIcon, trailingIcon, trailingText, children, onPointerDown, ...rest } =
-      props;
+    const {
+      className,
+      leadingIcon,
+      trailingIcon,
+      trailingText,
+      children,
+      onPointerDown,
+      onClick,
+      ...rest
+    } = props;
     const ripple = useRipple();
     return (
       <BaseMenu.Item
@@ -147,6 +155,10 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         onPointerDown={(event) => {
           if (!props.disabled) ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          if (!props.disabled) ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >
@@ -168,8 +180,16 @@ export interface MenuLinkItemProps extends BaseMenu.LinkItem.Props, MenuItemSlot
 /** Menu item rendering an anchor; use `render={<Link />}` for router links. */
 export const MenuLinkItem = React.forwardRef<HTMLAnchorElement, MenuLinkItemProps>(
   function MenuLinkItem(props, ref) {
-    const { className, leadingIcon, trailingIcon, trailingText, children, onPointerDown, ...rest } =
-      props;
+    const {
+      className,
+      leadingIcon,
+      trailingIcon,
+      trailingText,
+      children,
+      onPointerDown,
+      onClick,
+      ...rest
+    } = props;
     const ripple = useRipple();
     return (
       <BaseMenu.LinkItem
@@ -178,6 +198,10 @@ export const MenuLinkItem = React.forwardRef<HTMLAnchorElement, MenuLinkItemProp
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >
@@ -199,8 +223,16 @@ export interface MenuCheckboxItemProps extends BaseMenu.CheckboxItem.Props, Menu
 /** Toggleable item; while checked the row fills with secondary-container (no checkmark, per spec). */
 export const MenuCheckboxItem = React.forwardRef<HTMLDivElement, MenuCheckboxItemProps>(
   function MenuCheckboxItem(props, ref) {
-    const { className, leadingIcon, trailingIcon, trailingText, children, onPointerDown, ...rest } =
-      props;
+    const {
+      className,
+      leadingIcon,
+      trailingIcon,
+      trailingText,
+      children,
+      onPointerDown,
+      onClick,
+      ...rest
+    } = props;
     const ripple = useRipple();
     return (
       <BaseMenu.CheckboxItem
@@ -209,6 +241,10 @@ export const MenuCheckboxItem = React.forwardRef<HTMLDivElement, MenuCheckboxIte
         onPointerDown={(event) => {
           if (!props.disabled) ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          if (!props.disabled) ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >
@@ -237,8 +273,16 @@ export interface MenuRadioItemProps extends BaseMenu.RadioItem.Props, MenuItemSl
 
 export const MenuRadioItem = React.forwardRef<HTMLDivElement, MenuRadioItemProps>(
   function MenuRadioItem(props, ref) {
-    const { className, leadingIcon, trailingIcon, trailingText, children, onPointerDown, ...rest } =
-      props;
+    const {
+      className,
+      leadingIcon,
+      trailingIcon,
+      trailingText,
+      children,
+      onPointerDown,
+      onClick,
+      ...rest
+    } = props;
     const ripple = useRipple();
     return (
       <BaseMenu.RadioItem
@@ -247,6 +291,10 @@ export const MenuRadioItem = React.forwardRef<HTMLDivElement, MenuRadioItemProps
         onPointerDown={(event) => {
           if (!props.disabled) ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          if (!props.disabled) ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >
@@ -313,8 +361,16 @@ export interface MenuSubmenuTriggerProps extends BaseMenu.SubmenuTrigger.Props, 
 /** Item that opens a submenu; defaults to a cascading arrow_right trailing indicator. */
 export const MenuSubmenuTrigger = React.forwardRef<HTMLDivElement, MenuSubmenuTriggerProps>(
   function MenuSubmenuTrigger(props, ref) {
-    const { className, leadingIcon, trailingIcon, trailingText, children, onPointerDown, ...rest } =
-      props;
+    const {
+      className,
+      leadingIcon,
+      trailingIcon,
+      trailingText,
+      children,
+      onPointerDown,
+      onClick,
+      ...rest
+    } = props;
     const ripple = useRipple();
     return (
       <BaseMenu.SubmenuTrigger
@@ -323,6 +379,10 @@ export const MenuSubmenuTrigger = React.forwardRef<HTMLDivElement, MenuSubmenuTr
         onPointerDown={(event) => {
           if (!props.disabled) ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          if (!props.disabled) ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >

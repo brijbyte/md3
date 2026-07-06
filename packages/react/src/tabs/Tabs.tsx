@@ -75,7 +75,7 @@ export interface TabProps extends BaseTabs.Tab.Props {
 }
 
 export const Tab = React.forwardRef<HTMLButtonElement, TabProps>(function Tab(props, ref) {
-  const { className, icon, badge, children, onPointerDown, ...rest } = props;
+  const { className, icon, badge, children, onPointerDown, onClick, ...rest } = props;
   const ripple = useRipple();
 
   return (
@@ -86,6 +86,10 @@ export const Tab = React.forwardRef<HTMLButtonElement, TabProps>(function Tab(pr
       onPointerDown={(event) => {
         ripple.onPointerDown(event);
         onPointerDown?.(event);
+      }}
+      onClick={(event) => {
+        ripple.onClick();
+        onClick?.(event);
       }}
       {...rest}
     >

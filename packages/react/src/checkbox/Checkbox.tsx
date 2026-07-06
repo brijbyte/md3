@@ -12,7 +12,7 @@ export interface CheckboxProps extends BaseCheckbox.Root.Props {
 
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   function Checkbox(props, ref) {
-    const { className, onPointerDown, error, ...rest } = props;
+    const { className, onPointerDown, onClick, error, ...rest } = props;
     const ripple = useRipple();
 
     return (
@@ -24,6 +24,10 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >

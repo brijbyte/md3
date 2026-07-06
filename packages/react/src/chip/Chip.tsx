@@ -14,7 +14,7 @@ export interface ChipProps extends BaseButton.Props {
 
 function createChip(variant: "assist" | "suggestion", displayName: string) {
   const Chip = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip(props, ref) {
-    const { elevated = false, icon, className, children, onPointerDown, ...rest } = props;
+    const { elevated = false, icon, className, children, onPointerDown, onClick, ...rest } = props;
     const ripple = useRipple();
 
     return (
@@ -27,6 +27,10 @@ function createChip(variant: "assist" | "suggestion", displayName: string) {
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >

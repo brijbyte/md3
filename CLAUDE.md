@@ -222,8 +222,14 @@ LoadingIndicator (indeterminate only, contained), Snackbar, LinearProgress /
 CircularProgress (determinate/indeterminate), `@brijbyte/md3-icons`.
 
 Durable component gotchas: Button's round shape rests at `calc(height/2)`, NOT
-`corner-full` (transitioning from 9999px breaks the pressed-corner morph timing); shape
-rules use `:where()` so `:active` always wins; the corner morph uses
+`corner-full` (transitioning from 9999px breaks the toggle round↔square morph timing);
+Button has **no press-triggered shape morph** — Compose's plain `Button(shape: Shape)`
+never morphs on `:active`; that's an opt-in expressive `ButtonShapes`/experimental
+overload, and this library only wires an active-press corner morph for ButtonGroup's
+connected variant (`ButtonGroup.module.css`'s `--_inner-corner`, keyed off
+`[data-toggle]:active` inside `[data-variant="connected"]`) — never reintroduce a
+general `.root:active` shape rule in `Button.module.css`. The corner morph that does
+exist (toggle selection flipping round↔square) uses
 `--md-sys-motion-easing-fast-spatial` (the 800/0.6 expressive spring exported from
 tokens.json as a CSS `linear()` curve, pair with `duration-medium3`); `TabPanel` is
 unstyled a11y wiring (MD3 specs only the tab bar); Badge leaves "999+" clamping to

@@ -1,8 +1,8 @@
 /* Spec: expressive md.comp.icon-button.<size> sets — MDC Android icon_btn_tokens.xml (v34)
    + Compose <Size>IconButtonTokens.kt + m3.material.io corner/color tables (all agree).
-   Chrome, heights, shape/press morph, filled/tonal/outlined colors, and disabled all
+   Chrome, heights, toggle shape morph, filled/tonal/outlined colors, and disabled all
    come from Button.module.css (the root renders with Button's .root class stacked) —
-   heights, square/pressed radii, and outline widths are spec-identical. This file keeps
+   heights, square radii, and outline widths are spec-identical. This file keeps
    only what differs: paddings + explicit width, icon sizes, standard's colors, and the
    no-elevation rule. Same @layer and equal specificity as button.css, so import order
    matters: button.css MUST be imported before icon-button.css (documented in README +

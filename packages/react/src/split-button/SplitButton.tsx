@@ -76,7 +76,7 @@ export interface SplitButtonMenuProps extends Omit<BaseButton.Props, "aria-label
  *  so composing a Base UI Menu.Trigger via `render` works out of the box. */
 export const SplitButtonMenu = React.forwardRef<HTMLButtonElement, SplitButtonMenuProps>(
   function SplitButtonMenu(props, ref) {
-    const { className, children, onPointerDown, ...rest } = props;
+    const { className, children, onPointerDown, onClick, ...rest } = props;
     const { variant, size } = React.useContext(SplitButtonContext);
     const ripple = useRipple();
 
@@ -89,6 +89,10 @@ export const SplitButtonMenu = React.forwardRef<HTMLButtonElement, SplitButtonMe
         onPointerDown={(event) => {
           ripple.onPointerDown(event);
           onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
         }}
         {...rest}
       >

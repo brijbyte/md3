@@ -41,9 +41,9 @@ Five sizes (`xsmall`–`xlarge`) cover the expressive spec; `small` is the defau
 
 ## Shapes & toggle
 
-The press feedback is built in: any button morphs to a smaller radius while pressed, whether
-it's round or `shape="square"`. Toggle buttons (`toggle`, Base UI Toggle underneath) flip shape
-and color on selection to make the state obvious at a glance; there is no text-variant toggle.
+Toggle buttons (`toggle`, Base UI Toggle underneath) flip shape and color on selection to make
+the state obvious at a glance; there is no text-variant toggle. Plain buttons never morph shape
+on press — that's reserved for `ButtonGroup`'s connected variant (see below).
 
 <ButtonShapes />
 
@@ -74,8 +74,8 @@ so click them to see the state change in place.
 
 Need a denser toolbar or a roomier tap target without changing the icon size? Adjust the width
 independently of size: `narrow`/`default`/`wide` change padding only (height and icon stay fixed
-per size), across five expressive sizes. `shape="square"` and toggles morph the same way common
-buttons do.
+per size), across five expressive sizes. `shape="square"` and toggles use the same round/square
+shapes as common buttons.
 
 <IconButtonSizes />
 

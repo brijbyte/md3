@@ -3,8 +3,9 @@
    (its token files carry TODO-incorrect values; component code matches MDC).
    Chrome and states come from Button.module.css (the root renders with Button's .root
    class stacked); this file keeps FAB geometry, elevation, and colors. Button's
-   shape/press morph never fires (the radius here doesn't use its --_radius), matching
-   spec: FABs keep one radius. Same @layer and equal specificity as button.css, so
+   toggle shape morph never fires here (the radius here doesn't use its --_radius, and
+   FAB isn't a toggle anyway), matching spec: FABs keep one radius. Same @layer and
+   equal specificity as button.css, so
    import order matters: button.css MUST be imported before fab.css (documented in
    README + docs; the aggregate index.css orders them correctly). */
 @layer components {
