@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "Material Design 3 components for React, built on Base UI",
   "license": "MIT",
+  "bin": {
+    "md3": "./bin/md3.mjs"
+  },
   "files": [
     "dist",
     "bin"
   ],
   "type": "module",
-  "bin": {
-    "md3": "./bin/md3.mjs"
-  },
   "sideEffects": [
     "**/*.css"
   ],

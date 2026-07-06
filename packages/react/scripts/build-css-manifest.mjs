@@ -3,7 +3,9 @@
 // Derived by statically walking each component's import graph from its
 // src/<name>/index.ts entry and recording every *.module.css it (transitively)
 // pulls in — this is how family reuse (icon-button/fab/split-button reusing
-// Button.module.css) and ripple usage are discovered, with no manual upkeep.
+// Button.module.css) is discovered, with no manual upkeep. tokens.css and
+// ripple.css are excluded: they're global setup a consumer imports once, not
+// per-component.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,7 +26,7 @@ function componentNames() {
     .toSorted();
 }
 
-function resolveImport(fromFile, spec) {
+function resolveImport(/** @type {string} */ fromFile, /** @type {string} */ spec) {
   if (!spec.startsWith(".")) return null; // package import, not part of the src graph
   const base = join(dirname(fromFile), spec);
   for (const candidate of [base, `${base}.ts`, `${base}.tsx`, join(base, "index.ts")]) {
@@ -33,20 +35,22 @@ function resolveImport(fromFile, spec) {
   return null;
 }
 
-function topFolder(absPath) {
+function topFolder(/** @type {string} */ absPath) {
   return relative(srcDir, absPath).split("/")[0];
 }
 
 // BFS over the import graph starting at src/<name>/index.ts, collecting the
 // top-level src folder of every *.module.css transitively imported.
-function cssDeps(name) {
+function cssDeps(/** @type {string} */ name) {
   const entry = join(srcDir, name, "index.ts");
+  /** @type {string[]} */
   const queue = [entry];
   const visitedFiles = new Set(queue);
+  /** @type {Set<string>} */
   const cssFolders = new Set();
 
   while (queue.length) {
-    const file = queue.shift();
+    const file = /** @type {string} */ (queue.shift());
     const contents = readFileSync(file, "utf8");
     for (const match of contents.matchAll(IMPORT_RE)) {
       const spec = match[1] ?? match[2] ?? match[3];
@@ -66,16 +70,21 @@ function cssDeps(name) {
   return cssFolders;
 }
 
+// Global setup, not per-component: consumers import these once alongside the
+// alias files, so they're never included in a manifest entry.
+const GLOBAL_CSS = new Set(["tokens", "ripple"]);
+
 export function buildCssManifest() {
+  /** @type {Record<string, string[]>} */
   const manifest = {};
 
   for (const name of componentNames()) {
     const deps = cssDeps(name);
     deps.delete(name);
-    const usesRipple = deps.delete("ripple");
+    for (const global of GLOBAL_CSS) deps.delete(global);
     const rest = [...deps].toSorted();
 
-    manifest[name] = [...new Set(["tokens", ...(usesRipple ? ["ripple"] : []), ...rest, name])];
+    manifest[name] = [...rest, ...(GLOBAL_CSS.has(name) ? [] : [name])];
   }
 
   return manifest;

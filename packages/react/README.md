@@ -46,13 +46,15 @@ npx md3 alias icon-button --dir src/ui
 
 ```tsx
 // src/ui/icon-button.tsx
-import "@brijbyte/md3-react/tokens.css";
-import "@brijbyte/md3-react/ripple.css";
 import "@brijbyte/md3-react/button.css";
 import "@brijbyte/md3-react/icon-button.css";
 
 export * from "@brijbyte/md3-react/icon-button";
 ```
+
+> [!NOTE]
+> `tokens.css` and `ripple.css` are global setup (see [Styles](#styles) above)
+> and are deliberately left out of these files — import them once yourself.
 
 ## Tailwind CSS
 
