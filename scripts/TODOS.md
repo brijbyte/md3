@@ -23,3 +23,10 @@
       approach vs. something closer to Compose's actual PathMeasure-based
       double-length-path + getSegment technique (see CircularWavyProgressModifiers.kt),
       since the CSS approximation may inherently drift for a non-circular (star) path.
+- [ ] Tooltip/RichTooltip have no mobile long-press gesture (shipped 2026-07). Base UI's
+      Tooltip/PreviewCard triggers are hover/focus-driven only; on a real touchscreen
+      there's no native hover, so a tap just fires the trigger's own click action and the
+      tooltip never appears. Compose Material3's spec (`BasicTooltip.kt` `handleGestures`)
+      shows the tooltip on a held long-press and `consume()`s that pointer event so the
+      trigger's tap-through doesn't also fire; a quick tap is left alone. Would need a
+      custom long-press handler added to `TooltipTrigger`/`RichTooltipTrigger` to match.
