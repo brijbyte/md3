@@ -13,7 +13,7 @@ const manifest = JSON.parse(readFileSync(join(pkgRoot, "dist/css-manifest.json")
 const pkgName = JSON.parse(readFileSync(join(pkgRoot, "package.json"), "utf8")).name;
 
 function usage() {
-  console.error("Usage: md3 alias <component> [<component>...] --dir <dir>");
+  console.error("Usage: md3 alias --dir <dir> <component> [<component>...]");
   console.error(`Available components: ${Object.keys(manifest).toSorted().join(", ")}`);
   process.exit(1);
 }
@@ -40,14 +40,10 @@ function alias(components, dir) {
   );
 }
 
-const [command, ...rest] = process.argv.slice(2);
-if (command !== "alias") usage();
-
-const dirFlagIndex = rest.indexOf("--dir");
-if (dirFlagIndex === -1 || !rest[dirFlagIndex + 1]) usage();
-
-const dir = rest[dirFlagIndex + 1];
-const components = [...rest.slice(0, dirFlagIndex), ...rest.slice(dirFlagIndex + 2)];
+// --dir must come right after `alias` so the command can live in a package.json
+// script ("md3 alias --dir src/ui") with component names appended at call time.
+const [command, dirFlag, dir, ...components] = process.argv.slice(2);
+if (command !== "alias" || dirFlag !== "--dir" || !dir) usage();
 if (components.length === 0) usage();
 
 alias(components, dir);

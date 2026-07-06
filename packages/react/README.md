@@ -36,12 +36,23 @@ import "@brijbyte/md3-react/icon-button.css"; // builds on button.css
 
 ## CLI
 
-`md3 alias <component> [<component>...] --dir <dir>` writes a re-export file
+`md3 alias --dir <dir> <component> [<component>...]` writes a re-export file
 per component under `<dir>` that imports its required CSS in the right order,
 so you can import from your own path without tracking stylesheets by hand:
 
 ```bash
-npx md3 alias icon-button --dir src/ui
+npx md3 alias --dir src/ui icon-button
+```
+
+`--dir` comes first so the command drops into a package.json script — any extra
+arguments become component names:
+
+```json
+{ "scripts": { "ui:add": "md3 alias --dir src/ui" } }
+```
+
+```bash
+pnpm ui:add button checkbox
 ```
 
 ```tsx

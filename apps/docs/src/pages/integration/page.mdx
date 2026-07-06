@@ -75,6 +75,39 @@ Toggle the docs theme — every class in this card is a token utility, so it fol
 > from `tokens.css`, which must also be loaded. The mapping ships as its own file because
 > a raw `@theme` block is only meaningful inside a Tailwind v4 build.
 
+## Aliasing with the md3 CLI
+
+Don't want to track which stylesheet each component needs — or that `button.css` must
+precede `icon-button.css`? The package ships an `md3` CLI whose `alias` command writes a
+re-export file per component into your app, with the required CSS imported in the right
+order:
+
+```bash
+npx md3 alias --dir src/ui button icon-button checkbox
+```
+
+`--dir` comes right after `alias`, so the command drops into a package.json script —
+`"ui:add": "md3 alias --dir src/ui"` — and anything appended at call time
+(`pnpm ui:add snackbar`) is treated as component names.
+
+```tsx
+// src/ui/icon-button.tsx (generated)
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+
+export * from "@brijbyte/md3-react/icon-button";
+```
+
+Your app then imports from its own path — `import { IconButton } from "./ui/icon-button"` —
+and the stylesheets come along automatically, ordered correctly. With this approach the
+per-component `@import` lines from the entry CSS above are unnecessary; your Tailwind
+entry keeps only the layer pin, `tokens.css`, `ripple.css`, and `tailwind-tokens.css`.
+
+> [!NOTE]
+> `tokens.css` and `ripple.css` are global setup and deliberately not written into the
+> generated files — import them once yourself, as shown above. Run the command without
+> arguments to see the list of available component names.
+
 ## Overriding component styles
 
 ### Utility overrides
