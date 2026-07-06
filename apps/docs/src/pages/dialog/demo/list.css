@@ -1,0 +1,24 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/dialog.css";
+@import "@brijbyte/md3-react/radio.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-dialog-list {
+  max-height: 480px;
+}
+
+.demo-dialog-list-group {
+  display: flex;
+  flex-direction: column;
+  padding-block: 8px;
+}
+
+.demo-dialog-list-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-block: 4px;
+  color: var(--md-sys-color-on-surface);
+}

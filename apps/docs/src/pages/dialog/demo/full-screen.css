@@ -1,0 +1,27 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/dialog.css";
+@import "@brijbyte/md3-react/text-field.css";
+
+.demo-dialog-full-screen-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.demo-dialog-full-screen-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Override TextField's 280px min-width so the pair fits side by side where there's
+   room and wraps to stacked rows on compact screens. */
+.demo-dialog-full-screen-times > * {
+  flex: 1 1 200px;
+  min-width: 0;
+}

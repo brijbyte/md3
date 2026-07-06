@@ -1,0 +1,25 @@
+export {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogIcon,
+  DialogHeadline,
+  DialogSupportingText,
+  DialogBody,
+  DialogActions,
+  DialogHeader,
+  DialogClose,
+} from "./Dialog";
+export type {
+  DialogVariant,
+  DialogProps,
+  DialogTriggerProps,
+  DialogContentProps,
+  DialogIconProps,
+  DialogHeadlineProps,
+  DialogSupportingTextProps,
+  DialogBodyProps,
+  DialogActionsProps,
+  DialogHeaderProps,
+  DialogCloseProps,
+} from "./Dialog";

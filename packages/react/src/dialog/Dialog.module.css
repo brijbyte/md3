@@ -1,0 +1,193 @@
+/* Spec: Compose Material3 AlertDialog.kt / tokens/DialogTokens.kt (v0_210), cross-checked
+   against material-web md-comp-dialog (v0_192) — full agreement. Container:
+   surface-container-high, corner-extra-large, elevation level3. Width 280–560dp, 24dp
+   padding all around; icon (secondary, 24dp) bottom-16 and centered — headline centers
+   only when an icon precedes it, supporting text stays start-aligned. Headline
+   headline-small bottom-16; supporting text body-medium on-surface-variant bottom-24;
+   action row end-aligned, 8dp gaps. Scrim: 32% (ScrimTokens). Full-screen variant per
+   m3.material.io fullscreen-dialog spec: surface container, 56dp header, slides up. */
+@layer components {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: var(--md-sys-color-scrim);
+    opacity: 0.32;
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  }
+
+  .backdrop[data-starting-style],
+  .backdrop[data-ending-style] {
+    opacity: 0;
+  }
+
+  .viewport {
+    position: fixed;
+    inset: 0;
+    z-index: 1201;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 599.98px) {
+    .viewport[data-variant="full-screen"] {
+      padding: 0;
+      align-items: stretch;
+    }
+  }
+
+  .popup {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 280px;
+    max-width: 560px;
+    max-height: 100%;
+    padding: 24px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-level3);
+    outline: none;
+    pointer-events: auto;
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-medium3)
+        var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+
+  .popup[data-starting-style] {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  .popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(1);
+    transition:
+      opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-short4)
+        var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 16px;
+    color: var(--md-sys-color-secondary);
+    font-size: 24px;
+  }
+
+  .icon > svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .headline {
+    margin: 0;
+    padding-bottom: 16px;
+    color: var(--md-sys-color-on-surface);
+    font-family: var(--md-sys-typescale-headline-small-font);
+    font-size: var(--md-sys-typescale-headline-small-size);
+    font-weight: var(--md-sys-typescale-headline-small-weight);
+    line-height: var(--md-sys-typescale-headline-small-line-height);
+    letter-spacing: var(--md-sys-typescale-headline-small-tracking);
+  }
+
+  /* A hero icon centers the headline under it; supporting text stays start-aligned. */
+  .icon + .headline {
+    text-align: center;
+  }
+
+  .supportingText {
+    margin: 0;
+    padding-bottom: 24px;
+    overflow-y: auto;
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    font-weight: var(--md-sys-typescale-body-medium-weight);
+    line-height: var(--md-sys-typescale-body-medium-line-height);
+    letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  }
+
+  /* Scrollable middle region (lists, forms) with the MD3 scroll dividers. */
+  .body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-bottom: 24px;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* Full-screen: header bar instead of actions, sections carry their own padding. On
+     screens ≥600px (MD3 medium+) it presents as a centered basic dialog — full-screen is
+     reserved for compact windows; below that it fills the viewport and slides up. */
+  /* Larger footprint than a basic dialog when centered — it hosts a task, not an alert. */
+  .popup[data-variant="full-screen"] {
+    width: 640px;
+    max-width: 100%;
+    min-height: min(560px, 100%);
+    padding: 0;
+  }
+
+  @media (max-width: 599.98px) {
+    .popup[data-variant="full-screen"] {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      border-radius: 0;
+      background: var(--md-sys-color-surface);
+      box-shadow: none;
+      transform: none;
+      transition:
+        opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+        translate var(--md-sys-motion-duration-medium3)
+          var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+
+    .popup[data-variant="full-screen"][data-starting-style],
+    .popup[data-variant="full-screen"][data-ending-style] {
+      opacity: 1;
+      translate: 0 100%;
+    }
+
+    .popup[data-variant="full-screen"][data-ending-style] {
+      transition: translate var(--md-sys-motion-duration-medium1)
+        var(--md-sys-motion-easing-emphasized-accelerate);
+    }
+  }
+
+  .header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    padding-inline: 8px 16px;
+  }
+
+  /* Header headline is title-large, start-aligned, no block padding of its own. */
+  .header .headline {
+    flex: 1;
+    padding-bottom: 0;
+    font-family: var(--md-sys-typescale-title-large-font);
+    font-size: var(--md-sys-typescale-title-large-size);
+    font-weight: var(--md-sys-typescale-title-large-weight);
+    line-height: var(--md-sys-typescale-title-large-line-height);
+    letter-spacing: var(--md-sys-typescale-title-large-tracking);
+  }
+}

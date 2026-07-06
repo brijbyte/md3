@@ -126,6 +126,7 @@ export default defineConfig({
         "bottom-sheet/index": "src/bottom-sheet/index.ts",
         "side-sheet/index": "src/side-sheet/index.ts",
         "checkbox/index": "src/checkbox/index.ts",
+        "dialog/index": "src/dialog/index.ts",
         "radio/index": "src/radio/index.ts",
         "switch/index": "src/switch/index.ts",
         "tabs/index": "src/tabs/index.ts",

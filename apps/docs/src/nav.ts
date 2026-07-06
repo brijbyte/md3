@@ -8,6 +8,7 @@ import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
+import DialogsIcon from "@brijbyte/md3-icons/outlined/Dialogs";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
@@ -126,6 +127,13 @@ export const SECTIONS: NavSection[] = [
         title: "Checkbox",
         description: "Multi-select done properly — indeterminate state included.",
         icon: CheckBoxIcon,
+      },
+      {
+        path: "/components/dialog",
+        label: "Dialog",
+        title: "Dialog",
+        description: "Interrupt with intent — confirmations and focused tasks over a scrim.",
+        icon: DialogsIcon,
       },
       {
         path: "/components/loading-indicator",
