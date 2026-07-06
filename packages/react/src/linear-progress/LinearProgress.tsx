@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Progress } from "@base-ui/react/progress";
+import { motion } from "../generated/tokens";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./LinearProgress.module.css";
 
@@ -184,9 +185,9 @@ function WavyDeterminate({ width, percent }: { width: number; percent: number })
             d: `path("${amplitude === 1 ? waveD : flatD}")`,
             transform: `translateX(calc(var(--md3-linear-progress-wave-phase) * ${-wavelength}px))`,
             transition: [
-              `d var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-standard)`,
-              `stroke-dasharray var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)`,
-              `stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)`,
+              `d ${motion.durationLong2} ${motion.easingStandard}`,
+              `stroke-dasharray ${motion.durationMedium2} ${motion.easingStandard}`,
+              `stroke-dashoffset ${motion.durationMedium2} ${motion.easingStandard}`,
             ].join(", "),
             strokeDasharray: `${stopU - startU} ${100 - (stopU - startU)}`,
             strokeDashoffset: `calc(${-startU} + var(--md3-linear-progress-wave-phase) * ${-wavelengthFraction})`,

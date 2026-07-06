@@ -7,6 +7,7 @@ import {
   CIRCULAR_PROGRESS_SIZE,
   CIRCULAR_PROGRESS_STROKE_WIDTH,
 } from "../generated/circular-progress-shapes";
+import { motion } from "../generated/tokens";
 import { mergeClassName } from "../utils/mergeClassName";
 import { morphPathD } from "../utils/morphPath";
 import styles from "./CircularProgress.module.css";
@@ -106,9 +107,9 @@ export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgres
                   transition: indeterminate
                     ? undefined
                     : [
-                        `d var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-standard)`,
-                        `stroke-dasharray var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)`,
-                        `stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)`,
+                        `d ${motion.durationLong2} ${motion.easingStandard}`,
+                        `stroke-dasharray ${motion.durationMedium2} ${motion.easingStandard}`,
+                        `stroke-dashoffset ${motion.durationMedium2} ${motion.easingStandard}`,
                       ].join(", "),
                   strokeDasharray: indeterminate ? undefined : `${sweep} ${100 - sweep}`,
                   strokeDashoffset: indeterminate
