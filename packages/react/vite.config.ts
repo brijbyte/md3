@@ -138,6 +138,7 @@ export default defineConfig({
         "circular-progress/index": "src/circular-progress/index.ts",
         "slider/index": "src/slider/index.ts",
         "snackbar/index": "src/snackbar/index.ts",
+        "tooltip/index": "src/tooltip/index.ts",
         "typography/index": "src/typography/index.ts",
       },
       formats: ["es"],

@@ -1,0 +1,123 @@
+@layer components {
+  .plainPositioner,
+  .richPositioner {
+    outline: none;
+    /* Portalled to body-end, so DOM order beats z-auto content. */
+    z-index: var(--md3-popup-z-index, 20);
+  }
+
+  /* Container per md.comp.plain-tooltip: inverse-surface, corner-extra-small, no
+     elevation. Metrics (40/200 width, 24 height, 8x4 padding) from Compose's
+     TooltipMinWidth/plainTooltipMaxWidth/TooltipMinHeight/PlainTooltipContentPadding. */
+  .plainPopup {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-width: 40px;
+    /* Clamp to the Positioner's computed room (Base UI sets this from the same
+       collision boundary that drives flip/shift) so content wraps instead of
+       overflowing when the boundary is narrower than the spec max-width. */
+    max-width: min(200px, var(--available-width));
+    min-height: 24px;
+    padding-inline: 8px;
+    padding-block: 4px;
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+    font-family: var(--md-sys-typescale-body-small-font);
+    font-size: var(--md-sys-typescale-body-small-size);
+    line-height: var(--md-sys-typescale-body-small-line-height);
+    font-weight: var(--md-sys-typescale-body-small-weight);
+    letter-spacing: var(--md-sys-typescale-body-small-tracking);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    /* Compose animates scale+alpha with the same fast-spatial/fast-effects motion scheme
+       symmetrically in both directions (a single Transition reacting to open/closed), so
+       enter and exit share this rule rather than diverging like a menu's expand/collapse. */
+    transition:
+      transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short3) linear;
+  }
+
+  /* Container per md.comp.rich-tooltip: surface-container, corner-medium, level2.
+     Width metrics (40/320) from Compose's TooltipMinWidth/richTooltipMaxWidth. */
+  .richPopup {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 40px;
+    /* Clamp to the Positioner's computed room, see .plainPopup. */
+    max-width: min(320px, var(--available-width));
+    min-height: 24px;
+    padding-inline: 16px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    background: var(--md-sys-color-surface-container);
+    box-shadow: var(--md-sys-elevation-level2);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    transition:
+      transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short3) linear;
+  }
+
+  .plainPopup[data-starting-style],
+  .richPopup[data-starting-style],
+  .plainPopup[data-ending-style],
+  .richPopup[data-ending-style] {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  /* Delay-grouped instant reopen/dismiss skips motion. */
+  .plainPopup[data-instant],
+  .richPopup[data-instant] {
+    transition: none;
+  }
+
+  /* Subhead: title-small, on-surface-variant. Top spacing approximates Compose's
+     28dp baseline-to-first-line (HeightToSubheadFirstLine). */
+  .subhead {
+    padding-top: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-title-small-font);
+    font-size: var(--md-sys-typescale-title-small-size);
+    line-height: var(--md-sys-typescale-title-small-line-height);
+    font-weight: var(--md-sys-typescale-title-small-weight);
+    letter-spacing: var(--md-sys-typescale-title-small-tracking);
+  }
+
+  /* Supporting text: body-medium, on-surface-variant. 8/16 spacing approximates
+     Compose's 24dp subhead-to-text baseline gap and 16dp trailing padding
+     (HeightFromSubheadToTextFirstLine / TextBottomPadding); standalone (no
+     subhead/action) falls back to the plain tooltip's uniform 4dp padding. */
+  .supportingText {
+    padding-top: 8px;
+    padding-bottom: 16px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line-height);
+    font-weight: var(--md-sys-typescale-body-medium-weight);
+    letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  }
+
+  .supportingText[data-standalone] {
+    padding-block: 4px;
+  }
+
+  /* Action row: label-large, primary — pass a `Button variant="text"` for the
+     hover/focus/press state layer; ActionLabelMinHeight/ActionLabelBottomPadding
+     from Compose. */
+  .action {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding-bottom: 8px;
+    color: var(--md-sys-color-primary);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    line-height: var(--md-sys-typescale-label-large-line-height);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  }
+}

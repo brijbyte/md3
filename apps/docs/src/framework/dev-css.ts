@@ -25,4 +25,5 @@ import "@brijbyte/md3-react/snackbar/Snackbar.module.css";
 import "@brijbyte/md3-react/split-button/SplitButton.module.css";
 import "@brijbyte/md3-react/switch/Switch.module.css";
 import "@brijbyte/md3-react/tabs/Tabs.module.css";
+import "@brijbyte/md3-react/tooltip/Tooltip.module.css";
 import "@brijbyte/md3-react/typography/Typography.module.css";

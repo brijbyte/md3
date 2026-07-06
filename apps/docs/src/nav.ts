@@ -18,6 +18,7 @@ import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
 import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
+import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
 export type NavItem = {
   // Slashless route ("/components/buttons"); SSG writes it as `<path>/index.html`.
@@ -179,6 +180,13 @@ export const SECTIONS: NavSection[] = [
         title: "Tabs",
         description: "Primary and secondary tabs with the indicator animation built in.",
         icon: TabIcon,
+      },
+      {
+        path: "/components/tooltip",
+        label: "Tooltip",
+        title: "Tooltip",
+        description: "Plain and rich tooltips, built on Base UI Tooltip and PreviewCard.",
+        icon: TooltipIcon,
       },
     ],
   },

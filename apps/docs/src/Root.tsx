@@ -60,6 +60,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/snackbar": mdxRoute(() => import("./pages/snackbar/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
+  "/components/tooltip": mdxRoute(() => import("./pages/tooltip/page.mdx")),
 };
 
 // The landing page renders without the docs chrome; everything else gets the

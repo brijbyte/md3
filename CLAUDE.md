@@ -2,6 +2,7 @@
 
 Skip the teaching/learning-checklist workflow here (no LEARNING.md, no comprehension
 quizzes) — overrides the global CLAUDE.md teacher instructions. Just do the work.
+Note: For screenshot testing with Playwright, always start the server on 5174 port.
 
 React implementation of Google's Material Design 3 (https://m3.material.io/), built as a
 styled layer on top of Base UI (`@base-ui/react`, the headless library). Deliverable is
@@ -118,8 +119,6 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   `.root.root` specificity inflation — deliberately rejected). Where import order can't
   decide — family color rules vs Button's disabled colors — the family rules carry
   `:not(:disabled, [data-disabled])` guards so disabled always wins.
-- **Segmented buttons deliberately skipped**: deprecated by the expressive update in favor
-  of connected ButtonGroup (decided 2026-07).
 
 ## Token pipeline
 

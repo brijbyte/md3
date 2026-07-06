@@ -1,0 +1,37 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/tooltip.css";
+
+.demo-tooltip-settings {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 96px;
+  gap: 4px;
+  width: 480px;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+.demo-tooltip-settings-tile {
+  background: var(--md-sys-color-tertiary-container);
+}
+
+.demo-tooltip-settings-tile:nth-child(3n + 2) {
+  background: var(--md-sys-color-primary-container);
+}
+
+.demo-tooltip-settings-tile:nth-child(3n) {
+  background: var(--md-sys-color-secondary-container);
+}
+
+.demo-tooltip-settings-anchor {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--md-sys-elevation-level1);
+}
