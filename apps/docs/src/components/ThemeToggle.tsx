@@ -11,14 +11,18 @@ function useTheme() {
   // Root's inline script sets data-theme before paint from localStorage / OS
   // preference; during server prerender there is no document, so default light.
   const [theme, setTheme] = React.useState<Theme>(() =>
-    typeof document !== "undefined" && document.documentElement.dataset.theme === "dark"
-      ? "dark"
-      : "light",
+    typeof document !== "undefined" && document.documentElement.dataset.theme === "light"
+      ? "light"
+      : "dark",
   );
 
   React.useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+      localStorage.removeItem("theme");
+    } else {
+      localStorage.setItem("theme", theme);
+    }
   }, [theme]);
 
   return [theme, setTheme] as const;

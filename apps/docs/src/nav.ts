@@ -7,6 +7,7 @@ import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
+import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
@@ -192,5 +193,21 @@ export const SECTIONS: NavSection[] = [
   },
 ];
 
+// Full-app examples combining many components; rendered without the docs
+// sidebar (see Root.tsx), same as HOME.
+export const SHOWCASES: NavItem[] = [
+  {
+    path: "/showcase/team-tasks",
+    label: "Team Tasks",
+    title: "Team Tasks",
+    description: "A task-tracking dashboard built from most of the component library.",
+    icon: ChecklistIcon,
+  },
+];
+
 // Flat route list (landing first) for lookup, SSG paths, and landing cards.
-export const NAV: NavItem[] = [HOME, ...SECTIONS.flatMap((section) => section.items)];
+export const NAV: NavItem[] = [
+  HOME,
+  ...SECTIONS.flatMap((section) => section.items),
+  ...SHOWCASES,
+];

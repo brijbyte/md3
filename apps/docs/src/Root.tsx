@@ -61,6 +61,9 @@ const PAGES: Record<string, PageEntry> = {
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
   "/components/tooltip": mdxRoute(() => import("./pages/tooltip/page.mdx")),
+  "/showcase/team-tasks": {
+    Page: React.lazy(() => import("./pages/showcases/team-tasks/index")),
+  },
 };
 
 // The landing page renders without the docs chrome; everything else gets the
@@ -71,7 +74,7 @@ const SIDEBAR = NAV.filter((item) => item.path !== "/");
 const themeInitScript = `
 const stored = localStorage.getItem("theme");
 document.documentElement.dataset.theme =
-  stored === "dark" || stored === "light"
+  stored === "light"
     ? stored
     : matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -95,6 +98,9 @@ export default function Root({ url }: { url: URL }) {
       : url.pathname;
   const route = NAV.find((item) => item.path === pathname);
   const entry = PAGES[pathname];
+  // Showcase pages reuse the landing (sidebar-free) layout — they're full-app
+  // demos, not doc pages.
+  const isLanding = pathname === "/" || pathname.startsWith("/showcase/");
 
   return (
     // data-theme is set by the inline script before hydration.
@@ -124,7 +130,7 @@ export default function Root({ url }: { url: URL }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
-        {pathname === "/" && entry ? (
+        {isLanding && entry ? (
           <LandingLayout Page={entry.Page} />
         ) : (
           <DocsLayout pathname={pathname} route={route} entry={entry} url={url} />
@@ -139,7 +145,7 @@ function LandingLayout({ Page }: { Page: React.ComponentType }) {
   return (
     <div className="mx-auto max-w-5xl px-6 pt-6 pb-24">
       <header className="flex items-center justify-between gap-4 pb-12">
-        <Typography as="span" variant="title-large">
+        <Typography as="a" variant="title-large" href="/">
           MD3 React
         </Typography>
         <ThemeToggle />

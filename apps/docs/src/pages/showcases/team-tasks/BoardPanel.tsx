@@ -1,0 +1,150 @@
+"use client";
+
+import * as React from "react";
+import { AssistChip, FilterChip } from "@brijbyte/md3-react/chip";
+import { Checkbox } from "@brijbyte/md3-react/checkbox";
+import { Fab } from "@brijbyte/md3-react/fab";
+import { IconButton } from "@brijbyte/md3-react/icon-button";
+import { useSnackbar } from "@brijbyte/md3-react/snackbar";
+import {
+  BottomSheet,
+  BottomSheetTrigger,
+  BottomSheetContent,
+  BottomSheetTitle,
+  BottomSheetClose,
+} from "@brijbyte/md3-react/bottom-sheet";
+import { Typography } from "@brijbyte/md3-react/typography";
+
+import AddIcon from "@brijbyte/md3-icons/outlined/Add";
+import CalendarTodayIcon from "@brijbyte/md3-icons/outlined/CalendarToday";
+import CloseIcon from "@brijbyte/md3-icons/outlined/Close";
+import DeleteIcon from "@brijbyte/md3-icons/outlined/Delete";
+
+import { PriorityChip } from "./PriorityChip";
+import { INITIAL_TASKS, type Priority, type Task } from "./types";
+
+function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => void }) {
+  return (
+    <li className="flex items-start gap-4 rounded-large bg-surface-container-low px-4 py-3">
+      <Checkbox
+        className="mt-1"
+        checked={task.done}
+        onCheckedChange={() => onToggle(task.id)}
+        aria-label={`Mark "${task.title}" as done`}
+      />
+      <BottomSheet>
+        <BottomSheetTrigger render={<button type="button" className="min-w-0 flex-1 text-left" />}>
+          <Typography
+            variant="body-large"
+            className={task.done ? "text-on-surface-variant line-through" : ""}
+          >
+            {task.title}
+          </Typography>
+          <Typography variant="body-small" className="mt-0.5 text-on-surface-variant">
+            {task.detail}
+          </Typography>
+        </BottomSheetTrigger>
+        <BottomSheetContent className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-6">
+          <div className="flex items-start justify-between gap-4">
+            {/* This is app UI, not a doc page — Roboto (plain) over title-large's brand default. */}
+            <BottomSheetTitle render={<Typography variant="title-large" className="font-plain" />}>
+              {task.title}
+            </BottomSheetTitle>
+            <BottomSheetClose render={<IconButton aria-label="Close" variant="standard" />}>
+              <CloseIcon />
+            </BottomSheetClose>
+          </div>
+          <Typography variant="body-medium" className="text-on-surface-variant">
+            {task.detail}
+          </Typography>
+          <div className="flex items-center gap-3">
+            <PriorityChip priority={task.priority} />
+            <AssistChip icon={<CalendarTodayIcon />}>Due this week</AssistChip>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <BottomSheetClose render={<IconButton aria-label="Delete task" variant="standard" />}>
+              <DeleteIcon />
+            </BottomSheetClose>
+          </div>
+        </BottomSheetContent>
+      </BottomSheet>
+      <PriorityChip priority={task.priority} />
+    </li>
+  );
+}
+
+export function BoardPanel() {
+  const [tasks, setTasks] = React.useState(INITIAL_TASKS);
+  const [activeFilters, setActiveFilters] = React.useState<ReadonlySet<Priority>>(new Set());
+  const { showSnackbar } = useSnackbar();
+
+  function togglePriorityFilter(priority: Priority, pressed: boolean) {
+    setActiveFilters((current) => {
+      const next = new Set(current);
+      if (pressed) next.add(priority);
+      else next.delete(priority);
+      return next;
+    });
+  }
+
+  function toggle(id: string) {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+    const nextDone = !task.done;
+    setTasks((current) => current.map((t) => (t.id === id ? { ...t, done: nextDone } : t)));
+    if (nextDone) {
+      showSnackbar({
+        message: `"${task.title}" marked done`,
+        action: {
+          label: "Undo",
+          onClick: () =>
+            setTasks((current) => current.map((t) => (t.id === id ? { ...t, done: false } : t))),
+        },
+      });
+    }
+  }
+
+  const visible = tasks.filter(
+    (task) => activeFilters.size === 0 || activeFilters.has(task.priority),
+  );
+
+  return (
+    <div className="relative">
+      <div className="mb-4 flex flex-wrap gap-2">
+        <FilterChip
+          pressed={activeFilters.has("high")}
+          onPressedChange={(pressed) => togglePriorityFilter("high", pressed)}
+        >
+          High priority
+        </FilterChip>
+        <FilterChip
+          pressed={activeFilters.has("medium")}
+          onPressedChange={(pressed) => togglePriorityFilter("medium", pressed)}
+        >
+          Medium priority
+        </FilterChip>
+        <FilterChip
+          pressed={activeFilters.has("low")}
+          onPressedChange={(pressed) => togglePriorityFilter("low", pressed)}
+        >
+          Low priority
+        </FilterChip>
+      </div>
+
+      <ul className="flex flex-col gap-2">
+        {visible.map((task) => (
+          <TaskRow key={task.id} task={task} onToggle={toggle} />
+        ))}
+        {visible.length === 0 && (
+          <li className="rounded-large bg-surface-container-low px-4 py-8 text-center">
+            <Typography variant="body-medium" className="text-on-surface-variant">
+              No tasks at this priority.
+            </Typography>
+          </li>
+        )}
+      </ul>
+
+      <Fab aria-label="Add task" icon={<AddIcon />} className="sticky bottom-6 float-right mt-6" />
+    </div>
+  );
+}
