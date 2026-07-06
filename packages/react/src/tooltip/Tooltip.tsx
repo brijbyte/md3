@@ -40,13 +40,19 @@ export const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTrigger
       onPointerMove,
       onPointerUp,
       onPointerCancel,
+      onClickCapture,
+      onContextMenu,
       id: idProp,
       ...rest
     } = props;
     const generatedId = React.useId();
     const triggerId = idProp ?? generatedId;
     const handle = React.useContext(TooltipHandleContext);
-    const longPress = useLongPressOpen<HTMLButtonElement>(() => handle?.open(triggerId));
+    // Plain tooltips are transient: a long-press-opened one self-dismisses (Compose parity).
+    const longPress = useLongPressOpen<HTMLButtonElement>(
+      () => handle?.open(triggerId),
+      () => handle?.close(),
+    );
     return (
       <BaseTooltip.Trigger
         ref={ref}
@@ -60,12 +66,19 @@ export const TooltipTrigger = React.forwardRef<HTMLButtonElement, TooltipTrigger
           onPointerMove?.(event);
         }}
         onPointerUp={(event) => {
-          longPress.onPointerUp(event);
+          longPress.onPointerUp();
           onPointerUp?.(event);
         }}
         onPointerCancel={(event) => {
           longPress.onPointerCancel();
           onPointerCancel?.(event);
+        }}
+        onClickCapture={(event) => {
+          if (!longPress.onClickCapture(event)) onClickCapture?.(event);
+        }}
+        onContextMenu={(event) => {
+          longPress.onContextMenu(event);
+          onContextMenu?.(event);
         }}
         {...rest}
       />

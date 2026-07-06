@@ -7,9 +7,15 @@ import styles from "./Tooltip.module.css";
 
 export interface RichTooltipProps extends BasePreviewCard.Root.Props {}
 
+interface RichTooltipContextValue {
+  handle: BasePreviewCard.Handle<unknown>;
+  /** Set by RichTooltipContent: an action makes the tooltip persistent (no auto-dismiss). */
+  hasActionRef: React.RefObject<boolean>;
+}
+
 /** Shares the root's handle with its Trigger descendants so a long touch press can
     imperatively open the tooltip (Base UI's own open path is hover/focus only). */
-const RichTooltipHandleContext = React.createContext<BasePreviewCard.Handle<unknown> | null>(null);
+const RichTooltipContext = React.createContext<RichTooltipContextValue | null>(null);
 
 /** MD3 rich tooltip root: state only, renders no DOM. Built on Base UI's PreviewCard —
     unlike plain tooltip, rich tooltip content is interactive and stays open while hovered. */
@@ -17,10 +23,12 @@ export function RichTooltip(props: RichTooltipProps) {
   const internalHandleRef = React.useRef<BasePreviewCard.Handle<unknown> | null>(null);
   if (!internalHandleRef.current) internalHandleRef.current = BasePreviewCard.createHandle();
   const handle = props.handle ?? internalHandleRef.current;
+  const hasActionRef = React.useRef(false);
+  const contextValue = React.useMemo(() => ({ handle, hasActionRef }), [handle]);
   return (
-    <RichTooltipHandleContext.Provider value={handle}>
+    <RichTooltipContext.Provider value={contextValue}>
       <BasePreviewCard.Root {...props} handle={handle} />
-    </RichTooltipHandleContext.Provider>
+    </RichTooltipContext.Provider>
   );
 }
 
@@ -34,13 +42,21 @@ export const RichTooltipTrigger = React.forwardRef<HTMLAnchorElement, RichToolti
       onPointerMove,
       onPointerUp,
       onPointerCancel,
+      onClickCapture,
+      onContextMenu,
       id: idProp,
       ...rest
     } = props;
     const generatedId = React.useId();
     const triggerId = idProp ?? generatedId;
-    const handle = React.useContext(RichTooltipHandleContext);
-    const longPress = useLongPressOpen<HTMLAnchorElement>(() => handle?.open(triggerId));
+    const context = React.useContext(RichTooltipContext);
+    // Compose parity: action-less rich tooltips are transient, with-action ones persist.
+    const longPress = useLongPressOpen<HTMLAnchorElement>(
+      () => context?.handle.open(triggerId),
+      () => {
+        if (!context?.hasActionRef.current) context?.handle.close();
+      },
+    );
     return (
       <BasePreviewCard.Trigger
         ref={ref}
@@ -54,12 +70,19 @@ export const RichTooltipTrigger = React.forwardRef<HTMLAnchorElement, RichToolti
           onPointerMove?.(event);
         }}
         onPointerUp={(event) => {
-          longPress.onPointerUp(event);
+          longPress.onPointerUp();
           onPointerUp?.(event);
         }}
         onPointerCancel={(event) => {
           longPress.onPointerCancel();
           onPointerCancel?.(event);
+        }}
+        onClickCapture={(event) => {
+          if (!longPress.onClickCapture(event)) onClickCapture?.(event);
+        }}
+        onContextMenu={(event) => {
+          longPress.onContextMenu(event);
+          onContextMenu?.(event);
         }}
         {...rest}
       />
@@ -77,7 +100,7 @@ export interface RichTooltipContentProps extends Omit<
   action?: React.ReactNode;
   /** The tooltip's supporting text. */
   children?: React.ReactNode;
-  /** Side of the anchor to position against. @default 'bottom' */
+  /** Side of the anchor to position against. @default 'top' */
   side?: BasePreviewCard.Positioner.Props["side"];
   /** Alignment against the anchor. @default 'center' */
   align?: BasePreviewCard.Positioner.Props["align"];
@@ -114,11 +137,15 @@ export const RichTooltipContent = React.forwardRef<HTMLDivElement, RichTooltipCo
     // Standalone body text (no subhead/action) uses the same uniform vertical
     // padding as a plain tooltip; otherwise subhead/action get their own spacing.
     const standalone = title == null && action == null;
+    const context = React.useContext(RichTooltipContext);
+    React.useEffect(() => {
+      if (context) context.hasActionRef.current = action != null;
+    }, [context, action]);
     return (
       <BasePreviewCard.Portal container={container} keepMounted={keepMounted}>
         <BasePreviewCard.Positioner
           className={styles.richPositioner}
-          side={side}
+          side={side ?? "top" /* Compose's position providers prefer above the anchor */}
           align={align}
           sideOffset={sideOffset ?? 4}
           alignOffset={alignOffset}
