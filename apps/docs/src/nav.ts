@@ -18,6 +18,7 @@ import RightPanelOpenIcon from "@brijbyte/md3-icons/outlined/RightPanelOpen";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
 import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
+import TextFieldsIcon from "@brijbyte/md3-icons/outlined/TextFields";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
 import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
@@ -183,6 +184,13 @@ export const SECTIONS: NavSection[] = [
         icon: TabIcon,
       },
       {
+        path: "/components/text-field",
+        label: "Text field",
+        title: "Text field",
+        description: "Filled and outlined fields with a floating label, icons, and errors.",
+        icon: TextFieldsIcon,
+      },
+      {
         path: "/components/tooltip",
         label: "Tooltip",
         title: "Tooltip",
@@ -206,8 +214,4 @@ export const SHOWCASES: NavItem[] = [
 ];
 
 // Flat route list (landing first) for lookup, SSG paths, and landing cards.
-export const NAV: NavItem[] = [
-  HOME,
-  ...SECTIONS.flatMap((section) => section.items),
-  ...SHOWCASES,
-];
+export const NAV: NavItem[] = [HOME, ...SECTIONS.flatMap((section) => section.items), ...SHOWCASES];

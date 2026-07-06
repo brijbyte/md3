@@ -1,0 +1,11 @@
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/text-field.css";
+@import "@brijbyte/md3-react/icon-button.css";
+
+.demo-text-field-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 360px;
+}

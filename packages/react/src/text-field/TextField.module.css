@@ -1,0 +1,399 @@
+/* Spec: tokens/component-specs.json → filled-text-field, outlined-text-field.
+   Container min-height 56px = 8(top pad) + 16(label row, always reserved) +
+   24(input row) + 8(bottom pad). Label uses a single body-large font and a
+   0.75 scale transform for the floated (body-small) state instead of
+   swapping typescale objects, so the size change animates smoothly.
+   Filled disabled container wash is on-surface @ 4% (a filled-field-only
+   override — do not "correct" it to the generic 12% container-disabled
+   token). Outlined disabled outline uses 12% (the container-opacity token)
+   while every other disabled text/icon role uses 38% (content-opacity). */
+@layer components {
+  .root {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 280px;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-weight: var(--md-sys-typescale-body-large-weight);
+  }
+
+  .container {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    min-height: 56px;
+    /* The whole container forwards clicks to the control. */
+    cursor: text;
+  }
+
+  .root[data-variant="filled"] .container {
+    border-radius: var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0 0;
+    background: var(--md-sys-color-surface-container-highest);
+  }
+
+  /* Hover state layer (filled only; error-hover uses the same on-surface 8%). */
+  .root[data-variant="filled"] .container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--md-sys-color-on-surface);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 15ms linear;
+  }
+
+  .root[data-variant="filled"]:hover .container::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .root[data-variant="outlined"] .container {
+    border-radius: var(--md-sys-shape-corner-extra-small);
+  }
+
+  /* Active indicator (filled) */
+  .indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--md-sys-color-on-surface-variant);
+    pointer-events: none;
+    transition:
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      height var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .root[data-variant="filled"]:hover .container .indicator {
+    background: var(--md-sys-color-on-surface);
+  }
+
+  .root[data-variant="filled"][data-focused] .container .indicator {
+    background: var(--md-sys-color-primary);
+    height: 2px;
+  }
+
+  .root[data-variant="filled"][data-invalid] .container .indicator {
+    background: var(--md-sys-color-error);
+  }
+
+  .root[data-variant="filled"][data-invalid]:hover .container .indicator {
+    background: var(--md-sys-color-on-error-container);
+  }
+
+  .root[data-variant="filled"][data-invalid][data-focused] .container .indicator {
+    background: var(--md-sys-color-error);
+  }
+
+  /* Outline (outlined) — fieldset/legend gives the label notch natively.
+     A fieldset draws its top border at the legend's vertical midpoint, so
+     pull it up by half the 12px legend line box to land on the container edge. */
+  .outline {
+    position: absolute;
+    inset: -6px 0 0;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: inherit;
+    pointer-events: none;
+    min-width: 0;
+    transition: border-color var(--md-sys-motion-duration-short2)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  .root[data-variant="outlined"]:hover .outline {
+    border-color: var(--md-sys-color-on-surface);
+  }
+
+  .root[data-variant="outlined"][data-focused] .outline {
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
+  }
+
+  .root[data-variant="outlined"][data-invalid] .outline {
+    border-color: var(--md-sys-color-error);
+  }
+
+  .root[data-variant="outlined"][data-invalid]:hover .outline {
+    border-color: var(--md-sys-color-on-error-container);
+  }
+
+  .root[data-variant="outlined"][data-invalid][data-focused] .outline {
+    border-color: var(--md-sys-color-error);
+  }
+
+  .outlineLabel {
+    max-width: 0.01px;
+    padding: 0;
+    font-size: var(--md-sys-typescale-body-small-size);
+    line-height: 1;
+    letter-spacing: var(--md-sys-typescale-body-small-tracking);
+    white-space: nowrap;
+    overflow: hidden;
+    color: transparent;
+    transition: max-width var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .root[data-variant="outlined"][data-filled] .outlineLabel,
+  .root[data-variant="outlined"][data-focused] .outlineLabel {
+    max-width: 100%;
+    padding: 0 4px;
+  }
+
+  .icon {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    align-self: center;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Direct child only — a composed IconButton/toggle passed as leading/trailing
+     icon owns its own internal icon sizing; don't reach into it. */
+  .icon > svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Spec spacing: 12px container edge → icon, 16px icon → text. The 48px
+     box centers the 24px icon (12px each side), so the edge needs no margin
+     and the adjacent .content pads the remaining 4px of the 16px gap. */
+
+  .root[data-invalid] .icon[data-position="trailing"] {
+    color: var(--md-sys-color-error);
+  }
+
+  .root[data-invalid]:hover .icon[data-position="trailing"] {
+    color: var(--md-sys-color-on-error-container);
+  }
+
+  .root[data-invalid][data-focused] .icon[data-position="trailing"] {
+    color: var(--md-sys-color-error);
+  }
+
+  .content {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .icon[data-position="leading"] + .content {
+    padding-left: 4px;
+  }
+
+  .icon[data-position="leading"] + .content .label {
+    left: 4px;
+  }
+
+  .content[data-trailing-icon] {
+    padding-right: 4px;
+  }
+
+  .content[data-trailing-icon] .label {
+    right: 4px;
+  }
+
+  /* Block layout (not grid) so the input row's height is never stretched to
+     fill leftover space — a grid `auto` row does that under align-items:
+     stretch, throwing off the 8/16/24/8 split. The label is taken out of
+     flow entirely (absolute) and .inputRow reserves its 16px slot with a
+     fixed margin-top instead, so the split can't drift. */
+  .container[data-has-label] .content {
+    display: block;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .container[data-has-label] .inputRow {
+    margin-top: 16px;
+  }
+
+  /* Outlined's floated label moves out onto the border (below), vacating the
+     label row entirely — so its input sits centered with plain symmetric
+     padding instead of reserving that 16px row. */
+  .root[data-variant="outlined"] .container[data-has-label] .content {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .root[data-variant="outlined"] .container[data-has-label] .inputRow {
+    margin-top: 0;
+  }
+
+  .label {
+    position: absolute;
+    top: 8px;
+    /* Absolute positioning is relative to .content's padding edge, which sits
+       outside its own padding — match that padding here so the label lines
+       up with the input text (whose left/right come from the padding). */
+    left: 16px;
+    right: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
+    transform-origin: left top;
+    transform: translateY(8px) scale(1);
+    transition:
+      transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-fast-spatial),
+      color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .root[data-filled] .label,
+  .root[data-focused] .label {
+    transform: translateY(0) scale(0.75);
+  }
+
+  /* Outlined floats onto the border itself (matching the fieldset/legend
+     notch), not into the content's top padding like filled does: scaled
+     18px line box (24 × 0.75) from top 8px, centered on the border at 0. */
+  .root[data-variant="outlined"][data-filled] .label,
+  .root[data-variant="outlined"][data-focused] .label {
+    transform: translateY(-17px) scale(0.75);
+  }
+
+  /* Filled hover-label-text stays on-surface-variant (same as rest) — no rule. */
+  .root[data-variant="outlined"]:hover .label {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  /* Variant-qualified so it ties the hover rule's specificity and wins by order. */
+  .root[data-variant="filled"][data-focused] .label,
+  .root[data-variant="outlined"][data-focused] .label {
+    color: var(--md-sys-color-primary);
+  }
+
+  .root[data-invalid] .label {
+    color: var(--md-sys-color-error);
+  }
+
+  .root[data-invalid]:hover .label {
+    color: var(--md-sys-color-on-error-container);
+  }
+
+  .root[data-invalid][data-focused] .label {
+    color: var(--md-sys-color-error);
+  }
+
+  .inputRow {
+    /* Stretch to fill .content's width when .content is a flex row (no
+       label) — otherwise this shrink-wraps to the input's current content,
+       leaving the rest of the field unclickable. Ignored when .content is
+       block (has-label), where block layout already fills the width. */
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: flex-end;
+    min-height: 24px;
+    gap: 8px;
+  }
+
+  /* A resting (unfloated) label overlaps the whole input row, prefix
+     included — hide affixes until the label has floated out of the way,
+     same as the input's own placeholder. */
+  .affix {
+    flex: none;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .container:not([data-has-label]) .affix,
+  .root[data-filled] .affix,
+  .root[data-focused] .affix {
+    opacity: 1;
+  }
+
+  .input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    resize: none;
+    color: var(--md-sys-color-on-surface);
+    font: inherit;
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
+    caret-color: var(--md-sys-color-primary);
+    field-sizing: content;
+  }
+
+  .root[data-invalid] .input {
+    caret-color: var(--md-sys-color-error);
+  }
+
+  /* Placeholder only makes sense once the label has floated out of the way
+     (or when there is no label overlapping it at all). */
+  .input::placeholder {
+    color: transparent;
+  }
+
+  .container:not([data-has-label]) .input::placeholder,
+  .root[data-focused] .input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .supportingText {
+    margin: 0;
+    padding: 4px 16px 0;
+    min-height: 16px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: var(--md-sys-typescale-body-small-size);
+    line-height: var(--md-sys-typescale-body-small-line-height);
+    letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  }
+
+  .root[data-invalid] .supportingText {
+    color: var(--md-sys-color-error);
+  }
+
+  /* Disabled */
+  /* pointer-events on the root (not .container) — otherwise hover hit-tests
+     still land on the root and the hover indicator/outline/label rules fire. */
+  .root[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .root[data-variant="filled"][data-disabled] .container {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 4%, transparent);
+  }
+
+  .root[data-variant="filled"][data-disabled] .indicator {
+    background: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  }
+
+  .root[data-variant="outlined"][data-disabled] .outline {
+    border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  }
+
+  .root[data-disabled] .label,
+  .root[data-disabled] .input,
+  .root[data-disabled] .affix,
+  .root[data-disabled] .supportingText,
+  .root[data-disabled] .icon {
+    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  }
+}

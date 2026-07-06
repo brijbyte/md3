@@ -140,6 +140,7 @@ export default defineConfig({
         "snackbar/index": "src/snackbar/index.ts",
         "tooltip/index": "src/tooltip/index.ts",
         "typography/index": "src/typography/index.ts",
+        "text-field/index": "src/text-field/index.ts",
       },
       formats: ["es"],
     },
