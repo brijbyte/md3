@@ -1,8 +1,8 @@
 /* Spec: m3.material.io/components/sliders/specs measurements table (5 sizes, XS
    default) cross-checked against Compose Material3 SliderTokens.kt for the
    expressive redesign (handle width stays 4px at every size; only its height, the
-   track height/corner, and the inset-icon size scale). 6px handle-adjacent gap is
-   an approximation — the spec table doesn't list a per-size gap token. */
+   track height/corner, and the inset-icon size scale). The 6px handle-adjacent gap is
+   fixed across sizes, matching Compose ActiveHandle Leading/Trailing Space = 6dp. */
 @layer components {
   .root {
     position: relative;
@@ -15,9 +15,11 @@
 
     --md3-slider-track-height: 16px;
     --md3-slider-handle-height: 44px;
+    /* Track ends use a fixed per-size shape token (rectangly rounded, not a full
+       height/2 stadium cap) — scales up with size but stays clearly rectangular. */
     --md3-slider-track-radius: var(--md-sys-shape-corner-small);
-    /* Handle-adjacent gap corners round at one shape step smaller than the track's own
-       true-edge radius, scaling with size the same way the track radius itself does. */
+    /* Handle-adjacent gap corners are a small fixed nub (Compose TrackInsideCornerSize
+       = 2dp), not a scaled copy of the outer rounding. */
     --md3-slider-gap-radius: var(--md-sys-shape-corner-extra-small);
   }
 
@@ -198,15 +200,19 @@
     background: var(--md-sys-color-on-primary);
   }
 
+  /* Stable-size hit/hover target at the resting handle dimensions. Only the inner
+     .thumbBar narrows on interaction (see below) — resizing this box instead would move
+     the hover boundary out from under the pointer and flicker hover on/off. Mirrors
+     Compose ThumbContent, whose hoverable Box stays at thumbSize while the inner Spacer
+     shrinks. */
   .thumb {
     width: 4px;
     height: var(--md3-slider-handle-height);
-    border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md-sys-color-primary);
-    box-shadow: var(--md-sys-elevation-level1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     outline: none;
-    transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   }
 
   /* The handle always crosses perpendicular to the direction of travel — a vertical
@@ -214,50 +220,46 @@
   .thumb[data-orientation="vertical"] {
     width: var(--md3-slider-handle-height);
     height: 4px;
-    transition: height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   }
 
-  /* Pressed/dragging handle narrows to half its resting width (spec ratio, height unchanged). */
-  .thumb[data-pressed] {
+  .thumbBar {
+    width: 4px;
+    height: 100%;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-primary);
+    box-shadow: var(--md-sys-elevation-level1);
+    transition:
+      width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .thumb[data-orientation="vertical"] .thumbBar {
+    width: 100%;
+    height: 4px;
+  }
+
+  /* Expressive spec (Compose SliderTokens): the handle narrows to half its resting width on
+     focus (FocusHandleWidth) and press/drag (PressedHandleWidth), but NOT on hover
+     (HoverHandleWidth stays 4dp) — hover only surfaces the value bubble. No state layer. */
+  .thumb:has(:focus-visible) .thumbBar,
+  .thumb[data-active] .thumbBar {
     width: 2px;
   }
 
-  .thumb[data-orientation="vertical"][data-pressed] {
-    width: var(--md3-slider-handle-height);
+  .thumb[data-orientation="vertical"]:has(:focus-visible) .thumbBar,
+  .thumb[data-orientation="vertical"][data-active] .thumbBar {
+    width: 100%;
     height: 2px;
   }
 
-  /* The focusable element is the visually-hidden native input nested inside the thumb
-     div, not the div itself, so :focus-visible on .thumb never matches directly. */
-  .thumb:has(:focus-visible) {
+  /* Inset focus ring: its outer edge lands on the track gap edges. Compose insets the ring
+     by insetFocusRingPadding = 4dp from the handle, which with the 6px handle-track gap puts
+     it right at the segment edges. The focusable element is the visually-hidden native input
+     nested inside the thumb div, not the div itself, so :focus-visible on .thumb never
+     matches directly. */
+  .thumb:has(:focus-visible) .thumbBar {
     outline: 3px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
-  }
-
-  /* 40px hover/focus/pressed state layer centered on the handle */
-  .stateLayer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--md-sys-shape-corner-full);
-    transform: translate(-50%, -50%);
-    background: var(--md-sys-color-primary);
-    opacity: 0;
-    transition: opacity 15ms linear;
-  }
-
-  .thumb:hover .stateLayer {
-    opacity: var(--md-sys-state-hover-state-layer-opacity);
-  }
-
-  .thumb:has(:focus-visible) .stateLayer {
-    opacity: var(--md-sys-state-focus-state-layer-opacity);
-  }
-
-  .thumb[data-pressed] .stateLayer {
-    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+    outline-offset: 6px;
   }
 
   .positioner {
@@ -325,14 +327,17 @@
   }
 
   .thumb[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .thumb[data-disabled] .thumbBar {
     background: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
       transparent
     );
     box-shadow: var(--md-sys-elevation-level0);
-    cursor: default;
-    pointer-events: none;
   }
 
   .track[data-disabled] .insetIcon {

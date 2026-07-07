@@ -28,9 +28,11 @@ function cx(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
-// Matches the old fixed 12px notch (6px eaten from each flanking segment) — the spec
-// table has no per-size gap token, so this stays a flat approximation across all sizes.
-const GAP_PX = 6;
+// Segments are inset this far from the thumb's center (its value position). Spec gap is
+// measured from the thumb *edge* (Compose ActiveHandle Leading/Trailing Space = 6dp, fixed
+// across all sizes), so this is 6dp + the resting handle half-width (4px/2) to leave a 6px
+// visible gap on each side.
+const GAP_PX = 8;
 
 // A boundary against another segment (i.e. a thumb sitting in a gap) always rounds, at a
 // smaller fixed radius than the track's own true-edge corners — per spec, this corner
@@ -93,16 +95,19 @@ function markStyle(vertical: boolean, percent: number): React.CSSProperties {
       };
 }
 
-// The value bubble is a Base UI Tooltip. It shows while the thumb is focused (keyboard tab,
-// held for the whole focus duration) or while actively dragging, and hides on blur/release.
-// Kept separate from `pressed`, which drives the visual press state (narrow handle, state
-// layer) and should only reflect an actual pointer drag — not mere keyboard focus.
+// The value bubble is a Base UI Tooltip. It shows while the thumb is focused via keyboard,
+// or while actively dragging, and hides on blur/release. Dragging is read from Base UI's own
+// `data-dragging` on the thumb — set on the active thumb for a track click too, not just a
+// direct grab — so clicking anywhere on the track opens the bubble; `pressed` state we
+// managed from the thumb's own pointerdown missed track-initiated drags entirely.
 function SliderThumbLabel({
   index,
+  active,
   vertical,
   ...thumbProps
 }: {
   index: number;
+  active: boolean;
   vertical: boolean;
   "aria-label": string | undefined;
   "aria-labelledby": string | undefined;
@@ -110,45 +115,47 @@ function SliderThumbLabel({
   getAriaValueText: ((formattedValue: string, value: number, index: number) => string) | undefined;
 }) {
   const [focused, setFocused] = React.useState(false);
-  const [pressed, setPressed] = React.useState(false);
-  const open = focused || pressed;
-  // A mouse/touch press focuses the native input same as Tab does, and that focus
-  // outlives the press (browsers don't blur range inputs on pointerup) — without this,
-  // the tooltip would stay stuck open after the pointer leaves. Only a focus event with
-  // no immediately-preceding pointerdown counts as "keyboard" for tooltip purposes.
-  const pointerDownRef = React.useRef(false);
-  // The thumb moves via inline `insetInlineStart`, which doesn't resize or scroll
-  // anything, so Base UI's autoUpdate (ResizeObserver/IntersectionObserver-based)
-  // never notices — a virtual anchor re-measured fresh every frame does.
-  const [anchor, setAnchor] = React.useState<{ getBoundingClientRect(): DOMRect } | null>(null);
+  const [hovered, setHovered] = React.useState(false);
+  const [dragging, setDragging] = React.useState(false);
+  // `dragging` (from data-dragging) is true on every thumb during any drag; `active` narrows
+  // it to the one actually moving so only its bubble opens and only its handle narrows.
+  const activeDrag = dragging && active;
+  // Spec (material-web `.label`): the value bubble shows on hover, focus, and press/drag.
+  const open = focused || hovered || activeDrag;
+  // Base UI positions the thumb by mutating its inline `style` (inset-inline-start), which
+  // its own autoUpdate (ResizeObserver/IntersectionObserver-based) never reacts to — so we
+  // re-anchor the bubble off a MutationObserver on that attribute instead.
+  const [anchor, setAnchor] = React.useState<{
+    getBoundingClientRect(): DOMRect;
+    contextElement?: Element;
+  } | null>(null);
   const anchorElRef = React.useRef<HTMLDivElement>(null);
 
+  // Mirror Base UI's `data-dragging` (which it toggles on the active thumb for both direct
+  // grabs and track clicks) into React state so the tooltip can react to it.
   React.useEffect(() => {
-    if (!pressed) return;
-    const release = () => {
-      setPressed(false);
-      pointerDownRef.current = false;
-    };
-    window.addEventListener("pointerup", release);
-    window.addEventListener("pointercancel", release);
-    return () => {
-      window.removeEventListener("pointerup", release);
-      window.removeEventListener("pointercancel", release);
-    };
-  }, [pressed]);
+    const el = anchorElRef.current;
+    if (!el) return;
+    const sync = () => setDragging(el.hasAttribute("data-dragging"));
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(el, { attributes: true, attributeFilter: ["data-dragging"] });
+    return () => observer.disconnect();
+  }, []);
 
   React.useEffect(() => {
     if (!open) return;
-    const measure = () => {
-      const el = anchorElRef.current;
-      if (el) setAnchor({ getBoundingClientRect: () => el.getBoundingClientRect() });
-    };
-    measure();
-    let frame = requestAnimationFrame(function loop() {
-      measure();
-      frame = requestAnimationFrame(loop);
-    });
-    return () => cancelAnimationFrame(frame);
+    const el = anchorElRef.current;
+    if (!el) return;
+    // Re-anchor exactly when the thumb moves (its `style` mutates) rather than polling every
+    // frame — an idle open bubble does no work and never re-renders. `contextElement` lets
+    // Base UI attach its scroll/resize tracking to the real thumb's ancestors.
+    const reanchor = () =>
+      setAnchor({ getBoundingClientRect: () => el.getBoundingClientRect(), contextElement: el });
+    reanchor();
+    const observer = new MutationObserver(reanchor);
+    observer.observe(el, { attributes: true, attributeFilter: ["style"] });
+    return () => observer.disconnect();
   }, [open]);
 
   return (
@@ -158,17 +165,19 @@ function SliderThumbLabel({
         index={index}
         className={styles.thumb}
         {...thumbProps}
-        data-pressed={pressed || undefined}
-        onPointerDown={() => {
-          pointerDownRef.current = true;
-          setPressed(true);
-        }}
-        onFocus={() => {
-          if (!pointerDownRef.current) setFocused(true);
+        data-active={activeDrag || undefined}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        // Focused (tooltip + focus ring) tracks keyboard focus only: :focus-visible is true
+        // when focus arrives via keyboard, false for pointer — so a thumb press or a track
+        // click (which focuses the input without leaving it visibly focused) never sticks the
+        // ring on; pointer interactions surface the bubble through hover/press instead.
+        onFocus={(event) => {
+          if ((event.target as HTMLElement).matches(":focus-visible")) setFocused(true);
         }}
         onBlur={() => setFocused(false)}
       >
-        <span className={styles.stateLayer} aria-hidden />
+        <span className={styles.thumbBar} aria-hidden />
       </BaseSlider.Thumb>
       <Tooltip.Portal>
         <Tooltip.Positioner
@@ -222,9 +231,15 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
   const toPercent = (v: number) => ((v - min) / (max - min)) * 100;
   const hasIcon = icon != null && (size === "m" || size === "l" || size === "xl");
 
+  // Base UI's `data-dragging` is a root-level flag on *every* thumb, so on a range slider we
+  // track which thumb is actually moving (from the change event) to scope the value bubble
+  // and the pressed-handle narrowing to it. A single-thumb slider is always "the" thumb.
+  const [activeThumb, setActiveThumb] = React.useState(-1);
+
   const handleValueChange = React.useCallback<NonNullable<SliderProps["onValueChange"]>>(
     (newValue, eventDetails) => {
       setUncontrolledValue(newValue);
+      setActiveThumb(eventDetails.activeThumbIndex);
       onValueChange?.(newValue, eventDetails);
     },
     [onValueChange],
@@ -338,6 +353,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
           <SliderThumbLabel
             key={i}
             index={i}
+            active={!isRange || i === activeThumb}
             vertical={vertical}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledby}
