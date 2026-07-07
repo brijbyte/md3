@@ -1,7 +1,7 @@
 // Regression tests for the value-bubble / handle-interaction behaviour hardened in this
-// session. Runs under vitest + @testing-library/react (jsdom). Test infra (vitest config,
-// RTL) is not wired up in this package yet — this file documents the intended behaviour and
-// is ready to run once it is.
+// session. Runs under vitest + @testing-library/react in a real browser (Playwright, no
+// jsdom) — see vitest.config.ts. The :focus-visible / rAF spies below predate the browser
+// runner and are now belt-and-suspenders (the real browser implements them natively).
 //
 // Covered here (JS-observable behaviour):
 //   - value bubble shows on hover, and only for the hovered thumb (per-thumb)   [hover fix]

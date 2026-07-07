@@ -3,7 +3,8 @@
 Skip the teaching/learning-checklist workflow here (no LEARNING.md, no comprehension
 quizzes) — overrides the global CLAUDE.md teacher instructions. Just do the work.
 Note: For screenshot testing with Playwright, always start the server on 5174 port and
-don't kill existing server running on port 5173.
+don't kill existing server running on port 5173. For any edge case/bug fixes, add an
+equivalent test as well.
 
 React implementation of Google's Material Design 3 (https://m3.material.io/), built as a
 styled layer on top of Base UI (`@base-ui/react`, the headless library). Deliverable is
