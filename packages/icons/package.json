@@ -5,6 +5,8 @@
   "license": "MIT AND Apache-2.0",
   "files": [
     "dist",
+    "src",
+    "LICENSE",
     "LICENSE-APACHE-2.0"
   ],
   "type": "module",

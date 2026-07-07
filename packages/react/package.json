@@ -8,7 +8,9 @@
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "src",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": [
