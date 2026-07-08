@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Card } from "@brijbyte/md3-react/card";
 import { CircularProgress } from "@brijbyte/md3-react/circular-progress";
+import { Divider } from "@brijbyte/md3-react/divider";
 import { LinearProgress } from "@brijbyte/md3-react/linear-progress";
 import { Slider } from "@brijbyte/md3-react/slider";
 import { Typography } from "@brijbyte/md3-react/typography";
@@ -59,6 +60,8 @@ export function InsightsPanel() {
         </div>
       </div>
 
+      <Divider inset />
+
       <div>
         <Typography variant="label-large" className="team-tasks-muted">
           Team capacity range: {capacity[0]}–{capacity[1]} pts
@@ -80,6 +83,8 @@ export function InsightsPanel() {
           </Typography>
         </div>
       </div>
+
+      <Divider inset />
 
       <div>
         <Typography variant="label-large" className="team-tasks-muted">

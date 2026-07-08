@@ -10,6 +10,7 @@ import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import CategoryIcon from "@brijbyte/md3-icons/outlined/Category";
 import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
 import DialogsIcon from "@brijbyte/md3-icons/outlined/Dialogs";
+import HorizontalRuleIcon from "@brijbyte/md3-icons/outlined/HorizontalRule";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
@@ -142,6 +143,14 @@ export const SECTIONS: NavSection[] = [
         title: "Dialog",
         description: "Interrupt with intent — confirmations and focused tasks over a scrim.",
         icon: DialogsIcon,
+      },
+      {
+        path: "/components/divider",
+        label: "Divider",
+        title: "Divider",
+        description:
+          "A one-pixel line that separates content into groups — horizontal or vertical.",
+        icon: HorizontalRuleIcon,
       },
       {
         path: "/components/loading-indicator",

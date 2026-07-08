@@ -1,0 +1,36 @@
+---
+title: Divider
+---
+
+import DividerVariants from "./demo/variants.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
+
+```tsx
+import { Divider } from "@brijbyte/md3-react/divider";
+```
+
+```css
+@import "@brijbyte/md3-react/divider.css";
+```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/divider/overview" }]}
+/>
+
+## Variants
+
+A divider is a thin (1dp) line in the `outline-variant` color that groups related content —
+list items, toolbar sections, list columns. Default is a full-width horizontal line; pass
+`orientation="vertical"` for a vertical rule that stretches to its flex container's height.
+
+Use insets to align the line with content instead of the container edge: `insetStart` clears
+the leading 16dp (e.g. to start past a list item's leading icon), `insetEnd` the trailing
+16dp, and `inset` both.
+
+<DividerVariants />
+
+## Accessibility
+
+The divider wraps Base UI's `Separator`, rendering an element with `role="separator"` and
+`aria-orientation` set from `orientation`. Use one to separate content that is genuinely
+distinct; for purely decorative spacing, prefer margins so nothing extra is announced.

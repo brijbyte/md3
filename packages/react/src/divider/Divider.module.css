@@ -1,0 +1,38 @@
+/* Spec: MD3 divider — 1dp line, outline-variant. Inset = 16dp (list
+   divider-leading/trailing-space, tokens/component-specs.json → list). */
+@layer components {
+  .root {
+    flex-shrink: 0;
+    border: 0;
+    background: var(--md-sys-color-outline-variant);
+    margin: 0;
+  }
+
+  /* No width:100% — it would overflow past inset margins instead of shrinking.
+     Block/flex stretch fills the container minus margins. */
+  .root[data-orientation="horizontal"] {
+    height: 1px;
+    align-self: stretch;
+  }
+
+  .root[data-orientation="vertical"] {
+    width: 1px;
+    align-self: stretch;
+  }
+
+  .root[data-orientation="horizontal"][data-inset-start] {
+    margin-inline-start: 16px;
+  }
+
+  .root[data-orientation="horizontal"][data-inset-end] {
+    margin-inline-end: 16px;
+  }
+
+  .root[data-orientation="vertical"][data-inset-start] {
+    margin-block-start: 16px;
+  }
+
+  .root[data-orientation="vertical"][data-inset-end] {
+    margin-block-end: 16px;
+  }
+}

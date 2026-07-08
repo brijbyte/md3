@@ -1,3 +1,4 @@
+import { Divider } from "@brijbyte/md3-react/divider";
 import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
 import { Switch } from "@brijbyte/md3-react/switch";
 import { Typography } from "@brijbyte/md3-react/typography";
@@ -24,7 +25,7 @@ export function SettingsPanel() {
           </Typography>
         </RadioGroup>
       </div>
-
+      <Divider inset />
       <div>
         <Typography variant="title-medium" className="team-tasks-section-title">
           Preferences
