@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": false,
-    "noEmit": true
+    "noEmit": true,
+    "stripInternal": true
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts*"]

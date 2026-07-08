@@ -58,7 +58,7 @@ const variantElement: Record<TypographyVariant, React.ElementType> = {
 export const Typography = React.forwardRef<Element, TypographyImplProps>(
   function Typography(props, ref) {
     const { as, variant = "body-large", className, ...rest } = props;
-    const Component = (as ?? variantElement[variant]) as React.ElementType;
+    const Component = (as ?? variantElement[variant as TypographyVariant]) as React.ElementType;
     return (
       <Component
         ref={ref}

@@ -12,3 +12,4 @@ apps/docs/public/icons-data/
 .claude
 skills-lock.json
 packages/react/.vitest-attachments/
+/screenshots/
