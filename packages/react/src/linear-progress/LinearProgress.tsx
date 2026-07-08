@@ -33,7 +33,6 @@ const WAVY_WAVELENGTH_INDETERMINATE = 20;
 // — matches LinearProgressIndicatorTokens.ActiveWaveAmplitude (3dp) exactly.
 const WAVY_PEAK = (WAVY_HEIGHT - THICKNESS) / 2;
 
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
 // WavyProgressIndicatorDefaults.indicatorAmplitude: full amplitude except
@@ -63,6 +62,15 @@ function buildWaveD(totalWidth: number, wavelength: number, peakY: number, heigh
   return d;
 }
 
+// Width-derived constants shared by both wavy modes: w100 maps 0-1 (or 0-100%)
+// track progress into pathLength-100 units (the extra ±wavelength padding the
+// path carries for wave travel shrinks the usable fraction); wlf is one
+// wavelength in the same units, used for the wave-phase dashoffset correction.
+function wavyScale(width: number, wavelength: number) {
+  const maxX = width + wavelength * 2;
+  return { maxX, w100: (width / maxX) * 100, wlf: (wavelength / maxX) * 100 };
+}
+
 function useMeasuredWidth(ref: React.RefObject<HTMLElement | null>, enabled: boolean) {
   const [width, setWidth] = React.useState(240);
   React.useLayoutEffect(() => {
@@ -75,19 +83,6 @@ function useMeasuredWidth(ref: React.RefObject<HTMLElement | null>, enabled: boo
     return () => observer.disconnect();
   }, [enabled, ref]);
   return width;
-}
-
-// Compose's indeterminate head/tail animation specs, expressed as plain
-// clamped-linear functions of elapsed ms within the 1750ms cycle (delay ->
-// hold at 0, then rise 0->1 over its own duration, then hold at 1) — the
-// exact breakpoints already verified for the non-wavy indeterminate bars.
-function bar1Progress(elapsedMs: number) {
-  const t = elapsedMs % 1750;
-  return { tail: clamp01((t - 250) / 1000), head: clamp01(t / 1000) };
-}
-function bar2Progress(elapsedMs: number) {
-  const t = elapsedMs % 1750;
-  return { tail: clamp01((t - 900) / 850), head: clamp01((t - 650) / 850) };
 }
 
 export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressProps>(
@@ -180,6 +175,10 @@ function WavyDeterminate({ width, percent }: { width: number; percent: number })
       <path
         className={mergeClassName(styles.wavyIndicator, styles.wavyIndicatorMoving) as string}
         pathLength={100}
+        // `d` attribute is the universal geometry (Safari/Firefox ignore the CSS
+        // `d` property); the CSS `d` below layers on the smooth amplitude morph
+        // in engines that support it (Chromium).
+        d={amplitude === 1 ? waveD : flatD}
         style={
           {
             d: `path("${amplitude === 1 ? waveD : flatD}")`,
@@ -200,57 +199,23 @@ function WavyDeterminate({ width, percent }: { width: number; percent: number })
 
 function WavyIndeterminate({ width }: { width: number }) {
   const wavelength = WAVY_WAVELENGTH_INDETERMINATE;
-  const maxX = width + wavelength * 2;
+  const { maxX, w100, wlf } = wavyScale(width, wavelength);
   const waveD = React.useMemo(
     () => buildWaveD(maxX, wavelength, WAVY_PEAK, WAVY_HEIGHT),
     [maxX, wavelength],
   );
-  const bar1Ref = React.useRef<SVGPathElement>(null);
-  const bar2Ref = React.useRef<SVGPathElement>(null);
 
-  const applyBar = React.useCallback(
-    (el: SVGPathElement | null, tail: number, head: number, phase: number) => {
-      if (!el) return;
-      const tailPx = clamp(tail * width, CAP_WIDTH, width - CAP_WIDTH);
-      const headPx = clamp(head * width, CAP_WIDTH, width - CAP_WIDTH);
-      const waveShiftPx = phase * wavelength;
-      const u = (px: number) => (px / maxX) * 100;
-      const startU = u(tailPx + waveShiftPx);
-      const stopU = u(headPx + waveShiftPx);
-      el.style.strokeDasharray = `${Math.max(0, stopU - startU)} ${100 - Math.max(0, stopU - startU)}`;
-      el.style.strokeDashoffset = `${-startU}`;
-      el.style.transform = `translateX(${-waveShiftPx}px)`;
-    },
-    [width, wavelength, maxX],
-  );
-
-  // Synchronous initial frame (t=0) so there's no flash before the first rAF tick.
-  React.useLayoutEffect(() => {
-    const { tail: tail1, head: head1 } = bar1Progress(0);
-    const { tail: tail2, head: head2 } = bar2Progress(0);
-    applyBar(bar1Ref.current, tail1, head1, 0);
-    applyBar(bar2Ref.current, tail2, head2, 0);
-  }, [applyBar]);
-
-  React.useEffect(() => {
-    let raf = 0;
-    let cancelled = false;
-    const start = performance.now();
-    function frame(now: number) {
-      const elapsed = now - start;
-      const { tail: tail1, head: head1 } = bar1Progress(elapsed);
-      const { tail: tail2, head: head2 } = bar2Progress(elapsed);
-      const phase = (elapsed % 1000) / 1000;
-      applyBar(bar1Ref.current, tail1, head1, phase);
-      applyBar(bar2Ref.current, tail2, head2, phase);
-      if (!cancelled) raf = requestAnimationFrame(frame);
-    }
-    raf = requestAnimationFrame(frame);
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-    };
-  }, [applyBar]);
+  // The two sweeping bars are driven purely by CSS keyframes (see the module
+  // css) — no JS animation loop — so they stay locked to the same document
+  // timeline as the non-wavy indeterminate bars. JS only feeds the width-derived
+  // scale + wave template that the keyframes read.
+  // Geometry via the `d` attribute (static here) so it renders in Safari/Firefox,
+  // which don't honor the CSS `d` property.
+  const barStyle = {
+    "--md3-lp-w100": w100,
+    "--md3-lp-wlf": wlf,
+    "--md3-lp-wavelength": `${wavelength}px`,
+  } as React.CSSProperties;
 
   return (
     <svg
@@ -260,16 +225,16 @@ function WavyIndeterminate({ width }: { width: number }) {
       aria-hidden="true"
     >
       <path
-        ref={bar1Ref}
-        className={styles.wavyIndicator}
+        className={`${styles.wavyIndicator} ${styles.wavyIndeterminateBar} ${styles.wavyIndeterminateBar1}`}
         pathLength={100}
-        style={{ d: `path("${waveD}")` } as React.CSSProperties}
+        d={waveD}
+        style={barStyle}
       />
       <path
-        ref={bar2Ref}
-        className={styles.wavyIndicator}
+        className={`${styles.wavyIndicator} ${styles.wavyIndeterminateBar} ${styles.wavyIndeterminateBar2}`}
         pathLength={100}
-        style={{ d: `path("${waveD}")` } as React.CSSProperties}
+        d={waveD}
+        style={barStyle}
       />
     </svg>
   );

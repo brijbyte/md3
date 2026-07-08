@@ -9,8 +9,8 @@ export default function LinearProgressDeterminateDemo() {
 
   React.useEffect(() => {
     const id = setInterval(() => {
-      setValue((v) => (v >= 100 ? 0 : v + 2));
-    }, 60);
+      setValue((v) => (v >= 100 ? 0 : v + 1));
+    }, 100);
     return () => clearInterval(id);
   }, []);
 

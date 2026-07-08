@@ -99,6 +99,10 @@ export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgres
             <path
               className={mergeClassName(styles.indicator, styles.indicatorWavy) as string}
               pathLength={100}
+              // `d` attribute is the universal geometry (Safari/Firefox ignore the
+              // CSS `d` property); the CSS `d` below layers on the smooth
+              // circle<->star morph in engines that support it (Chromium).
+              d={amplitude === 1 ? STAR_D : CIRCLE_D}
               style={
                 {
                   d: `path("${amplitude === 1 ? STAR_D : CIRCLE_D}")`,
