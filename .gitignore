@@ -5,8 +5,10 @@ dist.old/
 *.log
 .DS_Store
 packages/react/src/generated/
+apps/docs/public/icons-data/
 *.module.css.d.ts
 .cache/
 .agents/
 .claude
 skills-lock.json
+packages/react/.vitest-attachments/

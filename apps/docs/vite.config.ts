@@ -9,6 +9,7 @@ import { defineHastPlugin } from "satteri";
 import { type BundledLanguage, codeToHast, codeToHtml } from "shiki";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import satteri from "vite-plugin-satteri";
+import { buildIconData } from "./scripts/build-icon-data.mjs";
 
 export default defineConfig({
   plugins: [
@@ -26,6 +27,7 @@ export default defineConfig({
     }),
     ssgPlugin(),
     demosPlugin(),
+    iconDataPlugin(),
   ],
   css: {
     modules: {
@@ -67,6 +69,18 @@ export default defineConfig({
 // override component styles). Prepending the statement to every css module makes
 // every parse order correct — repeats are no-ops once the order exists.
 const LAYER_ORDER = "@layer theme, base, components, utilities;\n";
+// Generate the icon-browser data (gitignored src/pages/icons/data/) before the module
+// graph is built, so the page's dynamic JSON imports resolve on a fresh clone. Skips
+// work when the data is newer than the icons dist (see build-icon-data.mjs).
+function iconDataPlugin(): Plugin {
+  return {
+    name: "md3:icon-data",
+    buildStart() {
+      buildIconData();
+    },
+  };
+}
+
 function layerOrderPlugin(): Plugin {
   return {
     name: "md3:layer-order",

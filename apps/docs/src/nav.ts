@@ -7,6 +7,7 @@ import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
+import CategoryIcon from "@brijbyte/md3-icons/outlined/Category";
 import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
 import DialogsIcon from "@brijbyte/md3-icons/outlined/Dialogs";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
@@ -73,6 +74,13 @@ export const SECTIONS: NavSection[] = [
         title: "Typography",
         description: "One component, fifteen type roles — change the tag, keep the scale.",
         icon: FormatSizeIcon,
+      },
+      {
+        path: "/styles/icons",
+        label: "Icons",
+        title: "Icons",
+        description: "Browse all 4,000+ Material Symbols — search, switch style, copy the import.",
+        icon: CategoryIcon,
       },
     ],
   },

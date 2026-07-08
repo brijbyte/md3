@@ -142,6 +142,13 @@
     padding: 0 4px;
   }
 
+  /* A leading icon shifts the label right of the icon (the 48px icon box less the
+     12px the label inset tightens by). The notch must follow it, or the floated
+     label strikes through the border instead of sitting in the gap. */
+  .icon[data-position="leading"] ~ .outline .outlineLabel {
+    margin-inline-start: 36px;
+  }
+
   .icon {
     position: relative;
     flex: none;
