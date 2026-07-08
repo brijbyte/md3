@@ -1,13 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { flushSync } from "react-dom";
-import { Button } from "@brijbyte/md3-react/button";
 import { AssistChip, FilterChip } from "@brijbyte/md3-react/chip";
 import { Checkbox } from "@brijbyte/md3-react/checkbox";
 import { Fab } from "@brijbyte/md3-react/fab";
 import { IconButton } from "@brijbyte/md3-react/icon-button";
-import { useSnackbar } from "@brijbyte/md3-react/snackbar";
 import {
   BottomSheet,
   BottomSheetTrigger,
@@ -15,15 +12,6 @@ import {
   BottomSheetTitle,
   BottomSheetClose,
 } from "@brijbyte/md3-react/bottom-sheet";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeadline,
-  DialogActions,
-  DialogClose,
-} from "@brijbyte/md3-react/dialog";
-import { TextField } from "@brijbyte/md3-react/text-field";
 import { Typography } from "@brijbyte/md3-react/typography";
 
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
@@ -31,96 +19,9 @@ import CalendarTodayIcon from "@brijbyte/md3-icons/outlined/CalendarToday";
 import CloseIcon from "@brijbyte/md3-icons/outlined/Close";
 import DeleteIcon from "@brijbyte/md3-icons/outlined/Delete";
 
+import { useAddTask } from "./AddTaskDialog";
 import { PriorityChip } from "./PriorityChip";
-import { INITIAL_TASKS, PRIORITY_LABEL, type Priority, type Task } from "./types";
-
-const PRIORITIES: Priority[] = ["high", "medium", "low"];
-
-function AddTaskDialog({ onAdd }: { onAdd: (task: Omit<Task, "id" | "done">) => void }) {
-  const [open, setOpen] = React.useState(false);
-  const [priority, setPriority] = React.useState<Priority>("medium");
-
-  // MD3 container transform: FAB ↔ dialog share a view-transition-name (one at a
-  // time), and the open flip is committed synchronously inside the transition so
-  // the browser morphs between the two snapshots. Plain state change elsewhere.
-  function setOpenWithMorph(nextOpen: boolean) {
-    if (
-      !document.startViewTransition ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setOpen(nextOpen);
-      return;
-    }
-    // Direction hook for the morph CSS (the collapse carries the FAB's radius).
-    document.documentElement.dataset.addTaskMorph = nextOpen ? "open" : "close";
-    const transition = document.startViewTransition(() => {
-      flushSync(() => setOpen(nextOpen));
-    });
-    // An aborted morph (e.g. rapid toggling) should degrade silently, not throw.
-    transition.finished
-      .catch(() => {})
-      .finally(() => {
-        delete document.documentElement.dataset.addTaskMorph;
-      });
-  }
-
-  function handleOpenChange(nextOpen: boolean) {
-    if (nextOpen) setPriority("medium");
-    setOpenWithMorph(nextOpen);
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const title = String(data.get("title") ?? "").trim();
-    if (!title) return;
-    onAdd({ title, detail: String(data.get("detail") ?? "").trim(), priority });
-    setOpenWithMorph(false);
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        render={
-          <Fab
-            aria-label="Add task"
-            icon={<AddIcon />}
-            className={`sticky bottom-6 float-right mt-6 ${open ? "" : "[view-transition-name:add-task]"}`}
-          />
-        }
-      />
-      <DialogContent className="team-tasks-add-morph w-full">
-        <DialogHeadline>New task</DialogHeadline>
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-          <TextField name="title" label="Title" variant="outlined" required />
-          <TextField name="detail" label="Detail" variant="outlined" multiline rows={2} />
-          <div>
-            <Typography variant="label-large" as="p" className="mb-2">
-              Priority
-            </Typography>
-            <div className="flex flex-wrap gap-2">
-              {PRIORITIES.map((p) => (
-                <FilterChip
-                  key={p}
-                  pressed={priority === p}
-                  onPressedChange={(pressed) => pressed && setPriority(p)}
-                >
-                  {PRIORITY_LABEL[p]}
-                </FilterChip>
-              ))}
-            </div>
-          </div>
-          <DialogActions>
-            <DialogClose render={<Button variant="text" />}>Cancel</DialogClose>
-            <Button type="submit" variant="text">
-              Add task
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import { type Priority, type Task } from "./types";
 
 function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => void }) {
   return (
@@ -172,10 +73,15 @@ function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => voi
   );
 }
 
-export function BoardPanel() {
-  const [tasks, setTasks] = React.useState(INITIAL_TASKS);
+export function BoardPanel({
+  tasks,
+  toggleTask,
+}: {
+  tasks: Task[];
+  toggleTask: (id: string) => void;
+}) {
+  const { requestOpen, morphClassName } = useAddTask();
   const [activeFilters, setActiveFilters] = React.useState<ReadonlySet<Priority>>(new Set());
-  const { showSnackbar } = useSnackbar();
 
   function togglePriorityFilter(priority: Priority, pressed: boolean) {
     setActiveFilters((current) => {
@@ -184,28 +90,6 @@ export function BoardPanel() {
       else next.delete(priority);
       return next;
     });
-  }
-
-  function toggle(id: string) {
-    const task = tasks.find((t) => t.id === id);
-    if (!task) return;
-    const nextDone = !task.done;
-    setTasks((current) => current.map((t) => (t.id === id ? { ...t, done: nextDone } : t)));
-    if (nextDone) {
-      showSnackbar({
-        message: `"${task.title}" marked done`,
-        action: {
-          label: "Undo",
-          onClick: () =>
-            setTasks((current) => current.map((t) => (t.id === id ? { ...t, done: false } : t))),
-        },
-      });
-    }
-  }
-
-  function addTask(task: Omit<Task, "id" | "done">) {
-    setTasks((current) => [...current, { ...task, id: crypto.randomUUID(), done: false }]);
-    showSnackbar({ message: `"${task.title}" added` });
   }
 
   const visible = tasks.filter(
@@ -237,7 +121,7 @@ export function BoardPanel() {
 
       <ul className="flex flex-col gap-2">
         {visible.map((task) => (
-          <TaskRow key={task.id} task={task} onToggle={toggle} />
+          <TaskRow key={task.id} task={task} onToggle={toggleTask} />
         ))}
         {visible.length === 0 && (
           <li className="rounded-large bg-surface-container-low px-4 py-8 text-center">
@@ -248,7 +132,12 @@ export function BoardPanel() {
         )}
       </ul>
 
-      <AddTaskDialog onAdd={addTask} />
+      <Fab
+        aria-label="Add task"
+        icon={<AddIcon />}
+        onClick={() => requestOpen("fab")}
+        className={`sticky bottom-6 float-right mt-6 ${morphClassName("fab")}`}
+      />
     </div>
   );
 }

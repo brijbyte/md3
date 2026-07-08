@@ -17,7 +17,10 @@ import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import PersonIcon from "@brijbyte/md3-icons/outlined/Person";
 import TuneIcon from "@brijbyte/md3-icons/outlined/Tune";
 
+import { useAddTask } from "./AddTaskDialog";
+
 export function AppHeader() {
+  const { requestOpen, morphClassName } = useAddTask();
   return (
     <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
       <div>
@@ -55,7 +58,13 @@ export function AppHeader() {
         </Menu>
 
         <SplitButton>
-          <SplitButtonAction icon={<AddIcon />}>New task</SplitButtonAction>
+          <SplitButtonAction
+            icon={<AddIcon />}
+            onClick={() => requestOpen("header")}
+            className={morphClassName("header")}
+          >
+            New task
+          </SplitButtonAction>
           <Menu>
             <MenuTrigger render={<SplitButtonMenu aria-label="More ways to create" />}>
               <ArrowDownIcon />
