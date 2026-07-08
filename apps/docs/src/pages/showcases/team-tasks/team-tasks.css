@@ -71,3 +71,284 @@ html[data-add-task-morph="close"]::view-transition-group(add-task) {
 .team-tasks-add-morph[data-ending-style] {
   view-transition-name: none;
 }
+
+/* Puts the shared morph name on whichever trigger is the active source (drop-in
+   for the former [view-transition-name:add-task] utility). */
+.team-tasks-morph-source {
+  view-transition-name: add-task;
+}
+
+/* ── Showcase layout ────────────────────────────────────────────────────────
+   Token-based, showcase-prefixed classes (no Tailwind in showcase code). Mobile
+   first; `sm` = 640px. Unlayered so they win over library @layer + Tailwind base. */
+
+/* Shared helpers. */
+.team-tasks-muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.team-tasks-plain {
+  font-family: var(--md-ref-typeface-plain);
+}
+.team-tasks-display {
+  font-family: var(--md-ref-typeface-plain);
+  font-weight: 700;
+}
+.team-tasks-fill {
+  flex: 1;
+}
+
+/* Header. */
+.team-tasks-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.team-tasks-header-titles {
+  text-align: center;
+}
+.team-tasks-subtitle {
+  margin-top: 4px;
+}
+.team-tasks-actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+.team-tasks-notif {
+  position: relative;
+  display: inline-flex;
+}
+.team-tasks-notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+.team-tasks-new {
+  margin-inline-start: auto;
+}
+
+@media (min-width: 640px) {
+  .team-tasks-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .team-tasks-header-titles {
+    text-align: left;
+  }
+  .team-tasks-actions {
+    width: auto;
+  }
+  .team-tasks-new {
+    margin-inline-start: 0;
+  }
+}
+
+/* Tabs. */
+.team-tasks-tablist {
+  position: sticky;
+  top: 0;
+  z-index: var(--md-ref-z-index-docked);
+  background: var(--md-sys-color-surface);
+}
+.team-tasks-panel {
+  padding-top: 24px;
+}
+
+/* Board. */
+.team-tasks-board {
+  position: relative;
+}
+.team-tasks-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.team-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.team-tasks-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+.team-tasks-checkbox {
+  margin-top: 4px;
+}
+.team-tasks-row-main {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.team-tasks-done {
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: line-through;
+}
+.team-tasks-row-detail {
+  margin-top: 2px;
+}
+.team-tasks-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 672px;
+  margin-inline: auto;
+  padding: 24px;
+}
+.team-tasks-sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.team-tasks-sheet-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.team-tasks-sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+}
+.team-tasks-empty {
+  padding: 32px 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+  text-align: center;
+}
+.team-tasks-fab {
+  position: sticky;
+  bottom: 24px;
+  float: right;
+  margin-top: 24px;
+}
+
+/* Priority chip. */
+.team-tasks-priority {
+  padding: 4px 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-sys-typescale-label-small-font);
+  font-size: var(--md-sys-typescale-label-small-size);
+  line-height: var(--md-sys-typescale-label-small-line-height);
+  letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  font-weight: 700;
+}
+.team-tasks-priority[data-priority="high"] {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+.team-tasks-priority[data-priority="medium"] {
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+.team-tasks-priority[data-priority="low"] {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Insights. */
+.team-tasks-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.team-tasks-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.team-tasks-stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+}
+.team-tasks-stat-card--progress {
+  align-items: center;
+  justify-content: flex-start;
+}
+.team-tasks-metric-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.team-tasks-metric-row--tight {
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .team-tasks-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Settings. */
+.team-tasks-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.team-tasks-section-title {
+  font-weight: 700;
+}
+.team-tasks-radio-group {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.team-tasks-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.team-tasks-pref-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.team-tasks-pref-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Add-task dialog. */
+.team-tasks-dialog {
+  width: 100%;
+}
+.team-tasks-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.team-tasks-field-label {
+  margin-bottom: 8px;
+}
+.team-tasks-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

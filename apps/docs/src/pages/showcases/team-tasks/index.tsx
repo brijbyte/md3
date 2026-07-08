@@ -62,7 +62,7 @@ function ShowcaseTeamTasksInner() {
       <AppHeader />
 
       <Tabs defaultValue="board">
-        <TabList aria-label="Team Tasks">
+        <TabList aria-label="Team Tasks" className="team-tasks-tablist">
           <Tab value="board" icon={<ChecklistIcon />}>
             Board
           </Tab>
@@ -73,13 +73,13 @@ function ShowcaseTeamTasksInner() {
             Settings
           </Tab>
         </TabList>
-        <TabPanel value="board" className="pt-6">
+        <TabPanel value="board" className="team-tasks-panel" tabIndex={-1}>
           <BoardPanel tasks={tasks} toggleTask={toggleTask} />
         </TabPanel>
-        <TabPanel value="insights" className="pt-6">
+        <TabPanel value="insights" className="team-tasks-panel" tabIndex={-1}>
           <InsightsPanel />
         </TabPanel>
-        <TabPanel value="settings" className="pt-6">
+        <TabPanel value="settings" className="team-tasks-panel" tabIndex={-1}>
           <SettingsPanel />
         </TabPanel>
       </Tabs>

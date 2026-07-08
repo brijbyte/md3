@@ -4,21 +4,21 @@ import { Typography } from "@brijbyte/md3-react/typography";
 
 export function SettingsPanel() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="team-tasks-settings">
       <div>
-        <Typography variant="title-medium" className="font-bold">
+        <Typography variant="title-medium" className="team-tasks-section-title">
           Notifications
         </Typography>
-        <RadioGroup defaultValue="instant" className="mt-3 flex flex-col gap-3">
-          <Typography as="label" variant="body-large" className="flex items-center gap-3">
+        <RadioGroup defaultValue="instant" className="team-tasks-radio-group">
+          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
             <Radio value="instant" />
             Instant — notify me the moment something changes
           </Typography>
-          <Typography as="label" variant="body-large" className="flex items-center gap-3">
+          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
             <Radio value="daily" />
             Daily digest
           </Typography>
-          <Typography as="label" variant="body-large" className="flex items-center gap-3">
+          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
             <Radio value="weekly" />
             Weekly digest
           </Typography>
@@ -26,19 +26,19 @@ export function SettingsPanel() {
       </div>
 
       <div>
-        <Typography variant="title-medium" className="font-bold">
+        <Typography variant="title-medium" className="team-tasks-section-title">
           Preferences
         </Typography>
-        <div className="mt-3 flex flex-col gap-4">
-          <label className="flex items-center justify-between gap-4">
+        <div className="team-tasks-pref-list">
+          <label className="team-tasks-pref-row">
             <Typography variant="body-large">Auto-assign reviewers</Typography>
             <Switch defaultChecked />
           </label>
-          <label className="flex items-center justify-between gap-4">
+          <label className="team-tasks-pref-row">
             <Typography variant="body-large">Sync theme across devices</Typography>
             <Switch defaultChecked />
           </label>
-          <label className="flex items-center justify-between gap-4">
+          <label className="team-tasks-pref-row">
             <Typography variant="body-large">Email digest</Typography>
             <Switch />
           </label>

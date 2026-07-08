@@ -25,43 +25,42 @@ import { type Priority, type Task } from "./types";
 
 function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => void }) {
   return (
-    <li className="flex items-start gap-4 rounded-large bg-surface-container-low px-4 py-3">
+    <li className="team-tasks-row">
       <Checkbox
-        className="mt-1"
+        className="team-tasks-checkbox"
         checked={task.done}
         onCheckedChange={() => onToggle(task.id)}
         aria-label={`Mark "${task.title}" as done`}
       />
       <BottomSheet>
-        <BottomSheetTrigger render={<button type="button" className="min-w-0 flex-1 text-left" />}>
-          <Typography
-            variant="body-large"
-            className={task.done ? "text-on-surface-variant line-through" : ""}
-          >
+        <BottomSheetTrigger render={<button type="button" className="team-tasks-row-main" />}>
+          <Typography variant="body-large" className={task.done ? "team-tasks-done" : ""}>
             {task.title}
           </Typography>
-          <Typography variant="body-small" className="mt-0.5 text-on-surface-variant">
+          <Typography variant="body-small" className="team-tasks-row-detail team-tasks-muted">
             {task.detail}
           </Typography>
         </BottomSheetTrigger>
-        <BottomSheetContent className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-6">
-          <div className="flex items-start justify-between gap-4">
+        <BottomSheetContent className="team-tasks-sheet">
+          <div className="team-tasks-sheet-head">
             {/* This is app UI, not a doc page — Roboto (plain) over title-large's brand default. */}
-            <BottomSheetTitle render={<Typography variant="title-large" className="font-plain" />}>
+            <BottomSheetTitle
+              render={<Typography variant="title-large" className="team-tasks-plain" />}
+            >
               {task.title}
             </BottomSheetTitle>
             <BottomSheetClose render={<IconButton aria-label="Close" variant="standard" />}>
               <CloseIcon />
             </BottomSheetClose>
           </div>
-          <Typography variant="body-medium" className="text-on-surface-variant">
+          <Typography variant="body-medium" className="team-tasks-muted">
             {task.detail}
           </Typography>
-          <div className="flex items-center gap-3">
+          <div className="team-tasks-sheet-meta">
             <PriorityChip priority={task.priority} />
             <AssistChip icon={<CalendarTodayIcon />}>Due this week</AssistChip>
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="team-tasks-sheet-actions">
             <BottomSheetClose render={<IconButton aria-label="Delete task" variant="standard" />}>
               <DeleteIcon />
             </BottomSheetClose>
@@ -97,8 +96,8 @@ export function BoardPanel({
   );
 
   return (
-    <div className="relative">
-      <div className="mb-4 flex flex-wrap gap-2">
+    <div className="team-tasks-board">
+      <div className="team-tasks-filters">
         <FilterChip
           pressed={activeFilters.has("high")}
           onPressedChange={(pressed) => togglePriorityFilter("high", pressed)}
@@ -119,13 +118,13 @@ export function BoardPanel({
         </FilterChip>
       </div>
 
-      <ul className="flex flex-col gap-2">
+      <ul className="team-tasks-list">
         {visible.map((task) => (
           <TaskRow key={task.id} task={task} onToggle={toggleTask} />
         ))}
         {visible.length === 0 && (
-          <li className="rounded-large bg-surface-container-low px-4 py-8 text-center">
-            <Typography variant="body-medium" className="text-on-surface-variant">
+          <li className="team-tasks-empty">
+            <Typography variant="body-medium" className="team-tasks-muted">
               No tasks at this priority.
             </Typography>
           </li>
@@ -136,7 +135,7 @@ export function BoardPanel({
         aria-label="Add task"
         icon={<AddIcon />}
         onClick={() => requestOpen("fab")}
-        className={`sticky bottom-6 float-right mt-6 ${morphClassName("fab")}`}
+        className={`team-tasks-fab ${morphClassName("fab")}`}
       />
     </div>
   );

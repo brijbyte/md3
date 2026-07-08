@@ -95,7 +95,7 @@ export function AddTaskProvider({
   // Only the active source carries the name, and only while closed — once open the
   // dialog owns it, so no two elements ever hold the same name at once.
   const morphClassName = React.useCallback(
-    (s: MorphSource) => (!open && source === s ? "[view-transition-name:add-task]" : ""),
+    (s: MorphSource) => (!open && source === s ? "team-tasks-morph-source" : ""),
     [open, source],
   );
 
@@ -108,16 +108,16 @@ export function AddTaskProvider({
     <AddTaskContext.Provider value={context}>
       {children}
       <Dialog open={open} onOpenChange={setOpenWithMorph}>
-        <DialogContent className="team-tasks-add-morph w-full">
+        <DialogContent className="team-tasks-add-morph team-tasks-dialog">
           <DialogHeadline>New task</DialogHeadline>
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <form className="team-tasks-dialog-form" onSubmit={handleSubmit}>
             <TextField name="title" label="Title" variant="outlined" required />
             <TextField name="detail" label="Detail" variant="outlined" multiline rows={2} />
             <div>
-              <Typography variant="label-large" as="p" className="mb-2">
+              <Typography variant="label-large" as="p" className="team-tasks-field-label">
                 Priority
               </Typography>
-              <div className="flex flex-wrap gap-2">
+              <div className="team-tasks-chip-row">
                 {PRIORITIES.map((p) => (
                   <FilterChip
                     key={p}
