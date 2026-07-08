@@ -62,8 +62,7 @@ test("wavy indeterminate is CSS-driven and shares the straight bar's envelope", 
 
     const cs = getComputedStyle(paths[i]);
     const wavyTail = parseFloat(cs.getPropertyValue("--_tail"));
-    const wavyEnvelope =
-      parseFloat(cs.getPropertyValue("--_head")) - wavyTail;
+    const wavyEnvelope = parseFloat(cs.getPropertyValue("--_head")) - wavyTail;
 
     expect(wavyTail).toBeCloseTo(straightTail, 2);
     expect(wavyEnvelope).toBeCloseTo(straightEnvelope, 2);

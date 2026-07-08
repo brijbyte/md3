@@ -27,7 +27,7 @@ export function CodeCollapse({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    // pointer-events-none keeps the copy button clickable under the fade
+    // pointer-events-none lets the fade sit over the code without eating selection
     <div className={expanded ? "relative" : "relative max-h-40 overflow-hidden rounded-b-large"}>
       {children}
       <div

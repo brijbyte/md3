@@ -13,15 +13,15 @@ export default function SemanticDemo() {
         March 14 · 6 min read
       </Typography>
       <Typography variant="title-medium">A section heading</Typography>
-      <Typography variant="body-medium">
+      <Typography variant="body-large">
         Body copy rendered as a regular paragraph. Headings above render as real <code>h1</code>/
         <code>h3</code> elements by default from their variant, and{" "}
-        <Typography as="a" variant="body-medium" href="#" className="demo-typography-semantic-link">
+        <Typography as="a" variant="body-large" href="#" className="demo-typography-semantic-link">
           links stay anchors
         </Typography>
         .
       </Typography>
-      <Typography as="label" variant="label-small">
+      <Typography as="label" variant="label-medium">
         Captioning a form field? Pass <code>as="label"</code> explicitly.
       </Typography>
     </article>

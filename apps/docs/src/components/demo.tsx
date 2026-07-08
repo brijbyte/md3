@@ -8,44 +8,11 @@ import "@brijbyte/md3-react/button/Button.module.css";
 import "@brijbyte/md3-react/icon-button/IconButton.module.css";
 
 import * as React from "react";
-import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
-import { CodeCollapse } from "./CodeCollapse";
-import { CopyButton } from "./CopyButton";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { DemoCodeTabs } from "./DemoCodeTabs";
 
 // Loader for a demo's Shiki-highlighted sources, passed in by the md3:demos
 // facade (see vite.config.ts); memoized there for stable promise identity.
 type DemoCode = () => Promise<{ FILES: { name: string; code: string; html: string }[] }>;
-
-// Demo source tabs: one tab per file of the standalone demo package, panels hold
-// the compile-time Shiki html (see the md3:demo-code virtual module) + a copy button.
-function DemoCode({ files }: { files: { name: string; code: string; html: string }[] }) {
-  return (
-    <Tabs defaultValue={files[0].name} className="mt-5">
-      <TabList variant="primary" aria-label="Demo source files">
-        {files.map((f) => (
-          <Tab key={f.name} value={f.name} className="h-9.5">
-            {/* File names read as code — mono beats the label-large face. */}
-            <Typography as="span" variant="label-large" className="font-mono">
-              {f.name}
-            </Typography>
-          </Tab>
-        ))}
-      </TabList>
-      <CodeCollapse>
-        {files.map((f) => (
-          <TabPanel key={f.name} value={f.name} className="relative" tabIndex={-1}>
-            <CopyButton text={f.code} className="absolute top-2 right-2" />
-            <div
-              className="text-body-medium [&>pre]:overflow-x-auto [&>pre]:bg-surface-container [&>pre]:p-4"
-              dangerouslySetInnerHTML={{ __html: f.html }}
-            />
-          </TabPanel>
-        ))}
-      </CodeCollapse>
-    </Tabs>
-  );
-}
 
 // Placeholder mirroring the collapsed code showcase: a tab bar with two file-name
 // stubs over a preview-height code block with a few uneven "lines" of code.
@@ -67,11 +34,11 @@ function DemoCodeSkeleton() {
   );
 }
 
-// Suspends on the code module inside DemoCode's own boundary, so the playground
+// Suspends on the code module inside DemoCodeTabs' own boundary, so the playground
 // above never waits on it; `use` unwraps the promise kicked off in Demo's render.
 function DemoCodeLoader({ code }: { code: ReturnType<DemoCode> }) {
   const { FILES } = React.use(code);
-  return <DemoCode files={FILES} />;
+  return <DemoCodeTabs files={FILES} />;
 }
 
 // Server component rendering a standalone demo: the entry element as children,

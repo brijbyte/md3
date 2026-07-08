@@ -137,22 +137,10 @@
    0-1 head/tail progress into pathLength units; the wave-phase var flows the
    crests while the dashoffset compensation keeps the visible envelope fixed. */
 .wavyIndeterminateBar {
-  --_dash: calc(
-    (var(--_head) - var(--_tail)) *
-      var(--_w100)
-  );
-  stroke-dasharray: var(--_dash)
-    calc(100 - var(--_dash));
-  stroke-dashoffset: calc(
-    -1 *
-      (var(--_tail) * var(--_w100) +
-        var(--_wave-phase) * var(--_wlf))
-  );
-  transform: translateX(
-    calc(
-      var(--_wave-phase) * -1 * var(--_wavelength)
-    )
-  );
+  --_dash: calc((var(--_head) - var(--_tail)) * var(--_w100));
+  stroke-dasharray: var(--_dash) calc(100 - var(--_dash));
+  stroke-dashoffset: calc(-1 * (var(--_tail) * var(--_w100) + var(--_wave-phase) * var(--_wlf)));
+  transform: translateX(calc(var(--_wave-phase) * -1 * var(--_wavelength)));
 }
 .wavyIndeterminateBar1 {
   animation:

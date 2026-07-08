@@ -39,12 +39,7 @@
 }
 
 .svgIndeterminate {
-  transform: rotate(
-    calc(
-      -90deg + var(--_global-rotation) +
-        var(--_step-rotation)
-    )
-  );
+  transform: rotate(calc(-90deg + var(--_global-rotation) + var(--_step-rotation)));
   animation:
     md3-circular-progress-global-rotate 6000ms linear infinite,
     md3-circular-progress-step-rotate 6000ms infinite,
@@ -70,8 +65,7 @@
 }
 
 .svgIndeterminate .indicator {
-  stroke-dasharray: var(--_sweep)
-    calc(100 - var(--_sweep));
+  stroke-dasharray: var(--_sweep) calc(100 - var(--_sweep));
   transition: none;
 }
 

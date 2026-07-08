@@ -14,8 +14,3 @@
   height: 24px;
   flex-shrink: 0;
 }
-
-.demo-slider-icons > [class*="slider-root"] {
-  flex: 1 1 auto;
-  min-width: 0;
-}
