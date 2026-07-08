@@ -4,7 +4,13 @@ import "./icon-browser.css";
 
 import * as React from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import {
+  BottomSheet,
+  BottomSheetClose,
+  BottomSheetContent,
+} from "@brijbyte/md3-react/bottom-sheet";
 import { FilterChip } from "@brijbyte/md3-react/chip";
+import { IconButton } from "@brijbyte/md3-react/icon-button";
 import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@brijbyte/md3-react/menu";
 import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
@@ -14,6 +20,7 @@ import { Typography } from "@brijbyte/md3-react/typography";
 import { iconRefs, matchesToken, searchToken } from "./icon-browser-utils";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import ArrowDropDownIcon from "@brijbyte/md3-icons/outlined/ArrowDropDown";
+import CloseIcon from "@brijbyte/md3-icons/outlined/Close";
 import SearchIcon from "@brijbyte/md3-icons/outlined/Search";
 
 const VIEWBOX = "0 -960 960 960";
@@ -24,7 +31,7 @@ type Style = (typeof STYLES)[number];
 // Variant chunk size — must match VARIANT_CHUNK in scripts/build-icon-data.mjs.
 const VARIANT_CHUNK = 128;
 // The 6 per-icon variant paths are stored in this order (COMBOS order in the generator).
-// The detail card groups them by style, each showing its unfilled + filled form.
+// The variant bottom sheet groups them by style, each showing its unfilled + filled form.
 const VARIANT_STYLES: { style: Style; label: string; unfilled: number; filled: number }[] = [
   { style: "outlined", label: "Outlined", unfilled: 0, filled: 1 },
   { style: "rounded", label: "Rounded", unfilled: 2, filled: 3 },
@@ -65,6 +72,23 @@ function loadVariants(iconIndex: number): Promise<string[]> {
   return p.then((rows) => rows[iconIndex - chunk * VARIANT_CHUNK]);
 }
 
+// Tracks a media query; false on the server (desktop default) until hydrated.
+function useMediaQuery(query: string) {
+  const subscribe = React.useCallback(
+    (cb: () => void) => {
+      const mql = window.matchMedia(query);
+      mql.addEventListener("change", cb);
+      return () => mql.removeEventListener("change", cb);
+    },
+    [query],
+  );
+  return React.useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
+
 export default function IconBrowser() {
   return (
     <SnackbarProvider>
@@ -75,6 +99,8 @@ export default function IconBrowser() {
 
 function IconBrowserInner() {
   const { showSnackbar } = useSnackbar();
+  // Docked (standard) sheet on desktop; modal sheet with a scrim on mobile.
+  const isMobile = useMediaQuery("(max-width: 599px)");
   const [style, setStyle] = React.useState<Style>("outlined");
   const [fill, setFill] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -91,7 +117,7 @@ function IconBrowserInner() {
     loadIndex().then(setIndex);
   }, []);
 
-  // Load the selected icon's 6 variant paths (for the compare strip in the detail card).
+  // Load the selected icon's 6 variant paths (for the compare strip in the bottom sheet).
   React.useEffect(() => {
     if (selected == null) {
       setVariantPaths(null);
@@ -150,6 +176,18 @@ function IconBrowserInner() {
       ? { ...iconRefs(index[selected][0], index[selected][1], style, fill), d: paths[selected] }
       : null;
 
+  // Retain the last detail/variants so the sheet keeps its content while animating closed
+  // (clearing on `selected → null` would empty the popup and snap it shut, not slide it).
+  // The fallback only kicks in once closed, so a freshly-opened icon never flashes stale data.
+  const closing = selected == null;
+  const lastSelRef = React.useRef(sel);
+  if (sel) lastSelRef.current = sel;
+  const sheetSel = sel ?? (closing ? lastSelRef.current : null);
+
+  const lastVariantsRef = React.useRef(variantPaths);
+  if (variantPaths) lastVariantsRef.current = variantPaths;
+  const sheetVariants = variantPaths ?? (closing ? lastVariantsRef.current : null);
+
   return (
     <div className="icon-browser">
       <div className="icon-browser-header">
@@ -185,94 +223,6 @@ function IconBrowserInner() {
             spellCheck={false}
           />
         </div>
-
-        <div className="icon-browser-detail">
-          {sel ? (
-            <>
-              {variantPaths ? (
-                <div className="icon-browser-variants" role="group" aria-label="Style variants">
-                  {VARIANT_STYLES.map((v) => (
-                    <div className="icon-browser-variant-col" key={v.style}>
-                      <div className="icon-browser-variant-swatches">
-                        {[
-                          { d: variantPaths[v.unfilled], f: false },
-                          { d: variantPaths[v.filled], f: true },
-                        ].map(({ d, f }) => (
-                          <button
-                            key={f ? "fill" : "outline"}
-                            type="button"
-                            className="icon-browser-variant"
-                            data-active={style === v.style && fill === f ? "" : undefined}
-                            aria-pressed={style === v.style && fill === f}
-                            title={f ? `${v.label} · filled` : v.label}
-                            aria-label={f ? `${v.label} filled` : v.label}
-                            onClick={() => {
-                              setStyle(v.style);
-                              setFill(f);
-                            }}
-                          >
-                            <svg viewBox={VIEWBOX} fill="currentColor" aria-hidden>
-                              <path d={d} />
-                            </svg>
-                          </button>
-                        ))}
-                      </div>
-                      <Typography
-                        as="span"
-                        variant="label-small"
-                        className="icon-browser-variant-label"
-                      >
-                        {v.label}
-                      </Typography>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="icon-browser-detail-preview">
-                  <svg viewBox={VIEWBOX} fill="currentColor" aria-hidden>
-                    <path d={sel.d} />
-                  </svg>
-                </div>
-              )}
-              <div className="icon-browser-detail-text">
-                <Typography as="span" variant="title-medium" className="icon-browser-detail-name">
-                  {sel.component}
-                </Typography>
-                <Typography as="code" variant="body-small" className="icon-browser-detail-path">
-                  {sel.path}
-                </Typography>
-              </div>
-              <div className="icon-browser-detail-actions">
-                <SplitButton variant="tonal" size="xsmall">
-                  <SplitButtonAction
-                    icon={<ContentCopyIcon />}
-                    onClick={() => copy("import", sel.importLine)}
-                  >
-                    Copy import
-                  </SplitButtonAction>
-                  <Menu>
-                    <MenuTrigger render={<SplitButtonMenu aria-label="More copy options" />}>
-                      <ArrowDropDownIcon />
-                    </MenuTrigger>
-                    <MenuContent>
-                      <MenuItem onClick={() => copy("name", sel.name)}>Copy name</MenuItem>
-                      <MenuItem onClick={() => copy("component", `<${sel.component} />`)}>
-                        Copy component
-                      </MenuItem>
-                      <MenuItem onClick={() => copy("import path", sel.path)}>
-                        Copy import path
-                      </MenuItem>
-                    </MenuContent>
-                  </Menu>
-                </SplitButton>
-              </div>
-            </>
-          ) : (
-            <Typography as="span" variant="body-medium" className="icon-browser-detail-empty">
-              Select an icon to copy its name, component, or import.
-            </Typography>
-          )}
-        </div>
       </div>
 
       <Typography as="p" variant="body-small" className="icon-browser-count">
@@ -302,6 +252,103 @@ function IconBrowserInner() {
           <LoadingIndicator aria-label="Loading icons" />
         </div>
       )}
+
+      {/* Sheet holding the selected icon's detail — name, import path, copy actions, and
+          the style/fill compare strip. Docked (standard) on desktop, modal on mobile.
+          Opens on select; dismissing it (close button/swipe/Escape) deselects the icon. */}
+      <BottomSheet
+        variant={isMobile ? "modal" : "standard"}
+        open={selected != null}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null);
+        }}
+      >
+        <BottomSheetContent className="icon-browser-detail-sheet">
+          {sheetSel ? (
+            <>
+              <BottomSheetClose
+                render={<IconButton variant="standard" aria-label="Close" />}
+                className="icon-browser-detail-close"
+              >
+                <CloseIcon />
+              </BottomSheetClose>
+              <div className="icon-browser-detail-header">
+                <div className="icon-browser-detail-text">
+                  <Typography as="span" variant="title-medium" className="icon-browser-detail-name">
+                    {sheetSel.component}
+                  </Typography>
+                  <Typography as="code" variant="body-small" className="icon-browser-detail-path">
+                    {sheetSel.path}
+                  </Typography>
+                </div>
+                <div className="icon-browser-detail-actions">
+                  <SplitButton variant="tonal" size="small">
+                    <SplitButtonAction
+                      icon={<ContentCopyIcon />}
+                      onClick={() => copy("import", sheetSel.importLine)}
+                    >
+                      Copy import
+                    </SplitButtonAction>
+                    <Menu>
+                      <MenuTrigger render={<SplitButtonMenu aria-label="More copy options" />}>
+                        <ArrowDropDownIcon />
+                      </MenuTrigger>
+                      <MenuContent>
+                        <MenuItem onClick={() => copy("name", sheetSel.name)}>Copy name</MenuItem>
+                        <MenuItem onClick={() => copy("component", `<${sheetSel.component} />`)}>
+                          Copy component
+                        </MenuItem>
+                        <MenuItem onClick={() => copy("import path", sheetSel.path)}>
+                          Copy import path
+                        </MenuItem>
+                      </MenuContent>
+                    </Menu>
+                  </SplitButton>
+                </div>
+              </div>
+              {sheetVariants ? (
+                <div className="icon-browser-variants" role="group" aria-label="Style variants">
+                  {VARIANT_STYLES.map((v) => (
+                    <div className="icon-browser-variant-col" key={v.style}>
+                      <div className="icon-browser-variant-swatches">
+                        {[
+                          { d: sheetVariants[v.unfilled], f: false },
+                          { d: sheetVariants[v.filled], f: true },
+                        ].map(({ d, f }) => (
+                          <button
+                            key={f ? "fill" : "outline"}
+                            type="button"
+                            className="icon-browser-variant"
+                            data-active={style === v.style && fill === f ? "" : undefined}
+                            aria-pressed={style === v.style && fill === f}
+                            title={f ? `${v.label} · filled` : v.label}
+                            aria-label={f ? `${v.label} filled` : v.label}
+                            onClick={() => {
+                              setStyle(v.style);
+                              setFill(f);
+                            }}
+                          >
+                            <svg viewBox={VIEWBOX} fill="currentColor" aria-hidden>
+                              <path d={d} />
+                            </svg>
+                          </button>
+                        ))}
+                      </div>
+                      <Typography
+                        as="span"
+                        variant="label-medium"
+                        className="icon-browser-variant-label"
+                      >
+                        {v.label}
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          ) : null}
+        </BottomSheetContent>
+      </BottomSheet>
     </div>
   );
 }
@@ -452,7 +499,10 @@ const SearchMirror = React.memo(function SearchMirror({
     for (const span of root.children) span.setAttribute("hidden", "until-found");
     const handle = (event: Event) => {
       const el = (event.target as HTMLElement)?.closest?.<HTMLElement>("[data-index]");
-      if (el?.dataset.index) onRevealRef.current(Number(el.dataset.index));
+      if (el?.dataset.index) {
+        event.preventDefault();
+        onRevealRef.current(Number(el.dataset.index));
+      }
     };
     // `beforematch` bubbles to the container.
     root.addEventListener("beforematch", handle);
