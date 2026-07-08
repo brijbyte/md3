@@ -1,22 +1,22 @@
-@property --md3-comp-circular-progress-global-rotation {
+@property --_global-rotation {
   syntax: "<angle>";
   inherits: true;
   initial-value: 0deg;
 }
 
-@property --md3-comp-circular-progress-step-rotation {
+@property --_step-rotation {
   syntax: "<angle>";
   inherits: true;
   initial-value: 0deg;
 }
 
-@property --md3-comp-circular-progress-sweep {
+@property --_sweep {
   syntax: "<number>";
   inherits: true;
   initial-value: 10;
 }
 
-@property --md3-comp-circular-progress-wave-phase {
+@property --_wave-phase {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
@@ -41,8 +41,8 @@
 .svgIndeterminate {
   transform: rotate(
     calc(
-      -90deg + var(--md3-comp-circular-progress-global-rotation) +
-        var(--md3-comp-circular-progress-step-rotation)
+      -90deg + var(--_global-rotation) +
+        var(--_step-rotation)
     )
   );
   animation:
@@ -70,8 +70,8 @@
 }
 
 .svgIndeterminate .indicator {
-  stroke-dasharray: var(--md3-comp-circular-progress-sweep)
-    calc(100 - var(--md3-comp-circular-progress-sweep));
+  stroke-dasharray: var(--_sweep)
+    calc(100 - var(--_sweep));
   transition: none;
 }
 
@@ -86,14 +86,14 @@
 
 @keyframes md3-circular-progress-wave-phase {
   to {
-    --md3-comp-circular-progress-wave-phase: 1;
+    --_wave-phase: 1;
   }
 }
 
 /* Global continuous spin: seamless since 1080deg % 360 === 0deg. */
 @keyframes md3-circular-progress-global-rotate {
   to {
-    --md3-comp-circular-progress-global-rotation: 1080deg;
+    --_global-rotation: 1080deg;
   }
 }
 
@@ -103,33 +103,33 @@
    segment leading in) — so the easing is set on each hop's starting keyframe. */
 @keyframes md3-circular-progress-step-rotate {
   0% {
-    --md3-comp-circular-progress-step-rotation: 0deg;
+    --_step-rotation: 0deg;
     animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
   }
   5% {
-    --md3-comp-circular-progress-step-rotation: 90deg;
+    --_step-rotation: 90deg;
   }
   25% {
-    --md3-comp-circular-progress-step-rotation: 90deg;
+    --_step-rotation: 90deg;
     animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
   }
   30% {
-    --md3-comp-circular-progress-step-rotation: 180deg;
+    --_step-rotation: 180deg;
   }
   50% {
-    --md3-comp-circular-progress-step-rotation: 180deg;
+    --_step-rotation: 180deg;
     animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
   }
   55% {
-    --md3-comp-circular-progress-step-rotation: 270deg;
+    --_step-rotation: 270deg;
   }
   75% {
-    --md3-comp-circular-progress-step-rotation: 270deg;
+    --_step-rotation: 270deg;
     animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
   }
   80%,
   100% {
-    --md3-comp-circular-progress-step-rotation: 360deg;
+    --_step-rotation: 360deg;
   }
 }
 
@@ -138,14 +138,14 @@
    the growth segment in the Compose source. */
 @keyframes md3-circular-progress-sweep {
   0% {
-    --md3-comp-circular-progress-sweep: 10;
+    --_sweep: 10;
     animation-timing-function: var(--md-sys-motion-easing-standard);
   }
   50% {
-    --md3-comp-circular-progress-sweep: 87;
+    --_sweep: 87;
     animation-timing-function: linear;
   }
   100% {
-    --md3-comp-circular-progress-sweep: 10;
+    --_sweep: 10;
   }
 }

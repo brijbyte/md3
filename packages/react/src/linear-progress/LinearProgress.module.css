@@ -27,10 +27,10 @@
 }
 
 .track {
-  /* --md3-comp-linear-progress-percent is set inline per render (JS-computed, not
+  /* --_percent is set inline per render (JS-computed, not
      expressible as a static token cascade like Slider's per-size vars). */
   inset-inline-start: calc(
-    var(--md3-comp-linear-progress-percent) * 1% + var(--md3-comp-linear-progress-gap) +
+    var(--_percent) * 1% + var(--md3-comp-linear-progress-gap) +
       var(--md3-comp-linear-progress-thickness)
   );
   inset-inline-end: 0;
@@ -84,7 +84,7 @@
   }
 }
 
-@property --md3-comp-linear-progress-wave-phase {
+@property --_wave-phase {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
@@ -92,12 +92,12 @@
 
 /* Per-bar active-envelope progress (0-1 head/tail of the sweeping segment),
    animated by the bar keyframes; dasharray/offset are derived from them. */
-@property --md3-comp-linear-progress-head {
+@property --_head {
   syntax: "<number>";
   inherits: false;
   initial-value: 0;
 }
-@property --md3-comp-linear-progress-tail {
+@property --_tail {
   syntax: "<number>";
   inherits: false;
   initial-value: 0;
@@ -133,19 +133,25 @@
 /* Indeterminate wavy: two sweeping bars driven entirely by CSS keyframes so
    they share the document timeline with the non-wavy indeterminate bars (which
    are pure keyframes too) — a JS rAF loop would run on its own clock and drift
-   out of phase. --md3-comp-linear-progress-w100/--md3-comp-linear-progress-wlf (width-derived, set inline) map the
+   out of phase. --_w100/--_wlf (width-derived, set inline) map the
    0-1 head/tail progress into pathLength units; the wave-phase var flows the
    crests while the dashoffset compensation keeps the visible envelope fixed. */
 .wavyIndeterminateBar {
-  --md3-comp-linear-progress-dash: calc((var(--md3-comp-linear-progress-head) - var(--md3-comp-linear-progress-tail)) * var(--md3-comp-linear-progress-w100));
-  stroke-dasharray: var(--md3-comp-linear-progress-dash) calc(100 - var(--md3-comp-linear-progress-dash));
+  --_dash: calc(
+    (var(--_head) - var(--_tail)) *
+      var(--_w100)
+  );
+  stroke-dasharray: var(--_dash)
+    calc(100 - var(--_dash));
   stroke-dashoffset: calc(
     -1 *
-      (var(--md3-comp-linear-progress-tail) * var(--md3-comp-linear-progress-w100) + var(--md3-comp-linear-progress-wave-phase) *
-        var(--md3-comp-linear-progress-wlf))
+      (var(--_tail) * var(--_w100) +
+        var(--_wave-phase) * var(--_wlf))
   );
   transform: translateX(
-    calc(var(--md3-comp-linear-progress-wave-phase) * -1 * var(--md3-comp-linear-progress-wavelength))
+    calc(
+      var(--_wave-phase) * -1 * var(--_wavelength)
+    )
   );
 }
 .wavyIndeterminateBar1 {
@@ -163,41 +169,41 @@
    0-1 envelope progress (tail = left edge, head = right edge). */
 @keyframes md3-linear-progress-ind-bar1 {
   0% {
-    --md3-comp-linear-progress-head: 0;
-    --md3-comp-linear-progress-tail: 0;
+    --_head: 0;
+    --_tail: 0;
   }
   14.2857% {
-    --md3-comp-linear-progress-head: 0.25;
-    --md3-comp-linear-progress-tail: 0;
+    --_head: 0.25;
+    --_tail: 0;
   }
   57.1429% {
-    --md3-comp-linear-progress-head: 1;
-    --md3-comp-linear-progress-tail: 0.75;
+    --_head: 1;
+    --_tail: 0.75;
   }
   71.4286%,
   100% {
-    --md3-comp-linear-progress-head: 1;
-    --md3-comp-linear-progress-tail: 1;
+    --_head: 1;
+    --_tail: 1;
   }
 }
 
 @keyframes md3-linear-progress-ind-bar2 {
   0%,
   37.1429% {
-    --md3-comp-linear-progress-head: 0;
-    --md3-comp-linear-progress-tail: 0;
+    --_head: 0;
+    --_tail: 0;
   }
   51.4286% {
-    --md3-comp-linear-progress-head: 0.294118;
-    --md3-comp-linear-progress-tail: 0;
+    --_head: 0.294118;
+    --_tail: 0;
   }
   85.7143% {
-    --md3-comp-linear-progress-head: 1;
-    --md3-comp-linear-progress-tail: 0.705882;
+    --_head: 1;
+    --_tail: 0.705882;
   }
   100% {
-    --md3-comp-linear-progress-head: 1;
-    --md3-comp-linear-progress-tail: 1;
+    --_head: 1;
+    --_tail: 1;
   }
 }
 
@@ -211,7 +217,7 @@
 
 @keyframes md3-linear-progress-wave-phase {
   to {
-    --md3-comp-linear-progress-wave-phase: 1;
+    --_wave-phase: 1;
   }
 }
 

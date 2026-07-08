@@ -13,39 +13,39 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
 
-    --md3-comp-slider-track-height: 16px;
-    --md3-comp-slider-handle-height: 44px;
+    --_track-height: 16px;
+    --_handle-height: 44px;
     /* Track ends use a fixed per-size shape token (rectangly rounded, not a full
        height/2 stadium cap) — scales up with size but stays clearly rectangular. */
-    --md3-comp-slider-track-radius: var(--md-sys-shape-corner-small);
+    --_track-radius: var(--md-sys-shape-corner-small);
     /* Handle-adjacent gap corners are a small fixed nub (Compose TrackInsideCornerSize
        = 2dp), not a scaled copy of the outer rounding. */
-    --md3-comp-slider-gap-radius: var(--md-sys-shape-corner-extra-small);
+    --_gap-radius: var(--md-sys-shape-corner-extra-small);
   }
 
   .root[data-size="s"] {
-    --md3-comp-slider-track-height: 24px;
+    --_track-height: 24px;
   }
 
   .root[data-size="m"] {
-    --md3-comp-slider-track-height: 40px;
-    --md3-comp-slider-handle-height: 52px;
-    --md3-comp-slider-track-radius: var(--md-sys-shape-corner-medium);
-    --md3-comp-slider-icon-size: 24px;
+    --_track-height: 40px;
+    --_handle-height: 52px;
+    --_track-radius: var(--md-sys-shape-corner-medium);
+    --_icon-size: 24px;
   }
 
   .root[data-size="l"] {
-    --md3-comp-slider-track-height: 56px;
-    --md3-comp-slider-handle-height: 68px;
-    --md3-comp-slider-track-radius: var(--md-sys-shape-corner-large);
-    --md3-comp-slider-icon-size: 24px;
+    --_track-height: 56px;
+    --_handle-height: 68px;
+    --_track-radius: var(--md-sys-shape-corner-large);
+    --_icon-size: 24px;
   }
 
   .root[data-size="xl"] {
-    --md3-comp-slider-track-height: 96px;
-    --md3-comp-slider-handle-height: 108px;
-    --md3-comp-slider-track-radius: var(--md-sys-shape-corner-extra-large);
-    --md3-comp-slider-icon-size: 32px;
+    --_track-height: 96px;
+    --_handle-height: 108px;
+    --_track-radius: var(--md-sys-shape-corner-extra-large);
+    --_icon-size: 32px;
   }
 
   .root[data-orientation="vertical"] {
@@ -59,14 +59,14 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-height: max(48px, var(--md3-comp-slider-track-height));
+    min-height: max(48px, var(--_track-height));
     outline: none;
   }
 
   .control[data-orientation="vertical"] {
     flex-direction: column;
     align-items: center;
-    width: max(48px, var(--md3-comp-slider-track-height));
+    width: max(48px, var(--_track-height));
     min-height: unset;
     height: 100%;
   }
@@ -77,14 +77,14 @@
   .track {
     position: relative;
     width: 100%;
-    height: var(--md3-comp-slider-track-height);
-    border-radius: var(--md3-comp-slider-track-radius);
+    height: var(--_track-height);
+    border-radius: var(--_track-radius);
     overflow: hidden;
     background: transparent;
   }
 
   .track[data-orientation="vertical"] {
-    width: var(--md3-comp-slider-track-height);
+    width: var(--_track-height);
     height: 100%;
   }
 
@@ -119,8 +119,8 @@
     top: 50%;
     inset-inline-start: 8px;
     transform: translateY(-50%);
-    width: var(--md3-comp-slider-icon-size, 24px);
-    height: var(--md3-comp-slider-icon-size, 24px);
+    width: var(--_icon-size, 24px);
+    height: var(--_icon-size, 24px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -207,7 +207,7 @@
      shrinks. */
   .thumb {
     width: 4px;
-    height: var(--md3-comp-slider-handle-height);
+    height: var(--_handle-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,7 +218,7 @@
   /* The handle always crosses perpendicular to the direction of travel — a vertical
      slider needs it rotated 90°, not just repositioned. */
   .thumb[data-orientation="vertical"] {
-    width: var(--md3-comp-slider-handle-height);
+    width: var(--_handle-height);
     height: 4px;
   }
 

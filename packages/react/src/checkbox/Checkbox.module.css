@@ -37,14 +37,14 @@
 
   /* State layer colors per selection state; ripple inherits via currentColor */
   .root[data-unchecked] {
-    --md3-comp-checkbox-state-color: var(--md-sys-color-on-surface);
-    --md3-comp-checkbox-pressed-color: var(--md-sys-color-primary);
+    --_state-color: var(--md-sys-color-on-surface);
+    --_pressed-color: var(--md-sys-color-primary);
   }
 
   .root[data-checked],
   .root[data-indeterminate] {
-    --md3-comp-checkbox-state-color: var(--md-sys-color-primary);
-    --md3-comp-checkbox-pressed-color: var(--md-sys-color-on-surface);
+    --_state-color: var(--md-sys-color-primary);
+    --_pressed-color: var(--md-sys-color-on-surface);
   }
 
   .stateLayer {
@@ -52,11 +52,11 @@
     inset: 0;
     border-radius: inherit;
     overflow: hidden;
-    color: var(--md3-comp-checkbox-state-color);
+    color: var(--_state-color);
   }
 
   .root:active .stateLayer {
-    color: var(--md3-comp-checkbox-pressed-color);
+    color: var(--_pressed-color);
   }
 
   .stateLayer::before {
@@ -131,8 +131,8 @@
   /* Error — state layer is error in every state (no pressed color flip).
      data-invalid comes from Base UI Field validation; data-error from the prop. */
   .root:is([data-error], [data-invalid]) {
-    --md3-comp-checkbox-state-color: var(--md-sys-color-error);
-    --md3-comp-checkbox-pressed-color: var(--md-sys-color-error);
+    --_state-color: var(--md-sys-color-error);
+    --_pressed-color: var(--md-sys-color-error);
   }
 
   .root:is([data-error], [data-invalid]) .box,

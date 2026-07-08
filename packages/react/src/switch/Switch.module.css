@@ -20,10 +20,10 @@
       border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
     /* Handle geometry, overridden per state below */
-    --md3-comp-switch-handle-size: 16px;
-    --md3-comp-switch-handle-x: 16px; /* handle center, from track left edge */
-    --md3-comp-switch-handle-color: var(--md-sys-color-outline);
-    --md3-comp-switch-state-color: var(--md-sys-color-on-surface);
+    --_handle-size: 16px;
+    --_handle-x: 16px; /* handle center, from track left edge */
+    --_handle-color: var(--md-sys-color-outline);
+    --_state-color: var(--md-sys-color-on-surface);
   }
 
   /* 48dp touch target (MD3): extends the hit area past the 52x32 track. */
@@ -40,29 +40,29 @@
   .root[data-checked] {
     background: var(--md-sys-color-primary);
     border-color: var(--md-sys-color-primary);
-    --md3-comp-switch-handle-size: 24px;
-    --md3-comp-switch-handle-x: 36px;
-    --md3-comp-switch-handle-color: var(--md-sys-color-on-primary);
-    --md3-comp-switch-state-color: var(--md-sys-color-primary);
+    --_handle-size: 24px;
+    --_handle-x: 36px;
+    --_handle-color: var(--md-sys-color-on-primary);
+    --_state-color: var(--md-sys-color-primary);
   }
 
   .root:hover,
   .root:focus-visible {
-    --md3-comp-switch-handle-color: var(--md-sys-color-on-surface-variant);
+    --_handle-color: var(--md-sys-color-on-surface-variant);
   }
 
   .root[data-checked]:hover,
   .root[data-checked]:focus-visible {
-    --md3-comp-switch-handle-color: var(--md-sys-color-primary-container);
+    --_handle-color: var(--md-sys-color-primary-container);
   }
 
   .root:active {
-    --md3-comp-switch-handle-size: 28px;
-    --md3-comp-switch-handle-color: var(--md-sys-color-on-surface-variant);
+    --_handle-size: 28px;
+    --_handle-color: var(--md-sys-color-on-surface-variant);
   }
 
   .root[data-checked]:active {
-    --md3-comp-switch-handle-color: var(--md-sys-color-primary-container);
+    --_handle-color: var(--md-sys-color-primary-container);
   }
 
   .root:focus-visible {
@@ -73,12 +73,12 @@
   .thumb {
     position: absolute;
     top: 50%;
-    /* Offset by border width so --md3-comp-switch-handle-x is relative to the outer track box */
-    left: calc(var(--md3-comp-switch-handle-x) - 2px);
-    width: var(--md3-comp-switch-handle-size);
-    height: var(--md3-comp-switch-handle-size);
+    /* Offset by border width so --_handle-x is relative to the outer track box */
+    left: calc(var(--_handle-x) - 2px);
+    width: var(--_handle-size);
+    height: var(--_handle-size);
     border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md3-comp-switch-handle-color);
+    background: var(--_handle-color);
     transform: translate(-50%, -50%);
     transition:
       left var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
@@ -96,7 +96,7 @@
     height: 40px;
     border-radius: var(--md-sys-shape-corner-full);
     transform: translate(-50%, -50%);
-    background: var(--md3-comp-switch-state-color);
+    background: var(--_state-color);
     opacity: 0;
     /* Hover/focus tint timing per material-web ripple spec */
     transition: opacity 15ms linear;
@@ -129,7 +129,7 @@
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
       transparent
     );
-    --md3-comp-switch-handle-color: color-mix(
+    --_handle-color: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
       transparent
@@ -143,6 +143,6 @@
       transparent
     );
     border-color: transparent;
-    --md3-comp-switch-handle-color: var(--md-sys-color-surface);
+    --_handle-color: var(--md-sys-color-surface);
   }
 }
