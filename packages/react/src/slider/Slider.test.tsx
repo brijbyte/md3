@@ -141,6 +141,36 @@ describe("Slider range", () => {
   });
 });
 
+// CSS-module class names are Vite-hashed here (not the library's build-time `md3-slider-*`),
+// so match the `tick` local name as a substring. Only tick/tickActive contain it.
+const tickCount = (container: HTMLElement) => container.querySelectorAll('[class*="tick"]').length;
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+describe("Slider ticks", () => {
+  it("numeric ticks set the mark interval independently of step", () => {
+    // A per-second seek slider (step 1) marking every 30s: floor(300/30)+1 = 11, not 301.
+    const { container } = render(<Slider min={0} max={300} step={1} ticks={30} value={0} />);
+    expect(tickCount(container)).toBe(11);
+  });
+
+  it("boolean ticks still mark once per step", () => {
+    const { container } = render(<Slider min={0} max={10} step={2} ticks value={0} />);
+    expect(tickCount(container)).toBe(6);
+  });
+});
+
+describe("Slider formatValue", () => {
+  it("formats the value-bubble text (e.g. seconds → m:ss)", async () => {
+    render(<Slider min={0} max={300} step={1} value={90} formatValue={mmss} aria-label="seek" />);
+    const thumb = thumbOf(screen.getByRole("slider"));
+
+    fireEvent.pointerEnter(thumb);
+    expect(await screen.findByText("1:30")).toBeTruthy();
+    expect(screen.queryByText("90")).toBeNull();
+  });
+});
+
 describe("Slider bubble positioning", () => {
   it("does not poll with requestAnimationFrame while an open bubble is idle", async () => {
     const raf = vi.spyOn(window, "requestAnimationFrame");

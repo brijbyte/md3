@@ -1,6 +1,7 @@
 @import "@brijbyte/md3-react/button.css";
 @import "@brijbyte/md3-react/icon-button.css";
 @import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/slider.css";
 @import "@brijbyte/md3-react/typography.css";
 
 .demo-bottom-sheet-standard {
@@ -34,9 +35,31 @@
 }
 
 .demo-bottom-sheet-standard-album {
+  box-sizing: border-box;
+  width: 100%;
   aspect-ratio: 1;
+  border: none;
   border-radius: var(--md-sys-shape-corner-medium);
   background: var(--md-sys-color-surface-container-high);
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+  text-align: left;
+  transition:
+    outline-color 0.15s,
+    transform 0.15s;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.demo-bottom-sheet-standard-album:hover {
+  transform: translateY(-2px);
+}
+
+.demo-bottom-sheet-standard-album[data-active] {
+  outline-color: var(--md-sys-color-primary);
 }
 
 .demo-bottom-sheet-standard-player {
@@ -61,4 +84,22 @@
 
 .demo-bottom-sheet-standard-subtitle {
   color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-bottom-sheet-standard-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.demo-bottom-sheet-standard-time {
+  flex-shrink: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-bottom-sheet-standard-seek {
+  flex: 1 1 auto;
+  min-width: 0;
 }

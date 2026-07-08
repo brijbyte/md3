@@ -8,8 +8,9 @@ import styles from "./Slider.module.css";
 export type SliderSize = "xs" | "s" | "m" | "l" | "xl";
 
 export interface SliderProps extends BaseSlider.Root.Props {
-  /** Shows discrete tick marks along the track. Pair with `step`. */
-  ticks?: boolean;
+  /** Shows discrete tick marks along the track. `true` marks every `step`; a number marks
+   * at that value interval instead (e.g. `30` on a per-second slider = a tick every 30s). */
+  ticks?: boolean | number;
   /** Grows the active track from the midpoint instead of from `min` — for
    * positive/negative ranges like balance or brightness offset. Single-thumb only. */
   centered?: boolean;
@@ -22,6 +23,9 @@ export interface SliderProps extends BaseSlider.Root.Props {
   "aria-labelledby"?: string;
   getAriaLabel?: (index: number) => string;
   getAriaValueText?: (formattedValue: string, value: number, index: number) => string;
+  /** Formats the value shown in the thumb's tooltip bubble (e.g. seconds → `m:ss`).
+   * Falls back to Base UI's `format`-based number formatting when omitted. */
+  formatValue?: (value: number, index: number) => string;
 }
 
 function cx(...classes: Array<string | false | undefined>) {
@@ -104,11 +108,13 @@ function SliderThumbLabel({
   index,
   active,
   vertical,
+  formatValue,
   ...thumbProps
 }: {
   index: number;
   active: boolean;
   vertical: boolean;
+  formatValue: ((value: number, index: number) => string) | undefined;
   "aria-label": string | undefined;
   "aria-labelledby": string | undefined;
   getAriaLabel: ((index: number) => string) | undefined;
@@ -187,7 +193,11 @@ function SliderThumbLabel({
           className={styles.positioner}
         >
           <Tooltip.Popup className={styles.valueLabel}>
-            <BaseSlider.Value>{(formattedValues) => formattedValues[index]}</BaseSlider.Value>
+            <BaseSlider.Value>
+              {(formattedValues, values) =>
+                formatValue ? formatValue(values[index], index) : formattedValues[index]
+              }
+            </BaseSlider.Value>
           </Tooltip.Popup>
         </Tooltip.Positioner>
       </Tooltip.Portal>
@@ -214,6 +224,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
     "aria-labelledby": ariaLabelledby,
     getAriaLabel,
     getAriaValueText,
+    formatValue,
     ...rest
   } = props;
 
@@ -227,7 +238,10 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
   const trackValues = Array.isArray(liveValue) ? liveValue : [liveValue];
   const thumbCount = trackValues.length;
   const isRange = thumbCount > 1;
-  const tickCount = ticks ? Math.floor((max - min) / step) + 1 : 0;
+  // Ticks default to one per `step`; a numeric `ticks` sets an independent value interval
+  // (so a per-second slider can still mark only every 30s).
+  const tickInterval = ticks === true ? step : typeof ticks === "number" ? ticks : 0;
+  const tickCount = tickInterval ? Math.floor((max - min) / tickInterval) + 1 : 0;
   const toPercent = (v: number) => ((v - min) / (max - min)) * 100;
   const hasIcon = icon != null && (size === "m" || size === "l" || size === "xl");
 
@@ -335,9 +349,10 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
           {centered && !isRange && <span className={styles.centerMark} aria-hidden />}
           {ticks &&
             Array.from({ length: tickCount }, (_, i) => {
-              // Same edge inset as the stop indicators — the spec never sits a
-              // mark flush on the track's rounded corner, only just inside it.
-              const percent = i === 0 ? 1 : i === tickCount - 1 ? 99 : (i / (tickCount - 1)) * 100;
+              // Position each mark at its real value; clamp to the same edge inset as the
+              // stop indicators — the spec never sits a mark flush on the rounded corner.
+              const raw = toPercent(min + i * tickInterval);
+              const percent = raw <= 1 ? 1 : raw >= 99 ? 99 : raw;
               const active = percent >= activeStart - 0.01 && percent <= activeEnd + 0.01;
               return (
                 <span
@@ -359,6 +374,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(function Sli
             aria-labelledby={ariaLabelledby}
             getAriaLabel={getAriaLabel}
             getAriaValueText={getAriaValueText}
+            formatValue={formatValue}
           />
         ))}
       </BaseSlider.Control>
