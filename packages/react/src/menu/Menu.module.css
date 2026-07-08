@@ -1,9 +1,11 @@
 @layer components {
   .positioner {
     outline: none;
-    /* Portalled to body-end, so DOM order beats z-auto content; the z-index
-       guards against consumer chrome with positive z (sticky headers etc.). */
-    z-index: var(--md3-popup-z-index, 20);
+    /* Portalled to body-end, so DOM order beats z-auto content; the z-index guards
+       against consumer chrome with positive z (sticky headers etc.) and, at 1300,
+       sits above the overlay layer (dialog/sheet backdrop 1200, popup 1201) so a menu
+       opened inside a Dialog/BottomSheet/SideSheet is never occluded by it. */
+    z-index: var(--md3-popup-z-index, 1300);
   }
 
   /* Container per md.comp.menu: surface-container, corner-extra-small, level2.
