@@ -125,7 +125,11 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 ## Token pipeline
 
 - Single source of truth: `packages/react/tokens/tokens.json` — MD3 system tokens (color
-  light+dark, typescale, shape, state-layer opacities, elevation, motion), baseline values.
+  light+dark, typescale, shape, state-layer opacities, elevation, motion), baseline values,
+  plus a theme-independent `z-index` group emitted as `--md-ref-z-index-*` (logical layer
+  names `docked`/`notification`/`overlay`/`modal`/`popover`; overlays and portalled popups
+  reference these instead of hardcoding, so a menu/tooltip inside a dialog/sheet stays above
+  it — popups keep the `--md3-popup-z-index` override).
 - `scripts/build-tokens.mjs` generates `src/generated/tokens.css` (`--md-sys-color-primary`
   etc., kebab-case), `src/generated/tokens.ts` (typed map, **camelCase keys**, `var(...)`
   values), and `src/generated/tailwind-tokens.css` (Tailwind v4 `@theme inline` —

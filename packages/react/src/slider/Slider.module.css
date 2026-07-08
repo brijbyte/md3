@@ -264,9 +264,9 @@
 
   .positioner {
     outline: none;
-    /* 1300 sits above the overlay layer (dialog/sheet backdrop 1200, popup 1201) so a
-       slider's value tooltip inside one is never occluded by it. */
-    z-index: var(--md3-popup-z-index, 1300);
+    /* The popup token sits above the overlay layer (overlay/modal) so a slider's value
+       tooltip inside one is never occluded by it. Override with the var. */
+    z-index: var(--md3-popup-z-index, var(--md-ref-z-index-popover));
   }
 
   /* Portalled (Base UI Tooltip), so the root never needs padding reserved for it.

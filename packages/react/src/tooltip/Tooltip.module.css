@@ -2,9 +2,9 @@
   .plainPositioner,
   .richPositioner {
     outline: none;
-    /* Portalled to body-end; 1300 sits above the overlay layer (dialog/sheet backdrop
-       1200, popup 1201) so a tooltip inside one is never occluded by it. */
-    z-index: var(--md3-popup-z-index, 1300);
+    /* Portalled to body-end; the popup token sits above the overlay layer (overlay/modal)
+       so a tooltip inside one is never occluded by it. Override with the var. */
+    z-index: var(--md3-popup-z-index, var(--md-ref-z-index-popover));
   }
 
   /* Container per md.comp.plain-tooltip: inverse-surface, corner-extra-small, no

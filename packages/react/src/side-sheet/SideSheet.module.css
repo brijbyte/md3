@@ -11,7 +11,7 @@
   .backdrop {
     position: fixed;
     inset: 0;
-    z-index: 1200;
+    z-index: var(--md-ref-z-index-overlay);
     background: var(--md-sys-color-scrim);
     opacity: 0.32;
     transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
@@ -25,7 +25,7 @@
   .viewport {
     position: fixed;
     inset: 0;
-    z-index: 1201;
+    z-index: var(--md-ref-z-index-modal);
     display: flex;
     align-items: stretch;
     pointer-events: none;
@@ -39,10 +39,10 @@
     justify-content: flex-start;
   }
 
-  /* No backdrop of its own to sit above — pitched below the modal stack (1200) so an
-     actual dialog/modal sheet still wins, but above ordinary page content. */
+  /* No backdrop of its own to sit above — pitched below the modal stack (scrim/modal) so
+     an actual dialog/modal sheet still wins, but above ordinary page content. */
   .viewport[data-variant="standard"] {
-    z-index: 500;
+    z-index: var(--md-ref-z-index-docked);
   }
 
   .popup {

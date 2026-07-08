@@ -10,7 +10,7 @@
   .backdrop {
     position: fixed;
     inset: 0;
-    z-index: 1200;
+    z-index: var(--md-ref-z-index-overlay);
     background: var(--md-sys-color-scrim);
     opacity: 0.32;
     transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
@@ -24,7 +24,7 @@
   .viewport {
     position: fixed;
     inset: 0;
-    z-index: 1201;
+    z-index: var(--md-ref-z-index-modal);
     display: flex;
     align-items: center;
     justify-content: center;
