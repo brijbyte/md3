@@ -45,7 +45,7 @@ const WAVY_RADIUS = (WAVY_SIZE - CIRCULAR_PROGRESS_STROKE_WIDTH) / 2;
 const WAVY_GAP_PERCENT = ((GAP + THICKNESS) / (Math.PI * WAVY_SIZE)) * 100;
 const CIRCLE_D = morphPathD(CIRCLE_STAR_MORPH, 0);
 const STAR_D = morphPathD(CIRCLE_STAR_MORPH, 1);
-// One full wave-phase cycle (--md3-circular-progress-wave-phase: 0 -> 1) is
+// One full wave-phase cycle (--md3-comp-circular-progress-wave-phase: 0 -> 1) is
 // one vertex-to-vertex hop of the star: 360/numVertices of rotation, and
 // 100/numVertices of the pathLength=100 circumference.
 const WAVE_PHASE_ROTATION_DEG = 360 / CIRCULAR_PROGRESS_NUM_VERTICES;
@@ -107,7 +107,7 @@ export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgres
                 {
                   d: `path("${amplitude === 1 ? STAR_D : CIRCLE_D}")`,
                   transformOrigin: `${size / 2}px ${size / 2}px`,
-                  transform: `rotate(calc(var(--md3-circular-progress-wave-phase) * ${WAVE_PHASE_ROTATION_DEG}deg))`,
+                  transform: `rotate(calc(var(--md3-comp-circular-progress-wave-phase) * ${WAVE_PHASE_ROTATION_DEG}deg))`,
                   transition: indeterminate
                     ? undefined
                     : [
@@ -118,7 +118,7 @@ export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgres
                   strokeDasharray: indeterminate ? undefined : `${sweep} ${100 - sweep}`,
                   strokeDashoffset: indeterminate
                     ? undefined
-                    : `calc(var(--md3-circular-progress-wave-phase) * ${-WAVE_PHASE_DASH_PERCENT}%)`,
+                    : `calc(var(--md3-comp-circular-progress-wave-phase) * ${-WAVE_PHASE_DASH_PERCENT}%)`,
                 } as React.CSSProperties
               }
             />

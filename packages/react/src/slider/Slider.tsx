@@ -43,8 +43,8 @@ const GAP_PX = 8;
 // reads as a small nub, not a scaled-down copy of the outer rounding. A boundary at the
 // track's true 0%/100% edge uses the full track radius, unless a thumb sits exactly there
 // (squared off — see trackFlatStart/trackFlatEnd).
-const GAP_RADIUS = "var(--md3-slider-gap-radius)";
-const TRUE_EDGE_RADIUS = "var(--md3-slider-track-radius)";
+const GAP_RADIUS = "var(--md3-comp-slider-gap-radius)";
+const TRUE_EDGE_RADIUS = "var(--md3-comp-slider-track-radius)";
 
 // Track/tick/icon geometry only ever needs to know whether the slider runs along the
 // inline or block axis — the thumb's own positioning (including RTL/vertical-lr

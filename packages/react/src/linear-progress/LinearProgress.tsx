@@ -119,7 +119,7 @@ export const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressPro
             <span className={styles.indicator} style={{ width: `${percent}%` }} />
             <span
               className={styles.track}
-              style={{ "--md3-linear-progress-percent": percent } as React.CSSProperties}
+              style={{ "--md3-comp-linear-progress-percent": percent } as React.CSSProperties}
             />
             <span className={styles.stop} />
           </>
@@ -182,14 +182,14 @@ function WavyDeterminate({ width, percent }: { width: number; percent: number })
         style={
           {
             d: `path("${amplitude === 1 ? waveD : flatD}")`,
-            transform: `translateX(calc(var(--md3-linear-progress-wave-phase) * ${-wavelength}px))`,
+            transform: `translateX(calc(var(--md3-comp-linear-progress-wave-phase) * ${-wavelength}px))`,
             transition: [
               `d ${motion.durationLong2} ${motion.easingStandard}`,
               `stroke-dasharray ${motion.durationMedium2} ${motion.easingStandard}`,
               `stroke-dashoffset ${motion.durationMedium2} ${motion.easingStandard}`,
             ].join(", "),
             strokeDasharray: `${stopU - startU} ${100 - (stopU - startU)}`,
-            strokeDashoffset: `calc(${-startU} + var(--md3-linear-progress-wave-phase) * ${-wavelengthFraction})`,
+            strokeDashoffset: `calc(${-startU} + var(--md3-comp-linear-progress-wave-phase) * ${-wavelengthFraction})`,
           } as React.CSSProperties
         }
       />
@@ -212,9 +212,9 @@ function WavyIndeterminate({ width }: { width: number }) {
   // Geometry via the `d` attribute (static here) so it renders in Safari/Firefox,
   // which don't honor the CSS `d` property.
   const barStyle = {
-    "--md3-lp-w100": w100,
-    "--md3-lp-wlf": wlf,
-    "--md3-lp-wavelength": `${wavelength}px`,
+    "--md3-comp-linear-progress-w100": w100,
+    "--md3-comp-linear-progress-wlf": wlf,
+    "--md3-comp-linear-progress-wavelength": `${wavelength}px`,
   } as React.CSSProperties;
 
   return (

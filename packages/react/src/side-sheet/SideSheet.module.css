@@ -5,7 +5,7 @@
    (docked-modal per material-web — same layout, different color/elevation/shape):
    surface-container-low, elevation level1, rounded only on the content-facing edge
    (corner-large-start), square against the screen edge it's flush with. Width defaults to
-   the 256dp docked reference, capped at the spec's 400dp max via --md3-side-sheet-width.
+   the 256dp docked reference, capped at the spec's 400dp max via --md3-comp-side-sheet-width.
    Scrim reuses the universal 32% modal-surface value (bottom sheet, nav drawer, dialogs). */
 @layer components {
   .backdrop {
@@ -47,7 +47,7 @@
 
   .popup {
     box-sizing: border-box;
-    width: var(--md3-side-sheet-width, 256px);
+    width: var(--md3-comp-side-sheet-width, 256px);
     max-width: min(400px, 100%);
     height: 100%;
     overflow-y: auto;

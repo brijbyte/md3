@@ -35,21 +35,21 @@
   }
 
   .root[data-unchecked] {
-    --md3-icon-color: var(--md-sys-color-on-surface-variant);
-    --md3-state-color: var(--md-sys-color-on-surface);
-    --md3-pressed-color: var(--md-sys-color-primary);
+    --md3-comp-radio-icon-color: var(--md-sys-color-on-surface-variant);
+    --md3-comp-radio-state-color: var(--md-sys-color-on-surface);
+    --md3-comp-radio-pressed-color: var(--md-sys-color-primary);
   }
 
   .root[data-unchecked]:hover,
   .root[data-unchecked]:focus-visible,
   .root[data-unchecked]:active {
-    --md3-icon-color: var(--md-sys-color-on-surface);
+    --md3-comp-radio-icon-color: var(--md-sys-color-on-surface);
   }
 
   .root[data-checked] {
-    --md3-icon-color: var(--md-sys-color-primary);
-    --md3-state-color: var(--md-sys-color-primary);
-    --md3-pressed-color: var(--md-sys-color-on-surface);
+    --md3-comp-radio-icon-color: var(--md-sys-color-primary);
+    --md3-comp-radio-state-color: var(--md-sys-color-primary);
+    --md3-comp-radio-pressed-color: var(--md-sys-color-on-surface);
   }
 
   .stateLayer {
@@ -57,11 +57,11 @@
     inset: 0;
     border-radius: inherit;
     overflow: hidden;
-    color: var(--md3-state-color);
+    color: var(--md3-comp-radio-state-color);
   }
 
   .root:active .stateLayer {
-    color: var(--md3-pressed-color);
+    color: var(--md3-comp-radio-pressed-color);
   }
 
   .stateLayer::before {
@@ -89,7 +89,7 @@
     width: 20px;
     height: 20px;
     box-sizing: border-box;
-    border: 2px solid var(--md3-icon-color);
+    border: 2px solid var(--md3-comp-radio-icon-color);
     border-radius: var(--md-sys-shape-corner-full);
     transition: border-color var(--md-sys-motion-duration-short2)
       var(--md-sys-motion-easing-standard);
@@ -99,7 +99,7 @@
     width: 10px;
     height: 10px;
     border-radius: var(--md-sys-shape-corner-full);
-    background: var(--md3-icon-color);
+    background: var(--md3-comp-radio-icon-color);
     transform: scale(0);
     transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
   }
@@ -112,7 +112,7 @@
   .root[data-disabled] {
     cursor: default;
     pointer-events: none;
-    --md3-icon-color: color-mix(
+    --md3-comp-radio-icon-color: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
       transparent

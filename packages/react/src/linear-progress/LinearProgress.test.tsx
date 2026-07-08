@@ -61,8 +61,8 @@ test("wavy indeterminate is CSS-driven and shares the straight bar's envelope", 
     const straightEnvelope = rect.width / rootWidth;
 
     const cs = getComputedStyle(paths[i]);
-    const wavyTail = parseFloat(cs.getPropertyValue("--md3-lp-tail"));
-    const wavyEnvelope = parseFloat(cs.getPropertyValue("--md3-lp-head")) - wavyTail;
+    const wavyTail = parseFloat(cs.getPropertyValue("--md3-comp-linear-progress-tail"));
+    const wavyEnvelope = parseFloat(cs.getPropertyValue("--md3-comp-linear-progress-head")) - wavyTail;
 
     expect(wavyTail).toBeCloseTo(straightTail, 2);
     expect(wavyEnvelope).toBeCloseTo(straightEnvelope, 2);
