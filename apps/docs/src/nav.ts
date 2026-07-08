@@ -11,6 +11,7 @@ import CategoryIcon from "@brijbyte/md3-icons/outlined/Category";
 import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
 import DialogsIcon from "@brijbyte/md3-icons/outlined/Dialogs";
 import HorizontalRuleIcon from "@brijbyte/md3-icons/outlined/HorizontalRule";
+import ListsIcon from "@brijbyte/md3-icons/outlined/Lists";
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
 import MenuIcon from "@brijbyte/md3-icons/outlined/Menu";
 import PaletteIcon from "@brijbyte/md3-icons/outlined/Palette";
@@ -151,6 +152,14 @@ export const SECTIONS: NavSection[] = [
         description:
           "A one-pixel line that separates content into groups — horizontal or vertical.",
         icon: HorizontalRuleIcon,
+      },
+      {
+        path: "/components/list",
+        label: "List",
+        title: "List",
+        description:
+          "Rows of one to three lines with leading and trailing slots, static or clickable.",
+        icon: ListsIcon,
       },
       {
         path: "/components/loading-indicator",

@@ -1,0 +1,191 @@
+/* Spec: Compose ListItem + tokens/component-specs.json → list.
+   Heights 56/72/88dp (1/2/3 line), block padding 8/8/12dp, 16dp inline padding
+   and leading/trailing spacing. Three-line rows top-align their content. */
+@layer components {
+  .list {
+    list-style: none;
+    margin: 0;
+    padding-block: 8px;
+    padding-inline: 0;
+  }
+
+  .wrapper {
+    list-style: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .item {
+    --_leading-color: var(--md-sys-color-on-surface-variant);
+    --_trailing-color: var(--md-sys-color-on-surface-variant);
+
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 56px;
+    padding-inline: 16px;
+    padding-block: 8px;
+    background: transparent;
+    color: var(--md-sys-color-on-surface);
+    text-align: start;
+  }
+
+  .item[data-lines="2"] {
+    min-height: 72px;
+  }
+
+  .item[data-lines="3"] {
+    min-height: 88px;
+    padding-block: 12px;
+    align-items: flex-start;
+  }
+
+  /* Interactive rows render as button/anchor — reset their intrinsic styling. */
+  .item[data-interactive] {
+    appearance: none;
+    border: 0;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  /* State layer + ripple host (interactive only). */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .item[data-interactive]:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .item[data-interactive]:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .item[data-interactive]:active .stateLayer::before {
+    opacity: var(--md-sys-state-pressed-state-layer-opacity);
+  }
+
+  /* Spec: 3px secondary focus indicator, inset inside the row. */
+  .item[data-interactive]:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -3px;
+  }
+
+  .leading {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    font-size: 24px;
+    color: var(--_leading-color);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .overline {
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-label-small-font);
+    font-size: var(--md-sys-typescale-label-small-size);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  }
+
+  .headline {
+    color: inherit;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    font-weight: var(--md-sys-typescale-body-large-weight);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  }
+
+  .supporting {
+    color: var(--md-sys-color-on-surface-variant);
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line-height);
+    font-weight: var(--md-sys-typescale-body-medium-weight);
+    letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  }
+
+  .trailing {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 16px;
+    margin-inline-start: auto;
+    font-size: 24px;
+    color: var(--_trailing-color);
+  }
+
+  /* Trailing supporting text stays label-small regardless of the 24dp icon slot. */
+  .trailingText {
+    font-size: var(--md-sys-typescale-label-small-size);
+    font-family: var(--md-sys-typescale-label-small-font);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  }
+
+  /* Selected: secondary-container tint, content recolored to match. */
+  .item[data-selected] {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    --_leading-color: currentColor;
+    --_trailing-color: currentColor;
+  }
+
+  .item[data-selected] .overline,
+  .item[data-selected] .supporting,
+  .item[data-selected] .trailingText {
+    color: inherit;
+  }
+
+  /* Disabled: 38% content per MD3 universals (leading/trailing icons and text). */
+  .item[data-disabled] {
+    cursor: default;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    --_leading-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    --_trailing-color: var(--_leading-color);
+  }
+
+  .item[data-disabled] .overline,
+  .item[data-disabled] .supporting,
+  .item[data-disabled] .trailingText {
+    color: inherit;
+  }
+}

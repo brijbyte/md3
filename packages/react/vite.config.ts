@@ -128,6 +128,7 @@ export default defineConfig({
         "checkbox/index": "src/checkbox/index.ts",
         "dialog/index": "src/dialog/index.ts",
         "divider/index": "src/divider/index.ts",
+        "list/index": "src/list/index.ts",
         "radio/index": "src/radio/index.ts",
         "switch/index": "src/switch/index.ts",
         "tabs/index": "src/tabs/index.ts",

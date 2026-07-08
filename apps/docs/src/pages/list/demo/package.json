@@ -1,0 +1,14 @@
+{
+  "name": "md3-demos-list",
+  "version": "0.0.0",
+  "private": true,
+  "description": "List",
+  "type": "module",
+  "dependencies": {
+    "@brijbyte/md3-icons": "latest",
+    "@brijbyte/md3-react": "latest"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

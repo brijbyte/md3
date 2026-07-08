@@ -15,6 +15,12 @@
       (layout + arrow-key nav across chips/actions, cf. material-web chip-set); InputChip
       arrow-key nav between primary and remove actions (multi-action-chip.ts); consider a
       `removeIcon` override slot on InputChip.
+- [ ] List selectable/multi-select listbox model (follow-up to List/ListItem, shipped
+      2026-07). Current `selected` is visual + `aria-current` only. A true single/multi
+      select list needs `role="listbox"`/`role="option"` (or radiogroup/checkbox per Compose
+      `Role.RadioButton`/`Role.Checkbox`), roving tabindex, arrow-key nav, and real
+      `aria-selected`/`aria-checked`. Bigger a11y feature than the row-level component; build
+      when a selectable-list use case lands.
 - [ ] CircularProgress wavy variant still not right despite two rounds of fixes (baked
       circle/star morph rotational alignment, then the missing `%` unit on the determinate
       wave-phase `stroke-dashoffset` compensation — see git history on CircularProgress.tsx /
