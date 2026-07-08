@@ -125,6 +125,24 @@ html[data-add-task-morph="close"]::view-transition-group(add-task) {
   top: -4px;
   right: -4px;
 }
+/* z-index belongs on the positioned ancestor (the Positioner), not the static popup. */
+.team-tasks-notif-positioner {
+  z-index: var(--md3-popup-z-index, var(--md-ref-z-index-popover));
+  outline: none;
+}
+.team-tasks-notif-popup {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding-block: 8px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+.team-tasks-notif-popup-title {
+  display: block;
+  padding: 8px 16px 4px;
+}
 .team-tasks-new {
   margin-inline-start: auto;
 }
