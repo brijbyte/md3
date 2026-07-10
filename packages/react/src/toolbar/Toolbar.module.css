@@ -1,0 +1,80 @@
+/* Spec: Compose Material3 (androidx-main) FloatingToolbarTokens v12 + DockedToolbarTokens
+   v14 + FloatingToolbar.kt / AppBar.kt (FlexibleBottomAppBar) — material-web predates the
+   toolbar and has no tokens for it. Both variants rest at elevation level0 (no shadow). */
+@layer components {
+  .root {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    /* DockedToolbar ContainerMinSpacing / FloatingToolbar ContainerBetweenSpace = 4dp
+       (docked allows up to 32dp; override for wider fixed arrangements). */
+    gap: var(--md3-comp-toolbar-gap, 4px);
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
+  }
+
+  /* Packed items: keep each child's 48dp touch target from bleeding over
+     neighbors (same containment as ButtonGroup). */
+  .root > * {
+    --md3-touch-target-width: 100%;
+  }
+
+  /* Docked: full-width 64dp bar, square corners, 16dp leading/trailing space.
+     SpaceBetween is Compose's default arrangement; gap acts as the min spacing. */
+  .root[data-variant="docked"] {
+    height: 64px;
+    padding-inline: 16px;
+    justify-content: space-between;
+  }
+
+  /* Floating: content-hugging pill, 8dp padding all sides; 64dp cross-axis
+     minimum so 40dp items still yield the spec container size. */
+  .root[data-variant="floating"] {
+    width: fit-content;
+    min-height: 64px;
+    padding: 8px;
+    justify-content: center;
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  .root[data-variant="floating"][data-orientation="vertical"] {
+    flex-direction: column;
+    min-height: 0;
+    min-width: 64px;
+  }
+
+  /* Bare input slot (guidelines "flexibility & slots" chat pill): the toolbar
+     container is the visual chrome, so the input itself is chrome-free. */
+  .input {
+    box-sizing: border-box;
+    min-width: 0;
+    align-self: stretch;
+    padding-inline: 16px 8px;
+    border: 0;
+    background: none;
+    outline: none;
+    color: inherit;
+    caret-color: var(--md-sys-color-primary);
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    font-weight: var(--md-sys-typescale-body-large-weight);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  }
+
+  .input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Vibrant scheme. Inner-button role remaps mirror FloatingToolbarTokens
+     VibrantButton*: unselected content follows the container (standard icon
+     buttons, outlined/text labels); selected tonal toggles flip to surface
+     roles so they read against the primary-container field. */
+  .root[data-color="vibrant"] {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    --md-sys-color-on-surface-variant: var(--md-sys-color-on-primary-container);
+    --md-sys-color-secondary-container: var(--md-sys-color-surface-container);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-surface);
+  }
+}

@@ -1,0 +1,76 @@
+---
+title: Toolbar
+---
+
+import ToolbarDocked from "./demo/docked.tsx";
+import ToolbarFloating from "./demo/floating.tsx";
+import ToolbarTextButtons from "./demo/text-buttons.tsx";
+import ToolbarWithFab from "./demo/with-fab.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
+
+```tsx
+import { Toolbar, ToolbarButton, ToolbarInput } from "@brijbyte/md3-react/toolbar";
+```
+
+```css
+@import "@brijbyte/md3-react/toolbar.css";
+```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/toolbars/overview" }]}
+/>
+
+## Docked
+
+A toolbar surfaces up to five key actions for the current screen. The docked variant is a
+full-width, 64dp bar in `surface-container` — the expressive successor to the bottom app
+bar, always placed at the bottom of the window and best for global actions that stay the
+same across pages (here, browser controls). Items spread edge-to-edge by default (16dp
+leading/trailing space); override `justify-content` for packed or centered arrangements.
+Emphasize at most one action, e.g. with a filled icon button.
+
+Wrap each action in `ToolbarButton` with the MD3 button passed to `render`: the toolbar
+then behaves as a single tab stop with arrow-key navigation between actions, per the ARIA
+toolbar pattern.
+
+<ToolbarDocked />
+
+## Floating
+
+The floating variant is a content-hugging pill (8dp padding, 4dp between items) that
+floats over content — keep it at least 16dp from screen edges. It suits contextual
+actions for the content underneath: text formatting while editing, or message actions
+while reading. It comes in two color schemes: **standard** (`surface-container`, low
+emphasis — keeps focus on the content) and **vibrant** (`primary-container`, high
+emphasis — draws attention to the controls, e.g. entering an edit mode). In a vibrant
+toolbar the inner buttons re-map automatically: unselected content follows
+`on-primary-container`, and selected tonal toggles flip to surface roles so they stay
+legible against the colored field. In larger windows a floating toolbar can be a vertical
+rail on either side — pass `orientation="vertical"`.
+
+<ToolbarFloating />
+
+## Flexibility and slots
+
+A toolbar is a container of slots, and slots aren't limited to icon buttons — text
+buttons, toggles, inputs, or any custom control work too. Icon buttons keep the hierarchy
+even; mix in a filled icon button or a tonal text button to emphasize a single action or
+the current selection. For chat- or search-style pills, `ToolbarInput` is a chrome-free
+input that inherits the pill's colors and joins the same keyboard navigation.
+
+<ToolbarTextButtons />
+
+## With a floating action button
+
+A floating toolbar can pair with a FAB for the screen's primary action — a separate,
+elevated surface set 8dp from the pill, like the guidelines' email example: vibrant
+triage actions with a tertiary reply FAB.
+
+<ToolbarWithFab />
+
+## Accessibility
+
+`Toolbar` wraps Base UI's Toolbar: it renders `role="toolbar"` with `aria-orientation`,
+and `ToolbarButton` items form a roving tabindex (one tab stop; arrow keys move between
+actions, wrapping at the ends). Give every toolbar an `aria-label` naming its purpose,
+and every icon-only action its own `aria-label`.

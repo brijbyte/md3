@@ -65,6 +65,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),
   "/components/tabs": mdxRoute(() => import("./pages/tabs/page.mdx")),
   "/components/text-field": mdxRoute(() => import("./pages/text-field/page.mdx")),
+  "/components/toolbar": mdxRoute(() => import("./pages/toolbar/page.mdx")),
   "/components/tooltip": mdxRoute(() => import("./pages/tooltip/page.mdx")),
   "/showcase/team-tasks": {
     Page: React.lazy(() => import("./pages/showcases/team-tasks/index")),

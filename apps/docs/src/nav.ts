@@ -24,6 +24,7 @@ import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
 import TextFieldsIcon from "@brijbyte/md3-icons/outlined/TextFields";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
+import BottomAppBarIcon from "@brijbyte/md3-icons/outlined/BottomAppBar";
 import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
 export type NavItem = {
@@ -223,6 +224,13 @@ export const SECTIONS: NavSection[] = [
         title: "Text field",
         description: "Filled and outlined fields with a floating label, icons, and errors.",
         icon: TextFieldsIcon,
+      },
+      {
+        path: "/components/toolbar",
+        label: "Toolbar",
+        title: "Toolbar",
+        description: "Docked bars and floating pills that keep key actions in reach.",
+        icon: BottomAppBarIcon,
       },
       {
         path: "/components/tooltip",
