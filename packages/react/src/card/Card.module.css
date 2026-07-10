@@ -134,13 +134,13 @@
   }
 
   .media:first-child {
-    border-top-left-radius: var(--md-sys-shape-corner-medium);
-    border-top-right-radius: var(--md-sys-shape-corner-medium);
+    border-start-start-radius: var(--md-sys-shape-corner-medium);
+    border-start-end-radius: var(--md-sys-shape-corner-medium);
   }
 
   .media:last-child {
-    border-bottom-left-radius: var(--md-sys-shape-corner-medium);
-    border-bottom-right-radius: var(--md-sys-shape-corner-medium);
+    border-end-start-radius: var(--md-sys-shape-corner-medium);
+    border-end-end-radius: var(--md-sys-shape-corner-medium);
   }
 
   /* Replaced elements fill the media box edge-to-edge. */

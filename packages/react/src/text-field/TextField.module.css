@@ -54,8 +54,7 @@
   /* Active indicator (filled) */
   .indicator {
     position: absolute;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     bottom: 0;
     height: 1px;
     background: var(--md-sys-color-on-surface-variant);
@@ -194,19 +193,19 @@
   }
 
   .icon[data-position="leading"] + .content {
-    padding-left: 4px;
+    padding-inline-start: 4px;
   }
 
   .icon[data-position="leading"] + .content .label {
-    left: 4px;
+    inset-inline-start: 4px;
   }
 
   .content[data-trailing-icon] {
-    padding-right: 4px;
+    padding-inline-end: 4px;
   }
 
   .content[data-trailing-icon] .label {
-    right: 4px;
+    inset-inline-end: 4px;
   }
 
   /* Block layout (not grid) so the input row's height is never stretched to
@@ -241,9 +240,8 @@
     top: 8px;
     /* Absolute positioning is relative to .content's padding edge, which sits
        outside its own padding — match that padding here so the label lines
-       up with the input text (whose left/right come from the padding). */
-    left: 16px;
-    right: 16px;
+       up with the input text (whose inline edges come from the padding). */
+    inset-inline: 16px;
     max-width: 100%;
     overflow: hidden;
     white-space: nowrap;
@@ -257,6 +255,11 @@
     transition:
       transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-fast-spatial),
       color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* No logical transform-origin keyword exists — mirror it by hand. */
+  .label:dir(rtl) {
+    transform-origin: right top;
   }
 
   .root[data-filled] .label,

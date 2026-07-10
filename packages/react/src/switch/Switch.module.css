@@ -21,7 +21,7 @@
 
     /* Handle geometry, overridden per state below */
     --_handle-size: 16px;
-    --_handle-x: 16px; /* handle center, from track left edge */
+    --_handle-x: 16px; /* handle center, from track start edge */
     --_handle-color: var(--md-sys-color-outline);
     --_state-color: var(--md-sys-color-on-surface);
   }
@@ -74,17 +74,22 @@
     position: absolute;
     top: 50%;
     /* Offset by border width so --_handle-x is relative to the outer track box */
-    left: calc(var(--_handle-x) - 2px);
+    inset-inline-start: calc(var(--_handle-x) - 2px);
     width: var(--_handle-size);
     height: var(--_handle-size);
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--_handle-color);
     transform: translate(-50%, -50%);
     transition:
-      left var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+      inset-inline-start var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
       width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* inset-inline-start measures from the right in RTL, so re-center the other way. */
+  .thumb:dir(rtl) {
+    transform: translate(50%, -50%);
   }
 
   /* 40px hover/focus/pressed state layer centered on the handle */

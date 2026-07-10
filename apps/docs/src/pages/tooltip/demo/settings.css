@@ -29,7 +29,7 @@
 .demo-tooltip-settings-anchor {
   position: absolute;
   bottom: 12px;
-  left: 12px;
+  inset-inline-start: 12px;
   background: var(--md-sys-color-surface);
   box-shadow: var(--md-sys-elevation-level1);
 }

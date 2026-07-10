@@ -35,7 +35,7 @@ html[data-navigating] body::before {
 }
 
 html[data-navigating] body::after {
-  left: 0;
+  inset-inline-start: 0;
   width: 40%;
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--md-sys-color-primary);
@@ -53,15 +53,16 @@ html[data-navigating] body::after {
 }
 
 /* Shiki dual-theme tokens: the compile emits --shiki-light/--shiki-dark per span
-   (defaultColor: false); pick one by [data-theme]. Background stays on our tokens. */
+   (defaultColor: false); light-dark() resolves against the nearest color-scheme
+   (set by the [data-theme] token blocks). Background stays on our tokens. */
 @layer components {
   .shiki span {
-    color: var(--shiki-light);
+    color: light-dark(var(--shiki-light), var(--shiki-dark));
     font-style: var(--shiki-light-font-style, inherit);
   }
 
-  html[data-theme="dark"] .shiki span {
-    color: var(--shiki-dark);
+  /* font-style can't go through light-dark(); nearest-[data-theme] is close enough. */
+  [data-theme="dark"] .shiki span {
     font-style: var(--shiki-dark-font-style, inherit);
   }
 
@@ -213,8 +214,17 @@ html[data-navigating] body::after {
 /* Demo playground isolation: `all: initial` severs every inherited docs style at
    the boundary (and, being unlayered, outranks every layer). Custom properties are
    exempt from `all`, so --md-sys-* tokens flow through and demos follow the theme. */
+/* Theme-overridden playground: paint the overridden scheme's own card color —
+   otherwise dark-theme content sits transparent on the light section (or vice
+   versa). Matches the section's bg token so it reads as the same card. */
+.demo-surface[data-theme] {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0 0;
+}
+
 .demo-surface {
   all: initial;
+  @apply py-5;
   display: flow-root;
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
@@ -223,4 +233,5 @@ html[data-navigating] body::after {
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
   color: var(--md-sys-color-on-surface);
   -webkit-font-smoothing: antialiased;
+  border-end-end-radius: 0;
 }

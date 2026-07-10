@@ -3,6 +3,7 @@ import * as React from "react";
 import CheckIcon from "@brijbyte/md3-icons/outlined/Check";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import { IconButton, type IconButtonSize } from "@brijbyte/md3-react/icon-button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@brijbyte/md3-react/tooltip";
 
 // Copies `text` to the clipboard, flashing a check icon as confirmation.
 export function CopyButton({
@@ -18,18 +19,25 @@ export function CopyButton({
   const timer = React.useRef<number>(undefined);
   React.useEffect(() => () => clearTimeout(timer.current), []);
   return (
-    <IconButton
-      aria-label={copied ? "Copied" : "Copy code"}
-      size={size}
-      className={className}
-      onClick={async () => {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        clearTimeout(timer.current);
-        timer.current = window.setTimeout(() => setCopied(false), 2000);
-      }}
-    >
-      {copied ? <CheckIcon /> : <ContentCopyIcon />}
-    </IconButton>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <IconButton
+            aria-label={copied ? "Copied" : "Copy code"}
+            size={size}
+            className={className}
+            onClick={async () => {
+              await navigator.clipboard.writeText(text);
+              setCopied(true);
+              clearTimeout(timer.current);
+              timer.current = window.setTimeout(() => setCopied(false), 2000);
+            }}
+          >
+            {copied ? <CheckIcon /> : <ContentCopyIcon />}
+          </IconButton>
+        }
+      />
+      <TooltipContent>{copied ? "Copied" : "Copy code"}</TooltipContent>
+    </Tooltip>
   );
 }

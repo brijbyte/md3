@@ -6,7 +6,7 @@
 // Button.module.css) is discovered, with no manual upkeep. tokens.css and
 // ripple.css are excluded: they're global setup a consumer imports once, not
 // per-component.
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,18 +19,23 @@ const IMPORT_RE =
   /(?:import|export)\s[^;]*?from\s+["']([^"']+)["']|import\s*["']([^"']+)["']|import\s*\(\s*["']([^"']+)["']/g;
 
 function componentNames() {
-  return readdirSync(srcDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && e.name !== "ripple" && e.name !== "utils")
-    .filter((e) => existsSync(join(srcDir, e.name, "index.ts")))
-    .map((e) => e.name)
-    .toSorted();
+  return (
+    readdirSync(srcDir, { withFileTypes: true })
+      // ripple/utils/portal are infrastructure, not components with their own css.
+      .filter((e) => e.isDirectory() && !["ripple", "utils", "portal"].includes(e.name))
+      .filter((e) => existsSync(join(srcDir, e.name, "index.ts")))
+      .map((e) => e.name)
+      .toSorted()
+  );
 }
 
 function resolveImport(/** @type {string} */ fromFile, /** @type {string} */ spec) {
   if (!spec.startsWith(".")) return null; // package import, not part of the src graph
   const base = join(dirname(fromFile), spec);
-  for (const candidate of [base, `${base}.ts`, `${base}.tsx`, join(base, "index.ts")]) {
-    if (existsSync(candidate)) return candidate;
+  // Bare `base` last and files only — a directory import ("../portal") must
+  // resolve to its index.ts, never the directory itself.
+  for (const candidate of [`${base}.ts`, `${base}.tsx`, join(base, "index.ts"), base]) {
+    if (existsSync(candidate) && statSync(candidate).isFile()) return candidate;
   }
   return null;
 }

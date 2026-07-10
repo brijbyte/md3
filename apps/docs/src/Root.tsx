@@ -275,7 +275,7 @@ function DocsLayout({
       </div>
 
       {PageToc && (
-        <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pr-6 xl:block">
+        <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pe-6 xl:block">
           {/* The outline rides the page's own chunk; nothing to show meanwhile. */}
           <React.Suspense>
             <PageToc />

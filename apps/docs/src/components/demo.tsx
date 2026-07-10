@@ -9,6 +9,8 @@ import "@brijbyte/md3-react/icon-button/IconButton.module.css";
 
 import * as React from "react";
 import { DemoCodeTabs } from "./DemoCodeTabs";
+import { DemoControlsProvider, DemoSurface } from "./DemoControls";
+import { TooltipProvider } from "@brijbyte/md3-react/tooltip";
 
 // Loader for a demo's Shiki-highlighted sources, passed in by the md3:demos
 // facade (see vite.config.ts); memoized there for stable promise identity.
@@ -44,21 +46,27 @@ function DemoCodeLoader({ code }: { code: ReturnType<DemoCode> }) {
 // Server component rendering a standalone demo: the entry element as children,
 // its code loader as a prop — both supplied by the md3:demos facade, which wraps
 // every demo entry a page imports, so pages never render Demo themselves. The
-// inner .demo-surface div (app.css, unlayered) severs all style inheritance from
-// the docs page while --md-sys-* tokens still flow through, so demos follow the
-// theme toggle.
+// DemoSurface's .demo-surface div (app.css, unlayered) severs all style
+// inheritance from the docs page while --md-sys-* tokens still flow through, so
+// demos follow the theme toggle; DemoControlsProvider lets the code-tab buttons
+// override the surface's theme and text direction per demo (surface only — the
+// code tabs keep following the docs theme).
 export function Demo({ code, children }: { code: DemoCode; children: React.ReactNode }) {
   return (
-    <section className="rounded-large bg-surface-container-low pt-4 my-6">
-      <div className="demo-surface">
-        {/* Center the demo as one block (fit-content, auto margins) so multi-row
-            demos keep their internal left alignment; gap spaces stacked rows. */}
-        {/* px keeps full-width (wrapping) demos off the container's rounded edge. */}
-        <div className="mx-auto flex w-fit max-w-full flex-col gap-4 px-4 py-2">{children}</div>
-      </div>
-      <React.Suspense fallback={<DemoCodeSkeleton />}>
-        <DemoCodeLoader code={code()} />
-      </React.Suspense>
-    </section>
+    <TooltipProvider delay={500}>
+      <DemoControlsProvider>
+        <section className="rounded-large bg-surface-container-low my-6">
+          <DemoSurface>
+            {/* Center the demo as one block (fit-content, auto margins) so multi-row
+              demos keep their internal start alignment; gap spaces stacked rows. */}
+            {/* px keeps full-width (wrapping) demos off the container's rounded edge. */}
+            <div className="mx-auto flex w-fit max-w-full flex-col gap-4 px-4 py-2">{children}</div>
+          </DemoSurface>
+          <React.Suspense fallback={<DemoCodeSkeleton />}>
+            <DemoCodeLoader code={code()} />
+          </React.Suspense>
+        </section>
+      </DemoControlsProvider>
+    </TooltipProvider>
   );
 }

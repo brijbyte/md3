@@ -15,6 +15,8 @@ export interface SnackbarProviderProps {
   timeout?: number;
   /** Icon for the close button (e.g. `@brijbyte/md3-icons/outlined/Close`), 24dp. */
   closeIcon?: React.ReactNode;
+  /** Portal container. @default document.body */
+  container?: Toast.Portal.Props["container"];
 }
 
 const SnackbarCloseIconContext = React.createContext<React.ReactNode>("×");
@@ -23,11 +25,11 @@ const SnackbarCloseIconContext = React.createContext<React.ReactNode>("×");
 // unlike a generic toast stack this renders the current toast directly —
 // no --toast-index/peek/scale stacking transform is needed.
 export function SnackbarProvider(props: SnackbarProviderProps) {
-  const { children, limit = 1, timeout = 4000, closeIcon } = props;
+  const { children, limit = 1, timeout = 4000, closeIcon, container } = props;
   return (
     <Toast.Provider limit={limit} timeout={timeout}>
       {children}
-      <Toast.Portal>
+      <Toast.Portal container={container}>
         <Toast.Viewport className={styles.viewport}>
           <SnackbarCloseIconContext.Provider value={closeIcon ?? "×"}>
             <SnackbarList />

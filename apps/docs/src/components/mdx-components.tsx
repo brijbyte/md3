@@ -59,8 +59,8 @@ export const MDX_COMPONENTS: Record<string, React.ElementType> = {
   h3: heading("h3", "title-large", "mt-8 mb-2 scroll-mt-6"),
   p: (props: Props<"p">) => <Typography className="my-4" {...props} />,
   a: (props: Props<"a">) => <a className="text-primary underline" {...props} />,
-  ul: (props: Props<"ul">) => <ul className="my-4 list-disc space-y-1 pl-6" {...props} />,
-  ol: (props: Props<"ol">) => <ol className="my-4 list-decimal space-y-1 pl-6" {...props} />,
+  ul: (props: Props<"ul">) => <ul className="my-4 list-disc space-y-1 ps-6" {...props} />,
+  ol: (props: Props<"ol">) => <ol className="my-4 list-decimal space-y-1 ps-6" {...props} />,
   blockquote: ({
     "data-alert": alert,
     children,
@@ -70,7 +70,7 @@ export const MDX_COMPONENTS: Record<string, React.ElementType> = {
       <Callout variant={alert}>{children}</Callout>
     ) : (
       <blockquote
-        className="my-4 border-l-4 border-primary pl-4 text-on-surface-variant"
+        className="my-4 border-s-4 border-primary ps-4 text-on-surface-variant"
         {...props}
       >
         {children}
@@ -100,7 +100,7 @@ export const MDX_COMPONENTS: Record<string, React.ElementType> = {
     <Typography
       as="th"
       variant="label-large"
-      className="border-b border-outline-variant px-3 py-2 text-left"
+      className="border-b border-outline-variant px-3 py-2 text-start"
       {...props}
     />
   ),

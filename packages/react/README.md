@@ -122,6 +122,22 @@ import { Checkbox } from "@brijbyte/md3-react/checkbox";
 
 Dark mode: set `data-theme="dark"` on `<html>` (falls back to
 `prefers-color-scheme` when unset; force light with `data-theme="light"`).
+`data-theme` also works on any element to pin a scheme for just that subtree.
+
+Scoped themes and popups: popup content (Menu, Dialog, the sheets, tooltips,
+Snackbar) portals to `document.body`, so it follows the document-level theme
+and direction — not those of a `data-theme`/`dir`-scoped subtree its trigger
+happens to sit in. To keep a popup inside such a subtree, pass that element to
+the content component's `container` prop (forwarded to Base UI's `Portal`):
+
+```tsx
+<div ref={scopeRef} data-theme="dark" dir="rtl">
+  <Menu>
+    <MenuTrigger>Open</MenuTrigger>
+    <MenuContent container={scopeRef}>…</MenuContent>
+  </Menu>
+</div>
+```
 
 Customization: override CSS custom properties (`--md-sys-color-primary`, …) or
 target the stable class names (`.md3-button-root`) and data attributes

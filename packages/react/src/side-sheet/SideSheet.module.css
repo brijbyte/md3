@@ -68,34 +68,42 @@
     box-shadow: none;
   }
 
+  /* Anchors resolve logically (the viewport places them with flex-start/end), so the
+     content-facing edge — rounded corners, standard divider — is an inline edge too.
+     The offscreen slide offset is physical (translateX), so :dir(rtl) flips its sign. */
   .popup[data-anchor="right"] {
-    border-radius: var(--md-sys-shape-corner-large) 0 0 var(--md-sys-shape-corner-large);
+    border-start-start-radius: var(--md-sys-shape-corner-large);
+    border-end-start-radius: var(--md-sys-shape-corner-large);
+    --_offscreen-x: 100%;
   }
 
   .popup[data-variant="standard"][data-anchor="right"] {
     border-radius: 0;
-    border-left: 1px solid var(--md-sys-color-outline);
+    border-inline-start: 1px solid var(--md-sys-color-outline);
   }
 
   .popup[data-anchor="left"] {
-    border-radius: 0 var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0;
+    border-start-end-radius: var(--md-sys-shape-corner-large);
+    border-end-end-radius: var(--md-sys-shape-corner-large);
+    --_offscreen-x: -100%;
   }
 
   .popup[data-variant="standard"][data-anchor="left"] {
     border-radius: 0;
-    border-right: 1px solid var(--md-sys-color-outline);
+    border-inline-end: 1px solid var(--md-sys-color-outline);
   }
 
-  .popup[data-anchor="right"][data-starting-style],
-  .popup[data-anchor="right"][data-ending-style] {
-    transform: translateX(calc(100% + var(--drawer-swipe-movement-x, 0px)));
-    transition: transform var(--md-sys-motion-duration-short4)
-      var(--md-sys-motion-easing-emphasized-accelerate);
+  .popup:dir(rtl)[data-anchor="right"] {
+    --_offscreen-x: -100%;
   }
 
-  .popup[data-anchor="left"][data-starting-style],
-  .popup[data-anchor="left"][data-ending-style] {
-    transform: translateX(calc(-100% + var(--drawer-swipe-movement-x, 0px)));
+  .popup:dir(rtl)[data-anchor="left"] {
+    --_offscreen-x: 100%;
+  }
+
+  .popup[data-starting-style],
+  .popup[data-ending-style] {
+    transform: translateX(calc(var(--_offscreen-x) + var(--drawer-swipe-movement-x, 0px)));
     transition: transform var(--md-sys-motion-duration-short4)
       var(--md-sys-motion-easing-emphasized-accelerate);
   }

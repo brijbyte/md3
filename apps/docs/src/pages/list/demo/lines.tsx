@@ -8,13 +8,13 @@ import ChevronRightIcon from "@brijbyte/md3-icons/outlined/ChevronRight";
 export default function ListLinesDemo() {
   return (
     <List className="demo-list">
-      <ListItem leading={<FolderIcon />} trailingSupportingText="24">
+      <ListItem leading={<FolderIcon className="rtl:rotate-180" />} trailingSupportingText="24">
         Documents
       </ListItem>
       <ListItem
         leading={<ImageIcon />}
         supportingText="Edited 2 days ago"
-        trailing={<ChevronRightIcon />}
+        trailing={<ChevronRightIcon className="rtl:rotate-180" />}
       >
         Photos
       </ListItem>
@@ -23,7 +23,7 @@ export default function ListLinesDemo() {
         overline="SHARED"
         supportingText="Long-press an item to change who can see it and edit it."
         lines={3}
-        trailing={<ChevronRightIcon />}
+        trailing={<ChevronRightIcon className="rtl:rotate-180" />}
       >
         Team drive
       </ListItem>

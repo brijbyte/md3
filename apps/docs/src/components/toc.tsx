@@ -25,7 +25,7 @@ function TocList({ items }: { items: TocItem[] }) {
             {item.text}
           </Typography>
           {children.length > 0 && (
-            <div className="border-l border-outline-variant pl-3">
+            <div className="border-s border-outline-variant ps-3">
               <TocList items={children} />
             </div>
           )}

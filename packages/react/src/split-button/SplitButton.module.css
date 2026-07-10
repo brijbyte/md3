@@ -116,6 +116,11 @@
     transition: transform 200ms var(--md-sys-motion-easing-fast-spatial);
   }
 
+  /* The optical offset is an LTR px value — mirror it in RTL. */
+  .root .menuIcon:dir(rtl) {
+    transform: translateX(calc(-1 * var(--_menu-icon-offset)));
+  }
+
   .root .trailing:is([aria-expanded="true"], [data-popup-open]) .menuIcon {
     transform: translateX(0) rotate(180deg);
   }

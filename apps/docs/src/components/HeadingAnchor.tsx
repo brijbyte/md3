@@ -13,7 +13,7 @@ export function HeadingAnchor({ id }: { id: string }) {
     <a
       href={`#${id}`}
       aria-label={copied ? "Link copied" : "Copy link to section"}
-      className="ml-2 inline-flex align-middle text-xl text-on-surface-variant opacity-0 transition-opacity hover:text-primary focus-visible:opacity-100 group-hover:opacity-100"
+      className="ms-2 inline-flex align-middle text-xl text-on-surface-variant opacity-0 transition-opacity hover:text-primary focus-visible:opacity-100 group-hover:opacity-100"
       onClick={async (event) => {
         event.preventDefault(); // copy only — don't scroll/jump to the hash
         await navigator.clipboard.writeText(new URL(`#${id}`, window.location.href).href);

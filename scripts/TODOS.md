@@ -21,6 +21,14 @@
       `Role.RadioButton`/`Role.Checkbox`), roving tabindex, arrow-key nav, and real
       `aria-selected`/`aria-checked`. Bigger a11y feature than the row-level component; build
       when a selectable-list use case lands.
+- [ ] Revisit theming/direction for portalled popup content (Menu, Dialog, sheets,
+      tooltips, Snackbar): popups portal to document.body per Base UI, so a
+      `data-theme`/`dir` scoped on a subtree doesn't reach them — today the consumer
+      must pass the scope element via the content component's `container` prop
+      (documented in packages/react/README.md). A context-provided default container
+      (`PortalContainerProvider`) was tried and reverted (2026-07, see git history) in
+      favor of keeping Base UI's real portal; find a way to propagate the attributes
+      to the portal without hijacking its container.
 - [ ] CircularProgress wavy variant still not right despite two rounds of fixes (baked
       circle/star morph rotational alignment, then the missing `%` unit on the determinate
       wave-phase `stroke-dashoffset` compensation — see git history on CircularProgress.tsx /

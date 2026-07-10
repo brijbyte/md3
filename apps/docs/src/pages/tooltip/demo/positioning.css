@@ -27,20 +27,20 @@
 
 .demo-tooltip-positioning-anchor--top-left {
   top: 16px;
-  left: 16px;
+  inset-inline-start: 16px;
 }
 
 .demo-tooltip-positioning-anchor--top-right {
   top: 16px;
-  right: 16px;
+  inset-inline-end: 16px;
 }
 
 .demo-tooltip-positioning-anchor--bottom-left {
   bottom: 16px;
-  left: 16px;
+  inset-inline-start: 16px;
 }
 
 .demo-tooltip-positioning-anchor--bottom-right {
   bottom: 16px;
-  right: 16px;
+  inset-inline-end: 16px;
 }

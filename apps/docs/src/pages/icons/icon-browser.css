@@ -41,7 +41,7 @@
 
 .icon-browser-chip-label {
   color: var(--md-sys-color-on-surface-variant);
-  margin-right: 4px;
+  margin-inline-end: 4px;
 }
 
 .icon-browser-count {
@@ -57,11 +57,11 @@
   padding: 0 24px 32px;
 }
 
-/* Close button pinned to the top-right corner, level with the drag handle. */
+/* Close button pinned to the top trailing corner, level with the drag handle. */
 .icon-browser-detail-close {
   position: absolute;
   top: 8px;
-  right: 12px;
+  inset-inline-end: 12px;
   z-index: 1;
 }
 
@@ -174,7 +174,7 @@
 .icon-grid-row {
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   width: 100%;
   display: grid;
   gap: 4px;
