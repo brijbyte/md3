@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Field } from "@base-ui/react/field";
+import { Input } from "@base-ui/react/input";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./TextField.module.css";
 
@@ -70,10 +71,9 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       ...rest
     } = props;
     // `rows` only applies to the textarea Field.Control swaps to via `render`
-    // when multiline — FieldControlProps is typed for <input> and has no
-    // `rows`, so merge it in loosely rather than fighting the element union.
-    const controlProps: Record<string, unknown> = { ...rest };
-    if (multiline) controlProps.rows = rows;
+    // — FieldControlProps is typed for <input> and has no `rows`, so merge
+    // it in loosely rather than fighting the element union.
+    const textareaProps: Record<string, unknown> = { ...rest, rows };
 
     return (
       <Field.Root
@@ -98,12 +98,20 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
             {label ? <Field.Label className={styles.label}>{label}</Field.Label> : null}
             <div className={styles.inputRow}>
               {prefix ? <span className={styles.affix}>{prefix}</span> : null}
-              <Field.Control
-                ref={ref as React.Ref<HTMLElement>}
-                className={styles.input}
-                render={multiline ? <textarea /> : undefined}
-                {...(controlProps as Field.Control.Props)}
-              />
+              {multiline ? (
+                <Field.Control
+                  ref={ref as React.Ref<HTMLElement>}
+                  className={styles.input}
+                  render={<textarea />}
+                  {...(textareaProps as Field.Control.Props)}
+                />
+              ) : (
+                <Input
+                  ref={ref as React.Ref<HTMLInputElement>}
+                  className={styles.input}
+                  {...rest}
+                />
+              )}
               {suffix ? <span className={styles.affix}>{suffix}</span> : null}
             </div>
           </div>
