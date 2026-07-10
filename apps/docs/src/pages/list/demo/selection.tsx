@@ -18,21 +18,21 @@ export default function ListSelectionDemo() {
         </Typography>
         <List className="demo-list">
           <ListItem
-            component="label"
+            as="label"
             supportingText="Get notified about mentions"
             trailing={<Switch defaultChecked aria-label="Mentions" />}
           >
             Mentions
           </ListItem>
           <ListItem
-            component="label"
+            as="label"
             supportingText="Play a sound on new messages"
             trailing={<Switch aria-label="Sounds" />}
           >
             Sounds
           </ListItem>
           <ListItem
-            component="label"
+            as="label"
             supportingText="Use the dark color scheme"
             trailing={<Switch defaultChecked aria-label="Dark theme" />}
           >
@@ -47,15 +47,15 @@ export default function ListSelectionDemo() {
         </Typography>
         <List className="demo-list">
           <ListItem
-            component="label"
+            as="label"
             leading={<Checkbox defaultChecked aria-label="Draft the postmortem" />}
           >
             Draft the incident postmortem
           </ListItem>
-          <ListItem component="label" leading={<Checkbox aria-label="Review the export PR" />}>
+          <ListItem as="label" leading={<Checkbox aria-label="Review the export PR" />}>
             Review the export PR
           </ListItem>
-          <ListItem component="label" leading={<Checkbox aria-label="Cut the release candidate" />}>
+          <ListItem as="label" leading={<Checkbox aria-label="Cut the release candidate" />}>
             Cut the release candidate
           </ListItem>
         </List>
@@ -68,21 +68,21 @@ export default function ListSelectionDemo() {
         <RadioGroup defaultValue="standard">
           <List className="demo-list">
             <ListItem
-              component="label"
+              as="label"
               supportingText="Arrives in 5–7 days"
               trailing={<Radio value="standard" aria-label="Standard shipping" />}
             >
               Standard shipping
             </ListItem>
             <ListItem
-              component="label"
+              as="label"
               supportingText="Arrives in 2 days"
               trailing={<Radio value="express" aria-label="Express shipping" />}
             >
               Express shipping
             </ListItem>
             <ListItem
-              component="label"
+              as="label"
               supportingText="Arrives tomorrow"
               trailing={<Radio value="overnight" aria-label="Overnight shipping" />}
             >

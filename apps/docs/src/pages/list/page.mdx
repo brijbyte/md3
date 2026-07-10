@@ -39,7 +39,10 @@ themselves. Separate rows or groups with a [Divider](/components/divider).
 
 Pass `onClick` or `href` (or set `interactive`) to make a row respond to pointer, keyboard,
 and focus: it renders as a `<button>` or `<a>` inside its `<li>`, gains the MD3 state layer
-and ripple, and shows the focus ring. `selected` tints the row with the
+and ripple, and shows the focus ring. For client-side routing, pass your router's link
+component via the `as` prop — `<ListItem as={Link} to="/inbox">` — and the row renders it
+(still wrapped in its `<li>`), implying `interactive`; props follow the component, so `to`
+is type-checked. `selected` tints the row with the
 secondary-container color for single-select lists (settings panes, navigation), and
 `disabled` dims it to 38% and drops the interactions.
 
@@ -50,7 +53,7 @@ secondary-container color for single-select lists (settings panes, navigation), 
 Put a [Checkbox](/components/checkbox), [Switch](/components/switch), or
 [Radio](/components/radio) in the `leading` or `trailing` slot to make rows selectable —
 checkboxes for multi-select, switches for settings, radios for a single choice. Set
-`component="label"` so a click anywhere on the row activates that control: the row becomes a
+`as="label"` so a click anywhere on the row activates that control: the row becomes a
 `<label>` and the control stays the one focusable, keyboard-operable element — no nested
 buttons, no extra JS.
 
