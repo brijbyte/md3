@@ -84,17 +84,17 @@ export const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgres
           viewBox={`0 0 ${size} ${size}`}
           aria-hidden="true"
         >
-          {!indeterminate && (
-            <circle
-              className={styles.track}
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              pathLength={100}
-              strokeDasharray={`${trackLength} ${100 - trackLength}`}
-              strokeDashoffset={trackOffset}
-            />
-          )}
+          {/* Indeterminate dash values live in CSS (driven by --_sweep/--_gap). */}
+          <circle
+            className={styles.track}
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            pathLength={100}
+            strokeDasharray={indeterminate ? undefined : `${trackLength} ${100 - trackLength}`}
+            strokeDashoffset={indeterminate ? undefined : trackOffset}
+            style={indeterminate ? ({ "--_gap": gapPercent } as React.CSSProperties) : undefined}
+          />
           {wavy ? (
             <path
               className={mergeClassName(styles.indicator, styles.indicatorWavy) as string}

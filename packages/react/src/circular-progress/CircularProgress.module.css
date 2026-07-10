@@ -69,6 +69,13 @@
   transition: none;
 }
 
+.svgIndeterminate .track {
+  stroke-dasharray: calc(100 - var(--_sweep) - 2 * var(--_gap))
+    calc(var(--_sweep) + 2 * var(--_gap));
+  stroke-dashoffset: calc(-1 * (var(--_sweep) + var(--_gap)));
+  transition: none;
+}
+
 /* Wave motion: the star repeats every 360/numVertices degrees, so sampling a
    different rotation phase reads as crests sliding along the ring. Countering
    with the same shift in stroke-dashoffset keeps the visible arc's start/end
