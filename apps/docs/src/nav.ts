@@ -164,8 +164,8 @@ export const SECTIONS: NavSection[] = [
       },
       {
         path: "/components/loading-indicator",
-        label: "Loading indicator",
-        title: "Loading indicator",
+        label: "Loading Indicator",
+        title: "Loading Indicator",
         description: "A shape-morphing spinner straight out of Compose — no spinning arc here.",
         icon: ProgressActivityIcon,
       },

@@ -2,7 +2,7 @@
   "name": "md3-demos-loading-indicator",
   "version": "0.0.0",
   "private": true,
-  "description": "Loading indicator",
+  "description": "Loading Indicator",
   "type": "module",
   "dependencies": {
     "@brijbyte/md3-react": "latest"
