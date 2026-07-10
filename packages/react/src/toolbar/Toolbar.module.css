@@ -6,16 +6,17 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    /* DockedToolbar ContainerMinSpacing / FloatingToolbar ContainerBetweenSpace = 4dp
-       (docked allows up to 32dp; override for wider fixed arrangements). */
+    /* DockedToolbar ContainerMinSpacing = 4dp (docked allows up to 32dp;
+       override for wider fixed arrangements). Floating overrides below. */
     gap: var(--md3-comp-toolbar-gap, 4px);
     background: var(--md-sys-color-surface-container);
     color: var(--md-sys-color-on-surface);
   }
 
-  /* Packed items: keep each child's 48dp touch target from bleeding over
-     neighbors (same containment as ButtonGroup). */
-  .root > * {
+  /* Docked packs items as close as 4px: keep each child's 48dp touch target
+     from bleeding over neighbors (same containment as ButtonGroup). Floating's
+     8px gap lets full 48px targets tile flush, so no containment there. */
+  .root[data-variant="docked"] > * {
     --md3-touch-target-width: 100%;
   }
 
@@ -27,12 +28,15 @@
     justify-content: space-between;
   }
 
-  /* Floating: content-hugging pill, 8dp padding all sides; 64dp cross-axis
-     minimum so 40dp items still yield the spec container size. */
+  /* Floating: content-hugging pill. Compose pads 8dp around 48dp touch boxes;
+     our touch targets are non-layout pseudos, so the visual equivalent around
+     40dp buttons is 12px padding + 8px gap — keeping the pill corner (32px)
+     concentric with the buttons' circles (20px + 12px). */
   .root[data-variant="floating"] {
     width: fit-content;
     min-height: 64px;
-    padding: 8px;
+    padding: 12px;
+    gap: var(--md3-comp-toolbar-gap, 8px);
     justify-content: center;
     border-radius: var(--md-sys-shape-corner-full);
   }
