@@ -1,7 +1,5 @@
 "use client";
 
-import "./team-tasks.css";
-
 import * as React from "react";
 import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
 import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
@@ -16,6 +14,7 @@ import { BoardPanel } from "./BoardPanel";
 import { InsightsPanel } from "./InsightsPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { INITIAL_TASKS, Task } from "./types";
+import shared from "./team-tasks.module.css";
 
 function ShowcaseTeamTasksInner() {
   const [tasks, setTasks] = React.useState(INITIAL_TASKS);
@@ -62,7 +61,7 @@ function ShowcaseTeamTasksInner() {
       <AppHeader />
 
       <Tabs defaultValue="board">
-        <TabList aria-label="Team Tasks" className="team-tasks-tablist">
+        <TabList aria-label="Team Tasks" className={shared.tablist}>
           <Tab value="board" icon={<ChecklistIcon />}>
             Board
           </Tab>
@@ -73,13 +72,13 @@ function ShowcaseTeamTasksInner() {
             Settings
           </Tab>
         </TabList>
-        <TabPanel value="board" className="team-tasks-panel" tabIndex={-1}>
+        <TabPanel value="board" className={shared.panel} tabIndex={-1}>
           <BoardPanel tasks={tasks} toggleTask={toggleTask} />
         </TabPanel>
-        <TabPanel value="insights" className="team-tasks-panel" tabIndex={-1}>
+        <TabPanel value="insights" className={shared.panel} tabIndex={-1}>
           <InsightsPanel />
         </TabPanel>
-        <TabPanel value="settings" className="team-tasks-panel" tabIndex={-1}>
+        <TabPanel value="settings" className={shared.panel} tabIndex={-1}>
           <SettingsPanel />
         </TabPanel>
       </Tabs>

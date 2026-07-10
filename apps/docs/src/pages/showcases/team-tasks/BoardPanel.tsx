@@ -22,30 +22,32 @@ import DeleteIcon from "@brijbyte/md3-icons/outlined/Delete";
 import { useAddTask } from "./AddTaskDialog";
 import { PriorityChip } from "./PriorityChip";
 import { type Priority, type Task } from "./types";
+import shared from "./team-tasks.module.css";
+import styles from "./BoardPanel.module.css";
 
 function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => void }) {
   return (
-    <li className="team-tasks-row">
+    <li className={styles.row}>
       <Checkbox
-        className="team-tasks-checkbox"
+        className={styles.checkbox}
         checked={task.done}
         onCheckedChange={() => onToggle(task.id)}
         aria-label={`Mark "${task.title}" as done`}
       />
       <BottomSheet>
-        <BottomSheetTrigger render={<button type="button" className="team-tasks-row-main" />}>
-          <Typography variant="body-large" className={task.done ? "team-tasks-done" : ""}>
+        <BottomSheetTrigger render={<button type="button" className={styles.rowMain} />}>
+          <Typography variant="body-large" className={task.done ? styles.done : ""}>
             {task.title}
           </Typography>
-          <Typography variant="body-small" className="team-tasks-row-detail team-tasks-muted">
+          <Typography variant="body-small" className={`${styles.rowDetail} ${shared.muted}`}>
             {task.detail}
           </Typography>
         </BottomSheetTrigger>
-        <BottomSheetContent className="team-tasks-sheet">
-          <div className="team-tasks-sheet-head">
+        <BottomSheetContent className={styles.sheet}>
+          <div className={styles.sheetHead}>
             {/* This is app UI, not a doc page — Roboto (plain) over title-large's brand default. */}
             <BottomSheetTitle
-              render={<Typography variant="title-large" className="team-tasks-plain" />}
+              render={<Typography variant="title-large" className={shared.plain} />}
             >
               {task.title}
             </BottomSheetTitle>
@@ -53,14 +55,14 @@ function TaskRow({ task, onToggle }: { task: Task; onToggle: (id: string) => voi
               <CloseIcon />
             </BottomSheetClose>
           </div>
-          <Typography variant="body-medium" className="team-tasks-muted">
+          <Typography variant="body-medium" className={shared.muted}>
             {task.detail}
           </Typography>
-          <div className="team-tasks-sheet-meta">
+          <div className={styles.sheetMeta}>
             <PriorityChip priority={task.priority} />
             <AssistChip icon={<CalendarTodayIcon />}>Due this week</AssistChip>
           </div>
-          <div className="team-tasks-sheet-actions">
+          <div className={styles.sheetActions}>
             <BottomSheetClose render={<IconButton aria-label="Delete task" variant="standard" />}>
               <DeleteIcon />
             </BottomSheetClose>
@@ -96,8 +98,8 @@ export function BoardPanel({
   );
 
   return (
-    <div className="team-tasks-board">
-      <div className="team-tasks-filters">
+    <div className={styles.board}>
+      <div className={styles.filters}>
         <FilterChip
           pressed={activeFilters.has("high")}
           onPressedChange={(pressed) => togglePriorityFilter("high", pressed)}
@@ -118,13 +120,13 @@ export function BoardPanel({
         </FilterChip>
       </div>
 
-      <ul className="team-tasks-list">
+      <ul className={styles.list}>
         {visible.map((task) => (
           <TaskRow key={task.id} task={task} onToggle={toggleTask} />
         ))}
         {visible.length === 0 && (
-          <li className="team-tasks-empty">
-            <Typography variant="body-medium" className="team-tasks-muted">
+          <li className={styles.empty}>
+            <Typography variant="body-medium" className={shared.muted}>
               No tasks at this priority.
             </Typography>
           </li>
@@ -135,7 +137,7 @@ export function BoardPanel({
         aria-label="Add task"
         icon={<AddIcon />}
         onClick={() => requestOpen("fab")}
-        className={`team-tasks-fab ${morphClassName("fab")}`}
+        className={`${styles.fab} ${morphClassName("fab")}`}
       />
     </div>
   );

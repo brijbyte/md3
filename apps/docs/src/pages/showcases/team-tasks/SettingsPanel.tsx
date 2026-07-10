@@ -3,23 +3,25 @@ import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
 import { Switch } from "@brijbyte/md3-react/switch";
 import { Typography } from "@brijbyte/md3-react/typography";
 
+import styles from "./SettingsPanel.module.css";
+
 export function SettingsPanel() {
   return (
-    <div className="team-tasks-settings">
+    <div className={styles.settings}>
       <div>
-        <Typography variant="title-medium" className="team-tasks-section-title">
+        <Typography variant="title-medium" className={styles.sectionTitle}>
           Notifications
         </Typography>
-        <RadioGroup defaultValue="instant" className="team-tasks-radio-group">
-          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
+        <RadioGroup defaultValue="instant" className={styles.radioGroup}>
+          <Typography as="label" variant="body-large" className={styles.radioLabel}>
             <Radio value="instant" />
             Instant — notify me the moment something changes
           </Typography>
-          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
+          <Typography as="label" variant="body-large" className={styles.radioLabel}>
             <Radio value="daily" />
             Daily digest
           </Typography>
-          <Typography as="label" variant="body-large" className="team-tasks-radio-label">
+          <Typography as="label" variant="body-large" className={styles.radioLabel}>
             <Radio value="weekly" />
             Weekly digest
           </Typography>
@@ -27,19 +29,19 @@ export function SettingsPanel() {
       </div>
       <Divider inset />
       <div>
-        <Typography variant="title-medium" className="team-tasks-section-title">
+        <Typography variant="title-medium" className={styles.sectionTitle}>
           Preferences
         </Typography>
-        <div className="team-tasks-pref-list">
-          <label className="team-tasks-pref-row">
+        <div className={styles.prefList}>
+          <label className={styles.prefRow}>
             <Typography variant="body-large">Auto-assign reviewers</Typography>
             <Switch defaultChecked />
           </label>
-          <label className="team-tasks-pref-row">
+          <label className={styles.prefRow}>
             <Typography variant="body-large">Sync theme across devices</Typography>
             <Switch defaultChecked />
           </label>
-          <label className="team-tasks-pref-row">
+          <label className={styles.prefRow}>
             <Typography variant="body-large">Email digest</Typography>
             <Switch />
           </label>

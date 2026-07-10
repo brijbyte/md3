@@ -1,0 +1,29 @@
+/* ── Showcase shared styles ─────────────────────────────────────────────────
+   Token-based CSS module shared across the showcase's components. Mobile
+   first; `sm` = 640px. Unlayered so rules win over library @layer + Tailwind base. */
+
+/* Shared helpers. */
+.muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.plain {
+  font-family: var(--md-ref-typeface-plain);
+}
+.display {
+  font-family: var(--md-ref-typeface-plain);
+  font-weight: 700;
+}
+.fill {
+  flex: 1;
+}
+
+/* Tabs. */
+.tablist {
+  position: sticky;
+  top: 0;
+  z-index: var(--md-ref-z-index-docked);
+  background: var(--md-sys-color-surface);
+}
+.panel {
+  padding-top: 24px;
+}

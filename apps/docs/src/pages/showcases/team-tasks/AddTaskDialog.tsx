@@ -15,6 +15,7 @@ import { TextField } from "@brijbyte/md3-react/text-field";
 import { Typography } from "@brijbyte/md3-react/typography";
 
 import { PRIORITY_LABEL, type Priority, type Task } from "./types";
+import styles from "./AddTaskDialog.module.css";
 
 const PRIORITIES: Priority[] = ["high", "medium", "low"];
 
@@ -95,7 +96,7 @@ export function AddTaskProvider({
   // Only the active source carries the name, and only while closed — once open the
   // dialog owns it, so no two elements ever hold the same name at once.
   const morphClassName = React.useCallback(
-    (s: MorphSource) => (!open && source === s ? "team-tasks-morph-source" : ""),
+    (s: MorphSource) => (!open && source === s ? styles.morphSource : ""),
     [open, source],
   );
 
@@ -108,16 +109,16 @@ export function AddTaskProvider({
     <AddTaskContext.Provider value={context}>
       {children}
       <Dialog open={open} onOpenChange={setOpenWithMorph}>
-        <DialogContent className="team-tasks-add-morph team-tasks-dialog">
+        <DialogContent className={`${styles.addMorph} ${styles.dialog}`}>
           <DialogHeadline>New task</DialogHeadline>
-          <form className="team-tasks-dialog-form" onSubmit={handleSubmit}>
+          <form className={styles.dialogForm} onSubmit={handleSubmit}>
             <TextField name="title" label="Title" variant="outlined" required />
             <TextField name="detail" label="Detail" variant="outlined" multiline rows={2} />
             <div>
-              <Typography variant="label-large" as="p" className="team-tasks-field-label">
+              <Typography variant="label-large" as="p" className={styles.fieldLabel}>
                 Priority
               </Typography>
-              <div className="team-tasks-chip-row">
+              <div className={styles.chipRow}>
                 {PRIORITIES.map((p) => (
                   <FilterChip
                     key={p}

@@ -17,6 +17,8 @@ import TaskAltIcon from "@brijbyte/md3-icons/outlined/TaskAlt";
 import TuneIcon from "@brijbyte/md3-icons/outlined/Tune";
 
 import { useAddTask } from "./AddTaskDialog";
+import shared from "./team-tasks.module.css";
+import styles from "./AppHeader.module.css";
 
 const NOTIFICATIONS = [
   {
@@ -45,22 +47,22 @@ const NOTIFICATIONS = [
 export function AppHeader() {
   const { requestOpen, morphClassName } = useAddTask();
   return (
-    <header className="team-tasks-header">
-      <div className="team-tasks-header-titles">
+    <header className={styles.header}>
+      <div className={styles.headerTitles}>
         {/* This is app UI, not a doc page — Roboto (plain) over display-small's brand default. */}
-        <Typography as="h1" variant="display-small" className="team-tasks-display">
+        <Typography as="h1" variant="display-small" className={shared.display}>
           Team Tasks
         </Typography>
-        <Typography variant="title-medium" className="team-tasks-subtitle team-tasks-muted">
+        <Typography variant="title-medium" className={`${styles.subtitle} ${shared.muted}`}>
           Everything the Atlas squad is working on this sprint.
         </Typography>
       </div>
-      <div className="team-tasks-actions">
+      <div className={styles.actions}>
         <Popover.Root>
           <Popover.Trigger render={<IconButton aria-label="Notifications" />}>
-            <span className="team-tasks-notif">
+            <span className={styles.notif}>
               <NotificationsIcon />
-              <Badge className="team-tasks-notif-badge">3</Badge>
+              <Badge className={styles.notifBadge}>3</Badge>
             </span>
           </Popover.Trigger>
           <Popover.Portal>
@@ -68,12 +70,12 @@ export function AppHeader() {
               side="bottom"
               align="end"
               sideOffset={8}
-              className="team-tasks-notif-positioner"
+              className={styles.notifPositioner}
             >
-              <Popover.Popup className="team-tasks-notif-popup">
+              <Popover.Popup className={styles.notifPopup}>
                 <Typography
                   variant="title-small"
-                  className="team-tasks-notif-popup-title team-tasks-muted"
+                  className={`${styles.notifPopupTitle} ${shared.muted}`}
                 >
                   Notifications
                 </Typography>
@@ -106,7 +108,7 @@ export function AppHeader() {
           </MenuContent>
         </Menu>
 
-        <SplitButton className="team-tasks-new">
+        <SplitButton className={styles.newTask}>
           <SplitButtonAction
             icon={<AddIcon />}
             onClick={() => requestOpen("header")}
