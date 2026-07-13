@@ -1,0 +1,251 @@
+/* ── Funky ───────────────────────────────────────────────────────────────────
+   A demo theme for @brijbyte/md3-react showing both public styling surfaces:
+
+   1. Design tokens (--md-sys-*): redefine them on a scope element and every
+      component inside re-skins itself — colors, shape, type.
+   2. Stable class names (.md3-<component>-<part>): the library ships all its
+      CSS in @layer components, so plain unlayered rules like these always win.
+      No specificity tricks, no !important.
+
+   Scope: everything is keyed off a `.funky` class. Put it on <html>/<body> to
+   theme an app; here it sits on the showcase stage so it can be toggled.
+   Portalled surfaces (dialogs, menus, snackbars) render outside the stage, so
+   they re-apply the class on the popup itself — hence the `.funky.md3-*`
+   variants below. */
+
+/* ── 1. Tokens ── palette ─────────────────────────────────────────────────── */
+
+.funky {
+  --md-sys-color-primary: #ff3d8d;
+  --md-sys-color-on-primary: #211136;
+  --md-sys-color-primary-container: #ffb1d3;
+  --md-sys-color-on-primary-container: #211136;
+  --md-sys-color-secondary: #6f2bd6;
+  --md-sys-color-on-secondary: #fff5e6;
+  --md-sys-color-secondary-container: #e5d4ff;
+  --md-sys-color-on-secondary-container: #2a0a55;
+  --md-sys-color-tertiary: #4f7d00;
+  --md-sys-color-on-tertiary: #fff5e6;
+  --md-sys-color-tertiary-container: #cdf548;
+  --md-sys-color-on-tertiary-container: #1d2b00;
+  --md-sys-color-error: #e3032f;
+  --md-sys-color-on-error: #fff5e6;
+  --md-sys-color-error-container: #ffcfc9;
+  --md-sys-color-on-error-container: #3d0008;
+  --md-sys-color-background: #fdf2df;
+  --md-sys-color-on-background: #211136;
+  --md-sys-color-surface: #fdf2df;
+  --md-sys-color-on-surface: #211136;
+  --md-sys-color-surface-dim: #f2e2c4;
+  --md-sys-color-surface-bright: #fff9ec;
+  --md-sys-color-surface-container-lowest: #fffaf0;
+  --md-sys-color-surface-container-low: #f9e9cb;
+  --md-sys-color-surface-container: #f5e0b8;
+  --md-sys-color-surface-container-high: #f1d7a5;
+  --md-sys-color-surface-container-highest: #edcd92;
+  --md-sys-color-surface-variant: #f1dcb5;
+  --md-sys-color-on-surface-variant: #4d3a70;
+  /* Ink outlines everywhere: outlined buttons, switch tracks, text fields and
+     dividers all pick this up with zero component overrides. */
+  --md-sys-color-outline: #211136;
+  --md-sys-color-outline-variant: #211136;
+  --md-sys-color-inverse-surface: #211136;
+  --md-sys-color-inverse-on-surface: #fdf2df;
+  --md-sys-color-inverse-primary: #ffb1d3;
+  --md-sys-color-shadow: #211136;
+
+  /* Shape: MD3's pills flattened into chunky rounded rects. */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 2px;
+  --md-sys-shape-corner-small: 4px;
+  --md-sys-shape-corner-medium: 6px;
+  --md-sys-shape-corner-large: 8px;
+  --md-sys-shape-corner-large-increased: 10px;
+  --md-sys-shape-corner-extra-large: 12px;
+  --md-sys-shape-corner-full: 10px;
+}
+
+[data-theme="dark"] .funky,
+[data-theme="dark"].funky {
+  --md-sys-color-primary: #ff6cab;
+  --md-sys-color-on-primary: #170b2b;
+  --md-sys-color-primary-container: #75003f;
+  --md-sys-color-on-primary-container: #ffd6e7;
+  --md-sys-color-secondary: #c2a2ff;
+  --md-sys-color-on-secondary: #170b2b;
+  --md-sys-color-secondary-container: #4a1d99;
+  --md-sys-color-on-secondary-container: #eaddff;
+  --md-sys-color-tertiary: #c0f24a;
+  --md-sys-color-on-tertiary: #170b2b;
+  --md-sys-color-tertiary-container: #405f10;
+  --md-sys-color-on-tertiary-container: #d4f58a;
+  --md-sys-color-error: #ff5470;
+  --md-sys-color-on-error: #170b2b;
+  --md-sys-color-error-container: #7a0024;
+  --md-sys-color-on-error-container: #ffd9dc;
+  --md-sys-color-background: #170b2b;
+  --md-sys-color-on-background: #f4e8ff;
+  --md-sys-color-surface: #170b2b;
+  --md-sys-color-on-surface: #f4e8ff;
+  --md-sys-color-surface-dim: #12081f;
+  --md-sys-color-surface-bright: #2d1b4d;
+  --md-sys-color-surface-container-lowest: #120722;
+  --md-sys-color-surface-container-low: #1e1038;
+  --md-sys-color-surface-container: #251545;
+  --md-sys-color-surface-container-high: #2c1a52;
+  --md-sys-color-surface-container-highest: #341f60;
+  --md-sys-color-surface-variant: #3a2666;
+  --md-sys-color-on-surface-variant: #cbb8ef;
+  --md-sys-color-outline: #f4e8ff;
+  --md-sys-color-outline-variant: #f4e8ff;
+  --md-sys-color-inverse-surface: #f4e8ff;
+  --md-sys-color-inverse-on-surface: #170b2b;
+  --md-sys-color-inverse-primary: #b8005e;
+  --md-sys-color-shadow: #f4e8ff;
+}
+
+/* ── 1b. Tokens ── type ───────────────────────────────────────────────────────
+   The typescale `-font` tokens resolve their `--md-ref-typeface-*` references
+   at :root, so re-pointing the ref typefaces inside a scope is not enough —
+   re-point the per-role tokens. (Swap the mono stack for your own face.) */
+
+.funky {
+  --funky-typeface: var(--font-roboto-mono, ui-monospace, monospace);
+  --md-sys-typescale-display-large-font: var(--funky-typeface);
+  --md-sys-typescale-display-medium-font: var(--funky-typeface);
+  --md-sys-typescale-display-small-font: var(--funky-typeface);
+  --md-sys-typescale-headline-large-font: var(--funky-typeface);
+  --md-sys-typescale-headline-medium-font: var(--funky-typeface);
+  --md-sys-typescale-headline-small-font: var(--funky-typeface);
+  --md-sys-typescale-title-large-font: var(--funky-typeface);
+  --md-sys-typescale-title-medium-font: var(--funky-typeface);
+  --md-sys-typescale-title-small-font: var(--funky-typeface);
+  --md-sys-typescale-body-large-font: var(--funky-typeface);
+  --md-sys-typescale-body-medium-font: var(--funky-typeface);
+  --md-sys-typescale-body-small-font: var(--funky-typeface);
+  --md-sys-typescale-label-large-font: var(--funky-typeface);
+  --md-sys-typescale-label-medium-font: var(--funky-typeface);
+  --md-sys-typescale-label-small-font: var(--funky-typeface);
+}
+
+/* ── 2. Class-name overrides ── what tokens can't express ─────────────────────
+   Hard offset shadows, ink borders, uppercase labels: everything references
+   on-surface, so the dark palette flips these to pale neon automatically. */
+
+/* MD3's round buttons derive their radius from height (not corner-full), so
+   flattening the pills takes a class override. This also drops the press-morph
+   radius animation — blocky is the point here. */
+.funky .md3-button-root:not(.md3-fab-root) {
+  border-radius: 10px;
+}
+
+/* Buttons (the whole family stacks .md3-button-root). Text buttons and
+   standard icon buttons stay flat; the FAB gets its own loudness below. */
+.funky .md3-button-root:not([data-variant="text"], [data-variant="standard"], .md3-fab-root) {
+  border: 2px solid var(--md-sys-color-on-surface);
+  box-shadow: 3px 3px 0 var(--md-sys-color-on-surface);
+}
+
+.funky
+  .md3-button-root:not([data-variant="text"], [data-variant="standard"], .md3-fab-root):hover:not(
+    :disabled,
+    [data-disabled]
+  ) {
+  translate: -1px -1px;
+  box-shadow: 4px 4px 0 var(--md-sys-color-on-surface);
+}
+
+.funky
+  .md3-button-root:not([data-variant="text"], [data-variant="standard"], .md3-fab-root):active:not(
+    :disabled,
+    [data-disabled]
+  ) {
+  translate: 2px 2px;
+  box-shadow: 0 0 0 var(--md-sys-color-on-surface);
+}
+
+.funky .md3-button-root:disabled,
+.funky .md3-button-root[data-disabled] {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Shouty labels. */
+.funky .md3-button-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* FAB: the loudest thing on the page. */
+.funky .md3-fab-root {
+  border: 3px solid var(--md-sys-color-on-surface);
+  box-shadow: 6px 6px 0 var(--md-sys-color-on-surface);
+}
+
+.funky .md3-fab-root:hover:not(:disabled) {
+  translate: -1px -1px;
+  box-shadow: 7px 7px 0 var(--md-sys-color-on-surface);
+}
+
+.funky .md3-fab-root:active:not(:disabled) {
+  translate: 4px 4px;
+  box-shadow: 0 0 0 var(--md-sys-color-on-surface);
+}
+
+/* Cards become paste-up posters. */
+.funky .md3-card-root {
+  border: 2px solid var(--md-sys-color-on-surface);
+  box-shadow: 6px 6px 0 var(--md-sys-color-on-surface);
+}
+
+/* Chips: mini versions of the button treatment. */
+.funky .md3-chip-root {
+  border: 2px solid var(--md-sys-color-on-surface);
+  box-shadow: 2px 2px 0 var(--md-sys-color-on-surface);
+}
+
+.funky .md3-chip-root:active {
+  translate: 1px 1px;
+  box-shadow: 0 0 0 var(--md-sys-color-on-surface);
+}
+
+/* Selection controls: hard shadows under the box / track. */
+.funky .md3-checkbox-box {
+  box-shadow: 2px 2px 0 var(--md-sys-color-on-surface);
+}
+
+.funky .md3-switch-root {
+  box-shadow: 3px 3px 0 var(--md-sys-color-on-surface);
+}
+
+/* Text fields: heavier outline, heavier still while focused. */
+.funky .md3-text-field-outline {
+  border-width: 2px;
+}
+
+.funky .md3-text-field-root[data-focused] .md3-text-field-outline {
+  border-width: 3px;
+}
+
+/* Tabs: a fat square indicator. */
+.funky .md3-tabs-indicator {
+  height: 5px;
+  border-radius: 0;
+}
+
+/* Progress: hazard stripes on the determinate bar. */
+.funky .md3-linear-progress-indicator:not(.md3-linear-progress-wavy) {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--md-sys-color-primary) 0 6px,
+    var(--md-sys-color-tertiary-container) 6px 12px
+  );
+}
+
+/* Dialog is portalled outside the stage, so `.funky` rides on the popup itself
+   (see the note up top) — hence the compound selector. */
+.funky.md3-dialog-popup,
+.funky .md3-dialog-popup {
+  border: 3px solid var(--md-sys-color-on-surface);
+  box-shadow: 8px 8px 0 var(--md-sys-color-on-surface);
+}

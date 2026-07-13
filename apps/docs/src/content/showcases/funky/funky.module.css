@@ -1,0 +1,83 @@
+/* ── Funky showcase layout ──────────────────────────────────────────────────
+   Page scaffolding only — everything that makes it funky lives in
+   funky-theme.css. Token-based so the stage repaints when the theme flips. */
+
+.stage {
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tagline {
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 52ch;
+}
+
+.funkToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.tile {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: stretch;
+}
+
+.controlLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.spaceBetween {
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.tabPanel {
+  padding-top: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.footer {
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 72ch;
+}

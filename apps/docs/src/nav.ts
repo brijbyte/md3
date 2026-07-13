@@ -4,6 +4,7 @@ import ButtonsIcon from "@brijbyte/md3-icons/outlined/ButtonsAlt";
 import FormatSizeIcon from "@brijbyte/md3-icons/outlined/FormatSize";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
+import CelebrationIcon from "@brijbyte/md3-icons/outlined/Celebration";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
@@ -268,6 +269,14 @@ export const SHOWCASES: NavItem[] = [
     title: "Team Tasks",
     description: "A task-tracking dashboard built from most of the component library.",
     icon: ChecklistIcon,
+  },
+  {
+    path: "/showcase/funky",
+    label: "Funk Station",
+    title: "Funk Station",
+    description:
+      "One CSS file reskins the library — tokens set the vibe, stable class names do the rest.",
+    icon: CelebrationIcon,
   },
 ];
 
