@@ -187,6 +187,8 @@ export const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerPr
 );
 
 export interface SelectContentProps extends BaseSelect.Popup.Props {
+  /** Density scale: each step below 0 tightens option heights by 4px. @default 0 */
+  density?: 0 | -1 | -2 | -3;
   /** Side of the trigger to position against. @default 'bottom' */
   side?: BaseSelect.Positioner.Props["side"];
   /** Alignment against the trigger. @default 'start' */
@@ -207,6 +209,7 @@ export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps
   function SelectContent(props, ref) {
     const {
       className,
+      density,
       side = "bottom",
       align = "start",
       sideOffset,
@@ -232,6 +235,7 @@ export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps
           <BaseSelect.Popup
             ref={ref}
             className={mergeClassName(`${menuStyles.popup} ${styles.popup}`, className)}
+            data-density={density ? density : undefined}
             {...rest}
           />
         </BaseSelect.Positioner>
@@ -279,7 +283,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         {...rest}
       >
         <span className={menuStyles.stateLayer} ref={ripple.containerRef} aria-hidden />
-        <BaseSelect.ItemIndicator className={`${menuStyles.icon} ${styles.check}`}>
+        <BaseSelect.ItemIndicator className={`${menuStyles.icon} ${styles.check}`} data-indicator>
           {/* Material Symbols check. */}
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
             <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />

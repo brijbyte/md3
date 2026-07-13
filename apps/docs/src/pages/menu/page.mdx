@@ -5,6 +5,8 @@ title: Menu
 import BasicMenu from "./demo/basic.tsx";
 import ContextMenuDemo from "./demo/context-menu.tsx";
 import EditorMenu from "./demo/editor.tsx";
+import GroupedMenu from "./demo/grouped.tsx";
+import MenuDensity from "./demo/density.tsx";
 import MenuIcons from "./demo/icons.tsx";
 import MenuSelection from "./demo/selection.tsx";
 import ScrollableMenu from "./demo/scrollable.tsx";
@@ -46,8 +48,9 @@ available.
 
 Give users a visual head start on scanning long lists: items take a 24dp
 `leadingIcon`, a `trailingIcon`, and `trailingText` for hints like keyboard shortcuts.
-Use `MenuSeparator` to divide groups — on web, MD3 recommends dividers over the
-expressive gap treatment.
+When only some items carry a leading icon, the others reserve its box automatically
+so every label stays aligned. Use `MenuSeparator` to divide sections — or the
+expressive [gap treatment](#gap-separated-groups) below when the menu doesn't scroll.
 
 <MenuIcons />
 
@@ -70,6 +73,27 @@ its own `MenuContent`, opened on hover or with the arrow keys. `MenuGroup` label
 section via the `label` prop.
 
 <Submenu />
+
+## Gap-separated groups
+
+The menu anatomy's expressive alternative to dividers: `variant="segmented"` on
+`MenuContent` renders each `MenuGroup` as its own container, separated by a small gap
+(2dp, per the segmented-menu tokens). The outer corners of the stack round to
+`corner-large`, edge items pick up a matching inner rounding, and selection fills as a
+`tertiary-container` pill. Keep every item inside a `MenuGroup` here, and prefer
+dividers for menus that scroll.
+
+<GroupedMenu />
+
+## Density
+
+Pointer-dense screens (data tables, desktop toolbars) can tighten menus without a
+custom theme: `density` on `MenuContent` steps from `0` to `-3`, trimming 4px of item
+height per step — 48px rows down to 36px, per the
+[density guidance](https://m3.material.io/m3/pages/understanding-layout/density).
+`SelectContent` takes the same prop. Leave touch-first UIs at the default.
+
+<MenuDensity />
 
 ## A complex menu
 

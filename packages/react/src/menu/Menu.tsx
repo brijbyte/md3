@@ -47,7 +47,14 @@ export const MenuTrigger = React.forwardRef<HTMLButtonElement, MenuTriggerProps>
   },
 );
 
+export type MenuDensity = 0 | -1 | -2 | -3;
+
 export interface MenuContentProps extends BaseMenu.Popup.Props {
+  /** 'segmented' renders each MenuGroup child as its own container separated by
+      a gap — the spec's expressive gap treatment. @default 'standard' */
+  variant?: "standard" | "segmented";
+  /** Density scale: each step below 0 tightens item heights by 4px. @default 0 */
+  density?: MenuDensity;
   /** Side of the anchor to position against. @default 'bottom' ('inline-end' in submenus) */
   side?: BaseMenu.Positioner.Props["side"];
   /** Alignment against the anchor. @default 'start' */
@@ -68,6 +75,8 @@ export const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
   function MenuContent(props, ref) {
     const {
       className,
+      variant,
+      density,
       side,
       align,
       sideOffset,
@@ -92,7 +101,13 @@ export const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
           anchor={anchor}
           {...positionerProps}
         >
-          <BaseMenu.Popup ref={ref} className={mergeClassName(styles.popup, className)} {...rest} />
+          <BaseMenu.Popup
+            ref={ref}
+            className={mergeClassName(styles.popup, className)}
+            data-variant={variant === "segmented" ? variant : undefined}
+            data-density={density ? density : undefined}
+            {...rest}
+          />
         </BaseMenu.Positioner>
       </BaseMenu.Portal>
     );
@@ -318,9 +333,9 @@ export interface MenuGroupProps extends BaseMenu.Group.Props {
 
 export const MenuGroup = React.forwardRef<HTMLDivElement, MenuGroupProps>(
   function MenuGroup(props, ref) {
-    const { label, children, ...rest } = props;
+    const { label, children, className, ...rest } = props;
     return (
-      <BaseMenu.Group ref={ref} {...rest}>
+      <BaseMenu.Group ref={ref} className={mergeClassName(styles.group, className)} {...rest}>
         {label != null ? (
           <BaseMenu.GroupLabel className={styles.groupLabel}>{label}</BaseMenu.GroupLabel>
         ) : null}

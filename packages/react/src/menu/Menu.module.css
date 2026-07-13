@@ -22,29 +22,52 @@
     color: var(--md-sys-color-on-surface);
     box-shadow: var(--md-sys-elevation-level2);
     outline: none;
-    transform-origin: var(--transform-origin);
-    /* Enter: expressive scale-in + quick fade (Compose-style; material-web's
-       staggered height expand needs JS animation and was deliberately skipped). */
+    /* Enter: vertical container reveal from the anchor edge (the guidelines'/
+       material-web menu motion) + quick fade. The rest clip sits 24px outside
+       the box so the elevation shadow stays visible; only the reveal edge moves. */
+    --_clip-hidden: inset(0 -24px 100% -24px);
+    clip-path: inset(-24px);
     transition:
-      transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      clip-path var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
       opacity var(--md-sys-motion-duration-short1) linear;
   }
 
+  /* Opening upward (or a repositioned flip) reveals from the bottom edge. */
+  .popup[data-side="top"] {
+    --_clip-hidden: inset(100% -24px 0 -24px);
+  }
+
   .popup[data-starting-style] {
-    transform: scale(0.8);
+    clip-path: var(--_clip-hidden);
     opacity: 0;
   }
 
-  /* Exit: 150ms fade, emphasized-accelerate (material-web close timing). */
+  /* Exit: 150ms collapse back toward the anchor + fade (material-web close timing). */
   .popup[data-ending-style] {
+    clip-path: var(--_clip-hidden);
     opacity: 0;
-    transition: opacity var(--md-sys-motion-duration-short3)
-      var(--md-sys-motion-easing-emphasized-accelerate);
+    transition:
+      clip-path var(--md-sys-motion-duration-short3)
+        var(--md-sys-motion-easing-emphasized-accelerate),
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-accelerate);
   }
 
   /* Keyboard activation / dismissal / menubar sibling switches skip motion. */
   .popup[data-instant] {
     transition: none;
+  }
+
+  /* Density: each step below 0 tightens item heights by 4px (m3 density guidance). */
+  .popup[data-density="-1"] {
+    --_density: -1;
+  }
+
+  .popup[data-density="-2"] {
+    --_density: -2;
+  }
+
+  .popup[data-density="-3"] {
+    --_density: -3;
   }
 
   /* 48px row, 12px inline padding/gaps, label-large — spec-page metrics over
@@ -58,7 +81,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 48px;
+    min-height: calc(var(--_item-height, 48px) + var(--_density, 0) * 4px);
     padding-inline: 12px;
     color: var(--md-sys-color-on-surface);
     font-family: var(--md-sys-typescale-label-large-font);
@@ -79,6 +102,7 @@
     inset: 0;
     z-index: -1;
     overflow: hidden;
+    border-radius: inherit;
   }
 
   .stateLayer::before {
@@ -109,6 +133,14 @@
     block-size: 24px;
     font-size: 24px;
     color: var(--_icon-color);
+  }
+
+  /* Mixed menus: when any sibling row has a leading icon, icon-less rows
+     reserve its box (12px padding + 24px icon + 12px gap) so labels align.
+     Select's checkmark indicator ([data-indicator]) doesn't count — it comes
+     and goes with selection and would shift every other row. */
+  .popup:has(.item > .icon:not([data-indicator])) .item:not(:has(> .icon)) {
+    padding-inline-start: 48px;
   }
 
   .icon > * {
@@ -177,5 +209,74 @@
     height: 1px;
     margin-block: 8px;
     background: var(--md-sys-color-outline-variant);
+  }
+
+  /* Segmented variant (the spec's expressive gap treatment, Compose
+     SegmentedMenuTokens): the popup goes transparent and each MenuGroup is its
+     own container, 2px apart. drop-shadow (vs per-group box-shadow) follows each
+     card's silhouette and survives the popup's overflow clip. */
+  .popup[data-variant="segmented"] {
+    --_item-height: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-block: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.3)) drop-shadow(0 2px 8px rgb(0 0 0 / 0.15));
+  }
+
+  /* Even 4px item inset on all sides (also makes the 16px corners' 12px
+     item rounding concentric on both axes). */
+  .popup[data-variant="segmented"] .group {
+    flex-shrink: 0;
+    padding: 4px;
+    border-radius: var(--md-sys-shape-corner-small);
+    background: var(--md-sys-color-surface-container-low);
+  }
+
+  .popup[data-variant="segmented"] .group:first-child {
+    border-start-start-radius: var(--md-sys-shape-corner-large);
+    border-start-end-radius: var(--md-sys-shape-corner-large);
+  }
+
+  .popup[data-variant="segmented"] .group:last-child {
+    border-end-start-radius: var(--md-sys-shape-corner-large);
+    border-end-end-radius: var(--md-sys-shape-corner-large);
+  }
+
+  /* Concentric with the group's small (8px) corners: 8 − 4 inset = 4. */
+  .popup[data-variant="segmented"] .item {
+    border-radius: var(--md-sys-shape-corner-extra-small);
+  }
+
+  /* Only items against a LARGE (16px) group corner round up to medium
+     (16 − 4 inset = 12): the top of the first group and the bottom of the
+     last. The extra :not(.item) branch reaches one wrapper deep (RadioGroup). */
+  .popup[data-variant="segmented"] .group:first-child > .item:first-child,
+  .popup[data-variant="segmented"]
+    .group:first-child
+    > :not(.item):first-child
+    > .item:first-child {
+    border-start-start-radius: var(--md-sys-shape-corner-medium);
+    border-start-end-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  .popup[data-variant="segmented"] .group:last-child > .item:last-child,
+  .popup[data-variant="segmented"] .group:last-child > :not(.item):last-child > .item:last-child {
+    border-end-start-radius: var(--md-sys-shape-corner-medium);
+    border-end-end-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  /* Segmented selection: tertiary-container pill, medium radius on all corners. */
+  .popup[data-variant="segmented"] .item[data-checked]:not([data-disabled]) {
+    border-radius: var(--md-sys-shape-corner-medium);
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  .popup[data-variant="segmented"] .separator {
+    margin: 2px 12px;
   }
 }

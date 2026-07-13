@@ -101,6 +101,18 @@ test("opening focuses the field and positions the menu below the trigger", async
   expect(selected.querySelector("svg")).not.toBeNull();
 });
 
+// The selection checkmark must not count as a leading icon for the menu's
+// mixed-icon alignment rule, or unselected rows would shift on every change.
+test("check indicator does not indent the unselected options", async () => {
+  const { container } = renderSelect({ defaultValue: "CO" });
+  await userEvent.click(container.querySelector("button")!);
+  await waitFor(() => {
+    expect(document.querySelector("[role='option'][data-selected]")).not.toBeNull();
+  });
+  const unselected = document.querySelector("[role='option']:not([data-selected])")!;
+  expect(getComputedStyle(unselected).paddingInlineStart).toBe("12px");
+});
+
 test("choosing an option updates the value and closes the menu", async () => {
   const { container } = renderSelect();
   const trigger = container.querySelector("button")!;

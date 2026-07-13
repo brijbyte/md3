@@ -17,6 +17,7 @@ export {
 export type {
   ContextMenuProps,
   ContextMenuTriggerProps,
+  MenuDensity,
   MenuProps,
   MenuTriggerProps,
   MenuContentProps,

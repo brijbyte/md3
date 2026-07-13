@@ -1,0 +1,7 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/menu.css";
+
+.demo-menu-grouped {
+  display: flex;
+  justify-content: center;
+}
