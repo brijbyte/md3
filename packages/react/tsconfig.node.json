@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts", "scripts/**/*.mjs"]
+  "include": ["tsdown.config.ts", "scripts/**/*.mjs"]
 }
