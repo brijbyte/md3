@@ -73,23 +73,20 @@
   .thumb {
     position: absolute;
     top: 50%;
-    /* Offset by border width so --_handle-x is relative to the outer track box */
-    inset-inline-start: calc(var(--_handle-x) - 2px);
+    /* Handle center sits at --_handle-x from the track's outer start edge (-2px rebases
+       past the border). Fully logical — no translate/:dir() flip, which bundlers that
+       lower :dir() to :lang() lists would break. */
+    inset-inline-start: calc(var(--_handle-x) - 2px - var(--_handle-size) / 2);
     width: var(--_handle-size);
     height: var(--_handle-size);
     border-radius: var(--md-sys-shape-corner-full);
     background: var(--_handle-color);
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
     transition:
       inset-inline-start var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
       width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
-  }
-
-  /* inset-inline-start measures from the right in RTL, so re-center the other way. */
-  .thumb:dir(rtl) {
-    transform: translate(50%, -50%);
   }
 
   /* 40px hover/focus/pressed state layer centered on the handle */

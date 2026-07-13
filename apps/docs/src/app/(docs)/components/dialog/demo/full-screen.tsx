@@ -31,7 +31,7 @@ export default function FullScreenDialogDemo() {
           <DialogClose render={<Button variant="text" />}>Save</DialogClose>
         </DialogHeader>
         <form className="demo-dialog-full-screen-form">
-          <TextField label="Event title" variant="outlined" />
+          <TextField label="Event title" variant="outlined" autoFocus />
           <TextField label="Date" variant="outlined" defaultValue="Mon, Jul 6" />
           <div className="demo-dialog-full-screen-times">
             <TextField label="From" variant="outlined" defaultValue="10:00 AM" />

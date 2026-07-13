@@ -69,12 +69,10 @@
   }
 
   /* Anchors resolve logically (the viewport places them with flex-start/end), so the
-     content-facing edge — rounded corners, standard divider — is an inline edge too.
-     The offscreen slide offset is physical (translateX), so :dir(rtl) flips its sign. */
+     content-facing edge — rounded corners, standard divider — is an inline edge too. */
   .popup[data-anchor="right"] {
     border-start-start-radius: var(--md-sys-shape-corner-large);
     border-end-start-radius: var(--md-sys-shape-corner-large);
-    --_offscreen-x: 100%;
   }
 
   .popup[data-variant="standard"][data-anchor="right"] {
@@ -85,7 +83,6 @@
   .popup[data-anchor="left"] {
     border-start-end-radius: var(--md-sys-shape-corner-large);
     border-end-end-radius: var(--md-sys-shape-corner-large);
-    --_offscreen-x: -100%;
   }
 
   .popup[data-variant="standard"][data-anchor="left"] {
@@ -93,12 +90,15 @@
     border-inline-end: 1px solid var(--md-sys-color-outline);
   }
 
-  .popup:dir(rtl)[data-anchor="right"] {
-    --_offscreen-x: -100%;
+  /* The offscreen slide offset is physical (translateX), so it keys off data-edge —
+     the anchor resolved against direction in JS. (Not :dir(): bundlers lower it to a
+     :lang() list that ignores the dir attribute, silently breaking RTL.) */
+  .popup[data-edge="right"] {
+    --_offscreen-x: 100%;
   }
 
-  .popup:dir(rtl)[data-anchor="left"] {
-    --_offscreen-x: 100%;
+  .popup[data-edge="left"] {
+    --_offscreen-x: -100%;
   }
 
   .popup[data-starting-style],

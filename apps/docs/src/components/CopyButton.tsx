@@ -8,10 +8,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
 // Copies `text` to the clipboard, flashing a check icon as confirmation.
 export function CopyButton({
   text,
+  fileName,
   className,
   size,
 }: {
   text: string;
+  fileName?: string;
   className?: string;
   size?: IconButtonSize;
 }) {
@@ -23,7 +25,7 @@ export function CopyButton({
       <TooltipTrigger
         render={
           <IconButton
-            aria-label={copied ? "Copied" : "Copy code"}
+            aria-label={copied ? `Copied ${fileName ?? "code"}` : `Copy ${fileName ?? "code"}`}
             size={size}
             className={className}
             onClick={async () => {

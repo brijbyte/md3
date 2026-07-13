@@ -4,6 +4,7 @@ import "./DemoControls.css";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { TooltipProvider } from "@/ui/tooltip";
 import * as React from "react";
+import { Typography } from "@brijbyte/md3-react/typography";
 
 // Per-demo playground overrides: theme follows the docs toggle until overridden
 // (null), direction defaults to ltr. State lives here so the buttons (in the
@@ -82,14 +83,17 @@ export function DemoSurface({ children }: { children: React.ReactNode }) {
   // Popup content (menus, sheets, dialogs) portals to document.body per Base UI
   // and deliberately keeps the docs-level theme/direction — pass `container`
   // explicitly to a *Content component to scope it (see the library README).
+
   return (
-    <div
+    <Typography
+      as="div"
+      variant="body-large"
       className="demo-surface"
       dir={dir}
       data-theme={theme ?? undefined}
       data-color-theme={theme && colorTheme && colorTheme !== "default" ? colorTheme : undefined}
     >
       {children}
-    </div>
+    </Typography>
   );
 }

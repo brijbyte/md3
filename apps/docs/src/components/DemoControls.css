@@ -1,9 +1,3 @@
-/* Demo playground isolation: `all: initial` severs every inherited docs style at
-   the boundary (and, being unlayered, outranks every layer). Custom properties are
-   exempt from `all`, so --md-sys-* tokens flow through and demos follow the theme. */
-/* Theme-overridden playground: paint the overridden scheme's own card color —
-   otherwise dark-theme content sits transparent on the light section (or vice
-   versa). Matches the section's bg token so it reads as the same card. */
 .demo-surface[data-theme] {
   background: var(--md-sys-color-surface-container-low);
   border-radius: var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0 0;
@@ -13,12 +7,6 @@
   all: initial;
   display: flow-root;
   padding-block: 20px;
-  font-family: var(--md-sys-typescale-body-large-font);
-  font-size: var(--md-sys-typescale-body-large-size);
-  line-height: var(--md-sys-typescale-body-large-line-height);
-  font-weight: var(--md-sys-typescale-body-large-weight);
-  letter-spacing: var(--md-sys-typescale-body-large-tracking);
-  color: var(--md-sys-color-on-surface);
   -webkit-font-smoothing: antialiased;
   border-end-end-radius: 0;
 }

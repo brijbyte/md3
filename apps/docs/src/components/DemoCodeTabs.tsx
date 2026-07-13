@@ -1,4 +1,8 @@
 "use client";
+
+import "./shiki.css";
+import "./DemoCodeTabs.css";
+
 import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "@/ui/tabs";
 import { Button } from "@/ui/button";
@@ -11,7 +15,6 @@ import { CopyButton } from "./CopyButton";
 import { LoadingIndicator } from "@/ui/loading-indicator";
 import { useDemoControls } from "./DemoControls";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/ui/tooltip";
-import "./shiki.css";
 
 // A demo's showable sources, Shiki-highlighted at compile time by the demo
 // loader (loaders/demo-loader.mjs) into a public/demo-code/*.json payload.
@@ -155,10 +158,8 @@ function DemoSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => vo
   const active = files.find((f) => f.name === value) ?? files[0];
   return (
     <Tabs value={value} onValueChange={(v) => setValue(v as string)}>
-      {/* Toggles sit beside the tab list (not inside), so the list scrolls
-          under them while they stay pinned at the end. */}
-      <div className="flex items-center">
-        <TabList aria-label="Demo source files" className="min-w-0 grow">
+      <div className="bg-surface flex items-center shadow-[inset_0_-1px_var(--color-outline-variant)]">
+        <TabList aria-label="Demo source files" className="demo-source-tablist min-w-0 grow">
           {files.map((f) => (
             <Tab key={f.name} value={f.name} className="font-mono">
               {f.name}
@@ -171,7 +172,12 @@ function DemoSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => vo
         </div>
       </div>
       <div className="relative">
-        <CopyButton text={active.code} size="xsmall" className="absolute inset-e-2 top-2 z-1" />
+        <CopyButton
+          text={active.code}
+          fileName={active.name}
+          size="xsmall"
+          className="absolute inset-e-2 top-2 z-1"
+        />
         {files.map((f) => (
           <TabPanel key={f.name} value={f.name} className="relative" tabIndex={-1}>
             <div

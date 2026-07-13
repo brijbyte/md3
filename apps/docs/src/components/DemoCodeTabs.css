@@ -1,0 +1,33 @@
+/* Scroll affordance for the demo source tab list: edge shadows that appear only
+   when tabs are hidden in that direction. The cover gradients ride the content
+   (background-attachment: local) and mask the viewport-pinned shadows at the
+   scroll extents. Unlayered on purpose — it must beat the library's
+   .md3-tabs-list background in @layer components regardless of import order. */
+.demo-source-tablist {
+  --_bg: var(--md-sys-color-surface);
+  --_shadow: color-mix(in srgb, var(--md-sys-color-shadow) 25%, transparent);
+  background-image:
+    linear-gradient(to right, var(--_bg) 30%, transparent),
+    linear-gradient(to left, var(--_bg) 30%, transparent),
+    radial-gradient(farthest-side at 0 50%, var(--_shadow), transparent),
+    radial-gradient(farthest-side at 100% 50%, var(--_shadow), transparent);
+  background-position:
+    left center,
+    right center,
+    left center,
+    right center;
+  background-size:
+    40px 100%,
+    40px 100%,
+    12px 100%,
+    12px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+  background-color: var(--_bg);
+}
+
+/* A black shadow can't contrast with the near-black dark surface — use a faint
+   on-surface haze there instead. */
+[data-theme="dark"] .demo-source-tablist {
+  --_shadow: color-mix(in srgb, var(--md-sys-color-on-surface) 16%, transparent);
+}
