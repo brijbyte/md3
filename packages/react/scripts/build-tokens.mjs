@@ -1,9 +1,10 @@
 // Generates src/generated/tokens.css and tokens.ts from tokens/tokens.json.
 // CSS custom properties follow MD3 naming: --md-sys-color-primary, etc.
 // Imported by vite.config.ts (runs on build + watch); also runnable as a CLI.
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { writeIfChanged } from "./write-if-changed.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -90,7 +91,7 @@ ${colorVars("dark")}
 }
 `;
 
-  writeFileSync(tokensCssPath, css);
+  writeIfChanged(tokensCssPath, css);
 
   // Tailwind v4 theme: MD3 tokens as utility names (bg-primary, text-title-large,
   // rounded-extra-large, shadow-level1, ease-emphasized, font-brand). `inline`
@@ -139,7 +140,7 @@ ${[
 ].join("\n")}
 }
 `;
-  writeFileSync(tailwindTokensCssPath, twCss);
+  writeIfChanged(tailwindTokensCssPath, twCss);
 
   // Typed map of CSS variable names, so TS code never hand-writes var() strings.
   const tsEntries = (/** @type {TokenGroup} */ obj, /** @type {string} */ prefix) =>
@@ -175,7 +176,7 @@ ${tsEntries(tokens["z-index"], "--md-ref-z-index")}
 export type ColorToken = keyof typeof color;
 `;
 
-  writeFileSync(join(outDir, "tokens.ts"), ts);
+  writeIfChanged(join(outDir, "tokens.ts"), ts);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

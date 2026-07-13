@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --filter docs dev",
+    "dev": "pnpm --parallel --filter @brijbyte/md3-react --filter docs dev",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",

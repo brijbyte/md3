@@ -4,9 +4,10 @@
 // androidx.graphics.shapes — see scripts/loading-indicator/) runs here, once,
 // at build time. The component only does cheap per-frame lerp + rotation.
 // Imported by vite.config.ts (runs on build + watch); also runnable as a CLI.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { writeIfChanged } from "./write-if-changed.mjs";
 import { normalizePolygon } from "./loading-indicator/geometry.mjs";
 import { morphMatch } from "./loading-indicator/morph.mjs";
 import {
@@ -72,7 +73,7 @@ export const VIEWBOX_SIZE = ${VIEWBOX};
 `;
 
   mkdirSync(dirname(loadingIndicatorShapesPath), { recursive: true });
-  writeFileSync(loadingIndicatorShapesPath, contents);
+  writeIfChanged(loadingIndicatorShapesPath, contents);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

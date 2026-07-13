@@ -5,9 +5,10 @@
 // RoundedPolygon.star(innerRadius=0.75, rounding=0.35/0.4, innerRounding=0.5))
 // and morphs between them by `amplitude`. The component only does a per-frame
 // lerp, matching LoadingIndicator's pattern.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { writeIfChanged } from "./write-if-changed.mjs";
 import {
   circlePolygon,
   cornerRounding,
@@ -84,7 +85,7 @@ export const CIRCULAR_PROGRESS_NUM_VERTICES = ${NUM_VERTICES};
 `;
 
   mkdirSync(dirname(circularProgressShapesPath), { recursive: true });
-  writeFileSync(circularProgressShapesPath, contents);
+  writeIfChanged(circularProgressShapesPath, contents);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

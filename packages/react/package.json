@@ -17,12 +17,12 @@
     "**/*.css"
   ],
   "exports": {
+    "./styles.css": "./dist/index.css",
+    "./*.css": "./dist/styles/*.css",
     "./*": {
       "types": "./dist/*/index.d.ts",
       "import": "./dist/*/index.js"
-    },
-    "./styles.css": "./dist/index.css",
-    "./*.css": "./dist/styles/*.css"
+    }
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.mjs",
