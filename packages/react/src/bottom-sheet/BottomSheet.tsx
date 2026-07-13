@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Drawer as BaseDrawer } from "@base-ui/react/drawer";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./BottomSheet.module.css";
@@ -54,10 +55,17 @@ export const BottomSheetContent = React.forwardRef<HTMLDivElement, BottomSheetCo
   function BottomSheetContent(props, ref) {
     const { className, dragHandle = true, container, keepMounted, children, ...rest } = props;
     const variant = React.useContext(BottomSheetVariantContext);
+    // The popup portals out of a scoped DirectionProvider's DOM — stamp dir
+    // (rtl only) so the sheet's logical CSS follows it (see FabMenu).
+    const direction = useDirection();
     return (
       <BaseDrawer.Portal container={container} keepMounted={keepMounted}>
         {variant === "modal" ? <BaseDrawer.Backdrop className={styles.backdrop} /> : null}
-        <BaseDrawer.Viewport className={styles.viewport} data-variant={variant}>
+        <BaseDrawer.Viewport
+          className={styles.viewport}
+          data-variant={variant}
+          dir={direction === "rtl" ? "rtl" : undefined}
+        >
           <BaseDrawer.Popup
             ref={ref}
             className={mergeClassName(styles.popup, className)}

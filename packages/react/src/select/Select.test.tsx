@@ -1,3 +1,4 @@
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render, waitFor } from "@testing-library/react";
 import { userEvent } from "@vitest/browser/context";
 import { renderToString } from "react-dom/server";
@@ -142,4 +143,30 @@ test("outlined trigger label sits in the outline notch", async () => {
   expect(
     Math.abs(label.getBoundingClientRect().left - legend.getBoundingClientRect().left),
   ).toBeLessThan(12);
+});
+
+// Regression: the popup portals to document.body, outside a scoped
+// DirectionProvider's DOM — without the stamped dir it rendered LTR in RTL apps.
+test("popup follows a scoped DirectionProvider's rtl direction", async () => {
+  const { container } = render(
+    <DirectionProvider direction="rtl">
+      <Select items={STATES}>
+        <SelectTrigger label="State" />
+        <SelectContent>
+          {STATES.map((state) => (
+            <SelectItem key={state.value} value={state.value}>
+              {state.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </DirectionProvider>,
+  );
+  await userEvent.click(container.querySelector("button")!);
+  const popup = await waitFor(() => {
+    const el = document.querySelector('[role="listbox"]');
+    expect(el).not.toBeNull();
+    return el as HTMLElement;
+  });
+  expect(getComputedStyle(popup).direction).toBe("rtl");
 });

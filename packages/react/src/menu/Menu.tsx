@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { ContextMenu as BaseContextMenu } from "@base-ui/react/context-menu";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
@@ -90,6 +91,7 @@ export const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
     // Nested (submenu/context) menus keep Base UI's positioning defaults —
     // submenus open beside the parent item, context menus at the pointer.
     const nested = React.useContext(NestedMenuContext);
+    const direction = useDirection();
     return (
       <BaseMenu.Portal container={container} keepMounted={keepMounted}>
         <BaseMenu.Positioner
@@ -99,6 +101,7 @@ export const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
           sideOffset={sideOffset}
           alignOffset={alignOffset}
           anchor={anchor}
+          dir={direction === "rtl" ? "rtl" : undefined}
           {...positionerProps}
         >
           <BaseMenu.Popup

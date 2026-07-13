@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Slider as BaseSlider } from "@base-ui/react/slider";
 import { Tooltip } from "@base-ui/react/tooltip";
 import { mergeClassName } from "../utils/mergeClassName";
@@ -123,6 +124,7 @@ function SliderThumbLabel({
   const [focused, setFocused] = React.useState(false);
   const [hovered, setHovered] = React.useState(false);
   const [dragging, setDragging] = React.useState(false);
+  const direction = useDirection();
   // `dragging` (from data-dragging) is true on every thumb during any drag; `active` narrows
   // it to the one actually moving so only its bubble opens and only its handle narrows.
   const activeDrag = dragging && active;
@@ -191,6 +193,8 @@ function SliderThumbLabel({
           side={vertical ? "left" : "top"}
           sideOffset={12}
           className={styles.positioner}
+          // Portalled out of a scoped DirectionProvider's DOM (see FabMenu).
+          dir={direction === "rtl" ? "rtl" : undefined}
         >
           <Tooltip.Popup className={styles.valueLabel}>
             <BaseSlider.Value>

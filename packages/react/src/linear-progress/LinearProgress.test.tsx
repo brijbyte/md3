@@ -18,6 +18,38 @@ test("wavy paths provide geometry via the d attribute", async () => {
   }
 });
 
+// Regression: the wavy SVG geometry ignored direction, so RTL still filled
+// left-to-right. Compose rotates the whole RTL drawing 180° (a point-mirror);
+// the CSS scale(-1) on the svg must reproduce that for both wavy modes.
+test("wavy indicator mirrors in RTL", async () => {
+  for (const props of [{}, { value: 50 }] as const) {
+    const { container, unmount } = render(
+      <div dir="rtl" style={{ width: 320 }}>
+        <LinearProgress wavy {...props} />
+      </div>,
+    );
+    await raf();
+    const svg = container.querySelector("svg")!;
+    expect(getComputedStyle(svg).transform).toBe("matrix(-1, 0, 0, -1, 0, 0)");
+    unmount();
+  }
+});
+
+// The determinate stop indicator is drawn at the geometric right edge; in RTL
+// the mirror must land it at the visual left (the track's end).
+test("wavy determinate stop indicator sits at the visual start edge in RTL", async () => {
+  const { container } = render(
+    <div dir="rtl" style={{ width: 320 }}>
+      <LinearProgress wavy value={50} />
+    </div>,
+  );
+  await raf();
+  const svg = container.querySelector("svg")!;
+  const stop = container.querySelector("circle")!;
+  const offset = stop.getBoundingClientRect().left - svg.getBoundingClientRect().left;
+  expect(offset).toBeLessThan(8);
+});
+
 // Pin every running animation to the same document-timeline position so the two
 // indeterminate bars can be compared deterministically.
 function syncAnimations(t: number) {

@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Toast } from "@base-ui/react/toast";
 import styles from "./Snackbar.module.css";
 
@@ -26,11 +27,12 @@ const SnackbarCloseIconContext = React.createContext<React.ReactNode>("×");
 // no --toast-index/peek/scale stacking transform is needed.
 export function SnackbarProvider(props: SnackbarProviderProps) {
   const { children, limit = 1, timeout = 4000, closeIcon, container } = props;
+  const direction = useDirection();
   return (
     <Toast.Provider limit={limit} timeout={timeout}>
       {children}
       <Toast.Portal container={container}>
-        <Toast.Viewport className={styles.viewport}>
+        <Toast.Viewport className={styles.viewport} dir={direction === "rtl" ? "rtl" : undefined}>
           <SnackbarCloseIconContext.Provider value={closeIcon ?? "×"}>
             <SnackbarList />
           </SnackbarCloseIconContext.Provider>

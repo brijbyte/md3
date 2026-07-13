@@ -111,6 +111,12 @@
   overflow: visible;
 }
 
+/* Compose draws the RTL wavy indicator inside rotate(180°) — a point-mirror
+   about the center, i.e. scale(-1). The non-wavy bars flip via inset-inline-*. */
+.wavySvg:dir(rtl) {
+  transform: scale(-1);
+}
+
 .wavyTrack {
   stroke: var(--md-sys-color-secondary-container);
   stroke-width: 4px;

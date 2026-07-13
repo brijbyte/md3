@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Field } from "@base-ui/react/field";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import menuStyles from "../menu/Menu.module.css";
@@ -219,6 +220,7 @@ export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps
       positionerProps,
       ...rest
     } = props;
+    const direction = useDirection();
     return (
       <BaseSelect.Portal container={container}>
         <BaseSelect.Positioner
@@ -228,6 +230,7 @@ export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps
           sideOffset={sideOffset}
           alignOffset={alignOffset}
           anchor={anchor}
+          dir={direction === "rtl" ? "rtl" : undefined}
           // MD3 positions the menu as a plain dropdown, never over the trigger.
           alignItemWithTrigger={false}
           {...positionerProps}

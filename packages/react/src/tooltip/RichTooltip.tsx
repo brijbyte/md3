@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { PreviewCard as BasePreviewCard } from "@base-ui/react/preview-card";
 import { mergeClassName } from "../utils/mergeClassName";
 import { useLongPressOpen } from "./useLongPressOpen";
@@ -141,6 +142,7 @@ export const RichTooltipContent = React.forwardRef<HTMLDivElement, RichTooltipCo
     React.useEffect(() => {
       if (context) context.hasActionRef.current = action != null;
     }, [context, action]);
+    const direction = useDirection();
     return (
       <BasePreviewCard.Portal container={container} keepMounted={keepMounted}>
         <BasePreviewCard.Positioner
@@ -150,6 +152,7 @@ export const RichTooltipContent = React.forwardRef<HTMLDivElement, RichTooltipCo
           sideOffset={sideOffset ?? 4}
           alignOffset={alignOffset}
           anchor={anchor}
+          dir={direction === "rtl" ? "rtl" : undefined}
           {...positionerProps}
         >
           <BasePreviewCard.Popup

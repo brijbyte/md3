@@ -22,7 +22,10 @@
     box-sizing: border-box;
     position: absolute;
     inset-block-end: 8px;
-    inset-inline-start: 50%;
+    /* Centered via auto margins (direction-agnostic) rather than a physical
+       translateX(-50%), which would mis-center once the viewport goes RTL. */
+    inset-inline: 0;
+    margin-inline: auto;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -33,7 +36,6 @@
     background: var(--md-sys-color-inverse-surface);
     box-shadow: var(--md-sys-elevation-level3);
     pointer-events: auto;
-    transform: translateX(-50%);
     transition:
       transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
       opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
@@ -43,28 +45,20 @@
      to the leading edge (not centered) on larger ones. */
   @media (min-width: 600px) {
     .root {
-      inset-inline-start: 8px;
+      margin-inline: 8px auto;
       /* Hugs content up to 672px (so a short message doesn't span the whole
          viewport), but — unlike `max-content`, which sizes as if nothing ever
          wraps — still forces `.text` to wrap at that width instead of growing
          past it. */
       width: fit-content(672px);
       min-width: 344px;
-      transform: none;
     }
   }
 
   .root[data-starting-style],
   .root[data-ending-style] {
     opacity: 0;
-    transform: translateX(-50%) translateY(16px);
-  }
-
-  @media (min-width: 600px) {
-    .root[data-starting-style],
-    .root[data-ending-style] {
-      transform: translateY(16px);
-    }
+    transform: translateY(16px);
   }
 
   /* Provider `limit`: toasts beyond it are marked `data-limited` instead of

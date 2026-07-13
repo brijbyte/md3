@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Drawer as BaseDrawer } from "@base-ui/react/drawer";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./SideSheet.module.css";
@@ -63,6 +64,7 @@ export const SideSheetContent = React.forwardRef<HTMLDivElement, SideSheetConten
   function SideSheetContent(props, ref) {
     const { className, container, keepMounted, ...rest } = props;
     const { variant, anchor } = React.useContext(SideSheetContext);
+    const direction = useDirection();
     return (
       <BaseDrawer.Portal container={container} keepMounted={keepMounted}>
         {variant === "modal" ? <BaseDrawer.Backdrop className={styles.backdrop} /> : null}
@@ -70,6 +72,7 @@ export const SideSheetContent = React.forwardRef<HTMLDivElement, SideSheetConten
           className={styles.viewport}
           data-variant={variant}
           data-anchor={anchor}
+          dir={direction === "rtl" ? "rtl" : undefined}
         >
           <BaseDrawer.Popup
             ref={ref}

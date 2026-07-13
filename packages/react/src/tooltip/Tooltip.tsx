@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Tooltip as BaseTooltip } from "@base-ui/react/tooltip";
 import { mergeClassName } from "../utils/mergeClassName";
 import { useLongPressOpen } from "./useLongPressOpen";
@@ -117,6 +118,7 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentPro
       positionerProps,
       ...rest
     } = props;
+    const direction = useDirection();
     return (
       <BaseTooltip.Portal container={container} keepMounted={keepMounted}>
         <BaseTooltip.Positioner
@@ -126,6 +128,7 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentPro
           sideOffset={sideOffset ?? 4}
           alignOffset={alignOffset}
           anchor={anchor}
+          dir={direction === "rtl" ? "rtl" : undefined}
           {...positionerProps}
         >
           <BaseTooltip.Popup

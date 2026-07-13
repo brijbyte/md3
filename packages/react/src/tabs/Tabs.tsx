@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
@@ -47,6 +48,13 @@ export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function T
     () => false,
     () => true,
   );
+  // A direction flip repositions tabs without resizing them, so Base UI's
+  // ResizeObserver-driven indicator keeps stale coordinates. Deferring the key
+  // by one commit remounts the indicator after the flipped layout is measurable
+  // (keying on direction directly would remeasure the pre-flip layout).
+  const direction = useDirection();
+  const [measuredDirection, setMeasuredDirection] = React.useState(direction);
+  React.useEffect(() => setMeasuredDirection(direction), [direction]);
   return (
     <BaseTabs.List
       ref={ref}
@@ -56,7 +64,11 @@ export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function T
       {...rest}
     >
       {children}
-      <BaseTabs.Indicator className={styles.indicator} renderBeforeHydration />
+      <BaseTabs.Indicator
+        key={measuredDirection}
+        className={styles.indicator}
+        renderBeforeHydration
+      />
       {isHydrating && (
         <script
           suppressHydrationWarning

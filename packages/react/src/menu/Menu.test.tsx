@@ -1,3 +1,4 @@
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render, waitFor } from "@testing-library/react";
 import { userEvent } from "@vitest/browser/context";
 import { expect, test } from "vitest";
@@ -142,4 +143,26 @@ test("no icon box is reserved when no item has a leading icon", async () => {
   const popup = await openMenu();
   const item = popup.querySelector('[role="menuitem"]')!;
   expect(getComputedStyle(item).paddingInlineStart).toBe("12px");
+});
+
+// Regression: the popup portals to document.body, outside a scoped
+// DirectionProvider's DOM — without the stamped dir it rendered LTR in RTL apps.
+test("popup follows a scoped DirectionProvider's rtl direction", async () => {
+  const { getByRole } = render(
+    <DirectionProvider direction="rtl">
+      <Menu>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent>
+          <MenuItem>Item 1</MenuItem>
+        </MenuContent>
+      </Menu>
+    </DirectionProvider>,
+  );
+  await userEvent.click(getByRole("button"));
+  const popup = await waitFor(() => {
+    const el = document.querySelector('[role="menu"]');
+    expect(el).not.toBeNull();
+    return el as HTMLElement;
+  });
+  expect(getComputedStyle(popup).direction).toBe("rtl");
 });

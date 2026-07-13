@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Dialog as BaseDialog } from "@base-ui/react/dialog";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Dialog.module.css";
 
@@ -43,10 +44,17 @@ export const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps
   function DialogContent(props, ref) {
     const { className, container, keepMounted, ...rest } = props;
     const variant = React.useContext(DialogVariantContext);
+    // The popup portals out of a scoped DirectionProvider's DOM — stamp dir
+    // (rtl only) so the dialog's logical CSS follows it (see FabMenu).
+    const direction = useDirection();
     return (
       <BaseDialog.Portal container={container} keepMounted={keepMounted}>
         <BaseDialog.Backdrop className={styles.backdrop} />
-        <BaseDialog.Viewport className={styles.viewport} data-variant={variant}>
+        <BaseDialog.Viewport
+          className={styles.viewport}
+          data-variant={variant}
+          dir={direction === "rtl" ? "rtl" : undefined}
+        >
           <BaseDialog.Popup
             ref={ref}
             className={mergeClassName(styles.popup, className)}
