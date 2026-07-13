@@ -70,11 +70,10 @@ function DemoDirButton() {
   );
 }
 
-function loadFiles(url: string): Promise<DemoFile[]> {
-  return fetch(url).then((res) => {
-    if (!res.ok) throw new Error(`GET ${url}: ${res.status}`);
-    return res.json();
-  });
+async function loadFiles(url: string): Promise<DemoFile[]> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`GET ${url}: ${res.status}`);
+  return res.json();
 }
 
 // Collapsed by default: a toolbar with a centered "Show code" button and the
@@ -85,20 +84,23 @@ function loadFiles(url: string): Promise<DemoFile[]> {
 export function DemoCodeTabs({ codeUrl }: { codeUrl: string }) {
   const [promise, setPromise] = React.useState<Promise<DemoFile[]> | null>(null);
   const [expanded, setExpanded] = React.useState(false);
+  // Fetch kicked off outside setState: updaters must stay pure (StrictMode
+  // double-invokes them, which double-fetched); the ref dedupes across renders.
+  const promiseRef = React.useRef<Promise<DemoFile[]> | null>(null);
 
-  function showCode() {
-    setPromise(
-      (prev) =>
-        prev ??
-        loadFiles(codeUrl).catch((error): DemoFile[] => {
-          console.error("Failed to load demo sources", error);
-          setPromise(null);
-          setExpanded(false);
-          return [];
-        }),
-    );
+  const showCode = React.useCallback(() => {
+    if (!promiseRef.current) {
+      promiseRef.current = loadFiles(codeUrl).catch((err) => {
+        console.error(err);
+        promiseRef.current = null;
+        setPromise(null);
+        setExpanded(false);
+        return [];
+      });
+    }
+    setPromise(promiseRef.current);
     setExpanded(true);
-  }
+  }, [codeUrl]);
 
   if (!expanded || !promise) {
     return (
