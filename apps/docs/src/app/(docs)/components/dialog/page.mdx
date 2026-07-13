@@ -1,0 +1,89 @@
+---
+title: Dialog
+---
+
+import BasicDialog from "./demo/basic.tsx";
+import HeroIconDialog from "./demo/hero-icon.tsx";
+import ListDialog from "./demo/list.tsx";
+import FullScreenDialog from "./demo/full-screen.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeadline,
+  DialogSupportingText,
+  DialogActions,
+  DialogClose,
+} from "@brijbyte/md3-react/dialog";
+```
+
+```css
+@import "@brijbyte/md3-react/dialog.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Dialog", href: "https://base-ui.com/react/components/dialog" },
+    { label: "MD3 guidelines", href: "https://m3.material.io/components/dialogs/guidelines" },
+  ]}
+/>
+
+Dialogs interrupt on purpose: they stop the current flow to ask for a decision or a small
+focused task, and hold the rest of the page behind a scrim until it's resolved. Use one
+for high-stakes moments — destructive actions, unsaved changes, a required choice — not
+for information a snackbar or inline message could carry. `Dialog` wraps Base UI's
+`Dialog`, so focus trapping, scroll locking, and Escape/scrim dismissal come built in.
+
+## Basic
+
+The canonical confirmation: a headline phrased as the decision being made, supporting
+text spelling out the consequence, and two text buttons — the dismissive action first,
+the confirming action last. Give both actions specific verbs ("Cancel" / "Delete"), never
+an ambiguous "Yes"/"No". `DialogClose` renders the control you pass it and closes the
+dialog on click in addition to running its own `onClick`, so the confirming action is
+just a `DialogClose` with your handler attached.
+
+<BasicDialog />
+
+## With a hero icon
+
+An optional `DialogIcon` above the headline reinforces what the dialog is about; its
+presence centers the headline under it (supporting text stays start-aligned, per spec).
+The icon renders in `secondary` at 24px.
+
+<HeroIconDialog />
+
+## Selection list
+
+Dialogs can carry a focused task instead of plain text — a single choice from a list is
+the classic one. Put the scrollable region in `DialogBody`: it grows between the headline
+and the actions, scrolls when content overflows, and draws the MD3 dividers at its top
+and bottom edges. Cap the dialog's height with your own class (here `max-height: 480px`)
+when the list shouldn't fill the viewport.
+
+<ListDialog />
+
+## Full-screen
+
+For a task that needs more room — creating or editing something with several fields —
+pass `variant="full-screen"` to `Dialog`. The action row is swapped for a `DialogHeader`:
+a close `IconButton`, the `DialogHeadline` (rendered as `title-large`), and the confirming
+text button. MD3 reserves true full-screen presentation for compact windows, so the
+variant adapts on its own: under 600px it fills the viewport on `surface` and slides up
+from the bottom edge; at 600px and above it renders as a centered dialog, sized a step up
+from the basic one to fit the task it hosts. Resize
+the window (or open this demo on a phone) to see both.
+
+<FullScreenDialog />
+
+## Accessibility
+
+The dialog traps focus and moves it in on open (to the first tabbable element, or the
+popup itself if there isn't one) and back to the trigger on close. `DialogHeadline` and
+`DialogSupportingText` wire up `aria-labelledby`/`aria-describedby` automatically; if a
+dialog has no visible headline, put an `aria-label` on `DialogContent`. Escape and scrim
+clicks both dismiss it — keep that for low-stakes dialogs, and handle truly critical
+confirmations by acting only on the explicit buttons.

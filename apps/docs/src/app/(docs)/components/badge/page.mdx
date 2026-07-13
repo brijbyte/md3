@@ -1,0 +1,36 @@
+---
+title: Badge
+---
+
+import BadgeVariants from "./demo/variants.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { Badge } from "@brijbyte/md3-react/badge";
+```
+
+```css
+@import "@brijbyte/md3-react/badge.css";
+```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/badges/overview" }]}
+/>
+
+## Variants
+
+A badge draws attention to an unread count or status change without competing with the
+icon it sits on. Leave it empty for a 6dp dot, or pass children for the large badge (16dp,
+label-small); formatting overflow like "999+" is up to you. Badges attach to tab items too
+— see [Tabs](/components/tabs).
+
+<BadgeVariants />
+
+## Accessibility
+
+Nest a badge inside the control it decorates (icon button, tab, nav item) and screen
+readers announce it in the right order automatically — after the destination's own label,
+matching the MD3 spec. A numbered badge needs no extra work: its visible text ("5", "999+")
+is what gets read aloud. A dot badge has no visible text, so it falls back to an
+`aria-label` of "New notification"; pass your own `aria-label` (or `aria-labelledby`) when
+you need something more specific.

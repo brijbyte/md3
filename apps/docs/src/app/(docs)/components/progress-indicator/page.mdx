@@ -1,0 +1,73 @@
+---
+title: Progress indicator
+---
+
+import LinearProgressDeterminate from "./demo/linear-determinate.tsx";
+import LinearProgressIndeterminate from "./demo/linear-indeterminate.tsx";
+import CircularProgressDeterminate from "./demo/circular-determinate.tsx";
+import CircularProgressIndeterminate from "./demo/circular-indeterminate.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { LinearProgress } from "@brijbyte/md3-react/linear-progress";
+import { CircularProgress } from "@brijbyte/md3-react/circular-progress";
+```
+
+```css
+@import "@brijbyte/md3-react/linear-progress.css";
+@import "@brijbyte/md3-react/circular-progress.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Progress", href: "https://base-ui.com/react/components/progress" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/progress-indicators/overview" },
+  ]}
+/>
+
+Users need to know something is happening, whether that's a six-second upload or an
+open-ended background sync. Both components render a rounded active indicator separated
+from its track by a small gap: pass a `value` for a determinate readout of how much has
+completed, or omit it to signal an unspecified wait instead.
+
+## Linear
+
+```tsx
+<LinearProgress value={42} aria-label="Downloading" />
+```
+
+<LinearProgressDeterminate />
+
+The track always ends in a small stop indicator, so users can tell where 100% is even
+mid-animation. For a more expressive look, pass `wavy` — the active indicator's amplitude
+ramps up just after the start and back down just before the end, flattening to a straight
+line at both edges so the wave never looks cut off.
+
+When you don't know how long a task will take, omit `value` (or pass `null`) to switch to
+the indeterminate animation: two independently moving bars travel along the track, with
+no fixed track or stop indicator to imply an endpoint that doesn't exist.
+
+<LinearProgressIndeterminate />
+
+## Circular
+
+```tsx
+<CircularProgress value={42} aria-label="Downloading" />
+```
+
+<CircularProgressDeterminate />
+
+Circular progress fits tighter spaces than a linear bar, like inline next to a button
+label. Indeterminate mode spins continuously while its arc grows and shrinks, with no
+track visible. `wavy` carries the same expressive treatment into this shape, morphing the
+active indicator between a plain ring and a many-pointed star as its amplitude ramps.
+
+<CircularProgressIndeterminate />
+
+## Accessibility
+
+Screen reader users get the same progress information as sighted users, with no extra
+wiring on your part. Both components render `role="progressbar"` (via Base UI's
+`Progress.Root`) with `aria-valuemin`/`aria-valuemax`/`aria-valuenow` set automatically
+from `value`/`max`, and omitting `value` marks the indicator indeterminate for assistive
+tech. Pass `aria-label` to describe what's in progress.

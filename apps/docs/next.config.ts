@@ -10,11 +10,12 @@ buildIconData();
 const ROOT = import.meta.dirname;
 
 // .mdx → server-safe JS via Sätteri (satteri-nextjs/loader), then our demo
-// loader wraps page-imported demos in the <Demo> chrome. Loaders run
-// right-to-left under both bundlers, and all options are JSON-serializable so
-// the same pipeline applies under webpack and Turbopack. MDX files are content
-// modules imported by app-router pages — never routes — so pageExtensions
-// stays default and no page.mdx is ever picked up from app/.
+// loader wraps page-imported demos in the <Demo> chrome and turns each
+// app-dir page.mdx into a full route module (<DocsPage> wrapper + metadata —
+// see loaders/demo-loader.mjs). Loaders run right-to-left under both
+// bundlers, and all options are JSON-serializable so the same pipeline
+// applies under webpack and Turbopack. page.mdx files under app/ ARE the
+// routes (mdx is in pageExtensions below).
 const HAST_PLUGINS = path.join(ROOT, "satteri/hast-plugins.mjs");
 
 // Magic specifier satteri's output imports `useMDXComponents` from; aliased to
@@ -46,7 +47,12 @@ const SATTERI_LOADER = {
 };
 const DEMO_LOADER = {
   loader: path.join(ROOT, "loaders/demo-loader.mjs"),
-  options: { createDemo: path.join(ROOT, "src/components/create-demo.tsx") },
+  options: {
+    createDemo: path.join(ROOT, "src/components/create-demo.tsx"),
+    docsPage: path.join(ROOT, "src/components/DocsPage.tsx"),
+    nav: path.join(ROOT, "src/nav.ts"),
+    appDir: path.join(ROOT, "src/app"),
+  },
 };
 
 const nextConfig: NextConfig = {
@@ -54,6 +60,7 @@ const nextConfig: NextConfig = {
   // payload for soft navigation), same hosting shape as the old Vite SSG.
   output: "export",
   trailingSlash: false,
+  pageExtensions: ["ts", "tsx", "mdx"],
   turbopack: {
     resolveAlias: { [PROVIDER_SPECIFIER]: "./src/mdx-components.tsx" },
     rules: {

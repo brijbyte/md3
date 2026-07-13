@@ -1,0 +1,80 @@
+---
+title: Slider
+---
+
+import SliderStates from "./demo/states.tsx";
+import SliderRange from "./demo/range.tsx";
+import SliderCentered from "./demo/centered.tsx";
+import SliderSizes from "./demo/sizes.tsx";
+import SliderIcons from "./demo/icons.tsx";
+import SliderSmartHome from "./demo/smart-home.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { Slider } from "@brijbyte/md3-react/slider";
+```
+
+```css
+@import "@brijbyte/md3-react/slider.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Slider", href: "https://base-ui.com/react/components/slider" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/sliders/overview" },
+  ]}
+/>
+
+One component covers every slider configuration Material Design 3 defines — continuous,
+discrete, centered, and range — instead of reaching for a different library each time
+the interaction changes.
+
+## States
+
+Switch between free-form and stepped input without swapping components. Continuous
+sliders (the default) accept any value in the range; discrete sliders snap to `step`
+and show tick marks once you pass `ticks`.
+
+<SliderStates />
+
+## Range
+
+Get a min/max range input for free — pass an array to `value`/`defaultValue` and the
+slider renders one thumb per entry. `getAriaLabel` keeps each thumb individually
+announced to assistive tech.
+
+<SliderRange />
+
+## Centered
+
+For balance, brightness offset, and other positive/negative controls, the meaningful
+origin is the midpoint, not `min`. Set `centered` and the active track grows from that
+midpoint toward the thumb instead of from the start.
+
+<SliderCentered />
+
+## Sizes
+
+Match a slider's presence to its context without hand-tuning dimensions: `size` picks
+one of the five track/handle sizes straight off the spec table — `xs` (the default),
+`s`, `m`, `l`, `xl`. Track height, handle height, and track corner radius scale
+together, while handle width stays 4px at every size. `m`, `l`, and `xl` are tall enough
+to take an inset `icon`; `xs` and `s` ignore it.
+
+<SliderSizes />
+
+## Adjacent icons
+
+When a slider's value needs to read at a glance, flank it with icons that scale in
+intensity from smallest on the left to largest on the right. This is plain layout
+composition, not a component prop — compare it to the inset `icon` prop above.
+
+<SliderIcons />
+
+## Vertical
+
+A vertical `xl` slider with an inset `icon`, set inside a card with its own live value
+readout next to the thumb, shows how far the public props alone take you in a real
+layout.
+
+<SliderSmartHome />

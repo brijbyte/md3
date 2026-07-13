@@ -29,6 +29,7 @@
     "satteri": "^0.9.5",
     "satteri-nextjs": "^0.0.2",
     "shiki": "^4.3.0",
-    "tailwindcss": "^4.3.2"
+    "tailwindcss": "^4.3.2",
+    "yuku-parser": "^0.6.1"
   }
 }

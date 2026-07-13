@@ -37,16 +37,21 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - Layouts mirror the old page layouts as route groups: `src/app/layout.tsx` owns the
   document (theme init script first in `<body>`, font links, `NavigationProgress`);
   `(landing)/` = slim header, holds `/` and `/showcase/*`; `(docs)/` = sidebar chrome.
-  Each docs route is a thin `page.tsx` importing its MDX content and rendering it inside
-  `<DocsPage path toc>` (center column + "On this page" rail; sidebar active state comes
-  from `usePathname` in `SidebarNav`/`MobileTabs`, correct in the prerendered HTML too).
+  Each docs route IS its `page.mdx` (`pageExtensions` includes mdx) — the demo loader
+  wraps the compiled default export in `<DocsPage path toc>` (center column + "On this
+  page" rail) and emits `export const metadata = routeMetadata(path)`, route derived from
+  the app-dir location with route groups stripped; no per-route page.tsx. Sidebar active
+  state comes from `usePathname` in `SidebarNav`/`MobileTabs`, correct in prerendered HTML.
 - **The docs app consumes the built library dist** (workspace dep, no source alias) — it
   exercises the exact published package. `app.css` imports
   `@brijbyte/md3-react/styles.css` + `tailwind-tokens.css`; run
   `pnpm --filter @brijbyte/md3-react dev` (watch build) alongside `pnpm dev` when editing
   library code.
-- MDX content lives at `src/content/<name>/page.mdx` (page dirs flat; NOT under `app/` —
-  mdx is never a route). Compiled by Sätteri via `satteri-nextjs/loader`, wired manually in
+- MDX pages live in their route dir (`src/app/(docs)/<section>/<page>/page.mdx`, demos and
+  page-local components alongside); `src/content/` only keeps the showcase sources.
+  Because demo folders sit under `app/`, demo/helper file names must avoid Next's special
+  names (`error`, `loading`, `page`, `route`, `icon`, …) — they'd be picked up as route
+  conventions. Compiled by Sätteri via `satteri-nextjs/loader`, wired manually in
   next.config.ts for both webpack and Turbopack (options JSON-serializable; hast plugins
   referenced as `"<abs path>#export"` string specs into `satteri/hast-plugins.mjs`:
   headingIds → alerts → externalLinks → shiki, ported verbatim from the old vite.config).
@@ -57,14 +62,15 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   the hast path — Sätteri converts them to JSX style objects itself and silently drops
   object values. Gotcha: satteri rewrites relative import extensions to `.js` in output;
   the demo loader restores them (`restoreSourceExtensions`).
-- **Demos are standalone drop-in packages**: `src/content/<page>/demo/` holds a
+- **Demos are standalone drop-in packages**: the route dir's `demo/` holds a
   `package.json` (name + real deps) plus one `<demo>.tsx` per demo (default export, sibling
   `<demo>.css`). Demos import the library only by published specifiers and put layout
   styles as token-based, demo-prefixed classes (`.demo-radio-row`) in their own css — never
   inline `style` objects, never docs Tailwind classes — so a folder copies out of the repo
   verbatim. Pages import each demo by its real path and render it directly
   (`<ButtonSizes />`); `loaders/demo-loader.mjs` (chained after the satteri loader on
-  `*.mdx`) rewrites each such import into a facade: `createDemo(entry, FILES)` wraps it in
+  `*.mdx`; all import matching is AST-based via `yuku-parser`, span edits — no regex
+  scraping) rewrites each such import into a facade: `createDemo(entry, FILES)` wraps it in
   the `Demo` server component (playground + collapsed code tabs), with the demo's sources
   (entry + relative imports + sibling css) Shiki-highlighted at compile time and inlined —
   server-only payload, and every file is a loader dependency so demo edits recompile the
