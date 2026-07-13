@@ -80,6 +80,25 @@ export function alerts() {
   });
 }
 
+// GFM tables keep the source newlines as text nodes between table/thead/tr
+// children; with optimizeStatic: false they compile to {"\n"} JSX children,
+// which React rejects inside tables (whitespace text node in <table>). Strip them.
+const TABLE_CONTAINERS = ["table", "thead", "tbody", "tfoot", "tr"];
+export function stripTableWhitespace() {
+  return defineHastPlugin({
+    name: "strip-table-whitespace",
+    element: {
+      filter: TABLE_CONTAINERS,
+      visit(node, ctx) {
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          const child = node.children[i];
+          if (child.type === "text" && !child.value.trim()) ctx.removeChildAt(node, i);
+        }
+      },
+    },
+  });
+}
+
 export function externalLinks() {
   return defineHastPlugin({
     name: "external-links",

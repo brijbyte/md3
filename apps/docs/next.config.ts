@@ -30,6 +30,7 @@ const SATTERI_LOADER = {
     // per-document state (the heading id chain) resets per compile.
     hastPlugins: [
       `${HAST_PLUGINS}#headingIds`,
+      `${HAST_PLUGINS}#stripTableWhitespace`,
       `${HAST_PLUGINS}#alerts`,
       `${HAST_PLUGINS}#externalLinks`,
       `${HAST_PLUGINS}#shiki`,
