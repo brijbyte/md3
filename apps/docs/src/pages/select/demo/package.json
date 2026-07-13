@@ -1,0 +1,15 @@
+{
+  "name": "md3-demos-select",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Select demos",
+  "type": "module",
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@brijbyte/md3-icons": "latest",
+    "@brijbyte/md3-react": "latest"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

@@ -1,0 +1,14 @@
+@import "@brijbyte/md3-react/menu.css";
+@import "@brijbyte/md3-react/text-field.css";
+@import "@brijbyte/md3-react/select.css";
+
+.demo-select-scrollable {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px);
+  justify-content: center;
+}
+
+/* Cap the menu so the list scrolls like the guidelines' font picker. */
+.demo-select-scrollable-menu {
+  max-height: 300px;
+}

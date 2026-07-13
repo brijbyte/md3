@@ -19,6 +19,7 @@ import DonutLargeIcon from "@brijbyte/md3-icons/outlined/DonutLarge";
 import ProgressActivityIcon from "@brijbyte/md3-icons/outlined/ProgressActivity";
 import RadioIcon from "@brijbyte/md3-icons/outlined/RadioButtonChecked";
 import RightPanelOpenIcon from "@brijbyte/md3-icons/outlined/RightPanelOpen";
+import DropdownMenuIcon from "@brijbyte/md3-icons/outlined/DropdownMenu";
 import RocketLaunchIcon from "@brijbyte/md3-icons/outlined/RocketLaunch";
 import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
@@ -189,6 +190,13 @@ export const SECTIONS: NavSection[] = [
         title: "Radio button",
         description: "Single-select groups with the state layer and motion MD3 expects.",
         icon: RadioIcon,
+      },
+      {
+        path: "/components/select",
+        label: "Select",
+        title: "Select",
+        description: "A text-field-shaped trigger opening a menu of options — MD3's dropdown.",
+        icon: DropdownMenuIcon,
       },
       {
         path: "/components/slider",

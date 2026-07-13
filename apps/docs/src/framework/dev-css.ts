@@ -22,6 +22,7 @@ import "@brijbyte/md3-react/loading-indicator/LoadingIndicator.module.css";
 import "@brijbyte/md3-react/menu/Menu.module.css";
 import "@brijbyte/md3-react/radio/Radio.module.css";
 import "@brijbyte/md3-react/ripple/ripple.module.css";
+import "@brijbyte/md3-react/select/Select.module.css";
 import "@brijbyte/md3-react/side-sheet/SideSheet.module.css";
 import "@brijbyte/md3-react/slider/Slider.module.css";
 import "@brijbyte/md3-react/snackbar/Snackbar.module.css";

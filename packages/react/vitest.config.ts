@@ -8,7 +8,9 @@ export default defineConfig({
   // Base UI's hooks (useId etc.) break if the optimizer bundles a second React copy;
   // dedupe + pre-bundling @base-ui/react keeps a single instance in the browser deps.
   resolve: { dedupe: ["react", "react-dom"] },
-  optimizeDeps: { include: ["react", "react-dom", "react-dom/client", "@base-ui/react"] },
+  optimizeDeps: {
+    include: ["react", "react-dom", "react-dom/client", "react-dom/server", "@base-ui/react"],
+  },
   test: {
     name: "react",
     include: ["src/**/*.test.{ts,tsx}"],

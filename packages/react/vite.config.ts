@@ -136,6 +136,7 @@ export default defineConfig({
         "card/index": "src/card/index.ts",
         "chip/index": "src/chip/index.ts",
         "menu/index": "src/menu/index.ts",
+        "select/index": "src/select/index.ts",
         "loading-indicator/index": "src/loading-indicator/index.ts",
         "linear-progress/index": "src/linear-progress/index.ts",
         "circular-progress/index": "src/circular-progress/index.ts",

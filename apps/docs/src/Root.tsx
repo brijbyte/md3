@@ -60,6 +60,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/menu": mdxRoute(() => import("./pages/menu/page.mdx")),
   "/components/progress-indicator": mdxRoute(() => import("./pages/progress-indicator/page.mdx")),
   "/components/radio": mdxRoute(() => import("./pages/radio/page.mdx")),
+  "/components/select": mdxRoute(() => import("./pages/select/page.mdx")),
   "/components/slider": mdxRoute(() => import("./pages/slider/page.mdx")),
   "/components/snackbar": mdxRoute(() => import("./pages/snackbar/page.mdx")),
   "/components/switch": mdxRoute(() => import("./pages/switch/page.mdx")),

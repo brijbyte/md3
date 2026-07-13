@@ -219,7 +219,8 @@ Patterns:
 
 ## Current status / roadmap
 
-Next candidates: TextField, Select (MD3 specs it as a menu opened from a text field —
-build after TextField; Base UI Select's `alignItemWithTrigger` must be false), dynamic
-color theming, rem-based type scaling (see Units decision), npm publish setup (finalize
-package name), docs site content + deploy.
+Next candidates: navigation family (nav bar / rail / drawer), search, app bars, date/time
+pickers, carousel, FAB menu, dynamic color theming, rem-based type scaling (see Units
+decision), npm publish setup (finalize package name), docs site content + deploy.
+Select ships as TextField anatomy + Menu popup (`src/select/`), reusing both modules'
+classes — its CSS overrides are specificity-bumped so import order can't break them.

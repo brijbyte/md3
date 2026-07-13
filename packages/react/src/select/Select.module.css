@@ -1,0 +1,85 @@
+/* Select = TextField's field anatomy (trigger) + Menu's popup/item styling,
+   both reused by stacking their classes; this file holds only the deltas.
+   Every override selector chains two select-local classes (or an attr) so it
+   out-specifies the reused rules regardless of stylesheet import order. */
+@layer components {
+  .root {
+  }
+
+  /* The trigger is a real <button> styled as the text field container. */
+  .root .trigger {
+    appearance: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: start;
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Purely visual inside the trigger button — a resting label must not
+     swallow the press (Field.Label handles label clicks itself). */
+  .root .label {
+    pointer-events: none;
+  }
+
+  .value {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    /* Keep the row's height when empty (no text content). */
+    min-height: var(--md-sys-typescale-body-large-line-height);
+  }
+
+  /* Placeholder hides behind the resting label, like the input placeholder. */
+  .root .trigger .value[data-placeholder] {
+    color: transparent;
+    transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .root .trigger:not([data-has-label]) .value[data-placeholder],
+  .root[data-focused] .trigger .value[data-placeholder] {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .dropdownIcon {
+    display: inline-flex;
+    transition: transform var(--md-sys-motion-duration-short4)
+      var(--md-sys-motion-easing-fast-spatial);
+  }
+
+  .dropdownIcon > svg {
+    inline-size: 24px;
+    block-size: 24px;
+  }
+
+  .dropdownIcon[data-popup-open] {
+    transform: rotate(180deg);
+  }
+
+  .positioner {
+  }
+
+  /* The menu matches the trigger's width (growing for longer options). */
+  .positioner .popup {
+    min-width: var(--anchor-width);
+    max-width: var(--available-width);
+  }
+
+  .check {
+  }
+
+  /* Selected rows: secondary-container fill + leading checkmark (menus
+     guidelines' single/multi-select treatment; checkmark via ItemIndicator). */
+  .positioner .item[data-selected]:not([data-disabled]) {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    --_icon-color: currentColor;
+  }
+}
