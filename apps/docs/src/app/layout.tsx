@@ -1,10 +1,11 @@
 // Root layout owning the HTML document (the old Root.tsx server component).
 // app.css @imports the library CSS; cascade-layer order is pinned by the
 // postcss-layer-order plugin, which prepends it to every stylesheet.
+
 import "./app.css";
 
 import type { Metadata } from "next";
-import { Google_Sans, Roboto_Mono, Roboto_Flex } from "next/font/google";
+import { Roboto_Mono, Roboto_Flex } from "next/font/google";
 import type * as React from "react";
 import { NavigationProgress } from "../components/NavigationProgress";
 import { HOME } from "../nav";
@@ -17,12 +18,6 @@ export const metadata: Metadata = {
   description: HOME.description,
 };
 
-const brand = Google_Sans({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-google-sans",
-});
 const plain = Roboto_Flex({
   weight: ["400", "500", "700"],
   subsets: ["latin"],
@@ -58,14 +53,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       data-theme="dark"
       data-color-theme="default"
-      className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable"
+      className={`scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable ${plain.variable} ${mono.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body
-        className={`min-h-screen antialiased bg-background text-on-background font-plain text-body-large ${brand.variable} ${plain.variable} ${mono.variable}`}
-      >
+      <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
         <NavigationProgress />
         {children}
       </body>

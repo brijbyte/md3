@@ -2,6 +2,12 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Roboto Mono for all code (preflight styles pre/code/kbd/samp off --font-mono
+   via --default-mono-font-family, so every code block picks this up). */
+@theme {
+  --font-mono: var(--font-roboto-mono);
+}
+
 /* Global library setup only: tokens + ripple. Component css is pulled in by
    its consumers — the `md3 alias` re-exports in src/ui/ (docs chrome,
    showcases) and each demo's own css. */
@@ -14,17 +20,11 @@
    scripts/build-color-themes.mjs — must load after tokens to override them. */
 @import "../styles/color-themes.css";
 
-/* Roboto Mono for all code (preflight styles pre/code/kbd/samp off --font-mono
-   via --default-mono-font-family, so every code block picks this up). */
-@theme {
-  --font-mono: var(--font-roboto-mono);
-}
-
 /* Unlayered, so it wins over the theme-layer defaults ("Roboto", system-ui).
    Two distinct ref typefaces: Google Sans carries the brand voice (headings,
    docs title, nav — the display/headline/title-large variants route here via
    the typescale tokens), Roboto is the plain face for content. */
 :root {
-  --md-ref-typeface-brand: var(--font-google-sans);
+  --md-ref-typeface-brand: var(--font-roboto);
   --md-ref-typeface-plain: var(--font-roboto);
 }
