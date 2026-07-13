@@ -273,3 +273,11 @@ export const SHOWCASES: NavItem[] = [
 
 // Flat route list (landing first) for lookup, SSG paths, and landing cards.
 export const NAV: NavItem[] = [HOME, ...SECTIONS.flatMap((section) => section.items), ...SHOWCASES];
+
+// Next.js Metadata for a route (title flows through the root layout's
+// "%s — MD3 React" template; the landing page uses the root default).
+export function routeMetadata(path: string): { title: string; description: string } {
+  const item = NAV.find((i) => i.path === path);
+  if (!item) throw new Error(`routeMetadata: unknown route "${path}"`);
+  return { title: item.title, description: item.description };
+}

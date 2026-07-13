@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Typography } from "@brijbyte/md3-react/typography";
 
-export type TocItem = { depth: number; text: string; id: string };
+// Shape of satteri-nextjs's per-page `toc` export (ids from the headingIds plugin).
+export type TocItem = { depth: number; value: string; id: string };
 
 // Nest a flat heading outline by depth: items at the group's shallowest depth
 // start entries, deeper items nest under the entry before them.
@@ -22,7 +23,7 @@ function TocList({ items }: { items: TocItem[] }) {
             href={`#${item.id}`}
             className="block py-1.5 text-on-surface-variant hover:text-on-surface"
           >
-            {item.text}
+            {item.value}
           </Typography>
           {children.length > 0 && (
             <div className="border-s border-outline-variant ps-3">

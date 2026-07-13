@@ -1,0 +1,30 @@
+@import "@brijbyte/md3-react/divider.css";
+
+.demo-divider {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.demo-divider-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 360px;
+  padding: 16px 0;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+/* No fixed height: padding sizes the row so the vertical divider (align-self:
+   stretch) picks up the row's content height instead of collapsing to 0. */
+.demo-divider-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  width: fit-content;
+}

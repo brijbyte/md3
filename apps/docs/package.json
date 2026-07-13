@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "next dev",
+    "build": "next build",
+    "preview": "npx serve out",
     "typecheck": "tsc --noEmit",
     "build:icon-data": "node scripts/build-icon-data.mjs",
     "build:color-themes": "esbuild scripts/build-color-themes.mjs --bundle --platform=node --format=esm --outfile=scripts/.build-color-themes.bundle.mjs && node scripts/.build-color-themes.bundle.mjs && rm scripts/.build-color-themes.bundle.mjs"
@@ -15,21 +15,20 @@
     "@base-ui/react": "^1.6.0",
     "@brijbyte/md3-icons": "workspace:*",
     "@brijbyte/md3-react": "workspace:*",
-    "@tanstack/react-virtual": "^3.14.5",
+    "@tanstack/react-virtual": "3.14.5",
+    "next": "^16.2.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@material/material-color-utilities": "^0.4.0",
-    "@tailwindcss/vite": "^4.3.2",
+    "@tailwindcss/postcss": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-rsc": "^0.5.27",
     "esbuild": "^0.28.1",
-    "rsc-html-stream": "^0.0.7",
-    "satteri": "^0.9.4",
+    "satteri": "^0.9.5",
+    "satteri-nextjs": "^0.0.2",
     "shiki": "^4.3.0",
-    "tailwindcss": "^4.3.2",
-    "vite-plugin-satteri": "^0.2.14"
+    "tailwindcss": "^4.3.2"
   }
 }

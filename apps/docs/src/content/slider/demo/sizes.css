@@ -1,0 +1,19 @@
+@import "@brijbyte/md3-react/slider.css";
+
+.demo-slider-sizes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 400px;
+  max-width: 100%;
+}
+
+.demo-slider-sizes-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.demo-slider-sizes-label {
+  flex: 0 0 80px;
+}

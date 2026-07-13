@@ -1,0 +1,69 @@
+---
+title: FAB menu
+---
+
+import BasicFabMenu from "./demo/basic.tsx";
+import FabMenuColorSets from "./demo/color-sets.tsx";
+import FabMenuSizes from "./demo/sizes.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
+
+```tsx
+import { FabMenu, FabMenuTrigger, FabMenuContent, FabMenuItem } from "@brijbyte/md3-react/fab-menu";
+```
+
+```css
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/fab-menu.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Menu", href: "https://base-ui.com/react/components/menu" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/fab-menu/overview" },
+  ]}
+/>
+
+Surface a FAB's related actions without leaving the corner the user's thumb
+already knows: the FAB morphs into a close button while two to six pill-shaped
+actions fan out above it, staggered bottom-to-top. It's built on
+[Base UI Menu](https://base-ui.com/react/components/menu), so dismissal (Esc,
+outside click), keyboard navigation, and menu semantics come for free —
+`FabMenu` holds the open state, `FabMenuTrigger` is the toggle FAB, and
+`FabMenuContent` is the portalled column of items.
+
+## Basic FAB menu
+
+Give every item a label — the spec is explicit that labels never drop — and
+keep the 24dp `icon` so items stay scannable. Items close the menu on click
+automatically. The trigger's `icon` rotates away as the close glyph rotates in;
+pass `closeIcon` to replace the default close glyph.
+
+<BasicFabMenu />
+
+## Color sets
+
+One `color` prop on the root picks the spec's color set for the whole unit:
+the closed FAB wears the set's container tone, the open close button flips to
+the bold tone, and every item matches. Pick the set that matches the FAB color
+you'd use in that spot anyway.
+
+<FabMenuColorSets />
+
+## FAB sizes
+
+The menu can open from any FAB size (`size` on the trigger): medium and large
+FABs shrink into the standard 56dp close button, anchored at their top-trailing
+corner so the close button appears exactly where the FAB's corner was. The
+trigger keeps the closed FAB's footprint while open, so surrounding layout
+never shifts.
+
+<FabMenuSizes />
+
+## Placement
+
+Per the guidelines, the FAB menu belongs at the window's trailing edge (it
+mirrors automatically in RTL — try the direction toggle on the demos above),
+opens from a plain FAB only (never an extended FAB), and shouldn't be combined
+with a toolbar or navigation rail. Items align to the FAB's trailing edge by
+default; `align="start"` on `FabMenuContent` aligns them to the other edge for
+a start-positioned FAB.

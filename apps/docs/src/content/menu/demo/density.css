@@ -1,0 +1,9 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/menu.css";
+
+.demo-menu-density {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}

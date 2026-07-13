@@ -8,11 +8,11 @@ import WarningIcon from "@brijbyte/md3-icons/outlined/Warning";
 import { HeadingAnchor } from "./HeadingAnchor";
 
 // MD3-styled replacements for markdown elements, passed to every MDX page
-// via its `components` prop (see mdxPage in Root.tsx). Server-safe.
+// via the mdx-components provider (src/mdx-components.tsx). Server-safe.
 type Props<T extends keyof React.JSX.IntrinsicElements> = React.JSX.IntrinsicElements[T];
 
 // GFM alert blockquotes (`> [!NOTE]`), tagged data-alert by the alerts hast
-// plugin in vite.config. MD3 has no yellow, so warning/caution both lean on error.
+// plugin in satteri/hast-plugins.mjs. MD3 has no yellow, so warning/caution both lean on error.
 const ALERTS: Record<
   string,
   { icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; label: string; accent: string }
@@ -78,7 +78,7 @@ export const MDX_COMPONENTS: Record<string, React.ElementType> = {
     ),
   hr: (props: Props<"hr">) => <hr className="my-8 border-outline-variant" {...props} />,
   // Block code keeps the pre's styling; only inline code gets its own chip look.
-  // Shiki (hast plugin in vite.config) adds its own className — merge, don't replace.
+  // Shiki (hast plugin in satteri/hast-plugins.mjs) adds its own className — merge, don't replace.
   pre: ({ className, ...props }: Props<"pre">) => (
     <pre
       className={`my-4 overflow-x-auto rounded-large bg-surface-container p-4 text-body-medium [&>code]:bg-transparent [&>code]:p-0 ${className ?? ""}`}

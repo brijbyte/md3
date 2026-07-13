@@ -1,0 +1,85 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-bottom-sheet-icon-grid {
+  padding: 0 0 24px;
+}
+
+.demo-bottom-sheet-icon-grid-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+  display: flex;
+  overflow-x: auto;
+}
+
+.demo-bottom-sheet-icon-grid-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 88px;
+  padding: 8px 4px;
+  border: none;
+  background: none;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  text-align: center;
+}
+
+.demo-bottom-sheet-icon-grid-action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.demo-bottom-sheet-icon-grid-action:hover .demo-bottom-sheet-icon-grid-action-icon {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 8%,
+    var(--md-sys-color-surface-container-high)
+  );
+}
+
+.demo-bottom-sheet-icon-grid-divider {
+  height: 1px;
+  margin: 8px 24px 16px;
+  background: var(--md-sys-color-outline-variant);
+}
+
+.demo-bottom-sheet-icon-grid-heading {
+  padding: 0 24px 12px;
+  display: block;
+}
+
+.demo-bottom-sheet-icon-grid-contacts {
+  list-style: none;
+  margin: 0;
+  padding: 0 24px;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.demo-bottom-sheet-icon-grid-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 72px;
+  text-align: center;
+}
+
+.demo-bottom-sheet-icon-grid-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+}

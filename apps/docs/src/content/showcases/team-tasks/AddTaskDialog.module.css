@@ -1,0 +1,95 @@
+/* Container-transform morph between the Add FAB and the New task dialog.
+   Progressive enhancement: browsers without view transitions (or with reduced
+   motion) fall back to the dialog's stock fade+scale. */
+
+::view-transition-group(add-task) {
+  animation-duration: var(--md-sys-motion-duration-medium2);
+  animation-timing-function: var(--md-sys-motion-easing-emphasized);
+  /* Clip the snapshots to the morphing container so the growing FAB snapshot
+     never paints outside the dialog's rounded bounds. */
+  overflow: clip;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+}
+
+/* Container transform: snapshots keep their natural size and the clipped group
+   reveals/conceals them — neither surface ever stretches (no ballooning FAB icon). */
+::view-transition-old(add-task),
+::view-transition-new(add-task) {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  mix-blend-mode: normal;
+}
+
+/* Collapsing back to the FAB, the container carries the FAB's squircle radius so
+   it lands on the button's shape instead of a circle. */
+html[data-add-task-morph="close"]::view-transition-group(add-task) {
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+/* Swap the surfaces in the first stretch of the morph rather than cross-fading
+   for its whole length — the outgoing FAB disappears before it reads oversized. */
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(add-task) {
+  animation: vt-out var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)
+    forwards;
+}
+
+::view-transition-new(add-task) {
+  animation: vt-in var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard) both;
+}
+
+/* The morph animates browser snapshots — the popup's own enter/exit transition
+   would double up underneath it. Unlayered, so it beats the library's @layer rule. */
+.addMorph {
+  view-transition-name: add-task;
+  transition: none;
+}
+
+/* Keep the popup at its resting styles even in Base UI's starting/ending frames,
+   so the snapshots the morph animates between are never the transparent ones. */
+.addMorph[data-starting-style],
+.addMorph[data-ending-style] {
+  opacity: 1;
+  transform: none;
+}
+
+/* On close the FAB takes the name back in the same commit; if the popup's ending
+   frame kept it too, the duplicate name would abort the transition. */
+.addMorph[data-ending-style] {
+  view-transition-name: none;
+}
+
+/* Puts the shared morph name on whichever trigger is the active source. */
+.morphSource {
+  view-transition-name: add-task;
+}
+
+/* Add-task dialog. */
+.dialog {
+  width: 100%;
+}
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.fieldLabel {
+  margin-bottom: 8px;
+}
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

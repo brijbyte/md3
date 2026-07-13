@@ -1,0 +1,32 @@
+/* Settings. */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.sectionTitle {
+  font-weight: 700;
+}
+.radioGroup {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prefList {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.prefRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}

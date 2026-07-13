@@ -1,0 +1,5 @@
+@import "@brijbyte/md3-react/text-field.css";
+
+.demo-text-field-multiline {
+  max-width: 360px;
+}

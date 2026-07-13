@@ -1,0 +1,13 @@
+{
+  "name": "md3-demos-bottom-sheet",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Bottom sheet",
+  "type": "module",
+  "dependencies": {
+    "@brijbyte/md3-react": "latest"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

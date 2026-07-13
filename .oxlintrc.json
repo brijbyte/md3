@@ -8,14 +8,24 @@
   "env": {
     "browser": true
   },
-  "ignorePatterns": ["dist", "src/generated", "*.module.css.d.ts"],
+  "ignorePatterns": [
+    "dist",
+    "src/generated",
+    "*.module.css.d.ts",
+    "apps/docs-old",
+    "apps/docs/.next",
+    "apps/docs/out",
+    "apps/docs/next-env.d.ts"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off"
   },
   "overrides": [
     {
       "files": ["**/vite.config.ts", "**/scripts/**"],
-      "env": { "node": true }
+      "env": {
+        "node": true
+      }
     }
   ]
 }

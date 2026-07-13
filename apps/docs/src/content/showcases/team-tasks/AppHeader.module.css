@@ -1,0 +1,67 @@
+/* Header. */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.headerTitles {
+  text-align: center;
+}
+.subtitle {
+  margin-top: 4px;
+}
+.actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+.notif {
+  position: relative;
+  display: inline-flex;
+}
+.notifBadge {
+  position: absolute;
+  top: -4px;
+  inset-inline-end: -4px;
+}
+/* z-index belongs on the positioned ancestor (the Positioner), not the static popup. */
+.notifPositioner {
+  z-index: var(--md3-popup-z-index, var(--md-ref-z-index-popover));
+  outline: none;
+}
+.notifPopup {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding-block: 8px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+.notifPopupTitle {
+  display: block;
+  padding: 8px 16px 4px;
+}
+.newTask {
+  margin-inline-start: auto;
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .headerTitles {
+    text-align: start;
+  }
+  .actions {
+    width: auto;
+  }
+  .newTask {
+    margin-inline-start: 0;
+  }
+}

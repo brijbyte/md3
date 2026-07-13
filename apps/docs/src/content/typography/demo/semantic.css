@@ -1,0 +1,17 @@
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-typography-semantic {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+}
+
+.demo-typography-semantic-meta {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-typography-semantic-link {
+  color: var(--md-sys-color-primary);
+  text-decoration: underline;
+}

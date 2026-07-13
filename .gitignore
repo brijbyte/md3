@@ -14,3 +14,7 @@ skills-lock.json
 packages/react/.vitest-attachments/
 packages/react/src/**/__screenshots__/
 /screenshots/
+apps/docs-old/public/icons-data/
+apps/docs/.next/
+apps/docs/out/
+*.tsbuildinfo

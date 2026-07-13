@@ -1,0 +1,9 @@
+@import "@brijbyte/md3-react/linear-progress.css";
+
+.demo-progress-indicator-linear {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 320px;
+  max-width: 100%;
+}

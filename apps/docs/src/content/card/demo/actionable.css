@@ -1,0 +1,27 @@
+@import "@brijbyte/md3-react/card.css";
+
+.demo-card-actionable {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.demo-card-actionable-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.demo-card-actionable-card {
+  width: 192px;
+  gap: 4px;
+  padding: 16px;
+}
+
+.demo-card-actionable-title {
+  text-transform: capitalize;
+}
+
+.demo-card-actionable-blurb {
+  color: var(--md-sys-color-on-surface-variant);
+}

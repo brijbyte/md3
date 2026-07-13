@@ -23,65 +23,74 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   `@brijbyte/md3-icons/<outlined|rounded|sharp>/<PascalName>[Fill]` (digit-leading names get
   an `Icon` prefix). Icons render `fill="currentColor"`, so they follow `--md-sys-color-*`
   via the surrounding `color`.
-- `apps/docs` — Vite RSC docs/demo app (`@vitejs/plugin-rsc`), see below.
+- `apps/docs` — Next.js App Router docs/demo app (static export via satteri-nextjs), see below.
+- `apps/docs-old` — frozen pre-Next.js (Vite RSC) copy of the docs app; excluded from the
+  pnpm workspace, kept only for reference. Don't build or edit it.
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
 
 ## Docs app (`apps/docs`)
 
-- `src/Root.tsx` is a server component owning the `<html>` document and routing;
-  routes/metadata live in `src/nav.ts` (`SECTIONS` → routes `/<section>/<page>`, flattened
-  into `NAV`). Every docs route is an MDX page at `src/pages/<name>/page.mdx` (page dirs
-  flat, only routes nested), `React.lazy`-loaded so only the active route's chunk is
-  imported. `/` is a standalone landing page (`home.tsx`); every other route gets the docs
-  sidebar layout.
-- MDX is compiled by Sätteri (`vite-plugin-satteri`, wrapped in vite.config's `mdxPlugin()`);
-  output is a server component and Root's `mdxPage()` injects the MD3-styled element map
-  from `components/mdx-components.tsx`. Code blocks are Shiki-highlighted at compile time
-  (`shikiHastPlugin`, dual themes as `--shiki-light/--shiki-dark` vars switched by
-  `[data-theme]`; zero client JS). On the MDX/hast path the shiki inline style string must
-  be left as-is — Sätteri converts it to a JSX style object itself and silently drops
-  object values. Headings get slugified anchor ids, and `mdxPlugin` appends
-  `export const toc` per page; `DocsLayout` renders the "On this page" right rail from it.
-- **Demos are standalone drop-in packages**: `src/pages/<page>/demo/` holds a `package.json`
-  (name + real deps) plus one `<demo>.tsx` per demo (default export, sibling `<demo>.css`).
-  Demos import the library only by published specifiers and put layout styles as
-  token-based, demo-prefixed classes (`.demo-radio-row`) in their own css — never inline
-  `style` objects, never docs Tailwind classes — so a folder copies out of the repo
+- Next.js 16 App Router, `output: "export"` (fully static `out/`, `<path>.html` per route,
+  `trailingSlash: false` — same hosting shape as the old Vite SSG; Next's own RSC payload
+  files drive soft navigation). Routes/metadata live in `src/nav.ts` (`SECTIONS` → routes
+  `/<section>/<page>`, flattened into `NAV`; `routeMetadata()` feeds each page's Metadata).
+- Layouts mirror the old page layouts as route groups: `src/app/layout.tsx` owns the
+  document (theme init script first in `<body>`, font links, `NavigationProgress`);
+  `(landing)/` = slim header, holds `/` and `/showcase/*`; `(docs)/` = sidebar chrome.
+  Each docs route is a thin `page.tsx` importing its MDX content and rendering it inside
+  `<DocsPage path toc>` (center column + "On this page" rail; sidebar active state comes
+  from `usePathname` in `SidebarNav`/`MobileTabs`, correct in the prerendered HTML too).
+- **The docs app consumes the built library dist** (workspace dep, no source alias) — it
+  exercises the exact published package. `app.css` imports
+  `@brijbyte/md3-react/styles.css` + `tailwind-tokens.css`; run
+  `pnpm --filter @brijbyte/md3-react dev` (watch build) alongside `pnpm dev` when editing
+  library code.
+- MDX content lives at `src/content/<name>/page.mdx` (page dirs flat; NOT under `app/` —
+  mdx is never a route). Compiled by Sätteri via `satteri-nextjs/loader`, wired manually in
+  next.config.ts for both webpack and Turbopack (options JSON-serializable; hast plugins
+  referenced as `"<abs path>#export"` string specs into `satteri/hast-plugins.mjs`:
+  headingIds → alerts → externalLinks → shiki, ported verbatim from the old vite.config).
+  `optimizeStatic: false` is required — the `src/mdx-components.tsx` provider restyles base
+  tags (p, h2, pre, …) with the MD3 element map, which a collapsed static subtree would
+  skip. satteri-nextjs's built-in toc collector respects headingIds' chained ids, so each
+  page's `toc` export matches the anchors. Shiki inline style strings must stay strings on
+  the hast path — Sätteri converts them to JSX style objects itself and silently drops
+  object values. Gotcha: satteri rewrites relative import extensions to `.js` in output;
+  the demo loader restores them (`restoreSourceExtensions`).
+- **Demos are standalone drop-in packages**: `src/content/<page>/demo/` holds a
+  `package.json` (name + real deps) plus one `<demo>.tsx` per demo (default export, sibling
+  `<demo>.css`). Demos import the library only by published specifiers and put layout
+  styles as token-based, demo-prefixed classes (`.demo-radio-row`) in their own css — never
+  inline `style` objects, never docs Tailwind classes — so a folder copies out of the repo
   verbatim. Pages import each demo by its real path and render it directly
-  (`<ButtonSizes />`); the `md3:demos` plugin wraps it in the `Demo` server component
-  (playground + collapsed code tabs with compile-time-highlighted sources). Pages never
-  render `Demo` themselves; section titles/captions are plain markdown above the demo tag.
+  (`<ButtonSizes />`); `loaders/demo-loader.mjs` (chained after the satteri loader on
+  `*.mdx`) rewrites each such import into a facade: `createDemo(entry, FILES)` wraps it in
+  the `Demo` server component (playground + collapsed code tabs), with the demo's sources
+  (entry + relative imports + sibling css) Shiki-highlighted at compile time and inlined —
+  server-only payload, and every file is a loader dependency so demo edits recompile the
+  page. Pages never render `Demo` themselves; section titles/captions are plain markdown
+  above the demo tag. Demo css `@import`s of library css resolve to the real dist files
+  (harmless duplicates of styles.css — the aggregate stays the source of truth).
 - Every component docs page opens (after imports, before the first heading) with two fenced
   blocks stating the consumer-facing imports: a `tsx` fence with the component import and a
   `css` fence with the required stylesheets, mirroring the demo css exactly (`tokens.css`,
   `ripple.css` only if the component uses ripple, then `<kebab>.css`). A section
   introducing a second component repeats the pair with just the additional imports.
-- Static output: the `md3:ssg` plugin prerenders every `getStaticPaths()` route to
-  `<path>.html` **plus `<path>.rsc`**, so `dist/client/` is the fully static deployable
-  site. Navigation is soft: `entry.browser.tsx` fetches the target's static `.rsc` payload
-  and swaps it in a transition (full-reload fallback; hash-only moves left to the browser).
-  `src/framework/entry.{rsc,ssr,browser}.tsx` are the three environment entries.
-- Styled with Tailwind v4; doubles as the Tailwind-integration testbed. Layer order
-  (`@layer theme, base, components, utilities;`) is pinned by the `md3:layer-order`
-  plugin (vite.config), which prepends the statement to every css module — stylesheet
-  parse order in `<head>` is nondeterministic (plugin-rsc `preinit`s client-reference css
-  during RSC deserialization, ahead of any render-time hoistable), so whichever sheet
-  parses first must itself establish the order. `app.css` imports
-  `@brijbyte/md3-react/styles.css` and the generated `tailwind-tokens.css`.
-- Library-source aliases live twice: tsconfig `paths` AND mirrored `resolve.alias` regexes
-  in vite.config — tsconfigPaths does not apply to imports from `.mdx`/`.css` files, which
-  would otherwise silently bundle a second copy from the built dist.
-- All icons come from `@brijbyte/md3-icons` — never hand-write SVGs in docs.
-- Docs fonts (app.css): brand = Roboto (headings, docs title, nav — nav items add the
-  `font-brand` utility since their variants default to plain), plain = Roboto Slab
-  (body/everything else), code = Roboto Mono via Tailwind `--font-mono` (preflight covers
-  all pre/code; demo source tabs add `font-mono`). Docs chrome text renders through the
-  library `Typography` component, not `text-*` utilities.
-- Dev-only gotchas: `framework/dev-css.ts` imports every library `.module.css` before
-  hydration (add new components to that list); `md3:fix-rsc-dev-css-removal` patches
-  plugin-rsc's dev css-link removal to avoid a FOUC; app.css declares metrics-adjusted
-  local fallbacks for each webfont (Roboto/Slab/Mono) so swaps are reflow-free — computed
-  from real font tables (capsize-style weighted advances), don't guess new ones.
+- Styled with Tailwind v4 (`@tailwindcss/postcss`); doubles as the Tailwind-integration
+  testbed. Layer order (`@layer theme, base, components, utilities;`) is pinned by
+  `postcss-layer-order.cjs` (referenced by absolute path in postcss.config.mjs — a relative
+  key fails from Turbopack's bundled runtime), which prepends the statement to every
+  stylesheet so whichever sheet parses first establishes the order.
+- All icons come from `@brijbyte/md3-icons` — never hand-write SVGs in docs. The icon
+  browser's data (`public/icons-data/`, gitignored) is generated by
+  `scripts/build-icon-data.mjs`, invoked at the top of next.config.ts (skips when fresh).
+- Docs fonts (app.css): brand/plain/code faces via `--md-ref-typeface-*` and Tailwind
+  `--font-mono` (preflight covers all pre/code; demo source tabs add `font-mono`). Docs
+  chrome text renders through the library `Typography` component, not `text-*` utilities.
+  app.css declares metrics-adjusted local fallbacks for each webfont so swaps are
+  reflow-free — computed from real font tables (capsize-style weighted advances), don't
+  guess new ones. Internal links go through `next/link` (`Typography as={Link}`);
+  `NavigationProgress` shows the MD3 top progress bar during soft navigations.
 
 ## Architecture decisions (settled — don't relitigate)
 
@@ -182,7 +191,8 @@ children so targets don't bleed over packed siblings).
 
 Each component lives in `src/<kebab-name>/` with `<Pascal>.tsx`, `<Pascal>.module.css`,
 `index.ts` (re-exports). Add new components to `vite.config.ts` `build.lib.entry`
-(per-component entry → per-component CSS) and the docs app's `framework/dev-css.ts`.
+(per-component entry → per-component CSS); the docs app picks styles up from the rebuilt
+dist automatically.
 
 Patterns:
 
@@ -203,8 +213,10 @@ Patterns:
 - `pnpm --filter @brijbyte/md3-react build` — vite lib build with `preserveModules` and
   `minify: false` (dist stays readable); codegen and CSS emission/aggregation happen via
   the `md3:codegen` / `md3:emit-css` plugins. `pnpm dev` in the package = `vite build --watch`.
-- `pnpm dev` (root) — docs dev server. The docs Vite config **aliases the library to
-  `packages/react/src`** so library edits HMR instantly without rebuilding.
+- `pnpm dev` (root) — docs dev server (`next dev`, Turbopack). The docs app consumes the
+  **built library dist**, so pair it with `pnpm --filter @brijbyte/md3-react dev` (watch
+  build) when editing library code; `pnpm --filter docs build` emits the static site to
+  `apps/docs/out/` (`pnpm --filter docs preview` serves it).
 - CSS Module typings (`*.module.css.d.ts`, gitignored) are generated by the build/watch;
   a bare `tsc` on a fresh clone needs `pnpm build:tokens && pnpm build:shapes && pnpm typegen:css` first.
 - Typecheck: `pnpm typecheck` in `packages/react`; `npx tsc --noEmit` in `apps/docs`.

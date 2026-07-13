@@ -1,0 +1,9 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/fab-menu.css";
+
+.demo-fab-menu-sizes {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 48px;
+}

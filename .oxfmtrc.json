@@ -1,4 +1,10 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["packages/react/tokens/component-specs.json"]
+  "ignorePatterns": [
+    "packages/react/tokens/component-specs.json",
+    "apps/docs-old",
+    "apps/docs/.next",
+    "apps/docs/out",
+    "apps/docs/next-env.d.ts"
+  ]
 }

@@ -1,0 +1,31 @@
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/checkbox.css";
+@import "@brijbyte/md3-react/switch.css";
+@import "@brijbyte/md3-react/radio.css";
+@import "@brijbyte/md3-react/list.css";
+
+.demo-list-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.demo-list-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 260px;
+  flex: 1;
+}
+
+.demo-list-caption {
+  color: var(--md-sys-color-on-surface-variant);
+  padding-inline: 4px;
+}
+
+/* Contained list: filled surface, rounded, per the guidelines' "gaps" pattern. */
+.demo-list {
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--md-sys-shape-corner-large);
+  overflow: hidden;
+}

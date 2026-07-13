@@ -1,0 +1,62 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+/* Media context menus commonly sit on a dark, album-art-derived surface —
+   demoed here with a fixed dark palette rather than the light system tokens. */
+.demo-bottom-sheet-media {
+  background: #1c1b1f;
+  color: #e6e1e5;
+}
+
+.demo-bottom-sheet-media-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px 16px;
+}
+
+.demo-bottom-sheet-media-art {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--md-sys-shape-corner-small);
+  background: linear-gradient(135deg, #b69df8, #7c4dff);
+}
+
+.demo-bottom-sheet-media-titles {
+  min-width: 0;
+  color: #e6e1e5;
+}
+
+.demo-bottom-sheet-media-subtitle {
+  color: #cac4d0;
+}
+
+.demo-bottom-sheet-media-divider {
+  height: 1px;
+  margin: 0 24px 8px;
+  background: #48454e;
+}
+
+.demo-bottom-sheet-media-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 16px;
+}
+
+.demo-bottom-sheet-media-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  color: #e6e1e5;
+  cursor: pointer;
+}
+
+.demo-bottom-sheet-media-item:hover {
+  background: color-mix(in srgb, #e6e1e5 8%, transparent);
+}

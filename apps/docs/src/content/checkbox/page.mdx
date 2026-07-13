@@ -1,0 +1,54 @@
+---
+title: Checkbox
+---
+
+import CheckboxStates from "./demo/states.tsx";
+import CheckboxError from "./demo/error.tsx";
+import CheckboxFieldError from "./demo/field-error.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
+
+```tsx
+import { Checkbox } from "@brijbyte/md3-react/checkbox";
+```
+
+```css
+@import "@brijbyte/md3-react/checkbox.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Checkbox", href: "https://base-ui.com/react/components/checkbox" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/checkbox/overview" },
+  ]}
+/>
+
+## States
+
+Let people pick any number of options from a list, not just one — including the
+indeterminate state for a "select all" row whose children are only partly checked. It
+renders on Base UI's Checkbox primitive, so keyboard toggling and `aria-checked` (including
+`"mixed"` for indeterminate) work correctly without extra wiring.
+
+<CheckboxStates />
+
+## Error
+
+Flag an invalid selection without hand-picking colors: the `error` prop switches every
+color role to the error palette and sets `aria-invalid` in one step. Disabled state still
+wins if both apply.
+
+<CheckboxError />
+
+### Form validation
+
+Native form validation gets the same styling for free, so there's no need to wire up the
+`error` prop by hand. Inside a [Base UI Field](https://base-ui.com/react/components/field),
+constraints like `required` mark the checkbox with `data-invalid`, which the stylesheet
+treats identically to the `error` prop. Uncheck the box below to trigger its `required`
+constraint.
+
+```tsx
+import { Field } from "@base-ui/react/field";
+```
+
+<CheckboxFieldError />

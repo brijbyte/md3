@@ -1,0 +1,51 @@
+@import "@brijbyte/md3-react/slider.css";
+
+.demo-slider-smart-home {
+  /* 0 (off) → 1 (full brightness), driven by the slider value */
+  --demo-slider-smart-home-lit: calc(var(--demo-slider-smart-home-brightness, 0) / 100);
+  --demo-slider-smart-home-glow: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) calc(var(--demo-slider-smart-home-lit) * 100%),
+    transparent
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 280px;
+  max-width: 100%;
+  padding: 32px 24px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background:
+    radial-gradient(
+      120% 80% at 50% 0%,
+      color-mix(in srgb, var(--demo-slider-smart-home-glow) 22%, transparent),
+      transparent 55%
+    ),
+    var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+  transition: background 120ms ease;
+}
+
+.demo-slider-smart-home-icon {
+  width: 24px;
+  height: 24px;
+  color: color-mix(
+    in srgb,
+    var(--demo-slider-smart-home-glow),
+    var(--md-sys-color-on-surface-variant)
+  );
+  filter: drop-shadow(
+    0 0 calc(var(--demo-slider-smart-home-lit) * 12px) var(--demo-slider-smart-home-glow)
+  );
+  transition:
+    color 120ms ease,
+    filter 120ms ease;
+}
+
+.demo-slider-smart-home-control {
+  position: relative;
+  display: flex;
+  height: 320px;
+  margin-block-start: 24px;
+}

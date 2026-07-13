@@ -1,0 +1,82 @@
+/* Board. */
+.board {
+  position: relative;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+.checkbox {
+  margin-top: 4px;
+}
+.rowMain {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.done {
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: line-through;
+}
+.rowDetail {
+  margin-top: 2px;
+}
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 672px;
+  margin-inline: auto;
+  padding: 24px;
+}
+.sheetHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.sheetMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sheetActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+}
+.empty {
+  padding: 32px 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+  text-align: center;
+}
+.fab {
+  position: sticky;
+  bottom: 24px;
+  float: inline-end;
+  margin-top: 24px;
+}

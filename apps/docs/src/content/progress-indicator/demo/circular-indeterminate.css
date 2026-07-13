@@ -1,0 +1,6 @@
+@import "@brijbyte/md3-react/circular-progress.css";
+
+.demo-progress-indicator-circular {
+  display: flex;
+  align-items: center;
+}

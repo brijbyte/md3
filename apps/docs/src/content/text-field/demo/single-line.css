@@ -1,0 +1,8 @@
+@import "@brijbyte/md3-react/text-field.css";
+
+.demo-text-field-single-line {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 360px;
+}

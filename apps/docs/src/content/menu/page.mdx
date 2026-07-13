@@ -1,0 +1,123 @@
+---
+title: Menu
+---
+
+import BasicMenu from "./demo/basic.tsx";
+import ContextMenuDemo from "./demo/context-menu.tsx";
+import EditorMenu from "./demo/editor.tsx";
+import GroupedMenu from "./demo/grouped.tsx";
+import MenuDensity from "./demo/density.tsx";
+import MenuIcons from "./demo/icons.tsx";
+import MenuSelection from "./demo/selection.tsx";
+import ScrollableMenu from "./demo/scrollable.tsx";
+import Submenu from "./demo/submenu.tsx";
+import { SpecLinks } from "../../components/SpecLinks";
+
+```tsx
+import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@brijbyte/md3-react/menu";
+```
+
+```css
+@import "@brijbyte/md3-react/menu.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "Base UI Menu", href: "https://base-ui.com/react/components/menu" },
+    { label: "MD3 spec", href: "https://m3.material.io/components/menus/overview" },
+  ]}
+/>
+
+Attach a list of choices to any control — a button, icon button, or table row —
+without hand-rolling positioning or collision logic. It's built on
+[Base UI Menu](https://base-ui.com/react/components/menu): `Menu` holds the open state,
+`MenuTrigger` usually `render`s an existing control, and `MenuContent` is the
+portalled surface — positioned below the anchor's start edge by default and
+repositioned automatically when it would be clipped (`side` / `align` to override).
+
+## Basic menu
+
+Items close the menu automatically on `onClick`, so you don't wire up dismissal
+yourself. A `disabled` item stays visible but inert, per the spec's "disable, don't
+remove" guidance — users see the full option set even when some aren't currently
+available.
+
+<BasicMenu />
+
+## Icons and shortcuts
+
+Give users a visual head start on scanning long lists: items take a 24dp
+`leadingIcon`, a `trailingIcon`, and `trailingText` for hints like keyboard shortcuts.
+When only some items carry a leading icon, the others reserve its box automatically
+so every label stays aligned. Use `MenuSeparator` to divide sections — or the
+expressive [gap treatment](#gap-separated-groups) below when the menu doesn't scroll.
+
+<MenuIcons />
+
+## Selection
+
+Let users pick several options in one visit instead of reopening the menu after every
+click: `MenuRadioGroup` with `MenuRadioItem` handles single-select, `MenuCheckboxItem`
+toggles independently — both stay open on activation and mark selection by filling
+the row with `secondary-container` (the spec uses the highlight alone, no checkmark).
+Control them with `value` / `onValueChange` and `checked` / `onCheckedChange`, or use
+the `default*` props as here.
+
+<MenuSelection />
+
+## Submenus and groups
+
+Nest deeper option sets without abandoning keyboard or hover flow: `MenuSubmenu`
+wraps a `MenuSubmenuTrigger` (it gets a cascading arrow indicator automatically) and
+its own `MenuContent`, opened on hover or with the arrow keys. `MenuGroup` labels a
+section via the `label` prop.
+
+<Submenu />
+
+## Gap-separated groups
+
+The menu anatomy's expressive alternative to dividers: `variant="segmented"` on
+`MenuContent` renders each `MenuGroup` as its own container, separated by a small gap
+(2dp, per the segmented-menu tokens). The outer corners of the stack round to
+`corner-large`, edge items pick up a matching inner rounding, and selection fills as a
+`tertiary-container` pill. Keep every item inside a `MenuGroup` here, and prefer
+dividers for menus that scroll.
+
+<GroupedMenu />
+
+## Density
+
+Pointer-dense screens (data tables, desktop toolbars) can tighten menus without a
+custom theme: `density` on `MenuContent` steps from `0` to `-3`, trimming 4px of item
+height per step — 48px rows down to 36px, per the
+[density guidance](https://m3.material.io/m3/pages/understanding-layout/density).
+`SelectContent` takes the same prop. Leave touch-first UIs at the default.
+
+<MenuDensity />
+
+## A complex menu
+
+Every piece above composes without extra glue code: this text-editor formatting menu
+(after the [MD3 menu guidelines](https://m3.material.io/components/menus/guidelines))
+mixes plain items, three cascading submenus — two carrying their own radio
+selection — keyboard shortcut hints, and dividers between logical groups.
+
+<EditorMenu />
+
+## Context menu
+
+Add right-click actions without building a second menu component: `ContextMenu` +
+`ContextMenuTrigger` open the same menu surface from a secondary click (or long press
+on touch), positioned at the pointer. All the item components work unchanged inside
+it.
+
+<ContextMenuDemo />
+
+## Scrolling
+
+A menu with dozens of items never pushes past the viewport or gets clipped: it
+scrolls within `max-height`, which by default caps itself to the available viewport
+space (`var(--available-height)`); this demo caps it lower via `className`. Per the
+guidelines, use dividers rather than gaps/groups in scrollable menus.
+
+<ScrollableMenu />

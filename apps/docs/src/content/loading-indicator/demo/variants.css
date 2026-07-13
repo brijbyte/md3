@@ -1,0 +1,7 @@
+@import "@brijbyte/md3-react/loading-indicator.css";
+
+.demo-loading-indicator-variants {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}

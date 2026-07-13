@@ -1,0 +1,30 @@
+@import "@brijbyte/md3-react/checkbox.css";
+
+.demo-checkbox-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demo-checkbox-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+}
+
+.demo-checkbox-field-message-slot {
+  display: block;
+  min-height: var(--md-sys-typescale-body-small-line-height);
+  padding-inline-start: 48px;
+}
+
+.demo-checkbox-field-message {
+  color: var(--md-sys-color-error);
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}

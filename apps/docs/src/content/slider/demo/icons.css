@@ -1,0 +1,16 @@
+@import "@brijbyte/md3-react/slider.css";
+
+.demo-slider-icons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 480px;
+  max-width: 100%;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-slider-icons svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}

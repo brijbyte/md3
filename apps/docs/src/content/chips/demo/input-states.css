@@ -1,0 +1,8 @@
+@import "@brijbyte/md3-react/chip.css";
+
+.demo-input-chip-states {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}

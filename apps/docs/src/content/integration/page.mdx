@@ -1,0 +1,153 @@
+---
+title: Tailwind integration
+---
+
+import TokenUtilities from "./demo/token-utilities.js";
+import UtilityOverrides from "./demo/utility-overrides.js";
+
+## Tailwind v4
+
+Tailwind v4 and the library share one cascade, so there's no separate "component library
+CSS" to reason about — just one layer order to pin once. In your Tailwind entry CSS, pin it
+on the first line, then import the shared layers, the components you actually use, and the
+token→utility mapping:
+
+```css
+@layer theme, base, components, utilities;
+
+@import "tailwindcss";
+
+/* required: tokens + theming, ripple (used by most pressable components) */
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+
+/* MD3 tokens as Tailwind utilities (see below) */
+@import "@brijbyte/md3-react/tailwind-tokens.css";
+
+/* only the components you use — keeps the CSS payload minimal.
+   Order matters: button.css must precede icon-button.css/fab.css/
+   split-button.css, which build on it */
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/checkbox.css";
+```
+
+The library uses Tailwind's own layer names — tokens in `theme`, component styles in
+`components` — so the standard Tailwind pin is all you need: preflight can't break the
+components, and any utility class you write outranks component styles without a fight.
+The whole docs runs on exactly that setup.
+
+### Tokens as Tailwind utilities
+
+Forget maintaining a parallel color palette in `tailwind.config` — MD3's own tokens
+already are your design system. `@brijbyte/md3-react/tailwind-tokens.css` maps every
+system token to a Tailwind theme namespace, so `bg-primary` or `text-title-large` just
+work, spelled the way the tokens already are:
+
+| MD3 tokens                 | Utilities                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| `--md-sys-color-*`         | `bg-background`, `text-on-background`, `bg-primary`, `border-outline`, … (all 37 roles, verbatim) |
+| `--md-sys-typescale-*`     | `text-display-large` … `text-label-small` — each sets size, line-height, weight, and tracking     |
+| `--md-sys-shape-corner-*`  | `rounded-extra-small` … `rounded-extra-large`                                                     |
+| `--md-sys-elevation-*`     | `shadow-level0` … `shadow-level5`                                                                 |
+| `--md-sys-motion-easing-*` | `ease-standard`, `ease-emphasized`, plus `-accelerate` / `-decelerate` variants                   |
+
+Because the mapping is `@theme inline`, each utility resolves to `var(--md-sys-*)` at
+runtime rather than a frozen value — so `bg-background` follows the active theme
+automatically. No `dark:` variants to write or maintain, and any future dynamic-color
+theming picks up for free, everywhere you already used a token utility.
+
+```tsx
+<article className="rounded-large bg-surface-container-high p-6 shadow-level1">
+  <h3 className="text-title-large text-on-surface">Tokens as utilities</h3>
+  <p className="text-body-medium text-on-surface-variant">…</p>
+</article>
+```
+
+### Tokens as utilities
+
+Toggle the docs theme — every class in this card is a token utility, so it follows.
+
+<TokenUtilities />
+
+> [!IMPORTANT]
+> `tailwind-tokens.css` only defines the theme mapping; the token values themselves come
+> from `tokens.css`, which must also be loaded. The mapping ships as its own file because
+> a raw `@theme` block is only meaningful inside a Tailwind v4 build.
+
+## Aliasing with the md3 CLI
+
+Don't want to track which stylesheet each component needs — or that `button.css` must
+precede `icon-button.css`? The package ships an `md3` CLI whose `alias` command writes a
+re-export file per component into your app, with the required CSS imported in the right
+order:
+
+```bash
+npx md3 alias --dir src/ui button icon-button checkbox
+```
+
+```tsx
+// src/ui/icon-button.tsx (generated)
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+
+export * from "@brijbyte/md3-react/icon-button";
+```
+
+Your app then imports from its own path — `import { IconButton } from "./ui/icon-button"` —
+and the stylesheets come along automatically, ordered correctly. With this approach the
+per-component `@import` lines from the entry CSS above are unnecessary; your Tailwind
+entry keeps only the layer pin, `tokens.css`, `ripple.css`, and `tailwind-tokens.css`.
+
+> [!NOTE]
+> `tokens.css` and `ripple.css` are global setup and deliberately not written into the
+> generated files — import them once yourself, as shown above. Run the command without
+> arguments to see the list of available component names.
+
+## Overriding component styles
+
+### Utility overrides
+
+Need one button a different shade? Just add a class — no fighting the library's own
+CSS. Utility classes win over component styles because the `utilities` layer is declared
+after `components`, so you never reach for `!important`.
+
+<UtilityOverrides />
+
+### Targeting variants and states
+
+Want to re-skin every outlined button in the app, or recolor a toggle only while it's
+pressed? One selector does it — the styling contract is stable class names
+(`md3-<component>-<part>`, e.g. `.md3-button-root`) plus `data-*` attributes:
+`data-variant` / `data-size` / `data-color` mirror the component props, and Base UI's
+state attributes (`data-pressed`, `data-checked`, `data-disabled`, `data-popup-open`, …)
+mirror interaction state. Variants are never baked into class names, so the selector
+below re-skins a variant globally, and unlayered app CSS always beats the `components`
+layer — no `!important` or specificity hacks:
+
+```css
+/* every outlined button in the app */
+.md3-button-root[data-variant="outlined"] {
+  border-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-primary);
+}
+
+/* large FABs only */
+.md3-fab-root[data-size="large"] {
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+/* selected (pressed) toggle icon buttons */
+.md3-icon-button-root[data-pressed] {
+  color: var(--md-sys-color-tertiary);
+}
+```
+
+The same attributes double as Tailwind data-attribute variants for one-off overrides,
+composing directly with the token utilities above — no separate CSS file needed:
+
+```tsx
+<Button variant="tonal" toggle className="data-pressed:bg-tertiary data-pressed:text-on-tertiary">
+  Mute
+</Button>
+```

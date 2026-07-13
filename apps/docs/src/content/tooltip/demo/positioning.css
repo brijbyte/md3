@@ -1,0 +1,46 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/tooltip.css";
+
+.demo-tooltip-positioning {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 520px;
+  max-width: 100%;
+}
+
+.demo-tooltip-positioning-frame {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.demo-tooltip-positioning-anchor {
+  position: absolute;
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.demo-tooltip-positioning-anchor--top-left {
+  top: 16px;
+  inset-inline-start: 16px;
+}
+
+.demo-tooltip-positioning-anchor--top-right {
+  top: 16px;
+  inset-inline-end: 16px;
+}
+
+.demo-tooltip-positioning-anchor--bottom-left {
+  bottom: 16px;
+  inset-inline-start: 16px;
+}
+
+.demo-tooltip-positioning-anchor--bottom-right {
+  bottom: 16px;
+  inset-inline-end: 16px;
+}

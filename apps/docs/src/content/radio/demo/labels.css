@@ -1,0 +1,18 @@
+@import "@brijbyte/md3-react/radio.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-radio-labels-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-radio-labels-item {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-radio-labels-item:has([data-disabled]) {
+  cursor: default;
+}

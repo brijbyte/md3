@@ -1,0 +1,7 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/fab-menu.css";
+
+.demo-fab-menu-basic {
+  display: flex;
+  justify-content: center;
+}

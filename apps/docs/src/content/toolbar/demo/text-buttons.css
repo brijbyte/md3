@@ -1,0 +1,16 @@
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/toolbar.css";
+
+.demo-toolbar-chat input {
+  width: 180px;
+}
+
+.demo-toolbar-slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}

@@ -1,6 +1,9 @@
 packages:
   - packages/*
   - apps/*
+  # Frozen pre-Next.js copy of the docs app; not installed or built.
+  - "!apps/docs-old"
 allowBuilds:
   esbuild: true
+  sharp: false
 engineStrict: true

@@ -1,0 +1,37 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/icon-button.css";
+@import "@brijbyte/md3-react/bottom-sheet.css";
+@import "@brijbyte/md3-react/typography.css";
+
+.demo-bottom-sheet-actions {
+  padding-bottom: 8px;
+}
+
+.demo-bottom-sheet-actions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 8px 24px;
+}
+
+.demo-bottom-sheet-actions-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.demo-bottom-sheet-actions-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+}
+
+.demo-bottom-sheet-actions-item:hover {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+}

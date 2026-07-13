@@ -1,0 +1,123 @@
+---
+title: Getting started
+---
+
+import BaseUiProps from "./demo/base-ui-props.tsx";
+import FirstButtons from "./demo/first-buttons.tsx";
+
+From `npm install` to a rendered, on-spec Button — this page gets you there in about five
+minutes, nothing skipped.
+
+## Install
+
+```sh
+npm install @brijbyte/md3-react
+# or
+pnpm add @brijbyte/md3-react
+```
+
+Most components wrap a headless [Base UI](https://base-ui.com) primitive, so you get correct
+behavior, accessibility, and keyboard handling for free — the library's job is just making it
+look exactly like the [Material Design 3](https://m3.material.io/) spec, not reinventing how it
+works.
+
+## Load the styles
+
+JavaScript and CSS are decoupled — importing a component does **not** pull in its styles, so
+your CSS payload only ever grows with what you actually use, never the whole library. Add
+these imports to your entry-point css file (e.g. `index.css`):
+
+```css
+/* required: tokens + theming */
+@import "@brijbyte/md3-react/tokens.css";
+/* required by most pressable components */
+@import "@brijbyte/md3-react/ripple.css";
+```
+
+and then import the component css you need wherever required:
+
+```css
+@import "@brijbyte/md3-react/button.css";
+```
+
+> [!NOTE]
+> There's also an everything bundle — `@import "@brijbyte/md3-react/styles.css"` — but it
+> ships every component's CSS whether you use it or not; prefer the per-component imports.
+
+## Load a font
+
+Every typescale role resolves to `--md-ref-typeface-brand` (display/headline/title-large)
+or `--md-ref-typeface-plain` (body/label/title-medium/title-small), both of which default
+to `"Roboto", system-ui, sans-serif` in `tokens.css`. The typescale only ever uses weights
+**400** and **500**, so that's all you need to load:
+
+```html
+<link
+  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
+```
+
+Or self-host via [Fontsource](https://fontsource.org/fonts/roboto) instead of Google's CDN:
+
+```sh
+npm install @fontsource/roboto
+```
+
+```ts
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+```
+
+To use a different typeface (or Google's variable Roboto Flex), override the two ref
+tokens after importing `tokens.css` — both roles can point at the same font, or you can
+split brand vs. plain to mix a display face with a text face:
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+
+:root {
+  --md-ref-typeface-brand: "Google Sans", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Roboto", system-ui, sans-serif;
+}
+```
+
+## Use a component
+
+Import each component (and its css) from its own path:
+
+```tsx
+import { Button } from "@brijbyte/md3-react/button";
+import AddIcon from "@brijbyte/md3-icons/outlined/Add";
+
+import "@brijbyte/md3-react/button.css";
+
+<Button variant="tonal" icon={<AddIcon />}>
+  Add item
+</Button>;
+```
+
+<FirstButtons />
+
+Nothing is hidden behind the wrapper: every Base UI prop — `render`, `disabled`, event
+handlers — passes straight through and works exactly as its own docs describe:
+
+<BaseUiProps />
+
+## Theming
+
+Dark mode isn't an afterthought bolted onto light-mode colors — every color is a CSS custom
+property (`--md-sys-color-*`) with its own dark value baked in. It kicks in automatically via
+`prefers-color-scheme`, or force it with a `data-theme` attribute on `<html>`:
+
+```html
+<html data-theme="dark"></html>
+```
+
+## Tailwind CSS
+
+No specificity fights: the library's CSS lives in the `theme` / `components` cascade
+layers (Tailwind v4's own layer names), so any unlayered Tailwind utility you write beats
+it automatically — no `!important`, no `.root.root` hacks. See
+[Tailwind overrides](/overview/integration) for the full setup, including using MD3 tokens as
+Tailwind utilities (`bg-primary`, `text-title-large`, `shadow-level1`, …).

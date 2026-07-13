@@ -1,0 +1,13 @@
+{
+  "name": "md3-demos-switch",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Switch states",
+  "type": "module",
+  "dependencies": {
+    "@brijbyte/md3-react": "latest"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

@@ -1,0 +1,12 @@
+@import "@brijbyte/md3-react/button.css";
+@import "@brijbyte/md3-react/menu.css";
+
+.demo-menu-scrollable {
+  display: flex;
+  justify-content: center;
+}
+
+/* Cap below the viewport-derived max so scrolling is always visible. */
+.demo-menu-scrollable-popup {
+  max-height: min(320px, var(--available-height));
+}
