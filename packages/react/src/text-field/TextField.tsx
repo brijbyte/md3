@@ -68,12 +68,26 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       validate,
       className,
       disabled,
+      onChange,
       ...rest
     } = props;
+    // Base UI syncs the field's filled state only in a layout effect, so SSR
+    // paints without data-filled and hydration animates the label to its
+    // floated spot — mirror the value (via onChange when uncontrolled) so a
+    // pre-filled label renders floated at once.
+    const { value, defaultValue } = rest;
+    const [uncontrolledFilled, setUncontrolledFilled] = React.useState(
+      defaultValue != null && defaultValue !== "",
+    );
+    const isFilled = value !== undefined ? value != null && value !== "" : uncontrolledFilled;
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setUncontrolledFilled(event.target.value !== "");
+      onChange?.(event as React.ChangeEvent<HTMLInputElement>);
+    };
     // `rows` only applies to the textarea Field.Control swaps to via `render`
     // — FieldControlProps is typed for <input> and has no `rows`, so merge
     // it in loosely rather than fighting the element union.
-    const textareaProps: Record<string, unknown> = { ...rest, rows };
+    const textareaProps: Record<string, unknown> = { ...rest, rows, onChange: handleChange };
 
     return (
       <Field.Root
@@ -83,6 +97,7 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
         invalid={error}
         validationMode={validationMode}
         validate={validate}
+        {...(isFilled ? { "data-filled": "" } : null)}
       >
         <div
           className={styles.container}
@@ -109,6 +124,7 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
                 <Input
                   ref={ref as React.Ref<HTMLInputElement>}
                   className={styles.input}
+                  onChange={handleChange}
                   {...rest}
                 />
               )}

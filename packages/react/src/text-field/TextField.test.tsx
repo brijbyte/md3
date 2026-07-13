@@ -1,4 +1,6 @@
 import { render } from "@testing-library/react";
+import { userEvent } from "@vitest/browser/context";
+import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
 import { TextField } from "./TextField";
 
@@ -32,4 +34,35 @@ test("outlined label without a leading icon still aligns with the notch", async 
   const { container } = render(<TextField variant="outlined" label="Search" defaultValue="x" />);
   await raf();
   expect(notchDelta(container)).toBeLessThan(12);
+});
+
+// Base UI only syncs the field's filled state in a layout effect, so without
+// the mirrored attribute SSR paints the label resting and hydration animates
+// it up. The server markup itself must already carry data-filled.
+test("pre-filled field is filled in server-rendered markup", () => {
+  const html = renderToString(<TextField label="Name" defaultValue="Ada" />);
+  const root = new DOMParser().parseFromString(html, "text/html").body.firstElementChild!;
+  expect(root.hasAttribute("data-filled")).toBe(true);
+});
+
+// The mirrored attribute must follow typing, not stick at the defaultValue.
+test("clearing an uncontrolled field unfills it", async () => {
+  const { container } = render(<TextField label="Name" defaultValue="Ada" />);
+  const root = container.firstElementChild!;
+  await raf();
+  expect(root.hasAttribute("data-filled")).toBe(true);
+  await userEvent.clear(container.querySelector("input")!);
+  expect(root.hasAttribute("data-filled")).toBe(false);
+});
+
+test("clearing a controlled field unfills it", async () => {
+  const { container, rerender } = render(
+    <TextField label="Name" value="Ada" onChange={() => {}} />,
+  );
+  const root = container.firstElementChild!;
+  await raf();
+  expect(root.hasAttribute("data-filled")).toBe(true);
+  rerender(<TextField label="Name" value="" onChange={() => {}} />);
+  await raf();
+  expect(root.hasAttribute("data-filled")).toBe(false);
 });
