@@ -1,26 +1,38 @@
-import type * as React from "react";
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Typography } from "@brijbyte/md3-react/typography";
 import { NAV } from "../nav";
 import { MobileTabs } from "./MobileTabs";
 import { ThemeToggle } from "./ThemeToggle";
 import { Toc, type TocItem } from "./toc";
 
-// Center column + right rail of a docs route: page header (title/description
-// from nav.ts), mobile tab row, the MDX content, and the floating "On this
-// page" outline. The (docs) layout supplies the flex container and sidebar;
-// this renders as its direct flex children so the rail sits at the far edge.
-export function DocsPage({
-  path,
-  toc,
-  children,
-}: {
-  path: string;
-  toc?: TocItem[];
-  children: React.ReactNode;
-}) {
-  const route = NAV.find((item) => item.path === path);
-  if (!route) throw new Error(`DocsPage: unknown route "${path}"`);
+// Center column + right rail of every docs route, rendered by the (docs)
+// layout around the page. Client component: usePathname resolves per-route
+// during prerender, so the static HTML carries the right title/description.
+// The "On this page" outline is scanned from the rendered headings after
+// mount (a layout can't read the page module's exports), so it only exists
+// post-hydration; the rail keeps its width from the start to avoid shift.
+export function DocsPage({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [toc, setToc] = React.useState<TocItem[]>([]);
+
+  React.useEffect(() => {
+    const headings = contentRef.current?.querySelectorAll("h2[id], h3[id]");
+    setToc(
+      Array.from(headings ?? [], (h) => ({
+        depth: Number(h.tagName[1]),
+        value: h.textContent ?? "",
+        id: h.id,
+      })),
+    );
+  }, [pathname]);
+
+  const route = NAV.find((item) => item.path === pathname);
+  if (!route) throw new Error(`DocsPage: unknown route "${pathname}"`);
   return (
     <>
       <div className="min-w-0 flex-1">
@@ -39,15 +51,13 @@ export function DocsPage({
           <Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
             {route.description}
           </Typography>
-          {children}
+          <div ref={contentRef}>{children}</div>
         </div>
       </div>
 
-      {toc && toc.length > 0 && (
-        <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pe-6 xl:block">
-          <Toc items={toc} />
-        </aside>
-      )}
+      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pe-6 xl:block">
+        <Toc items={toc} />
+      </aside>
     </>
   );
 }

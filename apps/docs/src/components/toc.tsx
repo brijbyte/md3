@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Typography } from "@brijbyte/md3-react/typography";
 
-// Shape of satteri-nextjs's per-page `toc` export (ids from the headingIds plugin).
+// Heading outline entries, scanned from the rendered page by DocsPage
+// (ids come from the headingIds hast plugin via mdx-components headings).
 export type TocItem = { depth: number; value: string; id: string };
 
 // Nest a flat heading outline by depth: items at the group's shallowest depth
@@ -36,7 +37,7 @@ function TocList({ items }: { items: TocItem[] }) {
   );
 }
 
-// Floating "On this page" outline (server component, plain anchor links).
+// Floating "On this page" outline (plain anchor links).
 export function Toc({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null;
   return (

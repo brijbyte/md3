@@ -15,18 +15,13 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - `packages/react` — the component library, published as `@brijbyte/md3-react` (placeholder
   name). No barrel export: consumers import per path (`@brijbyte/md3-react/button`, `/tokens`).
 - `packages/icons` — `@brijbyte/md3-icons`: Material Symbols (weight 400) as per-icon React
-  components, fully generated into `dist/` by `scripts/build-icons.mjs` (fetches SVGs from
-  Google Fonts gstatic into a gitignored `.cache/svg/` — only missing files fetched, delete
-  `.cache` for a full refresh; builds into `dist.tmp` then rename-swaps so a running dev
-  server never resolves half-written files). Default export only; all icons share a single
-  `dist/icon.d.ts` via the `exports` `./*` types condition. Import per path:
-  `@brijbyte/md3-icons/<outlined|rounded|sharp>/<PascalName>[Fill]` (digit-leading names get
-  an `Icon` prefix). Icons render `fill="currentColor"`, so they follow `--md-sys-color-*`
-  via the surrounding `color`.
+  components, fully generated into `dist/` by `scripts/build-icons.mjs`. Icons render
+  `fill="currentColor"`, so they follow `--md-sys-color-*` via the surrounding `color`.
 - `apps/docs` — Next.js App Router docs/demo app (static export via satteri-nextjs), see below.
 - `apps/docs-old` — frozen pre-Next.js (Vite RSC) copy of the docs app; excluded from the
   pnpm workspace, kept only for reference. Don't build or edit it.
-- pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the docs app.
+- pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the
+  library watch build + docs dev server in parallel.
 
 ## Docs app (`apps/docs`)
 
@@ -37,16 +32,19 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - Layouts mirror the old page layouts as route groups: `src/app/layout.tsx` owns the
   document (theme init script first in `<body>`, font links, `NavigationProgress`);
   `(landing)/` = slim header, holds `/` and `/showcase/*`; `(docs)/` = sidebar chrome.
-  Each docs route IS its `page.mdx` (`pageExtensions` includes mdx) — the demo loader
-  wraps the compiled default export in `<DocsPage path toc>` (center column + "On this
-  page" rail) and emits `export const metadata = routeMetadata(path)`, route derived from
-  the app-dir location with route groups stripped; no per-route page.tsx. Sidebar active
-  state comes from `usePathname` in `SidebarNav`/`MobileTabs`, correct in prerendered HTML.
+  Each docs route IS its `page.mdx` (`pageExtensions` includes mdx; no per-route
+  page.tsx) and exports its own `metadata = routeMetadata("<route>")` right after the
+  frontmatter. The `(docs)` layout renders `<DocsPage>` (client component) around every
+  page: title/description come from `NAV` via `usePathname` — which resolves per-route
+  during prerender, so static HTML is correct (same for `SidebarNav`/`MobileTabs` active
+  state) — and the "On this page" rail is DOM-scanned from the rendered `h2[id]/h3[id]`
+  after hydration (a layout can't read the page module's exports), re-scanned per
+  pathname; the rail reserves its width statically to avoid layout shift.
 - **The docs app consumes the built library dist** (workspace dep, no source alias) — it
   exercises the exact published package. `app.css` imports
-  `@brijbyte/md3-react/styles.css` + `tailwind-tokens.css`; run
-  `pnpm --filter @brijbyte/md3-react dev` (watch build) alongside `pnpm dev` when editing
-  library code.
+  `@brijbyte/md3-react/styles.css` + `tailwind-tokens.css`; root `pnpm dev` runs the
+  library watch build and the docs dev server in parallel, so library edits rebuild dist
+  and hot-reload the docs.
 - MDX pages live in their route dir (`src/app/(docs)/<section>/<page>/page.mdx`, demos and
   page-local components alongside); `src/content/` only keeps the showcase sources.
   Because demo folders sit under `app/`, demo/helper file names must avoid Next's special
@@ -57,36 +55,41 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   headingIds → alerts → externalLinks → shiki, ported verbatim from the old vite.config).
   `optimizeStatic: false` is required — the `src/mdx-components.tsx` provider restyles base
   tags (p, h2, pre, …) with the MD3 element map, which a collapsed static subtree would
-  skip. satteri-nextjs's built-in toc collector respects headingIds' chained ids, so each
-  page's `toc` export matches the anchors. Shiki inline style strings must stay strings on
-  the hast path — Sätteri converts them to JSX style objects itself and silently drops
-  object values. Gotcha: satteri rewrites relative import extensions to `.js` in output;
-  the demo loader restores them (`restoreSourceExtensions`).
+  skip. Shiki inline style strings must stay strings on the hast path — Sätteri converts
+  them to JSX style objects itself and silently drops object values. Gotcha: satteri
+  rewrites relative import extensions to `.js` in output, which Turbopack won't resolve
+  back to `.tsx`; `loaders/restore-extensions.mjs` (chained after satteri on `*.mdx`)
+  restores the on-disk extensions.
 - **Demos are standalone drop-in packages**: the route dir's `demo/` holds a
   `package.json` (name + real deps) plus one `<demo>.tsx` per demo (default export, sibling
   `<demo>.css`). Demos import the library only by published specifiers and put layout
   styles as token-based, demo-prefixed classes (`.demo-radio-row`) in their own css — never
   inline `style` objects, never docs Tailwind classes — so a folder copies out of the repo
   verbatim. Pages import each demo by its real path and render it directly
-  (`<ButtonSizes />`); `loaders/demo-loader.mjs` (chained after the satteri loader on
-  `*.mdx`; all import matching is AST-based via `yuku-parser`, span edits — no regex
-  scraping) rewrites each such import into a facade: `createDemo(entry, FILES)` wraps it in
-  the `Demo` server component (playground + collapsed code tabs), with the demo's sources
-  (entry + relative imports + sibling css) Shiki-highlighted at compile time and inlined —
-  server-only payload, and every file is a loader dependency so demo edits recompile the
-  page. Pages never render `Demo` themselves; section titles/captions are plain markdown
-  above the demo tag. Demo css `@import`s of library css resolve to the real dist files
-  (harmless duplicates of styles.css — the aggregate stays the source of truth).
+  (`<ButtonSizes />`), untransformed; `loaders/demo-loader.mjs` runs on the demo sources
+  themselves (`src/app/**/demo/*.tsx`; AST-based via `yuku-parser`, span edits — no regex
+  scraping) and rewrites each default-exporting module in place: `createDemo(entry, FILES)`
+  wraps the entry in the `Demo` chrome (playground + collapsed code tabs), with the demo's
+  sources (entry + relative imports + sibling css) Shiki-highlighted at compile time and
+  inlined; every file is a loader dependency so demo edits recompile. Helper modules in
+  `demo/` (no default export — keep it that way) pass through untouched. A `'use client'`
+  demo carries its highlighted payload in the client bundle (server demos keep it
+  server-only). Pages never render `Demo` themselves; section titles/captions are plain
+  markdown above the demo tag. Demo css `@import`s of library css resolve to the real dist
+  files (harmless duplicates of styles.css — the aggregate stays the source of truth).
 - Every component docs page opens (after imports, before the first heading) with two fenced
   blocks stating the consumer-facing imports: a `tsx` fence with the component import and a
   `css` fence with the required stylesheets, mirroring the demo css exactly (`tokens.css`,
   `ripple.css` only if the component uses ripple, then `<kebab>.css`). A section
   introducing a second component repeats the pair with just the additional imports.
 - Styled with Tailwind v4 (`@tailwindcss/postcss`); doubles as the Tailwind-integration
-  testbed. Layer order (`@layer theme, base, components, utilities;`) is pinned by
-  `postcss-layer-order.cjs` (referenced by absolute path in postcss.config.mjs — a relative
-  key fails from Turbopack's bundled runtime), which prepends the statement to every
-  stylesheet so whichever sheet parses first establishes the order.
+  testbed. Layer order (`@layer theme, base, components, utilities;`) is established by
+  `app.css` (imported first, in the root layout); docs chrome styles live in plain css
+  files beside their components (`NavigationProgress.css`, `MobileTabs.css`,
+  `SidebarNav.css`, `shiki.css`, `DemoControls.css` — imported by the matching tsx), which
+  load after app.css and append to those layers. `.demo-surface` (DemoControls.css) and
+  the nav-progress rules stay deliberately unlayered; app.css keeps only app-level
+  concerns (tailwind + library + color-theme imports, fonts, typeface overrides).
 - All icons come from `@brijbyte/md3-icons` — never hand-write SVGs in docs. The icon
   browser's data (`public/icons-data/`, gitignored) is generated by
   `scripts/build-icon-data.mjs`, invoked at the top of next.config.ts (skips when fresh).
@@ -219,10 +222,10 @@ Patterns:
 - `pnpm --filter @brijbyte/md3-react build` — vite lib build with `preserveModules` and
   `minify: false` (dist stays readable); codegen and CSS emission/aggregation happen via
   the `md3:codegen` / `md3:emit-css` plugins. `pnpm dev` in the package = `vite build --watch`.
-- `pnpm dev` (root) — docs dev server (`next dev`, Turbopack). The docs app consumes the
-  **built library dist**, so pair it with `pnpm --filter @brijbyte/md3-react dev` (watch
-  build) when editing library code; `pnpm --filter docs build` emits the static site to
-  `apps/docs/out/` (`pnpm --filter docs preview` serves it).
+- `pnpm dev` (root) — library watch build + docs dev server (`next dev`, Turbopack) in
+  parallel (`pnpm --parallel --filter @brijbyte/md3-react --filter docs dev`); the docs
+  app consumes the **built library dist**. `pnpm --filter docs build` emits the static
+  site to `apps/docs/out/` (`pnpm --filter docs preview` serves it).
 - CSS Module typings (`*.module.css.d.ts`, gitignored) are generated by the build/watch;
   a bare `tsc` on a fresh clone needs `pnpm build:tokens && pnpm build:shapes && pnpm typegen:css` first.
 - Typecheck: `pnpm typecheck` in `packages/react`; `npx tsc --noEmit` in `apps/docs`.

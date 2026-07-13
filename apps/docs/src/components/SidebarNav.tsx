@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Typography } from "@brijbyte/md3-react/typography";
 import { SECTIONS, type NavItem } from "../nav";
+import "./SidebarNav.css";
 
 // Desktop sidebar sections (MD3 nav-drawer styling). Client component only for
 // usePathname — during prerender it resolves per-route, so the static HTML

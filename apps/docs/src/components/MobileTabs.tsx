@@ -4,9 +4,10 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV } from "../nav";
+import "./MobileTabs.css";
 
 // Mobile nav: a flat, horizontally scrollable tab row (styled after MD3
-// primary tabs in app.css). The active tab is nudged into view on mount —
+// primary tabs in MobileTabs.css). The active tab is nudged into view on mount —
 // scrollIntoView only affects this row's own scroll container, and
 // block: "nearest" keeps the page's vertical scroll untouched.
 const TABS = NAV.filter((item) => item.path !== "/");

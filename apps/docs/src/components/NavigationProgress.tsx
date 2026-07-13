@@ -1,11 +1,14 @@
 "use client";
 
+import "./NavigationProgress.css";
+
 import * as React from "react";
 import { usePathname } from "next/navigation";
 
 // Soft-navigation feedback, ported from the old entry.browser.tsx: while the
 // next route is in flight, <html data-navigating> shows the MD3 indeterminate
-// linear progress bar pinned to the viewport (app.css) and a progress cursor.
+// linear progress bar pinned to the viewport (NavigationProgress.css) and a
+// progress cursor.
 // The app router has no global pending event, so the attribute is set on
 // same-origin link clicks that will navigate, and cleared when the pathname
 // (or, on failure, nothing) changes.

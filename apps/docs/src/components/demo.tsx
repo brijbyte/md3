@@ -4,14 +4,13 @@ import { DemoControlsProvider, DemoSurface } from "./DemoControls";
 import { TooltipProvider } from "@brijbyte/md3-react/tooltip";
 
 // A demo's showable sources, Shiki-highlighted at compile time by the demo
-// loader (loaders/demo-loader.mjs) and inlined into the page module. The page
-// is a server component, so the payload never ships as client JS.
+// loader (loaders/demo-loader.mjs) and inlined into the demo module itself.
 export type DemoFile = { name: string; code: string; html: string };
 
-// Server component rendering a standalone demo: the entry element as children,
-// its highlighted sources as a prop — both supplied by the demo loader's
-// facade, which wraps every demo entry a page imports, so pages never render
-// Demo themselves. The DemoSurface's .demo-surface div (app.css, unlayered)
+// Renders a standalone demo: the entry element as children, its highlighted
+// sources as a prop — both supplied by the demo loader, which wraps every
+// default-exporting demo module, so pages never render Demo themselves.
+// The DemoSurface's .demo-surface div (DemoControls.css, unlayered)
 // severs all style inheritance from the docs page while --md-sys-* tokens
 // still flow through, so demos follow the theme toggle; DemoControlsProvider
 // lets the code-tab buttons override the surface's theme and text direction

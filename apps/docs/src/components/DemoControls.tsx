@@ -1,6 +1,7 @@
 "use client";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import * as React from "react";
+import "./DemoControls.css";
 
 // Per-demo playground overrides: theme follows the docs toggle until overridden
 // (null), direction defaults to ltr. State lives here so the buttons (in the
@@ -67,7 +68,7 @@ function useDocsColorTheme() {
   );
 }
 
-// The .demo-surface div (app.css): `all: initial` exempts custom properties,
+// The .demo-surface div (DemoControls.css): `all: initial` exempts custom properties,
 // direction and unicode-bidi, so the tokens re-declared by data-theme and the
 // dir attribute both take effect inside despite the isolation. Overrides live
 // here (not on the section) so the code tabs keep following the docs theme.

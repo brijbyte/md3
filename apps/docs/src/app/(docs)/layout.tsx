@@ -1,11 +1,12 @@
 import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@brijbyte/md3-react/typography";
-import { SidebarNav } from "../../components/SidebarNav";
+import { DocsPage } from "@/components/DocsPage";
+import { SidebarNav } from "@/components/SidebarNav";
 
-// Docs chrome: sticky sidebar (desktop) beside the page. Each page renders
-// its own center column + TOC rail via <DocsPage> so the rail can be
-// per-page while header/sidebar stay shared.
+// Docs chrome: sticky sidebar (desktop) beside the page, with <DocsPage>
+// providing every route's center column (title/description via pathname)
+// and TOC rail — pages are just their MDX content.
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
@@ -15,7 +16,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         </Typography>
         <SidebarNav />
       </aside>
-      {children}
+      <DocsPage>{children}</DocsPage>
     </div>
   );
 }

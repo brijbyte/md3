@@ -9,13 +9,12 @@ buildIconData();
 
 const ROOT = import.meta.dirname;
 
-// .mdx → server-safe JS via Sätteri (satteri-nextjs/loader), then our demo
-// loader wraps page-imported demos in the <Demo> chrome and turns each
-// app-dir page.mdx into a full route module (<DocsPage> wrapper + metadata —
-// see loaders/demo-loader.mjs). Loaders run right-to-left under both
-// bundlers, and all options are JSON-serializable so the same pipeline
-// applies under webpack and Turbopack. page.mdx files under app/ ARE the
-// routes (mdx is in pageExtensions below).
+// .mdx → server-safe JS via Sätteri (satteri-nextjs/loader); page.mdx files
+// under app/ ARE the routes (mdx is in pageExtensions below). Demo sources
+// (src/app/**/demo/*.tsx) are wrapped in the <Demo> chrome by our demo
+// loader at their own modules (see loaders/demo-loader.mjs) — pages import
+// and render demos directly, untransformed. All loader options are
+// JSON-serializable so the same pipeline applies under webpack and Turbopack.
 const HAST_PLUGINS = path.join(ROOT, "satteri/hast-plugins.mjs");
 
 // Magic specifier satteri's output imports `useMDXComponents` from; aliased to
@@ -39,9 +38,6 @@ const SATTERI_LOADER = {
     // restyle base tags (p, h2, pre, …) with the MD3 element map.
     optimizeStatic: false,
     providerImportSource: PROVIDER_SPECIFIER,
-    // The built-in toc collector runs after headingIds and respects its ids,
-    // so each page's `toc` export carries the chained anchor ids.
-    toc: true,
     frontmatter: true,
   },
 };
@@ -49,22 +45,23 @@ const DEMO_LOADER = {
   loader: path.join(ROOT, "loaders/demo-loader.mjs"),
   options: {
     createDemo: path.join(ROOT, "src/components/create-demo.tsx"),
-    docsPage: path.join(ROOT, "src/components/DocsPage.tsx"),
-    nav: path.join(ROOT, "src/nav.ts"),
-    appDir: path.join(ROOT, "src/app"),
   },
 };
+// Runs after satteri (loaders apply right-to-left) to fix its .js-rewritten
+// relative import specifiers back to the on-disk .tsx/.ts files.
+const RESTORE_EXTENSIONS_LOADER = { loader: path.join(ROOT, "loaders/restore-extensions.mjs") };
 
 const nextConfig: NextConfig = {
   // Fully static site: every route prerenders to out/<path>.html (+ its RSC
   // payload for soft navigation), same hosting shape as the old Vite SSG.
   output: "export",
   trailingSlash: false,
-  pageExtensions: ["ts", "tsx", "mdx"],
+  pageExtensions: ["tsx", "mdx"],
   turbopack: {
     resolveAlias: { [PROVIDER_SPECIFIER]: "./src/mdx-components.tsx" },
     rules: {
-      "*.mdx": { loaders: [DEMO_LOADER, SATTERI_LOADER], as: "*.js" },
+      "*.mdx": { loaders: [RESTORE_EXTENSIONS_LOADER, SATTERI_LOADER], as: "*.js" },
+      "./src/app/**/demo/*.tsx": { loaders: [DEMO_LOADER] },
     },
   },
 };

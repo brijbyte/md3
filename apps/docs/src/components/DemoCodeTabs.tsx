@@ -10,6 +10,7 @@ import { CodeCollapse } from "./CodeCollapse";
 import { CopyButton } from "./CopyButton";
 import { useDemoControls } from "./DemoControls";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@brijbyte/md3-react/tooltip";
+import "./shiki.css";
 
 type DemoFile = { name: string; code: string; html: string };
 

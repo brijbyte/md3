@@ -1,5 +1,5 @@
-import TeamTasks from "../../../../content/showcases/team-tasks";
-import { routeMetadata } from "../../../../nav";
+import TeamTasks from "@/content/showcases/team-tasks";
+import { routeMetadata } from "@/nav";
 
 export const metadata = routeMetadata("/showcase/team-tasks");
 

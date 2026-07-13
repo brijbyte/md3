@@ -1,7 +1,7 @@
 import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@brijbyte/md3-react/typography";
-import { ThemeToggle } from "../../components/ThemeToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Full-width landing chrome: no sidebar, just a slim header and the page.
 // The home page and the showcases (full-app demos, not doc pages) live here.
