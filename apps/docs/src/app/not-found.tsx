@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Typography } from "@/ui/typography";
 import { SidebarNav } from "../components/SidebarNav";
 import { ThemeToggle } from "../components/ThemeToggle";
 

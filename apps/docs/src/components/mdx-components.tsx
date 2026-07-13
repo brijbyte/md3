@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { Typography, type TypographyVariant } from "@brijbyte/md3-react/typography";
+import { Typography, type TypographyVariant } from "@/ui/typography";
 import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import InfoIcon from "@brijbyte/md3-icons/outlined/Info";
 import LightbulbIcon from "@brijbyte/md3-icons/outlined/Lightbulb";

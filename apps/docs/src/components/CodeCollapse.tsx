@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Button } from "@brijbyte/md3-react/button";
+import { Button } from "@/ui/button";
 
 // Collapsed-by-default wrapper for demo source panels: a short clipped preview
 // with a fade into the code background and a centered "Show code" button;

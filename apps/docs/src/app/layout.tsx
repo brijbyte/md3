@@ -4,6 +4,7 @@
 import "./app.css";
 
 import type { Metadata } from "next";
+import { Google_Sans, Roboto_Mono, Roboto_Flex } from "next/font/google";
 import type * as React from "react";
 import { NavigationProgress } from "../components/NavigationProgress";
 import { HOME } from "../nav";
@@ -15,6 +16,25 @@ export const metadata: Metadata = {
   },
   description: HOME.description,
 };
+
+const brand = Google_Sans({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-google-sans",
+});
+const plain = Roboto_Flex({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
+});
+const mono = Roboto_Mono({
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto-mono",
+});
 
 // Apply persisted theme before first paint to avoid a flash.
 const themeInitScript = `
@@ -41,15 +61,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className="scheme-light data-[theme='dark']:scheme-dark data-navigating:cursor-progress scrollbar-gutter-stable"
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
+      <body
+        className={`min-h-screen antialiased bg-background text-on-background font-plain text-body-large ${brand.variable} ${plain.variable} ${mono.variable}`}
+      >
         <NavigationProgress />
         {children}
       </body>

@@ -1,7 +1,7 @@
-import { Divider } from "@brijbyte/md3-react/divider";
-import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";
-import { Switch } from "@brijbyte/md3-react/switch";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Divider } from "@/ui/divider";
+import { Radio, RadioGroup } from "@/ui/radio";
+import { Switch } from "@/ui/switch";
+import { Typography } from "@/ui/typography";
 
 import styles from "./SettingsPanel.module.css";
 

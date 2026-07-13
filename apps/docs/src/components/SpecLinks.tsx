@@ -1,4 +1,4 @@
-import { AssistChip } from "@brijbyte/md3-react/chip";
+import { AssistChip } from "@/ui/chip";
 import OpenInNewIcon from "@brijbyte/md3-icons/outlined/OpenInNew";
 
 export type SpecLink = { label: string; href: string };

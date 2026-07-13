@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Card } from "@brijbyte/md3-react/card";
-import { CircularProgress } from "@brijbyte/md3-react/circular-progress";
-import { Divider } from "@brijbyte/md3-react/divider";
-import { LinearProgress } from "@brijbyte/md3-react/linear-progress";
-import { Slider } from "@brijbyte/md3-react/slider";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Card } from "@/ui/card";
+import { CircularProgress } from "@/ui/circular-progress";
+import { Divider } from "@/ui/divider";
+import { LinearProgress } from "@/ui/linear-progress";
+import { Slider } from "@/ui/slider";
+import { Typography } from "@/ui/typography";
 
 import shared from "./team-tasks.module.css";
 import styles from "./InsightsPanel.module.css";

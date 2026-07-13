@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
-import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
-import { IconButton } from "@brijbyte/md3-react/icon-button";
+import { Tab, TabList, TabPanel, Tabs } from "@/ui/tabs";
+import { IconButton } from "@/ui/icon-button";
 import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
 import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 import RtlIcon from "@brijbyte/md3-icons/outlined/FormatTextdirectionRToL";
@@ -9,7 +9,7 @@ import LtrIcon from "@brijbyte/md3-icons/outlined/FormatTextdirectionLToR";
 import { CodeCollapse } from "./CodeCollapse";
 import { CopyButton } from "./CopyButton";
 import { useDemoControls } from "./DemoControls";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@brijbyte/md3-react/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/ui/tooltip";
 import "./shiki.css";
 
 type DemoFile = { name: string; code: string; html: string };

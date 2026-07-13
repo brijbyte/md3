@@ -1,18 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { AssistChip, FilterChip } from "@brijbyte/md3-react/chip";
-import { Checkbox } from "@brijbyte/md3-react/checkbox";
-import { Fab } from "@brijbyte/md3-react/fab";
-import { IconButton } from "@brijbyte/md3-react/icon-button";
+import { AssistChip, FilterChip } from "@/ui/chip";
+import { Checkbox } from "@/ui/checkbox";
+import { Fab } from "@/ui/fab";
+import { IconButton } from "@/ui/icon-button";
 import {
   BottomSheet,
   BottomSheetTrigger,
   BottomSheetContent,
   BottomSheetTitle,
   BottomSheetClose,
-} from "@brijbyte/md3-react/bottom-sheet";
-import { Typography } from "@brijbyte/md3-react/typography";
+} from "@/ui/bottom-sheet";
+import { Typography } from "@/ui/typography";
 
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
 import CalendarTodayIcon from "@brijbyte/md3-icons/outlined/CalendarToday";

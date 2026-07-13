@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DemoCodeTabs } from "./DemoCodeTabs";
 import { DemoControlsProvider, DemoSurface } from "./DemoControls";
-import { TooltipProvider } from "@brijbyte/md3-react/tooltip";
+import { TooltipProvider } from "@/ui/tooltip";
 
 // A demo's showable sources, Shiki-highlighted at compile time by the demo
 // loader (loaders/demo-loader.mjs) and inlined into the demo module itself.

@@ -2,8 +2,8 @@
 import * as React from "react";
 import CheckIcon from "@brijbyte/md3-icons/outlined/Check";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
-import { IconButton, type IconButtonSize } from "@brijbyte/md3-react/icon-button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@brijbyte/md3-react/tooltip";
+import { IconButton, type IconButtonSize } from "@/ui/icon-button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
 
 // Copies `text` to the clipboard, flashing a check icon as confirmation.
 export function CopyButton({

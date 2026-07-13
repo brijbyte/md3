@@ -4,19 +4,15 @@ import "./icon-browser.css";
 
 import * as React from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import {
-  BottomSheet,
-  BottomSheetClose,
-  BottomSheetContent,
-} from "@brijbyte/md3-react/bottom-sheet";
-import { FilterChip } from "@brijbyte/md3-react/chip";
-import { IconButton } from "@brijbyte/md3-react/icon-button";
-import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@brijbyte/md3-react/menu";
-import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
-import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-react/split-button";
-import { TextField } from "@brijbyte/md3-react/text-field";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { BottomSheet, BottomSheetClose, BottomSheetContent } from "@/ui/bottom-sheet";
+import { FilterChip } from "@/ui/chip";
+import { IconButton } from "@/ui/icon-button";
+import { LoadingIndicator } from "@/ui/loading-indicator";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/ui/menu";
+import { SnackbarProvider, useSnackbar } from "@/ui/snackbar";
+import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@/ui/split-button";
+import { TextField } from "@/ui/text-field";
+import { Typography } from "@/ui/typography";
 import { iconRefs, matchesToken, searchToken } from "./icon-browser-utils";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import ArrowDropDownIcon from "@brijbyte/md3-icons/outlined/ArrowDropDown";

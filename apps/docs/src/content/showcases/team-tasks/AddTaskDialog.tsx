@@ -2,17 +2,11 @@
 
 import * as React from "react";
 import { flushSync } from "react-dom";
-import { Button } from "@brijbyte/md3-react/button";
-import { FilterChip } from "@brijbyte/md3-react/chip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeadline,
-  DialogActions,
-  DialogClose,
-} from "@brijbyte/md3-react/dialog";
-import { TextField } from "@brijbyte/md3-react/text-field";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Button } from "@/ui/button";
+import { FilterChip } from "@/ui/chip";
+import { Dialog, DialogContent, DialogHeadline, DialogActions, DialogClose } from "@/ui/dialog";
+import { TextField } from "@/ui/text-field";
+import { Typography } from "@/ui/typography";
 
 import { PRIORITY_LABEL, type Priority, type Task } from "./types";
 import styles from "./AddTaskDialog.module.css";

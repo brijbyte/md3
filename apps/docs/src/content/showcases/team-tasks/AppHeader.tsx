@@ -1,10 +1,10 @@
 import { Popover } from "@base-ui/react/popover";
-import { Badge } from "@brijbyte/md3-react/badge";
-import { IconButton } from "@brijbyte/md3-react/icon-button";
-import { List, ListItem } from "@brijbyte/md3-react/list";
-import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@brijbyte/md3-react/menu";
-import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-react/split-button";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Badge } from "@/ui/badge";
+import { IconButton } from "@/ui/icon-button";
+import { List, ListItem } from "@/ui/list";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/ui/menu";
+import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@/ui/split-button";
+import { Typography } from "@/ui/typography";
 
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
 import AlternateEmailIcon from "@brijbyte/md3-icons/outlined/AlternateEmail";

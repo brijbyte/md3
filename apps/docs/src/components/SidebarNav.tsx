@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Typography } from "@/ui/typography";
 import { SECTIONS, type NavItem } from "../nav";
 import "./SidebarNav.css";
 

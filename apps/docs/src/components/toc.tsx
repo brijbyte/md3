@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { Typography } from "@/ui/typography";
 
 // Heading outline entries, scanned from the rendered page by DocsPage
 // (ids come from the headingIds hast plugin via mdx-components headings).

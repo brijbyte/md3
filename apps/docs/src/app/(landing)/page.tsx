@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ActionableCard } from "@brijbyte/md3-react/card";
-import { Button } from "@brijbyte/md3-react/button";
-import { Typography } from "@brijbyte/md3-react/typography";
+import { ActionableCard } from "@/ui/card";
+import { Button } from "@/ui/button";
+import { Typography } from "@/ui/typography";
 import ArrowForwardIcon from "@brijbyte/md3-icons/outlined/ArrowForward";
 import { SECTIONS, SHOWCASES, type NavItem } from "@/nav";
 

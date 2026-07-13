@@ -1,14 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@brijbyte/md3-react/split-button";
-import {
-  Menu,
-  MenuContent,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuTrigger,
-} from "@brijbyte/md3-react/menu";
+import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@/ui/split-button";
+import { Menu, MenuContent, MenuRadioGroup, MenuRadioItem, MenuTrigger } from "@/ui/menu";
 import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
 import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 import ArrowDownIcon from "@brijbyte/md3-icons/outlined/KeyboardArrowDown";

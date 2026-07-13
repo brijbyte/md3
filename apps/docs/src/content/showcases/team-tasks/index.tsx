@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { SnackbarProvider, useSnackbar } from "@brijbyte/md3-react/snackbar";
-import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";
+import { SnackbarProvider, useSnackbar } from "@/ui/snackbar";
+import { Tab, TabList, TabPanel, Tabs } from "@/ui/tabs";
 
 import ChecklistIcon from "@brijbyte/md3-icons/outlined/Checklist";
 import InsightsIcon from "@brijbyte/md3-icons/outlined/Insights";
