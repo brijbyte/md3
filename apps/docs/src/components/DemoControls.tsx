@@ -1,4 +1,5 @@
 "use client";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import * as React from "react";
 
 // Per-demo playground overrides: theme follows the docs toggle until overridden
@@ -41,7 +42,11 @@ export function DemoControlsProvider({ children }: { children: React.ReactNode }
     [theme, dir],
   );
 
-  return <DemoControlsContext.Provider value={value}>{children}</DemoControlsContext.Provider>;
+  return (
+    <DemoControlsContext.Provider value={value}>
+      <DirectionProvider direction={dir}>{children}</DirectionProvider>
+    </DemoControlsContext.Provider>
+  );
 }
 
 // Tracks the docs color theme so a theme-overridden surface still matches the
