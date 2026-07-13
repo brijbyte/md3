@@ -15,6 +15,7 @@ import "@brijbyte/md3-react/circular-progress/CircularProgress.module.css";
 import "@brijbyte/md3-react/dialog/Dialog.module.css";
 import "@brijbyte/md3-react/divider/Divider.module.css";
 import "@brijbyte/md3-react/fab/Fab.module.css";
+import "@brijbyte/md3-react/fab-menu/FabMenu.module.css";
 import "@brijbyte/md3-react/icon-button/IconButton.module.css";
 import "@brijbyte/md3-react/linear-progress/LinearProgress.module.css";
 import "@brijbyte/md3-react/list/List.module.css";

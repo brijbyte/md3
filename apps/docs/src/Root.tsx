@@ -55,6 +55,7 @@ const PAGES: Record<string, PageEntry> = {
   "/components/checkbox": mdxRoute(() => import("./pages/checkbox/page.mdx")),
   "/components/dialog": mdxRoute(() => import("./pages/dialog/page.mdx")),
   "/components/divider": mdxRoute(() => import("./pages/divider/page.mdx")),
+  "/components/fab-menu": mdxRoute(() => import("./pages/fab-menu/page.mdx")),
   "/components/list": mdxRoute(() => import("./pages/list/page.mdx")),
   "/components/loading-indicator": mdxRoute(() => import("./pages/loading-indicator/page.mdx")),
   "/components/menu": mdxRoute(() => import("./pages/menu/page.mdx")),

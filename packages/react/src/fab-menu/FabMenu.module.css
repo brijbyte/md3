@@ -1,0 +1,404 @@
+/* Spec: Compose FloatingActionButtonMenu.kt + FabMenuBaselineTokens (androidx-main) —
+   the only implementation carrying this expressive component; cross-checked against
+   m3.material.io/components/fab-menu (three color sets, 2–6 items, medium-button item
+   metrics, close button always 56dp, morph anchored at the FAB's top-trailing corner).
+   The trigger stacks Button's .root for chrome/states, so import order matters:
+   button.css MUST be imported before fab-menu.css (the aggregate index.css sorts
+   alphabetically, which is already correct). */
+@layer components {
+  /* The button is the press target and popup anchor, so it keeps the closed
+     FAB's footprint the whole time: page layout never shifts, and Base UI's
+     press-release check (trigger rect) covers the footprint even mid-morph.
+     Only .surface — the visible FAB — morphs, anchored to the top-trailing
+     corner the close button shares with the FAB (spec). */
+  .trigger {
+    --_box-size: 56px;
+    --_container-size: 56px;
+    --_icon-size: 24px;
+
+    width: var(--_box-size);
+    height: var(--_box-size);
+    padding: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  .trigger[data-size="medium"] {
+    --_box-size: 80px;
+    --_container-size: 80px;
+    --_icon-size: 28px;
+  }
+
+  .trigger[data-size="large"] {
+    --_box-size: 96px;
+    --_container-size: 96px;
+    --_icon-size: 36px;
+  }
+
+  /* Closed = FAB geometry (56/80/96, corner large/large-increased/extra-large);
+     open = the 56dp full-corner close button. */
+  .surface {
+    position: absolute;
+    /* Own stacking context so the z:-1 state layer paints above this bg. */
+    isolation: isolate;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: var(--_container-size);
+    height: var(--_container-size);
+    border-radius: var(--md-sys-shape-corner-large);
+    box-shadow: var(--md-sys-elevation-level3);
+    /* Size/shape morph on the expressive fast-spatial spring; color follows the
+       effects (non-spatial) track like Button's elevation. */
+    transition:
+      width var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      height var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      border-radius var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  .trigger[data-size="medium"] .surface {
+    border-radius: var(--md-sys-shape-corner-large-increased);
+  }
+
+  .trigger[data-size="large"] .surface {
+    border-radius: var(--md-sys-shape-corner-extra-large);
+  }
+
+  /* Open: every size becomes the 56dp close button (icon 20dp, corner full = 28). */
+  .trigger[data-popup-open] {
+    --_icon-size: 20px;
+  }
+
+  .trigger[data-popup-open] .surface {
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+  }
+
+  /* Focus ring and elevation live on the surface so they trace the morph. */
+  .trigger:focus-visible {
+    outline: none;
+  }
+
+  .trigger:focus-visible .surface {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .trigger:hover:not(:disabled, [data-disabled]) .surface {
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+
+  .trigger:active:not(:disabled, [data-disabled]) .surface {
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+
+  /* Color sets: closed uses the set's container tone, open flips to the bold tone
+     (Compose ToggleFloatingActionButtonDefaults). :not guards drop these when
+     disabled so the surface inherits Button's dimmed content color instead. */
+  .trigger[data-color="primary"]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  .trigger[data-color="primary"][data-popup-open]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  .trigger[data-color="secondary"]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .trigger[data-color="secondary"][data-popup-open]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+  }
+
+  .trigger[data-color="tertiary"]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  .trigger[data-color="tertiary"][data-popup-open]:not(:disabled, [data-disabled]) .surface {
+    background: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+  }
+
+  /* MD3 universal 12% disabled container (content dim comes from Button). */
+  .trigger:is(:disabled, [data-disabled]) .surface {
+    box-shadow: none;
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  /* Both icons stack centered; the FAB icon rotates out as close rotates in
+     (the spec's add→close morph), and both track --_icon-size through the morph. */
+  .fabIcon,
+  .closeIcon {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition:
+      rotate var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      inline-size var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      block-size var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      font-size var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  }
+
+  .closeIcon {
+    rotate: -90deg;
+    opacity: 0;
+  }
+
+  .trigger[data-popup-open] .fabIcon {
+    rotate: 90deg;
+    opacity: 0;
+  }
+
+  .trigger[data-popup-open] .closeIcon {
+    rotate: 0deg;
+    opacity: 1;
+  }
+
+  .positioner {
+    outline: none;
+    /* Portalled popup: above overlays, overridable like Menu (see Menu.module.css). */
+    z-index: var(--md3-popup-z-index, var(--md-ref-z-index-popover));
+  }
+
+  /* Invisible column: each item is its own pill surface. The 16px padding keeps
+     item shadows/focus rings inside the scroll clip; FabMenuContent's side/align
+     offsets compensate so pills sit 8px above the FAB, flush with its edge.
+     pointer-events: none lets clicks between pills fall through (and close). */
+  .popup {
+    --_stagger-step: 40ms;
+    --_exit-total: calc(5 * var(--_stagger-step) + var(--md-sys-motion-duration-short3));
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 16px;
+    max-height: var(--available-height);
+    max-width: var(--available-width);
+    overflow-y: auto;
+    scrollbar-width: none;
+    pointer-events: none;
+    outline: none;
+    /* No visible change — holds the popup mounted (Base UI waits on this
+       transition) until the last item finishes its staggered exit. */
+    transition: opacity var(--_exit-total) linear(0 0%, 0 99%, 1 100%);
+  }
+
+  .popup[data-ending-style] {
+    opacity: 0;
+  }
+
+  .popup[data-align="start"] {
+    align-items: flex-start;
+  }
+
+  /* Item pill: medium-button metrics (56dp, 24px inline padding, title-medium),
+     corner full, level3 (FabMenuBaselineTokens). Hugs content — no truncation. */
+  .item {
+    --_icon-size: 24px;
+
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+    min-height: 56px;
+    min-width: 56px;
+    padding-inline: 24px;
+    border-radius: 28px;
+    box-shadow: var(--md-sys-elevation-level3);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    pointer-events: auto;
+    white-space: nowrap;
+    font-family: var(--md-sys-typescale-title-medium-font);
+    font-size: var(--md-sys-typescale-title-medium-size);
+    line-height: var(--md-sys-typescale-title-medium-line-height);
+    font-weight: var(--md-sys-typescale-title-medium-weight);
+    letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+    /* Reveal from the FAB-aligned edge (Compose's width spring) + fade; the
+       -16px rest inset keeps the shadow unclipped. Delay = enter stagger. */
+    clip-path: inset(-16px);
+    transition:
+      clip-path var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial),
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+    transition-delay: var(--_enter-delay, 0ms);
+  }
+
+  /* Hidden clip: collapse toward the FAB-aligned edge. data-align is logical
+     (Base UI), clip-path inset is physical — :dir() resolves the pairing. */
+  .popup[data-align="end"] .item:dir(ltr),
+  .popup[data-align="start"] .item:dir(rtl) {
+    --_clip-hidden: inset(-16px -16px -16px calc(100% + 16px));
+  }
+
+  .popup[data-align="end"] .item:dir(rtl),
+  .popup[data-align="start"] .item:dir(ltr) {
+    --_clip-hidden: inset(-16px calc(100% + 16px) -16px -16px);
+  }
+
+  .popup[data-starting-style] .item,
+  .popup[data-ending-style] .item {
+    clip-path: var(--_clip-hidden);
+    opacity: 0;
+  }
+
+  /* Exit: quick collapse (Menu's close timing), staggered top-to-bottom. */
+  .popup[data-ending-style] .item {
+    transition:
+      clip-path var(--md-sys-motion-duration-short3)
+        var(--md-sys-motion-easing-emphasized-accelerate),
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-accelerate);
+    transition-delay: var(--_exit-delay, 0ms);
+  }
+
+  /* Stagger: enter bottom-to-top (nearest the FAB first), exit top-to-bottom —
+     Compose's staggered item-count animation. Spec caps the menu at 6 items;
+     the n+7 catch-alls keep any overflow sane. */
+  .item:nth-last-child(2) {
+    --_enter-delay: calc(1 * var(--_stagger-step));
+  }
+
+  .item:nth-last-child(3) {
+    --_enter-delay: calc(2 * var(--_stagger-step));
+  }
+
+  .item:nth-last-child(4) {
+    --_enter-delay: calc(3 * var(--_stagger-step));
+  }
+
+  .item:nth-last-child(5) {
+    --_enter-delay: calc(4 * var(--_stagger-step));
+  }
+
+  .item:nth-last-child(n + 6) {
+    --_enter-delay: calc(5 * var(--_stagger-step));
+  }
+
+  .item:nth-child(2) {
+    --_exit-delay: calc(1 * var(--_stagger-step));
+  }
+
+  .item:nth-child(3) {
+    --_exit-delay: calc(2 * var(--_stagger-step));
+  }
+
+  .item:nth-child(4) {
+    --_exit-delay: calc(3 * var(--_stagger-step));
+  }
+
+  .item:nth-child(5) {
+    --_exit-delay: calc(4 * var(--_stagger-step));
+  }
+
+  .item:nth-child(n + 6) {
+    --_exit-delay: calc(5 * var(--_stagger-step));
+  }
+
+  /* Keyboard dismissal / instant switches skip motion (Base UI data-instant). */
+  .popup[data-instant],
+  .popup[data-instant] .item {
+    transition: none;
+  }
+
+  /* Item color sets (FabMenuBaselineTokens list item = the set's container tone). */
+  .popup[data-color="primary"] .item {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  .popup[data-color="secondary"] .item {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .popup[data-color="tertiary"] .item {
+    background: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  /* State layer + ripple host (MD3 universals: hover 8%, focus 10%). */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  /* data-highlighted covers pointer hover and keyboard highlight alike. */
+  .item[data-highlighted] .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .item:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .item:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+    font-size: var(--_icon-size);
+  }
+
+  .icon > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .label {
+    position: relative;
+  }
+
+  /* Disabled item: 38% content / 12% container. After the color-set rules
+     (same .popup .item specificity) so it wins by order. */
+  .popup .item[data-disabled] {
+    cursor: default;
+    box-shadow: none;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+}

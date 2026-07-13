@@ -25,6 +25,7 @@ import SlidersIcon from "@brijbyte/md3-icons/outlined/Sliders";
 import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
 import TextFieldsIcon from "@brijbyte/md3-icons/outlined/TextFields";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
+import AutoAwesomeMotionIcon from "@brijbyte/md3-icons/outlined/AutoAwesomeMotion";
 import BottomAppBarIcon from "@brijbyte/md3-icons/outlined/BottomAppBar";
 import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
@@ -154,6 +155,13 @@ export const SECTIONS: NavSection[] = [
         description:
           "A one-pixel line that separates content into groups — horizontal or vertical.",
         icon: HorizontalRuleIcon,
+      },
+      {
+        path: "/components/fab-menu",
+        label: "FAB menu",
+        title: "FAB menu",
+        description: "A FAB that morphs into a close button and fans out related actions.",
+        icon: AutoAwesomeMotionIcon,
       },
       {
         path: "/components/list",
