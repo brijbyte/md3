@@ -45,6 +45,11 @@ const DEMO_LOADER = {
   loader: path.join(ROOT, "loaders/demo-loader.mjs"),
   options: {
     createDemo: path.join(ROOT, "src/components/create-demo.tsx"),
+    // Highlighted demo sources land here (gitignored), fetched on "Show code".
+    outDir: path.join(ROOT, "public/demo-code"),
+    // Cache-buster: bump to invalidate Turbopack's persisted loader results
+    // (they key on options, not on the loader source).
+    version: 1,
   },
 };
 // Runs after satteri (loaders apply right-to-left) to fix its .js-rewritten

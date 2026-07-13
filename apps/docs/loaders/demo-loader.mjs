@@ -6,13 +6,16 @@
 //
 //   export default function ButtonSizes() {…}
 //     ⇢ const __DemoEntry = function ButtonSizes() {…};
-//       export default __createDemo(__DemoEntry, [{ name, code, html }, …]);
+//       export default __createDemo(__DemoEntry, "/demo-code/<slug>.<hash>.json");
 //
 // The demo's showable sources (entry + relative imports + sibling css) are
-// read and Shiki-highlighted here at compile time and inlined; every file
-// read is registered as a loader dependency, so edits recompile the demo.
-// Helper modules in demo/ (no default export) pass through untouched. All
-// matching is AST-based via yuku-parser, applied as span edits.
+// read and Shiki-highlighted here at compile time, but NOT inlined: the
+// payload is written to public/demo-code/ (gitignored, content-hashed) and
+// fetched by the client only when "Show code" is clicked. Every file read is
+// registered as a loader dependency, so edits recompile the demo. Helper
+// modules in demo/ (no default export) pass through untouched. All matching
+// is AST-based via yuku-parser, applied as span edits.
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { langFromPath, parse, walk } from "yuku-parser";
@@ -67,6 +70,38 @@ function collectDemoFiles(dir, entry) {
   return files;
 }
 
+// …/src/app/(docs)/components/buttons/demo/fabs.tsx → components-buttons-fabs
+function demoSlug(resourcePath) {
+  const rel = resourcePath.split(`${path.sep}src${path.sep}app${path.sep}`).pop();
+  return rel
+    .replace(/\.tsx$/, "")
+    .split(path.sep)
+    .filter((seg) => !seg.startsWith("(") && seg !== "demo")
+    .join("-")
+    .replace(/[^a-zA-Z0-9-]+/g, "-")
+    .toLowerCase();
+}
+
+// Writes the highlighted payload to public/demo-code/<slug>.<hash>.json and
+// returns its URL path. Content-hashed so edits bust the browser cache; other
+// hashes of the same slug are pruned so dev sessions don't accumulate cruft.
+function writePayload(outDir, resourcePath, files) {
+  const payload = JSON.stringify(files);
+  const hash = crypto.createHash("sha1").update(payload).digest("hex").slice(0, 10);
+  const slug = demoSlug(resourcePath);
+  const fileName = `${slug}.${hash}.json`;
+  fs.mkdirSync(outDir, { recursive: true });
+  const stale = new RegExp(`^${slug}\\.[0-9a-f]{10}\\.json$`);
+  for (const existing of fs.readdirSync(outDir)) {
+    // force: parallel loader runs race to prune the same stale payload.
+    if (existing !== fileName && stale.test(existing))
+      fs.rmSync(path.join(outDir, existing), { force: true });
+  }
+  const outFile = path.join(outDir, fileName);
+  if (!fs.existsSync(outFile)) fs.writeFileSync(outFile, payload);
+  return `/demo-code/${fileName}`;
+}
+
 // Relative specifier so both bundlers resolve it without alias setup.
 function relativeSpecifier(fromFile, target) {
   const spec = path.relative(path.dirname(fromFile), target).split(path.sep).join("/");
@@ -78,7 +113,7 @@ function relativeSpecifier(fromFile, target) {
 const DIRECTIVE_RE = /^\s*(['"])use client\1;?[^\S\n]*\n/;
 
 async function transform(source, ctx) {
-  const { createDemo } = ctx.getOptions();
+  const { createDemo, outDir } = ctx.getOptions();
 
   const { program } = parse(source, {
     lang: langFromPath(ctx.resourcePath),
@@ -129,7 +164,8 @@ async function transform(source, ctx) {
   for (const { start, end, text } of edits.toSorted((a, b) => b.start - a.start)) {
     out = out.slice(0, start) + text + out.slice(end);
   }
-  return `${out}\nexport default __createDemo(__DemoEntry, ${JSON.stringify(files)});\n`;
+  const codeUrl = writePayload(outDir, ctx.resourcePath, files);
+  return `${out}\nexport default __createDemo(__DemoEntry, ${JSON.stringify(codeUrl)});\n`;
 }
 
 /* oxlint-disable oxc/no-this-in-exported-function -- webpack loader API: context is `this` */

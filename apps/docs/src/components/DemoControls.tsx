@@ -1,7 +1,9 @@
 "use client";
-import { DirectionProvider } from "@base-ui/react/direction-provider";
-import * as React from "react";
 import "./DemoControls.css";
+
+import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { TooltipProvider } from "@/ui/tooltip";
+import * as React from "react";
 
 // Per-demo playground overrides: theme follows the docs toggle until overridden
 // (null), direction defaults to ltr. State lives here so the buttons (in the
@@ -45,7 +47,9 @@ export function DemoControlsProvider({ children }: { children: React.ReactNode }
 
   return (
     <DemoControlsContext.Provider value={value}>
-      <DirectionProvider direction={dir}>{children}</DirectionProvider>
+      <DirectionProvider direction={dir}>
+        <TooltipProvider delay={500}>{children}</TooltipProvider>
+      </DirectionProvider>
     </DemoControlsContext.Provider>
   );
 }
