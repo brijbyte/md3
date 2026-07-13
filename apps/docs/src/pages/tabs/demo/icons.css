@@ -1,9 +1,0 @@
-@import "@brijbyte/md3-react/tabs.css";
-
-.demo-tabs-icons {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 480px;
-  max-width: 100%;
-}

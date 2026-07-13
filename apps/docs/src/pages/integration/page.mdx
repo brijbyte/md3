@@ -35,7 +35,7 @@ token→utility mapping:
 The library uses Tailwind's own layer names — tokens in `theme`, component styles in
 `components` — so the standard Tailwind pin is all you need: preflight can't break the
 components, and any utility class you write outranks component styles without a fight.
-This page runs on exactly that setup.
+The whole docs runs on exactly that setup.
 
 ### Tokens as Tailwind utilities
 
@@ -85,10 +85,6 @@ order:
 ```bash
 npx md3 alias --dir src/ui button icon-button checkbox
 ```
-
-`--dir` comes right after `alias`, so the command drops into a package.json script —
-`"ui:add": "md3 alias --dir src/ui"` — and anything appended at call time
-(`pnpm ui:add snackbar`) is treated as component names.
 
 ```tsx
 // src/ui/icon-button.tsx (generated)

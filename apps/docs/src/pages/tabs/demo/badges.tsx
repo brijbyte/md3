@@ -1,5 +1,7 @@
+"use client";
 import "./badges.css";
 
+import * as React from "react";
 import ChatBubbleIcon from "@brijbyte/md3-icons/outlined/ChatBubble";
 import MailIcon from "@brijbyte/md3-icons/outlined/Mail";
 import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
@@ -7,9 +9,10 @@ import { Badge } from "@brijbyte/md3-react/badge";
 import { Tab, TabList, Tabs } from "@brijbyte/md3-react/tabs";
 
 export default function BadgeInTabsDemo() {
+  const [tab, setTab] = React.useState("mail");
   return (
     <div className="demo-tabs-badges">
-      <Tabs defaultValue="mail">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabList aria-label="Inbox (primary)">
           <Tab
             value="mail"
@@ -32,7 +35,7 @@ export default function BadgeInTabsDemo() {
           </Tab>
         </TabList>
       </Tabs>
-      <Tabs defaultValue="mail">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabList variant="secondary" aria-label="Inbox (secondary)">
           <Tab value="mail" badge={<Badge>12</Badge>} aria-label="Mail, 12 unread">
             Mail

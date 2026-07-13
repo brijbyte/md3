@@ -3,7 +3,6 @@ title: Tabs
 ---
 
 import TabBadges from "./demo/badges.tsx";
-import TabIcons from "./demo/icons.tsx";
 import PrimaryTabs from "./demo/primary.tsx";
 import SecondaryTabs from "./demo/secondary.tsx";
 import { SpecLinks } from "../../components/SpecLinks";
@@ -38,14 +37,7 @@ it: a flatter 2dp indicator spans the full tab width instead of hugging the labe
 
 <SecondaryTabs />
 
-## With icons
-
-Add an icon without reworking spacing yourself: primary tabs stack it above the label at 64dp,
-while secondary tabs keep it inline, matching each variant's spec height.
-
-<TabIcons />
-
-## With badges
+## With icons and badges
 
 ```tsx
 import { Badge } from "@brijbyte/md3-react/badge";
@@ -54,6 +46,9 @@ import { Badge } from "@brijbyte/md3-react/badge";
 ```css
 @import "@brijbyte/md3-react/badge.css";
 ```
+
+Add an icon without reworking spacing yourself: primary tabs stack it above the label at 64dp,
+while secondary tabs keep it inline, matching each variant's spec height.
 
 Surface a count or a "new content" dot without hand-positioning it: pass `badge` to a Tab and it
 anchors to the icon's top-right corner, or sits inline after the label on text-only tabs. Badges
