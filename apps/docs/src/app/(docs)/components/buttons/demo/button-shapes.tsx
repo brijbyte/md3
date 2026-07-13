@@ -1,5 +1,4 @@
-import "./button-shapes.css";
-
+import "@brijbyte/md3-react/button.css";
 import { Button } from "@brijbyte/md3-react/button";
 import BookmarkIcon from "@brijbyte/md3-icons/outlined/Bookmark";
 import { Row } from "./row";

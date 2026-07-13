@@ -1,3 +1,5 @@
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/fab-menu.css";
 import "./sizes.css";
 
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";

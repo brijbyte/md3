@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/typography.css";
 import "./semantic.css";
 
 import { Typography } from "@brijbyte/md3-react/typography";

@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/loading-indicator.css";
 import "./variants.css";
 
 import { LoadingIndicator } from "@brijbyte/md3-react/loading-indicator";

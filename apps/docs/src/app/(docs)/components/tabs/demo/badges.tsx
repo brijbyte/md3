@@ -1,4 +1,6 @@
 "use client";
+import "@brijbyte/md3-react/tabs.css";
+import "@brijbyte/md3-react/badge.css";
 import "./badges.css";
 
 import * as React from "react";

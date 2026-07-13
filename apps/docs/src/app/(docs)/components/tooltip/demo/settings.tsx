@@ -1,3 +1,6 @@
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+import "@brijbyte/md3-react/tooltip.css";
 import "./settings.css";
 
 import { Button } from "@brijbyte/md3-react/button";

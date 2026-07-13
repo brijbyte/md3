@@ -1,4 +1,5 @@
 "use client";
+import "@brijbyte/md3-react/chip.css";
 import "./input.css";
 
 import * as React from "react";

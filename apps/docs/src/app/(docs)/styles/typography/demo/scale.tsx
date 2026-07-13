@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/typography.css";
 import "./scale.css";
 
 import { Typography, type TypographyVariant } from "@brijbyte/md3-react/typography";

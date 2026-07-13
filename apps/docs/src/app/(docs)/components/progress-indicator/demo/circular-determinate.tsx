@@ -1,4 +1,5 @@
 "use client";
+import "@brijbyte/md3-react/circular-progress.css";
 import "./circular-determinate.css";
 
 import * as React from "react";

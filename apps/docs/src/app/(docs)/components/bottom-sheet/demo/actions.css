@@ -1,8 +1,3 @@
-@import "@brijbyte/md3-react/button.css";
-@import "@brijbyte/md3-react/icon-button.css";
-@import "@brijbyte/md3-react/bottom-sheet.css";
-@import "@brijbyte/md3-react/typography.css";
-
 .demo-bottom-sheet-actions {
   padding-bottom: 8px;
 }

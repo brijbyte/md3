@@ -1,5 +1,5 @@
-import "./fabs.css";
-
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/fab.css";
 import { Fab } from "@brijbyte/md3-react/fab";
 import AddIcon from "@brijbyte/md3-icons/outlined/Add";
 import EditIcon from "@brijbyte/md3-icons/outlined/Edit";

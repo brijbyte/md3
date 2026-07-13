@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/side-sheet.css";
-@import "@brijbyte/md3-react/typography.css";
-
 .demo-side-sheet-standard {
   position: relative;
   isolation: isolate;

@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/button.css";
-@import "@brijbyte/md3-react/menu.css";
-
 .demo-menu-basic {
   display: flex;
   justify-content: center;

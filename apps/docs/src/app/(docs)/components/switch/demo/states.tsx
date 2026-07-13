@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/switch.css";
 import "./states.css";
 
 import { Switch } from "@brijbyte/md3-react/switch";

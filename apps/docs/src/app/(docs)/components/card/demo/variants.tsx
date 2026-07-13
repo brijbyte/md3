@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/card.css";
 import "./variants.css";
 
 import { Card } from "@brijbyte/md3-react/card";

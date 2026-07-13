@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/tabs.css";
-@import "@brijbyte/md3-react/badge.css";
-
 .demo-tabs-badges {
   display: flex;
   flex-direction: column;

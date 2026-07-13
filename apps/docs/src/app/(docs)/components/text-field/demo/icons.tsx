@@ -1,4 +1,6 @@
 "use client";
+import "@brijbyte/md3-react/text-field.css";
+import "@brijbyte/md3-react/icon-button.css";
 import "./icons.css";
 import * as React from "react";
 import { TextField } from "@brijbyte/md3-react/text-field";

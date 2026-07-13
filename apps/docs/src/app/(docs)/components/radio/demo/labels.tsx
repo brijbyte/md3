@@ -1,3 +1,5 @@
+import "@brijbyte/md3-react/radio.css";
+import "@brijbyte/md3-react/typography.css";
 import "./labels.css";
 
 import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";

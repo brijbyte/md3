@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/chip.css";
 import "./assist.css";
 
 import { AssistChip } from "@brijbyte/md3-react/chip";

@@ -1,5 +1,3 @@
-@import "@brijbyte/md3-react/text-field.css";
-
 .demo-text-field-variants {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

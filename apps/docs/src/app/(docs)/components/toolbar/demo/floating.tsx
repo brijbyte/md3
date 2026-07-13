@@ -1,3 +1,7 @@
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+import "@brijbyte/md3-react/toolbar.css";
 import "./floating.css";
 
 import { IconButton } from "@brijbyte/md3-react/icon-button";

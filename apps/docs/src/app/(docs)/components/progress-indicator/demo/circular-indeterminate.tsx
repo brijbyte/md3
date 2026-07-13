@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/circular-progress.css";
 import "./circular-indeterminate.css";
 
 import { CircularProgress } from "@brijbyte/md3-react/circular-progress";

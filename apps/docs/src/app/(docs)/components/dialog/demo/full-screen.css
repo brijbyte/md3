@@ -1,8 +1,3 @@
-@import "@brijbyte/md3-react/button.css";
-@import "@brijbyte/md3-react/icon-button.css";
-@import "@brijbyte/md3-react/dialog.css";
-@import "@brijbyte/md3-react/text-field.css";
-
 .demo-dialog-full-screen-form {
   display: flex;
   flex-direction: column;

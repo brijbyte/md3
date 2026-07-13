@@ -1,3 +1,8 @@
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/checkbox.css";
+import "@brijbyte/md3-react/switch.css";
+import "@brijbyte/md3-react/radio.css";
+import "@brijbyte/md3-react/list.css";
 import "./selection.css";
 
 import { List, ListItem } from "@brijbyte/md3-react/list";

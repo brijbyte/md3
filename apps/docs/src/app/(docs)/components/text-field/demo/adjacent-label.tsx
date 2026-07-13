@@ -1,3 +1,5 @@
+import "@brijbyte/md3-react/typography.css";
+import "@brijbyte/md3-react/text-field.css";
 import "./adjacent-label.css";
 import { Typography } from "@brijbyte/md3-react/typography";
 import { TextField } from "@brijbyte/md3-react/text-field";

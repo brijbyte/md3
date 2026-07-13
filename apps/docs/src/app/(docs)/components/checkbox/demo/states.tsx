@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/checkbox.css";
 import "./states.css";
 
 import { Checkbox } from "@brijbyte/md3-react/checkbox";

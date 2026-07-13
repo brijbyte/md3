@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/chip.css";
 import "./filter.css";
 
 import { FilterChip } from "@brijbyte/md3-react/chip";

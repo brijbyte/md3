@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/button.css";
 import "./first-buttons.css";
 
 import { Button } from "@brijbyte/md3-react/button";

@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/button.css";
-@import "@brijbyte/md3-react/fab.css";
-
 /* Stand-in for the app screen; in a real app the FAB is usually position: fixed. */
 .demo-fab-screen {
   position: relative;

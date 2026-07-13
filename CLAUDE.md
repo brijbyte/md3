@@ -4,7 +4,7 @@ Skip the teaching/learning-checklist workflow here (no LEARNING.md, no comprehen
 quizzes) — overrides the global CLAUDE.md teacher instructions. Just do the work.
 Note: For screenshot testing with Playwright, always start the server on 5174 port and
 don't kill existing server running on port 5173. For any edge case/bug fixes, add an
-equivalent test as well.
+equivalent test as well. Use the `PORT` env var.
 
 React implementation of Google's Material Design 3 (https://m3.material.io/), built as a
 styled layer on top of Base UI (`@base-ui/react`, the headless library). Deliverable is
@@ -72,17 +72,23 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   verbatim. Pages import each demo by its real path and render it directly
   (`<ButtonSizes />`), untransformed; `loaders/demo-loader.mjs` runs on the demo sources
   themselves (`src/app/**/demo/*.tsx`; AST-based via `yuku-parser`, span edits — no regex
-  scraping) and rewrites each default-exporting module in place: `createDemo(entry, FILES)`
-  wraps the entry in the `Demo` chrome (playground + collapsed code tabs), with the demo's
+  scraping) and rewrites each default-exporting module in place: `createDemo(entry, url)`
+  wraps the entry in the `Demo` chrome (playground + a code toolbar), with the demo's
   sources (entry + relative imports + sibling css) Shiki-highlighted at compile time and
-  inlined; every file is a loader dependency so demo edits recompile. Helper modules in
-  `demo/` (no default export — keep it that way) pass through untouched. A `'use client'`
-  demo carries its highlighted payload in the client bundle (server demos keep it
-  server-only). Pages never render `Demo` themselves; section titles/captions are plain
-  markdown above the demo tag. Demo css `@import`s of library css resolve to the real dist
-  files and are load-bearing — app.css no longer imports the styles.css aggregate, so a
-  demo's css imports are the only thing styling its components (bundler-deduped against
-  the `src/ui` alias imports).
+  written to `public/demo-code/<slug>.<hash>.json` (gitignored, content-hashed, stale
+  hashes pruned) — only the URL is inlined, and the client fetches the payload lazily when
+  "Show code" is clicked (collapsed, the toolbar shows just that button plus the
+  theme/RTL toggles); every file is a loader dependency so demo edits recompile. Helper
+  modules in `demo/` (no default export — keep it that way) pass through untouched.
+  Pages never render `Demo` themselves; section titles/captions are plain
+  markdown above the demo tag. Demos import library css as JS imports in their tsx
+  (`import "@brijbyte/md3-react/button.css"`, before the sibling-css import) and are
+  load-bearing — app.css no longer imports the styles.css aggregate. Never move them into
+  the demo css as `@import`: Turbopack inlines css `@import`s per file instead of deduping
+  them as modules, so a page collected N copies of button.css in route-dependent order and
+  broke the button-family import-order contract (direct load vs soft nav rendered FABs
+  differently). As JS imports they dedupe against the `src/ui` alias imports. Demo css
+  files keep only demo layout styles (deleted when that leaves them empty).
 - Every component docs page opens (after imports, before the first heading) with two fenced
   blocks stating the consumer-facing imports: a `tsx` fence with the component import and a
   `css` fence with the required stylesheets, mirroring the demo css exactly (`tokens.css`,

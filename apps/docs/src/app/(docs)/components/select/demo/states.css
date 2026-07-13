@@ -1,7 +1,3 @@
-@import "@brijbyte/md3-react/menu.css";
-@import "@brijbyte/md3-react/text-field.css";
-@import "@brijbyte/md3-react/select.css";
-
 .demo-select-states {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

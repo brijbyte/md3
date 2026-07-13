@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/radio.css";
 import "./size-picker.css";
 
 import { Radio, RadioGroup } from "@brijbyte/md3-react/radio";

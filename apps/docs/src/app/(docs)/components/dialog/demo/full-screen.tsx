@@ -1,4 +1,8 @@
 "use client";
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+import "@brijbyte/md3-react/dialog.css";
+import "@brijbyte/md3-react/text-field.css";
 import "./full-screen.css";
 
 import { Button } from "@brijbyte/md3-react/button";

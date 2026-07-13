@@ -1,5 +1,6 @@
 "use client";
 
+import "@brijbyte/md3-react/slider.css";
 import "./smart-home.css";
 
 import * as React from "react";

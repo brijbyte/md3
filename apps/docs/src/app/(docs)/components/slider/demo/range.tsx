@@ -1,4 +1,5 @@
 "use client";
+import "@brijbyte/md3-react/slider.css";
 import "./range.css";
 
 import { Slider } from "@brijbyte/md3-react/slider";

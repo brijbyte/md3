@@ -1,6 +1,6 @@
 "use client";
-import "./icon-button-sizes.css";
-
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
 import * as React from "react";
 import { IconButton, type IconButtonSize } from "@brijbyte/md3-react/icon-button";
 import HeartIcon from "@brijbyte/md3-icons/outlined/Favorite";

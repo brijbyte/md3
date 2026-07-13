@@ -1,3 +1,5 @@
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/menu.css";
 import "./density.css";
 
 import { Button } from "@brijbyte/md3-react/button";

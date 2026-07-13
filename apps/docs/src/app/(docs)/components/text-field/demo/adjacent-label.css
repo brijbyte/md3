@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/typography.css";
-@import "@brijbyte/md3-react/text-field.css";
-
 .demo-text-field-adjacent-label {
   display: flex;
   flex-direction: column;

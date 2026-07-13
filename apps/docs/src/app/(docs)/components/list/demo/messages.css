@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/list.css";
-@import "@brijbyte/md3-react/divider.css";
-
 /* Uncontained list: no filled container — dividers do the separating. */
 .demo-msg-list {
   width: 100%;

@@ -1,4 +1,5 @@
 "use client";
+import "@brijbyte/md3-react/linear-progress.css";
 import "./linear-determinate.css";
 
 import * as React from "react";

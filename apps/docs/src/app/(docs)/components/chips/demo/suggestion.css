@@ -1,5 +1,3 @@
-@import "@brijbyte/md3-react/chip.css";
-
 .demo-suggestion-chips {
   display: flex;
   flex-wrap: wrap;

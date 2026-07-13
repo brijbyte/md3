@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/list.css";
 import "./lines.css";
 
 import { List, ListItem } from "@brijbyte/md3-react/list";

@@ -1,6 +1,3 @@
-@import "@brijbyte/md3-react/text-field.css";
-@import "@brijbyte/md3-react/icon-button.css";
-
 .demo-text-field-icons {
   display: flex;
   flex-direction: column;

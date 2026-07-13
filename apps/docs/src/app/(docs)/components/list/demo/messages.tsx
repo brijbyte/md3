@@ -1,3 +1,5 @@
+import "@brijbyte/md3-react/list.css";
+import "@brijbyte/md3-react/divider.css";
 import "./messages.css";
 
 import * as React from "react";

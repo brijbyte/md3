@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/divider.css";
 import "./variants.css";
 
 import { Divider } from "@brijbyte/md3-react/divider";

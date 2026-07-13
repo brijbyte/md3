@@ -1,6 +1,5 @@
 "use client";
-import "./button-sizes.css";
-
+import "@brijbyte/md3-react/button.css";
 import * as React from "react";
 import { Button, type ButtonSize } from "@brijbyte/md3-react/button";
 import EditIcon from "@brijbyte/md3-icons/outlined/Edit";

@@ -1,4 +1,7 @@
 "use client";
+import "@brijbyte/md3-react/menu.css";
+import "@brijbyte/md3-react/text-field.css";
+import "@brijbyte/md3-react/select.css";
 import "./selection.css";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@brijbyte/md3-react/select";
 

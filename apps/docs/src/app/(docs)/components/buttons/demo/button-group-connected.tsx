@@ -1,5 +1,6 @@
-import "./button-group-connected.css";
-
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/icon-button.css";
+import "@brijbyte/md3-react/button-group.css";
 import { Button } from "@brijbyte/md3-react/button";
 import { ButtonGroup } from "@brijbyte/md3-react/button-group";
 import { IconButton } from "@brijbyte/md3-react/icon-button";

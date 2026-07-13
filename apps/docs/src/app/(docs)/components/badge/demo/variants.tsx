@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/badge.css";
 import "./variants.css";
 
 import { Badge } from "@brijbyte/md3-react/badge";

@@ -1,4 +1,5 @@
 "use client";
+import "@brijbyte/md3-react/chip.css";
 import "./input-states.css";
 
 import { InputChip } from "@brijbyte/md3-react/chip";

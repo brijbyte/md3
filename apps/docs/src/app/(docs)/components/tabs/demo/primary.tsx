@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/tabs.css";
 import "./primary.css";
 
 import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";

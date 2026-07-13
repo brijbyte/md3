@@ -1,4 +1,9 @@
 "use client";
+import "@brijbyte/md3-react/tokens.css";
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/side-sheet.css";
+import "@brijbyte/md3-react/typography.css";
 import "./basic.css";
 
 import { Button } from "@brijbyte/md3-react/button";

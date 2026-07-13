@@ -1,6 +1,7 @@
 "use client";
-import "./split-buttons.css";
-
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/split-button.css";
+import "@brijbyte/md3-react/menu.css";
 import * as React from "react";
 import {
   SplitButton,

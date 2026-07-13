@@ -1,6 +1,6 @@
 "use client";
-import "./hero-icon.css";
-
+import "@brijbyte/md3-react/button.css";
+import "@brijbyte/md3-react/dialog.css";
 import { Button } from "@brijbyte/md3-react/button";
 import {
   Dialog,

@@ -1,4 +1,6 @@
 "use client";
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/list.css";
 import "./interactive.css";
 
 import * as React from "react";

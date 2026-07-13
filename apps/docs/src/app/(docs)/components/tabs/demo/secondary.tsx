@@ -1,3 +1,6 @@
+import "@brijbyte/md3-react/tokens.css";
+import "@brijbyte/md3-react/ripple.css";
+import "@brijbyte/md3-react/tabs.css";
 import "./secondary.css";
 
 import { Tab, TabList, TabPanel, Tabs } from "@brijbyte/md3-react/tabs";

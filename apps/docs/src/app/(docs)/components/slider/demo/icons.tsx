@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/slider.css";
 import "./icons.css";
 
 import { Slider } from "@brijbyte/md3-react/slider";

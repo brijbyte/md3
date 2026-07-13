@@ -1,3 +1,4 @@
+import "@brijbyte/md3-react/linear-progress.css";
 import "./linear-indeterminate.css";
 
 import { LinearProgress } from "@brijbyte/md3-react/linear-progress";

@@ -1,4 +1,6 @@
 "use client";
+import "@brijbyte/md3-react/side-sheet.css";
+import "@brijbyte/md3-react/typography.css";
 import "./standard.css";
 
 import * as React from "react";
