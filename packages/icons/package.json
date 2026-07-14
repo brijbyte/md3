@@ -1,6 +1,6 @@
 {
   "name": "@brijbyte/md3-icons",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Google Material Symbols (weight 400) as per-icon React components",
   "license": "MIT AND Apache-2.0",
   "files": [
