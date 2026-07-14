@@ -3,18 +3,19 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Tab, TabList, Tabs } from "@/ui/tabs";
 import { NAV } from "../nav";
-import "./MobileTabs.css";
 
-// Mobile nav: a flat, horizontally scrollable tab row (styled after MD3
-// primary tabs in MobileTabs.css). The active tab is nudged into view on mount —
-// scrollIntoView only affects this row's own scroll container, and
-// block: "nearest" keeps the page's vertical scroll untouched.
+// Mobile nav: the library's primary Tabs used as page navigation — each tab
+// renders a Link and the pathname is the controlled value (never changed by
+// the Tabs themselves; a click navigates away). The active tab is nudged into
+// view on mount — scrollIntoView only affects the TabList's own scroll
+// container, and block: "nearest" keeps the page's vertical scroll untouched.
 const TABS = NAV.filter((item) => item.path !== "/");
 
 export function MobileTabs() {
   const pathname = usePathname();
-  const ref = React.useRef<HTMLElement>(null);
+  const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     ref.current
@@ -25,23 +26,26 @@ export function MobileTabs() {
   }, []);
 
   return (
-    <nav
-      ref={ref}
-      className="docs-mobile-tabs -mx-6 mb-6 flex overflow-x-auto px-6 md:hidden"
-      aria-label="Documentation"
+    <Tabs
+      value={pathname}
+      className="-mx-6 mb-6 md:hidden"
+      render={<nav aria-label="Documentation" />}
     >
-      {TABS.map((item) => (
-        <Link
-          key={item.path}
-          href={item.path}
-          aria-current={item.path === pathname ? "page" : undefined}
-          data-active={item.path === pathname ? "" : undefined}
-          className="docs-mobile-tab font-brand"
-        >
-          <item.icon className="docs-mobile-tab-icon" />
-          {item.label}
-        </Link>
-      ))}
-    </nav>
+      <TabList ref={ref} className="px-6">
+        {TABS.map((item) => (
+          <Tab
+            key={item.path}
+            value={item.path}
+            icon={<item.icon />}
+            nativeButton={false}
+            render={
+              <Link href={item.path} aria-current={item.path === pathname ? "page" : undefined} />
+            }
+          >
+            {item.label}
+          </Tab>
+        ))}
+      </TabList>
+    </Tabs>
   );
 }

@@ -1,4 +1,5 @@
 import type * as React from "react";
+import { Divider } from "@/ui/divider";
 import { Typography, type TypographyVariant } from "@/ui/typography";
 import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import InfoIcon from "@brijbyte/md3-icons/outlined/Info";
@@ -77,7 +78,7 @@ export const MDX_COMPONENTS: Record<string, React.ElementType> = {
         {children}
       </blockquote>
     ),
-  hr: (props: Props<"hr">) => <hr className="my-8 border-outline-variant" {...props} />,
+  hr: (props: React.ComponentProps<typeof Divider>) => <Divider className="my-8" {...props} />,
   // Block code keeps the pre's styling; only inline code gets its own chip look.
   // Shiki (hast plugin in satteri/hast-plugins.mjs) adds its own className — merge, don't replace.
   pre: ({ className, ...props }: Props<"pre">) => (

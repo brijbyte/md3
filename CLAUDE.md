@@ -97,8 +97,8 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 - Styled with Tailwind v4 (`@tailwindcss/postcss`); doubles as the Tailwind-integration
   testbed. Layer order (`@layer theme, base, components, utilities;`) is established by
   `app.css` (imported first, in the root layout); docs chrome styles live in plain css
-  files beside their components (`NavigationProgress.css`, `MobileTabs.css`,
-  `SidebarNav.css`, `shiki.css`, `DemoControls.css` — imported by the matching tsx), which
+  files beside their components (`NavigationProgress.css`, `SidebarNav.css`, `shiki.css`,
+  `DemoControls.css` — imported by the matching tsx), which
   load after app.css and append to those layers. `.demo-surface` (DemoControls.css) and
   the nav-progress rules stay deliberately unlayered; app.css keeps only app-level
   concerns (tailwind + library + color-theme imports, fonts, typeface overrides).

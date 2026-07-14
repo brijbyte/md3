@@ -1,34 +1,8 @@
-/* Soft-navigation feedback: NavigationProgress sets data-navigating on <html>
-   while the next page is in flight; show an MD3 indeterminate linear progress
-   bar (4dp, primary on secondary-container) pinned to the viewport. */
-html[data-navigating] body::before,
-html[data-navigating] body::after {
-  content: "";
+/* Soft-navigation bar (NavigationProgress.tsx): the library's indeterminate
+   LinearProgress pinned to the viewport top. Deliberately unlayered. */
+.docs-nav-progress {
   position: fixed;
   top: 0;
-  height: 4px;
-  z-index: 9999;
-}
-
-html[data-navigating] body::before {
   inset-inline: 0;
-  background: var(--md-sys-color-secondary-container);
-}
-
-html[data-navigating] body::after {
-  inset-inline-start: 0;
-  width: 40%;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--md-sys-color-primary);
-  /* 40% wide: -100% → 250% of own width sweeps edge to edge. */
-  animation: nav-progress 1.2s ease-in-out infinite;
-}
-
-@keyframes nav-progress {
-  from {
-    translate: -100%;
-  }
-  to {
-    translate: 250%;
-  }
+  z-index: var(--md-ref-z-index-notification);
 }
