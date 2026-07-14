@@ -5,12 +5,6 @@ import { seedSearchIndex } from "./scripts/build-search-index.mjs";
 
 const ROOT = import.meta.dirname;
 
-// .mdx → server-safe JS via Sätteri (satteri-nextjs/loader); page.mdx files
-// under app/ ARE the routes (mdx is in pageExtensions below). Demo sources
-// (src/app/**/demo/*.tsx) are wrapped in the <Demo> chrome by our demo
-// loader at their own modules (see loaders/demo-loader.mjs) — pages import
-// and render demos directly, untransformed. All loader options are
-// JSON-serializable so the same pipeline applies under webpack and Turbopack.
 const HAST_PLUGINS = path.join(ROOT, "satteri/hast-plugins.mjs");
 
 // Magic specifier satteri's output imports `useMDXComponents` from; aliased to
@@ -58,20 +52,9 @@ const SEARCH_INDEX_LOADER = { loader: path.join(ROOT, "loaders/search-index-load
 
 // Async config: the pre-build codegen runs (concurrently) before Next starts.
 export default async function nextConfig(): Promise<NextConfig> {
-  // Icon-browser data (gitignored public/icons-data/) so the icons page works
-  // on a fresh clone — skips when newer than the icons dist. Search index
-  // (gitignored public/search-index*.json) seeded with mtime checks; the
-  // search-index loader below keeps it fresh as pages recompile. Prod builds
-  // emit a content-hashed filename (stable within a build), handed to the
-  // client via NEXT_PUBLIC_SEARCH_INDEX_URL.
-  const [searchIndexUrl] = await Promise.all([
-    seedSearchIndex(),
-    Promise.resolve().then(buildIconData),
-  ]);
+  const [searchIndexUrl] = await Promise.all([seedSearchIndex(), buildIconData()]);
 
   return {
-    // Fully static site: every route prerenders to out/<path>.html (+ its RSC
-    // payload for soft navigation), same hosting shape as the old Vite SSG.
     output: "export",
     trailingSlash: false,
     pageExtensions: ["tsx", "mdx"],
