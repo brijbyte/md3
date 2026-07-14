@@ -49,6 +49,16 @@
   color: inherit;
 }
 
+/* Heading sub-results indent under their page label; the sub-item arrow reads as
+   secondary. Unlayered, so it wins the padding-inline-start over the library rule. */
+.docs-search-results .docs-search-child {
+  padding-inline-start: 28px;
+}
+
+.docs-search-results .docs-search-child:not([data-highlighted]) .md3-list-leading {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
 .docs-search-empty {
   padding: 20px 24px;
 }
