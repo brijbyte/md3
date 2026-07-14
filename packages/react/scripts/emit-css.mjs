@@ -32,7 +32,10 @@ export function emitCss() {
   const tokensCss = readFileSync(tokensCssPath, "utf8");
   writeFileSync(join(stylesDir, "tokens.css"), tokensCss);
   // Tailwind-only theme file: shipped standalone, never in the aggregate.
-  writeFileSync(join(stylesDir, "tailwind-tokens.css"), readFileSync(tailwindTokensCssPath, "utf8"));
+  writeFileSync(
+    join(stylesDir, "tailwind-tokens.css"),
+    readFileSync(tailwindTokensCssPath, "utf8"),
+  );
 
   // Aggregate from the finalized styles/ dir so a watch rebuild that re-emits no
   // split css (e.g. a .tsx-only change) still produces a complete index.css.
@@ -48,7 +51,10 @@ export function emitCss() {
     .filter((name) => name !== "ripple")
     .toSorted()
     .map((name) => componentCss.get(name));
-  writeFileSync(join(distDir, "index.css"), [tokensCss, rippleCss, ...sortedComponentCss].join("\n"));
+  writeFileSync(
+    join(distDir, "index.css"),
+    [tokensCss, rippleCss, ...sortedComponentCss].join("\n"),
+  );
 
   writeFileSync(
     join(distDir, "css-manifest.json"),

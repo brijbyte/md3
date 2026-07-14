@@ -18,4 +18,5 @@ packages/react/src/**/__screenshots__/
 apps/docs-old/public/icons-data/
 apps/docs/.next/
 apps/docs/out/
+apps/docs/next-env.d.ts
 *.tsbuildinfo
