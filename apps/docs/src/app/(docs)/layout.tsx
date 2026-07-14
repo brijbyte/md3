@@ -2,7 +2,7 @@ import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@/ui/typography";
 import { DocsPage } from "@/components/DocsPage";
-import { SearchButton, SearchDialog } from "@/components/SearchDialog";
+import { SearchDialog, SearchButton } from "@/components/SearchDialog";
 import { SidebarNav } from "@/components/SidebarNav";
 
 // Docs chrome: sticky sidebar (desktop) beside the page, with <DocsPage>
@@ -12,10 +12,12 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="mx-auto flex min-h-screen max-w-360">
       <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col p-3 md:flex">
-        <Typography as={Link} variant="title-large" href="/" className="shrink-0 px-4 pt-4 pb-2">
-          MD3 React
-        </Typography>
-        <SearchButton />
+        <div className="flex gap-2 justify-between items-center px-2">
+          <Typography as={Link} variant="title-large" href="/" className="shrink-0 grow">
+            MD3 React
+          </Typography>
+          <SearchButton />
+        </div>
         <SidebarNav />
       </aside>
       <DocsPage>{children}</DocsPage>

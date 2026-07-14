@@ -63,7 +63,6 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
 
       <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto pt-6 pb-22 pe-6 xl:block">
         <ThemeToggle />
-        {/* pt-6 + toggle + mt-6 ≈ the old py-22 offset, keeping the toc put. */}
         <div className="mt-6">
           <Toc items={toc} />
         </div>
