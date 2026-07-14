@@ -37,7 +37,7 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="min-w-0 flex-1">
-        <div className="mx-auto max-w-190 px-6 pt-6 pb-24">
+        <div className="mx-auto max-w-220 px-6 pt-6 pb-24">
           {/* Below xl the TOC rail (and its ThemeToggle) is hidden, so the
               toggle rides in this header instead. */}
           <header className="flex items-center justify-between gap-4 pb-4 xl:hidden">

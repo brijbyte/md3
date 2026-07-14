@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 // Only the home page lives here; showcases have their own (showcase) group.
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto max-w-6xl px-6 pt-6 pb-24">
+    <div className="mx-auto max-w-7xl px-6 pt-6 pb-24">
       <header className="flex items-center justify-between gap-4 pb-12">
         <Typography as={Link} variant="title-large" href="/">
           MD3 React
