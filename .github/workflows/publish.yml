@@ -24,9 +24,6 @@ permissions:
   contents: write # create the GitHub release
   id-token: write # npm provenance
 
-env:
-  NEXT_TELEMETRY_DISABLED: "1"
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -74,11 +71,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Only the tagged package — no docs build, no tests (that's CI's job).
       - name: Build
-        run: pnpm build
-
-      - name: Test
-        run: pnpm test
+        run: pnpm --filter "${{ steps.meta.outputs.name }}" build
 
       # Before publishing, so a missing changelog section blocks the release.
       - name: Extract changelog section (fails if missing)

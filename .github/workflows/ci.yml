@@ -53,6 +53,11 @@ jobs:
         if: always()
         run: pnpm typecheck
 
+      # Vitest browser mode drives a real chromium via Playwright.
+      - name: Install Playwright chromium
+        if: always()
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Test
         if: always()
         run: pnpm test
