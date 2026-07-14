@@ -1,3 +1,4 @@
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render } from "@testing-library/react";
 import { userEvent } from "@vitest/browser/context";
 import { renderToString } from "react-dom/server";
@@ -34,6 +35,28 @@ test("outlined label without a leading icon still aligns with the notch", async 
   const { container } = render(<TextField variant="outlined" label="Search" defaultValue="x" />);
   await raf();
   expect(notchDelta(container)).toBeLessThan(12);
+});
+
+// Regression: the RTL transform-origin flip used :dir(rtl), which bundlers lower to a
+// :lang() list that ignores the dir attribute — the floated label kept scaling about
+// its left edge and drifted toward the center, striking through the border instead of
+// sitting in the notch. Direction is now resolved in JS (data-dir).
+test("outlined floated label stays in the notch in RTL", async () => {
+  const { container } = render(
+    <div dir="rtl">
+      <DirectionProvider direction="rtl">
+        <TextField variant="outlined" label="Search" defaultValue="x" />
+      </DirectionProvider>
+    </div>,
+  );
+  await raf();
+  expect(container.querySelector<HTMLElement>("[data-dir]")!.dataset.dir).toBe("rtl");
+  const label = container.querySelector("label")!;
+  const legend = container.querySelector("legend")!;
+  const delta = Math.abs(
+    label.getBoundingClientRect().right - legend.getBoundingClientRect().right,
+  );
+  expect(delta).toBeLessThan(12);
 });
 
 // Base UI only syncs the field's filled state in a layout effect, so without

@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
 import { Field } from "@base-ui/react/field";
 import { Input } from "@base-ui/react/input";
 import { mergeClassName } from "../utils/mergeClassName";
@@ -88,11 +89,16 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
     // — FieldControlProps is typed for <input> and has no `rows`, so merge
     // it in loosely rather than fighting the element union.
     const textareaProps: Record<string, unknown> = { ...rest, rows, onChange: handleChange };
+    // The label's transform-origin has no logical keyword, and :dir() is off-limits
+    // (bundlers lower it to :lang()) — resolve the direction in JS instead.
+    const direction = useDirection();
 
     return (
       <Field.Root
         className={mergeClassName(styles.root, className)}
+        dir={direction}
         data-variant={variant}
+        data-dir={direction}
         disabled={disabled}
         invalid={error}
         validationMode={validationMode}

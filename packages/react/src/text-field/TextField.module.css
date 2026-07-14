@@ -257,8 +257,9 @@
       color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   }
 
-  /* No logical transform-origin keyword exists — mirror it by hand. */
-  .label:dir(rtl) {
+  /* No logical transform-origin keyword exists — mirror via the JS-resolved
+     direction (data-dir); :dir() would be lowered to :lang() by bundlers. */
+  .root[data-dir="rtl"] .label {
     transform-origin: right top;
   }
 
