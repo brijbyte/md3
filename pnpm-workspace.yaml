@@ -20,3 +20,5 @@ minimumReleaseAgeExclude:
   - "@yuku-parser/binding-win32-arm64@0.6.1"
   - "@yuku-parser/binding-win32-x64@0.6.1"
   - yuku-parser@0.6.1
+patchedDependencies:
+  next@16.2.10: patches/next@16.2.10.patch

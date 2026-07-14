@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  next@16.2.10: 5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d
+
 importers:
 
   .:
@@ -49,7 +52,7 @@ importers:
         version: 7.2.0
       next:
         specifier: ^16.2.10
-        version: 16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 16.2.10(patch_hash=5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -77,7 +80,7 @@ importers:
         version: 0.9.5
       satteri-nextjs:
         specifier: ^0.0.2
-        version: 0.0.2(next@16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 0.0.2(next@16.2.10(patch_hash=5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       shiki:
         specifier: ^4.3.1
         version: 4.3.1
@@ -4085,7 +4088,7 @@ snapshots:
 
   nanoid@3.3.15: {}
 
-  next@16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@16.2.10(patch_hash=5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@next/env': 16.2.10
       '@swc/helpers': 0.5.15
@@ -4362,9 +4365,9 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.1.5
       '@rolldown/binding-win32-x64-msvc': 1.1.5
 
-  satteri-nextjs@0.0.2(next@16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
+  satteri-nextjs@0.0.2(next@16.2.10(patch_hash=5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
     dependencies:
-      next: 16.2.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.10(patch_hash=5635241535a636ff83e4e8c88a55c70f116d219d6d4225eb9e9d6f6d0638782d)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       satteri: 0.9.4
       yaml: 2.9.0

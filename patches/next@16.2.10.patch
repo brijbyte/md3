@@ -1,0 +1,26 @@
+diff --git a/dist/client/components/segment-cache/navigation.js b/dist/client/components/segment-cache/navigation.js
+index dc7041df25499d7c37e6f128b43a211cc087bcfc..2ef10fb67095d4d451faa118c602ec3de946953f 100644
+--- a/dist/client/components/segment-cache/navigation.js
++++ b/dist/client/components/segment-cache/navigation.js
+@@ -153,7 +153,7 @@ routeCacheEntry) {
+ }
+ function navigateUsingPrefetchedRouteTree(now, state, url, currentUrl, currentRenderedSearch, nextUrl, currentCacheNode, currentFlightRouterState, freshnessPolicy, scrollBehavior, navigateType, route) {
+     const routeTree = route.tree;
+-    const canonicalUrl = route.canonicalUrl + url.hash;
++    const canonicalUrl = route.canonicalUrl.split('#')[0] + url.hash;
+     const renderedSearch = route.renderedSearch;
+     const prefetchSeed = {
+         renderedSearch,
+diff --git a/dist/esm/client/components/segment-cache/navigation.js b/dist/esm/client/components/segment-cache/navigation.js
+index a737a9e4a1446cec1f1b4ba66ac2b8bd1fe85e44..7a7e7086655cab4060b8cdc3b4240dde6af148ca 100644
+--- a/dist/esm/client/components/segment-cache/navigation.js
++++ b/dist/esm/client/components/segment-cache/navigation.js
+@@ -122,7 +122,7 @@ routeCacheEntry) {
+ }
+ function navigateUsingPrefetchedRouteTree(now, state, url, currentUrl, currentRenderedSearch, nextUrl, currentCacheNode, currentFlightRouterState, freshnessPolicy, scrollBehavior, navigateType, route) {
+     const routeTree = route.tree;
+-    const canonicalUrl = route.canonicalUrl + url.hash;
++    const canonicalUrl = route.canonicalUrl.split('#')[0] + url.hash;
+     const renderedSearch = route.renderedSearch;
+     const prefetchSeed = {
+         renderedSearch,
