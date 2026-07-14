@@ -68,6 +68,15 @@ jobs:
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@latest
 
+      # ~25k Material Symbols SVGs the icons build would otherwise re-download.
+      - name: Cache icon downloads
+        if: startsWith(steps.meta.outputs.tag, 'icons-')
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/icons/.cache
+          key: icons-svg-${{ github.run_id }}
+          restore-keys: icons-svg-
+
       - name: Install
         run: pnpm install --frozen-lockfile
 
