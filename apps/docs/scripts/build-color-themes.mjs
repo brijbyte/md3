@@ -66,12 +66,14 @@ const sysVars = (map) =>
 
 const blocks = Object.entries(SEEDS).map(([name, seedHex]) => {
   const scheme = new SchemeTonalSpot(Hct.fromInt(argbFromHex(seedHex)), false, 0);
-  return `  [data-color-theme='${name}'] {
+  // :root-prefixed to out-specify tokens.css (:root / :root:not([data-theme='light'])):
+  // demos import tokens.css as JS, so a copy can land after this file in source order.
+  return `  :root[data-color-theme='${name}'] {
 ${refPaletteVars(scheme)}
 ${sysVars(sysLight)}
   }
 
-  [data-theme='dark'][data-color-theme='${name}'] {
+  :root[data-theme='dark'][data-color-theme='${name}'] {
 ${sysVars(sysDark)}
   }`;
 });
