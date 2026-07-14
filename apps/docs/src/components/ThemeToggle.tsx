@@ -64,7 +64,7 @@ export function ThemeToggle() {
   const [colorTheme, setColorTheme] = useColorTheme();
 
   return (
-    <SplitButton variant="filled">
+    <SplitButton variant="filled" size="xsmall">
       {/* Icons swap via CSS, not state: the static HTML is theme-agnostic,
           so hydration matches whatever theme the inline script applied. */}
       <SplitButtonAction
