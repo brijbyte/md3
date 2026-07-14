@@ -1,6 +1,6 @@
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render, waitFor } from "@testing-library/react";
-import { userEvent } from "@vitest/browser/context";
+import { userEvent } from "vitest/browser";
 import { renderToString } from "react-dom/server";
 import { expect, test } from "vitest";
 import textFieldStyles from "../text-field/TextField.module.css";

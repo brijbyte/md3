@@ -1,6 +1,6 @@
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render, waitFor } from "@testing-library/react";
-import { userEvent } from "@vitest/browser/context";
+import { userEvent } from "vitest/browser";
 import { expect, test } from "vitest";
 // Resolves --md-sys-shape-* so corner-radius assertions see real values.
 import "../generated/tokens.css";

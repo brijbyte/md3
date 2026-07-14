@@ -1,6 +1,6 @@
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { render, waitFor } from "@testing-library/react";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import * as React from "react";
 import { expect, test } from "vitest";
 import { SnackbarProvider } from "./Snackbar";
