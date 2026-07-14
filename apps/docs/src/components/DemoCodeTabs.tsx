@@ -1,6 +1,6 @@
 "use client";
 
-import "./shiki.css";
+import "./shiki-theme.css";
 import "./DemoCodeTabs.css";
 
 import * as React from "react";

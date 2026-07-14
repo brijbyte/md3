@@ -5,11 +5,7 @@
 // specs are JSON-serializable, so they apply under webpack AND Turbopack.
 import { defineHastPlugin } from "satteri";
 import { codeToHast } from "shiki";
-
-// One theme pair for fenced MDX blocks and demo source tabs alike (the demo
-// loader mirrors it). Light is github-light-default: material-theme-lighter's
-// oranges/teals fall well below WCAG AA contrast on surface-container.
-export const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
+import { classTokens, getShikiTheme } from "./shiki.mjs";
 
 // Heading anchor ids: lowercased text, punctuation stripped, whitespace runs
 // collapsed to a dash ("Shapes & toggle" → "shapes-toggle").
@@ -117,8 +113,9 @@ export function externalLinks() {
 }
 
 // Compile-time syntax highlighting: replace fenced code blocks with Shiki's hast.
-// Dual themes emit --shiki-light/--shiki-dark vars per token; app.css picks one by
-// [data-theme]. Zero client JS. Inline code (no language- class) is left alone.
+// The generated theme + classTokens transformer (satteri/shiki.mjs) tag tokens
+// with sk-* classes, defined in shiki-theme.css. Zero client JS. Inline code
+// (no language- class) is left alone.
 export function shiki() {
   return defineHastPlugin({
     name: "shiki",
@@ -134,8 +131,8 @@ export function shiki() {
         if (!lang) return;
         const hast = await codeToHast(ctx.textContent(code).replace(/\n$/, ""), {
           lang,
-          themes: SHIKI_THEMES,
-          defaultColor: false,
+          theme: await getShikiTheme(),
+          transformers: [classTokens],
         });
         const pre = hast.children[0];
         if (pre.type === "element") pre.properties["data-language"] = lang;

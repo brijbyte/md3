@@ -30,7 +30,7 @@
 }
 
 /* MD3-styled scrollbars everywhere: slim pill thumb on outline-variant, no
-   track/buttons (mirrors the code-block scrollbars in shiki.css). Chromium/
+   track/buttons. Chromium/
    WebKit get the pseudo styling; the standard properties would disable it
    there, so they're scoped to engines without ::-webkit-scrollbar (Firefox). */
 ::-webkit-scrollbar {

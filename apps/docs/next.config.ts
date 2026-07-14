@@ -2,6 +2,7 @@ import path from "node:path";
 import type { NextConfig } from "next";
 import { buildIconData } from "./scripts/build-icon-data.mjs";
 import { seedSearchIndex } from "./scripts/build-search-index.mjs";
+import { buildShikiTheme } from "./scripts/build-shiki-theme.mjs";
 
 const ROOT = import.meta.dirname;
 
@@ -40,7 +41,7 @@ const DEMO_LOADER = {
     outDir: path.join(ROOT, "public/demo-code"),
     // Cache-buster: bump to invalidate Turbopack's persisted loader results
     // (they key on options, not on the loader source).
-    version: 1,
+    version: 3,
   },
 };
 // Runs after satteri (loaders apply right-to-left) to fix its .js-rewritten
@@ -52,7 +53,11 @@ const SEARCH_INDEX_LOADER = { loader: path.join(ROOT, "loaders/search-index-load
 
 // Async config: the pre-build codegen runs (concurrently) before Next starts.
 export default async function nextConfig(): Promise<NextConfig> {
-  const [searchIndexUrl] = await Promise.all([seedSearchIndex(), buildIconData()]);
+  const [searchIndexUrl] = await Promise.all([
+    seedSearchIndex(),
+    buildIconData(),
+    buildShikiTheme(),
+  ]);
 
   return {
     output: "export",

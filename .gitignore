@@ -7,6 +7,7 @@ dist.old/
 packages/react/src/generated/
 apps/docs/public/icons-data/
 apps/docs/public/demo-code/
+apps/docs/src/components/shiki-theme.css
 *.module.css.d.ts
 .cache/
 .agents/

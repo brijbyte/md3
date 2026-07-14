@@ -7,7 +7,7 @@ import LightbulbIcon from "@brijbyte/md3-icons/outlined/Lightbulb";
 import ReportIcon from "@brijbyte/md3-icons/outlined/Report";
 import WarningIcon from "@brijbyte/md3-icons/outlined/Warning";
 import { HeadingAnchor } from "./HeadingAnchor";
-import "./shiki.css";
+import "./shiki-theme.css";
 
 // MD3-styled replacements for markdown elements, passed to every MDX page
 // via the mdx-components provider (src/mdx-components.tsx). Server-safe.

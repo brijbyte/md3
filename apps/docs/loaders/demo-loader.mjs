@@ -19,10 +19,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { langFromPath, parse, walk } from "yuku-parser";
-
-// Mirrors SHIKI_THEMES in satteri/hast-plugins.mjs (kept local: this module
-// must stay dependency-light so both bundlers can run it as a plain loader).
-const SHIKI_THEMES = { light: "github-light-default", dark: "github-dark-dimmed" };
+import { classTokens, getShikiTheme } from "../satteri/shiki.mjs";
 
 // Lazy singleton so shiki loads once per process, not per demo.
 let shikiPromise;
@@ -31,8 +28,8 @@ async function highlight(code, lang) {
   const { codeToHtml } = await shikiPromise;
   return codeToHtml(code.replace(/\n$/, ""), {
     lang,
-    themes: SHIKI_THEMES,
-    defaultColor: false,
+    theme: await getShikiTheme(),
+    transformers: [classTokens],
   });
 }
 
