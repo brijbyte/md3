@@ -1,4 +1,3 @@
-import "@brijbyte/md3-react/ripple.css";
 import "@brijbyte/md3-react/checkbox.css";
 import "@brijbyte/md3-react/switch.css";
 import "@brijbyte/md3-react/radio.css";

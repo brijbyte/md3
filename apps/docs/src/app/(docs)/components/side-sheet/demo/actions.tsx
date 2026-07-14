@@ -1,7 +1,5 @@
 "use client";
-import "@brijbyte/md3-react/tokens.css";
 import "@brijbyte/md3-react/button.css";
-import "@brijbyte/md3-react/ripple.css";
 import "@brijbyte/md3-react/icon-button.css";
 import "@brijbyte/md3-react/side-sheet.css";
 import "@brijbyte/md3-react/switch.css";
