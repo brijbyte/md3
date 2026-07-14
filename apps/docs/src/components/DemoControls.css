@@ -4,9 +4,17 @@
 }
 
 .demo-surface {
+  /* all: initial severs inherited docs styles, so text defaults must be re-set
+     here from tokens (custom properties are exempt from `all` and flow through). */
   all: initial;
   display: flow-root;
   padding-block: 20px;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  color: var(--md-sys-color-on-surface);
   -webkit-font-smoothing: antialiased;
   border-end-end-radius: 0;
 }
