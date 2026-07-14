@@ -35,11 +35,14 @@ execFileSync("node", ["scripts/extract-changelog.mjs", version, `${dir}/CHANGELO
 
 const path = `${dir}/package.json`;
 const pkg = JSON.parse(readFileSync(path, "utf8"));
-pkg.version = version;
-writeFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
-
-git("add", path);
-git("commit", "-m", tag);
+if (pkg.version === version) {
+  console.log(`${pkg.name} is already at ${version} — tagging HEAD without a bump commit.`);
+} else {
+  pkg.version = version;
+  writeFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
+  git("add", path);
+  git("commit", "-m", tag);
+}
 git("tag", "-a", tag, "-m", tag);
 git("push", "origin", "main", tag);
 console.log(`Released ${tag} — publish workflow is running.`);
