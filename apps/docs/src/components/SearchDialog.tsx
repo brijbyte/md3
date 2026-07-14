@@ -3,7 +3,7 @@
 import "./SearchDialog.css";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Autocomplete } from "@base-ui/react/autocomplete";
 import type MiniSearch from "minisearch";
 import CloseIcon from "@brijbyte/md3-icons/outlined/Close";
@@ -133,7 +133,6 @@ const hitRow = (hit: SearchHit): Row => ({
 });
 
 export function SearchDialog() {
-  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [engine, setEngine] = React.useState<MiniSearch<SearchDoc> | null>(null);
@@ -166,10 +165,31 @@ export function SearchDialog() {
   }, [engine, query]);
   const rows = groups.flatMap((group) => group.rows);
 
-  const go = (row: Row) => {
-    setOpen(false);
-    router.push(row.href);
-  };
+  // Real <Link> per row: native href gives cmd/middle-click; Base UI clicks the
+  // highlighted item element on Enter, so keyboard navigation goes through it too.
+  // tabIndex -1 keeps items out of the tab order (aria-activedescendant drives focus).
+  const renderRow = (row: Row) => (
+    <Autocomplete.Item
+      key={row.key}
+      value={row}
+      render={
+        <ListItem
+          as={Link}
+          href={row.href}
+          tabIndex={-1}
+          onClick={() => setOpen(false)}
+          leading={row.icon ? <row.icon /> : <SearchIcon />}
+          supportingText={
+            row.supporting ? (
+              <span className="docs-search-snippet">{row.supporting}</span>
+            ) : undefined
+          }
+        />
+      }
+    >
+      {row.title}
+    </Autocomplete.Item>
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -223,13 +243,17 @@ export function SearchDialog() {
               render={<List className="docs-search-results" />}
               aria-label="Search results"
             >
-              {groups.map((group) => (
-                <Autocomplete.Group
-                  key={group.label ?? "results"}
-                  className="contents"
-                  items={group.rows}
-                >
-                  {group.label && (
+              {/* Labeled groups nest a role="none" <ul> so options stay valid
+                  <li>s under the list; the unlabeled search-results group emits
+                  its options directly. */}
+              {groups.map((group) =>
+                group.label ? (
+                  <Autocomplete.Group
+                    key={group.label}
+                    items={group.rows}
+                    className="docs-search-group"
+                    render={<li />}
+                  >
                     <Autocomplete.GroupLabel
                       render={
                         <Typography
@@ -241,29 +265,14 @@ export function SearchDialog() {
                     >
                       {group.label}
                     </Autocomplete.GroupLabel>
-                  )}
-                  {group.rows.map((row) => (
-                    <Autocomplete.Item
-                      key={row.key}
-                      value={row}
-                      onClick={() => go(row)}
-                      render={
-                        <ListItem
-                          as="li"
-                          leading={row.icon ? <row.icon /> : <SearchIcon />}
-                          supportingText={
-                            row.supporting ? (
-                              <span className="docs-search-snippet">{row.supporting}</span>
-                            ) : undefined
-                          }
-                        />
-                      }
-                    >
-                      {row.title}
-                    </Autocomplete.Item>
-                  ))}
-                </Autocomplete.Group>
-              ))}
+                    <ul role="none" className="docs-search-group-list">
+                      {group.rows.map(renderRow)}
+                    </ul>
+                  </Autocomplete.Group>
+                ) : (
+                  <React.Fragment key="results">{group.rows.map(renderRow)}</React.Fragment>
+                ),
+              )}
             </Autocomplete.List>
           ) : (
             <Typography variant="body-medium" className="docs-search-empty text-on-surface-variant">

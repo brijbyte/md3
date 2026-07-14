@@ -30,6 +30,14 @@
   outline: none;
 }
 
+/* Group <li> and its nested option <ul> carry no list styling of their own. */
+.docs-search-group,
+.docs-search-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* Base UI highlight (keyboard + hover) styled like an MD3 selected row. */
 .docs-search-results .md3-list-item[data-highlighted] {
   background: var(--md-sys-color-secondary-container);
