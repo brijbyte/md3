@@ -7,6 +7,7 @@ import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "@/ui/tabs";
 import { Button } from "@/ui/button";
 import { IconButton } from "@/ui/icon-button";
+import { Toolbar, ToolbarButton } from "@/ui/toolbar";
 import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
 import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 import RtlIcon from "@brijbyte/md3-icons/outlined/FormatTextdirectionRToL";
@@ -29,18 +30,22 @@ function DemoThemeButton() {
     <Tooltip>
       <TooltipTrigger
         render={
-          <IconButton size="xsmall" aria-label="Toggle demo theme" onClick={toggleTheme}>
-            {theme === null ? (
-              <>
-                <MoonIcon className="dark:hidden" />
-                <SunIcon className="hidden dark:inline" />
-              </>
-            ) : theme === "light" ? (
-              <MoonIcon />
-            ) : (
-              <SunIcon />
-            )}
-          </IconButton>
+          <ToolbarButton
+            render={
+              <IconButton size="xsmall" aria-label="Toggle demo theme" onClick={toggleTheme}>
+                {theme === null ? (
+                  <>
+                    <MoonIcon className="dark:hidden" />
+                    <SunIcon className="hidden dark:inline" />
+                  </>
+                ) : theme === "light" ? (
+                  <MoonIcon />
+                ) : (
+                  <SunIcon />
+                )}
+              </IconButton>
+            }
+          />
         }
       />
       <TooltipContent>
@@ -56,13 +61,17 @@ function DemoDirButton() {
     <Tooltip>
       <TooltipTrigger
         render={
-          <IconButton
-            size="xsmall"
-            aria-label={dir === "ltr" ? "Switch to RTL" : "Switch to LTR"}
-            onClick={toggleDir}
-          >
-            {dir === "ltr" ? <RtlIcon /> : <LtrIcon />}
-          </IconButton>
+          <ToolbarButton
+            render={
+              <IconButton
+                size="xsmall"
+                aria-label={dir === "ltr" ? "Switch to RTL" : "Switch to LTR"}
+                onClick={toggleDir}
+              >
+                {dir === "ltr" ? <RtlIcon /> : <LtrIcon />}
+              </IconButton>
+            }
+          />
         }
       />
       <TooltipContent>{dir === "ltr" ? "Switch to RTL" : "Switch to LTR"}</TooltipContent>
@@ -104,19 +113,19 @@ export function DemoCodeTabs({ codeUrl }: { codeUrl: string }) {
 
   if (!expanded || !promise) {
     return (
-      <Toolbar>
-        <Button variant="tonal" size="xsmall" onClick={showCode}>
+      <DemoToolbar>
+        <ToolbarButton render={<Button variant="tonal" size="xsmall" onClick={showCode} />}>
           Show code
-        </Button>
-      </Toolbar>
+        </ToolbarButton>
+      </DemoToolbar>
     );
   }
   return (
     <React.Suspense
       fallback={
-        <Toolbar>
+        <DemoToolbar>
           <LoadingIndicator aria-label="Loading demo sources" />
-        </Toolbar>
+        </DemoToolbar>
       }
     >
       <SuspendingSourceTabs promise={promise} onHide={() => setExpanded(false)} />
@@ -124,17 +133,21 @@ export function DemoCodeTabs({ codeUrl }: { codeUrl: string }) {
   );
 }
 
-// Collapsed/loading strip: centered content with the theme/direction toggles
+// Collapsed/loading strip: the library's docked Toolbar, squeezed to the code
+// area's 48dp strip with centered content and the theme/direction toggles
 // pinned at the end, where the expanded tab bar also parks them.
-function Toolbar({ children }: { children: React.ReactNode }) {
+function DemoToolbar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-surface-container rounded-b-large relative flex min-h-12 items-center justify-center">
+    <Toolbar
+      aria-label="Demo controls"
+      className="rounded-b-large relative h-auto min-h-12 justify-center px-2"
+    >
       {children}
       <div className="absolute inset-e-2 flex items-center gap-1">
         <DemoThemeButton />
         <DemoDirButton />
       </div>
-    </div>
+    </Toolbar>
   );
 }
 
@@ -168,10 +181,13 @@ function DemoSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => vo
             </Tab>
           ))}
         </TabList>
-        <div className="me-2 ms-2 flex shrink-0 items-center gap-1">
+        <Toolbar
+          aria-label="Demo controls"
+          className="me-2 ms-2 h-auto shrink-0 bg-transparent p-0"
+        >
           <DemoThemeButton />
           <DemoDirButton />
-        </div>
+        </Toolbar>
       </div>
       <div className="relative">
         <CopyButton
