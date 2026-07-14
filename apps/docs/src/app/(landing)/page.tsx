@@ -147,7 +147,7 @@ function FeedbackPreview() {
         <IconButton aria-label="Notifications">
           <span className="relative inline-flex">
             <NotificationsIcon />
-            <Badge className="absolute -end-1 -top-1">3</Badge>
+            <Badge className="absolute -inset-e-1 -top-1">3</Badge>
           </span>
         </IconButton>
         <LoadingIndicator contained aria-label="Loading" />
