@@ -1,11 +1,7 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 import { buildIconData } from "./scripts/build-icon-data.mjs";
-
-// Generate the icon-browser data (gitignored public/icons-data/) before the
-// build/dev server starts, so the icons page works on a fresh clone. Skips
-// work when the data is newer than the icons dist (see build-icon-data.mjs).
-buildIconData();
+import { seedSearchIndex } from "./scripts/build-search-index.mjs";
 
 const ROOT = import.meta.dirname;
 
@@ -56,20 +52,39 @@ const DEMO_LOADER = {
 // Runs after satteri (loaders apply right-to-left) to fix its .js-rewritten
 // relative import specifiers back to the on-disk .tsx/.ts files.
 const RESTORE_EXTENSIONS_LOADER = { loader: path.join(ROOT, "loaders/restore-extensions.mjs") };
+// Last in the chain = runs first, on the raw MDX source: refreshes the page's
+// search-index fragment (see scripts/build-search-index.mjs), passes source through.
+const SEARCH_INDEX_LOADER = { loader: path.join(ROOT, "loaders/search-index-loader.mjs") };
 
-const nextConfig: NextConfig = {
-  // Fully static site: every route prerenders to out/<path>.html (+ its RSC
-  // payload for soft navigation), same hosting shape as the old Vite SSG.
-  output: "export",
-  trailingSlash: false,
-  pageExtensions: ["tsx", "mdx"],
-  turbopack: {
-    resolveAlias: { [PROVIDER_SPECIFIER]: "./src/mdx-components.tsx" },
-    rules: {
-      "*.mdx": { loaders: [RESTORE_EXTENSIONS_LOADER, SATTERI_LOADER], as: "*.js" },
-      "./src/app/**/demo/*.tsx": { loaders: [DEMO_LOADER] },
+// Async config: the pre-build codegen runs (concurrently) before Next starts.
+export default async function nextConfig(): Promise<NextConfig> {
+  // Icon-browser data (gitignored public/icons-data/) so the icons page works
+  // on a fresh clone — skips when newer than the icons dist. Search index
+  // (gitignored public/search-index*.json) seeded with mtime checks; the
+  // search-index loader below keeps it fresh as pages recompile. Prod builds
+  // emit a content-hashed filename (stable within a build), handed to the
+  // client via NEXT_PUBLIC_SEARCH_INDEX_URL.
+  const [searchIndexUrl] = await Promise.all([
+    seedSearchIndex(),
+    Promise.resolve().then(buildIconData),
+  ]);
+
+  return {
+    // Fully static site: every route prerenders to out/<path>.html (+ its RSC
+    // payload for soft navigation), same hosting shape as the old Vite SSG.
+    output: "export",
+    trailingSlash: false,
+    pageExtensions: ["tsx", "mdx"],
+    env: { NEXT_PUBLIC_SEARCH_INDEX_URL: searchIndexUrl },
+    turbopack: {
+      resolveAlias: { [PROVIDER_SPECIFIER]: "./src/mdx-components.tsx" },
+      rules: {
+        "*.mdx": {
+          loaders: [RESTORE_EXTENSIONS_LOADER, SATTERI_LOADER, SEARCH_INDEX_LOADER],
+          as: "*.js",
+        },
+        "./src/app/**/demo/*.tsx": { loaders: [DEMO_LOADER] },
+      },
     },
-  },
-};
-
-export default nextConfig;
+  };
+}

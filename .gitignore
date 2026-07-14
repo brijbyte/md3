@@ -20,3 +20,5 @@ apps/docs/.next/
 apps/docs/out/
 apps/docs/next-env.d.ts
 *.tsbuildinfo
+apps/docs/public/search-index*.json
+apps/docs/.search-index/

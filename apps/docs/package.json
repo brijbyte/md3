@@ -17,6 +17,7 @@
     "@brijbyte/md3-icons": "workspace:*",
     "@brijbyte/md3-react": "workspace:*",
     "@tanstack/react-virtual": "3.14.5",
+    "minisearch": "^7.2.0",
     "next": "^16.2.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"

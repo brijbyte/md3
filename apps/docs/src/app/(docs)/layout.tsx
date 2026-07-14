@@ -2,6 +2,7 @@ import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@/ui/typography";
 import { DocsPage } from "@/components/DocsPage";
+import { SearchButton, SearchDialog } from "@/components/SearchDialog";
 import { SidebarNav } from "@/components/SidebarNav";
 
 // Docs chrome: sticky sidebar (desktop) beside the page, with <DocsPage>
@@ -14,9 +15,11 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         <Typography as={Link} variant="title-large" href="/" className="shrink-0 px-4 pt-4 pb-2">
           MD3 React
         </Typography>
+        <SearchButton />
         <SidebarNav />
       </aside>
       <DocsPage>{children}</DocsPage>
+      <SearchDialog />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Typography } from "@/ui/typography";
 import { NAV } from "../nav";
 import { MobileTabs } from "./MobileTabs";
+import { SearchIconButton } from "./SearchDialog";
 import { ThemeToggle } from "./ThemeToggle";
 import { Toc, type TocItem } from "./toc";
 
@@ -44,7 +45,10 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
               MD3 React
             </Typography>
             <span className="hidden md:block" aria-hidden />
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <SearchIconButton />
+              <ThemeToggle />
+            </div>
           </header>
           <MobileTabs />
           <Typography as="h1" variant="display-small" className="font-bold" id="top">

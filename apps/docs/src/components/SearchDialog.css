@@ -1,0 +1,53 @@
+/* Docs search dialog: top-aligned, MD3 docked-search-view layout. Deliberately
+   unlayered so it wins over the library's @layer components rules. */
+.docs-search-dialog {
+  align-self: flex-start;
+  margin-top: clamp(24px, 14vh, 128px);
+  width: 560px;
+  max-width: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  /* Clip the full-bleed header/results to the popup's extra-large corners. */
+  overflow: hidden;
+}
+
+/* Header field, docked-search-view style: square the filled container and
+   drop its fill so only the input row + active indicator (the divider) show. */
+.docs-search-field {
+  width: 100%;
+}
+
+.docs-search-field .md3-text-field-container {
+  border-radius: 0;
+  background: transparent;
+}
+
+.docs-search-results {
+  overflow-y: auto;
+  max-height: min(420px, 55vh);
+  scroll-padding-block: 8px;
+  outline: none;
+}
+
+/* Base UI highlight (keyboard + hover) styled like an MD3 selected row. */
+.docs-search-results .md3-list-item[data-highlighted] {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.docs-search-results .md3-list-item[data-highlighted] .md3-list-leading,
+.docs-search-results .md3-list-item[data-highlighted] .md3-list-supporting {
+  color: inherit;
+}
+
+.docs-search-empty {
+  padding: 20px 24px;
+}
+
+.docs-search-snippet {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
