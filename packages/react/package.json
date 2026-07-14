@@ -10,7 +10,8 @@
     "dist",
     "bin",
     "src",
-    "LICENSE"
+    "LICENSE.md",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "sideEffects": [
@@ -24,6 +25,9 @@
       "types": "./dist/*/index.d.ts",
       "import": "./dist/*/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build:tokens": "node scripts/build-tokens.mjs",

@@ -1,0 +1,64 @@
+name: CI
+
+# Runs on every PR: verifies formatting, lint, types, tests, and that the
+# packages + docs site build. All checks run even if an earlier one fails
+# (`if: always()` per step), so a PR sees every problem at once.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Disable Next.js telemetry for every `next` call in this workflow.
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 26
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Format
+        if: always()
+        run: pnpm format:check
+
+      - name: Lint
+        if: always()
+        run: pnpm lint
+
+      # Build before Typecheck: tsc needs the build-time codegen (token typings,
+      # *.module.css.d.ts) and the docs app typechecks against the built dist.
+      - name: Build
+        if: always()
+        run: pnpm build
+
+      - name: Typecheck
+        if: always()
+        run: pnpm typecheck
+
+      - name: Test
+        if: always()
+        run: pnpm test
+
+      # Last: dedupe re-resolves and may rewrite node_modules, so keep it after
+      # the steps that depend on the installed tree.
+      - name: Dedupe
+        if: always()
+        run: pnpm dedupe --check

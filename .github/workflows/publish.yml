@@ -1,0 +1,113 @@
+name: Publish
+
+# Publishes one package when its tag is pushed: `react-v<version>` publishes
+# @brijbyte/md3-react, `icons-v<version>` publishes @brijbyte/md3-icons — the
+# two are versioned independently. The tag must match the package's
+# package.json version. Publishing uses npm trusted publishing (OIDC, with
+# provenance) — no NPM_TOKEN. A version already on npm is skipped, so re-runs
+# are safe. Finally a GitHub release is cut for the tag, with the matching
+# `## v<version>` section of the package's CHANGELOG.md as its body.
+# Tags are cut with `pnpm release <react|icons> <version>` (scripts/release.mjs).
+
+on:
+  push:
+    tags:
+      - "react-v*"
+      - "icons-v*"
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write # create the GitHub release
+  id-token: write # npm provenance
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm-publish # scope the trusted publisher (and any approvals) here
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Resolve package and version from tag
+        id: meta
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PKG="${TAG%%-v*}"          # react | icons
+          VERSION="${TAG#*-v}"
+          case "$PKG" in
+            react|icons) ;;
+            *) echo "::error::Unrecognized tag '$TAG' — expected <react|icons>-v<version>."; exit 1 ;;
+          esac
+          {
+            echo "tag=$TAG"
+            echo "version=$VERSION"
+            echo "dir=packages/$PKG"
+            echo "name=$(node -p "require('./packages/$PKG/package.json').name")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify package version matches the tag
+        run: |
+          PKG_VERSION="$(node -p "require('./${{ steps.meta.outputs.dir }}/package.json').version")"
+          if [ "$PKG_VERSION" != "${{ steps.meta.outputs.version }}" ]; then
+            echo "::error::${{ steps.meta.outputs.name }} is at $PKG_VERSION but tag is ${{ steps.meta.outputs.tag }}"
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 26
+          registry-url: "https://registry.npmjs.org"
+          cache: pnpm
+
+      # Trusted publishing (OIDC) requires npm CLI >= 11.5.1.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      # Before publishing, so a missing changelog section blocks the release.
+      - name: Extract changelog section (fails if missing)
+        run: >-
+          node scripts/extract-changelog.mjs "${{ steps.meta.outputs.version }}"
+          "${{ steps.meta.outputs.dir }}/CHANGELOG.md" > RELEASE_NOTES.md
+
+      # Trusted publishing: npm authenticates via the OIDC token (id-token: write)
+      # and mints provenance automatically. Configure this repo + workflow (+ the
+      # npm-publish environment) as a trusted publisher on npmjs.com for BOTH
+      # packages first. Skips if the version is already on npm.
+      - name: Publish to npm (trusted publishing)
+        working-directory: ${{ steps.meta.outputs.dir }}
+        run: |
+          if npm view "${{ steps.meta.outputs.name }}@${{ steps.meta.outputs.version }}" version >/dev/null 2>&1; then
+            echo "::notice::${{ steps.meta.outputs.name }}@${{ steps.meta.outputs.version }} already published — skipping."
+            exit 0
+          fi
+          npm publish
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${{ steps.meta.outputs.tag }}" >/dev/null 2>&1; then
+            echo "::notice::Release ${{ steps.meta.outputs.tag }} already exists — skipping."
+            exit 0
+          fi
+          gh release create "${{ steps.meta.outputs.tag }}" \
+            --title "${{ steps.meta.outputs.name }}@${{ steps.meta.outputs.version }}" \
+            --notes-file RELEASE_NOTES.md \
+            --verify-tag

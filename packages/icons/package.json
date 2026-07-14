@@ -6,8 +6,9 @@
   "files": [
     "dist",
     "src",
-    "LICENSE",
-    "LICENSE-APACHE-2.0"
+    "LICENSE.md",
+    "LICENSE-APACHE-2.0",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "sideEffects": false,
@@ -20,6 +21,9 @@
       "types": "./dist/icon.d.ts",
       "import": "./dist/*.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "node scripts/build-icons.mjs",
