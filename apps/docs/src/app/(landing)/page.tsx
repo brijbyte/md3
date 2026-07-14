@@ -26,7 +26,7 @@ import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import ContentCutIcon from "@brijbyte/md3-icons/outlined/ContentCut";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import ContentPasteIcon from "@brijbyte/md3-icons/outlined/ContentPaste";
-import { SECTIONS, SHOWCASES, type NavItem } from "@/nav";
+import { SHOWCASES } from "@/nav";
 
 type PreviewCardProps = {
   href: string;
@@ -208,23 +208,6 @@ const PREVIEWS: (Omit<PreviewCardProps, "children"> & { preview: React.ReactNode
   },
 ];
 
-function ChipCloud({ items }: { items: NavItem[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
-        <AssistChip
-          key={item.path}
-          render={<Link href={item.path} />}
-          nativeButton={false}
-          icon={<item.icon />}
-        >
-          {item.label}
-        </AssistChip>
-      ))}
-    </div>
-  );
-}
-
 export default function HomePage() {
   return (
     <>
@@ -270,26 +253,6 @@ export default function HomePage() {
             {preview}
           </PreviewCard>
         ))}
-      </section>
-
-      <section className="mt-16">
-        <Typography as="h2" variant="headline-small" className="font-bold">
-          Everything in the box
-        </Typography>
-        <div className="mt-6 flex flex-col gap-6">
-          {SECTIONS.map((section) => (
-            <div key={section.label} className="flex flex-col gap-3">
-              <Typography
-                as="h3"
-                variant="label-large"
-                className="uppercase tracking-wide text-on-surface-variant"
-              >
-                {section.label}
-              </Typography>
-              <ChipCloud items={section.items} />
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="mt-16">
