@@ -2,6 +2,13 @@
    Token-based CSS module shared across the showcase's components. Mobile
    first; `sm` = 640px. Unlayered so rules win over library @layer + Tailwind base. */
 
+/* Standalone page frame (the (showcase) layout adds no container of its own). */
+.app {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 12px 12px 96px;
+}
+
 /* Shared helpers. */
 .muted {
   color: var(--md-sys-color-on-surface-variant);
@@ -17,12 +24,27 @@
   flex: 1;
 }
 
-/* Tabs. */
+/* Tabs. The New task button rides inside the strip (not a tab itself). */
 .tablist {
   position: sticky;
   top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   z-index: var(--md-ref-z-index-docked);
   background: var(--md-sys-color-surface);
+}
+/* The tab group scrolls when squeezed so the New task button never wraps. */
+.tabGroup {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.newTask {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+  align-self: center;
 }
 .panel {
   padding-top: 24px;

@@ -1,19 +1,19 @@
-/* Header. */
+/* Header: one row on every viewport; only the title size shrinks on mobile. */
 .header {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 16px;
   margin-bottom: 32px;
 }
 .headerTitles {
-  text-align: center;
+  min-width: 0;
 }
 .subtitle {
   margin-top: 4px;
 }
 .actions {
   display: flex;
-  width: 100%;
   align-items: center;
   gap: 8px;
 }
@@ -44,24 +44,9 @@
   display: block;
   padding: 8px 16px 4px;
 }
-.newTask {
-  margin-inline-start: auto;
-}
-
-@media (min-width: 640px) {
-  .header {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .headerTitles {
-    text-align: start;
-  }
-  .actions {
-    width: auto;
-  }
-  .newTask {
-    margin-inline-start: 0;
+@media (max-width: 639px) {
+  .title {
+    font-size: var(--md-sys-typescale-headline-medium-size);
+    line-height: var(--md-sys-typescale-headline-medium-line-height);
   }
 }

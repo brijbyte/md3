@@ -45,12 +45,11 @@ const NOTIFICATIONS = [
 ];
 
 export function AppHeader() {
-  const { requestOpen, morphClassName } = useAddTask();
   return (
     <header className={styles.header}>
       <div className={styles.headerTitles}>
         {/* This is app UI, not a doc page — Roboto (plain) over display-small's brand default. */}
-        <Typography as="h1" variant="display-small" className={shared.display}>
+        <Typography as="h1" variant="display-small" className={`${styles.title} ${shared.display}`}>
           Team Tasks
         </Typography>
         <Typography variant="title-medium" className={`${styles.subtitle} ${shared.muted}`}>
@@ -107,26 +106,32 @@ export function AppHeader() {
             <MenuItem leadingIcon={<LogoutIcon />}>Sign out</MenuItem>
           </MenuContent>
         </Menu>
-
-        <SplitButton className={styles.newTask}>
-          <SplitButtonAction
-            icon={<AddIcon />}
-            onClick={() => requestOpen("header")}
-            className={morphClassName("header")}
-          >
-            New task
-          </SplitButtonAction>
-          <Menu>
-            <MenuTrigger render={<SplitButtonMenu aria-label="More ways to create" />}>
-              <ArrowDownIcon />
-            </MenuTrigger>
-            <MenuContent align="end">
-              <MenuItem>From template</MenuItem>
-              <MenuItem>Import from CSV</MenuItem>
-            </MenuContent>
-          </Menu>
-        </SplitButton>
       </div>
     </header>
+  );
+}
+
+// Rendered by the page inside the TabList, parked at its end (not a tab).
+export function NewTaskButton() {
+  const { requestOpen, morphClassName } = useAddTask();
+  return (
+    <SplitButton className={shared.newTask}>
+      <SplitButtonAction
+        icon={<AddIcon />}
+        onClick={() => requestOpen("tabs")}
+        className={morphClassName("tabs")}
+      >
+        New task
+      </SplitButtonAction>
+      <Menu>
+        <MenuTrigger render={<SplitButtonMenu aria-label="More ways to create" />}>
+          <ArrowDownIcon />
+        </MenuTrigger>
+        <MenuContent align="end">
+          <MenuItem>From template</MenuItem>
+          <MenuItem>Import from CSV</MenuItem>
+        </MenuContent>
+      </Menu>
+    </SplitButton>
   );
 }

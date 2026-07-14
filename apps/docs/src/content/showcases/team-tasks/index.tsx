@@ -9,7 +9,7 @@ import InsightsIcon from "@brijbyte/md3-icons/outlined/Insights";
 import TuneIcon from "@brijbyte/md3-icons/outlined/Tune";
 
 import { AddTaskProvider } from "./AddTaskDialog";
-import { AppHeader } from "./AppHeader";
+import { AppHeader, NewTaskButton } from "./AppHeader";
 import { BoardPanel } from "./BoardPanel";
 import { InsightsPanel } from "./InsightsPanel";
 import { SettingsPanel } from "./SettingsPanel";
@@ -58,30 +58,35 @@ function ShowcaseTeamTasksInner() {
 
   return (
     <AddTaskProvider onAdd={addTask}>
-      <AppHeader />
+      <div className={shared.app}>
+        <AppHeader />
 
-      <Tabs defaultValue="board">
-        <TabList aria-label="Team Tasks" className={shared.tablist}>
-          <Tab value="board" icon={<ChecklistIcon />}>
-            Board
-          </Tab>
-          <Tab value="insights" icon={<InsightsIcon />}>
-            Insights
-          </Tab>
-          <Tab value="settings" icon={<TuneIcon />}>
-            Settings
-          </Tab>
-        </TabList>
-        <TabPanel value="board" className={shared.panel} tabIndex={-1}>
-          <BoardPanel tasks={tasks} toggleTask={toggleTask} />
-        </TabPanel>
-        <TabPanel value="insights" className={shared.panel} tabIndex={-1}>
-          <InsightsPanel />
-        </TabPanel>
-        <TabPanel value="settings" className={shared.panel} tabIndex={-1}>
-          <SettingsPanel />
-        </TabPanel>
-      </Tabs>
+        <Tabs defaultValue="board">
+          <TabList aria-label="Team Tasks" className={shared.tablist}>
+            <div className={shared.tabGroup}>
+              <Tab value="board" icon={<ChecklistIcon />}>
+                Board
+              </Tab>
+              <Tab value="insights" icon={<InsightsIcon />}>
+                Insights
+              </Tab>
+              <Tab value="settings" icon={<TuneIcon />}>
+                Settings
+              </Tab>
+            </div>
+            <NewTaskButton />
+          </TabList>
+          <TabPanel value="board" className={shared.panel} tabIndex={-1}>
+            <BoardPanel tasks={tasks} toggleTask={toggleTask} />
+          </TabPanel>
+          <TabPanel value="insights" className={shared.panel} tabIndex={-1}>
+            <InsightsPanel />
+          </TabPanel>
+          <TabPanel value="settings" className={shared.panel} tabIndex={-1}>
+            <SettingsPanel />
+          </TabPanel>
+        </Tabs>
+      </div>
     </AddTaskProvider>
   );
 }

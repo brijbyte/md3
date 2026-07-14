@@ -15,7 +15,7 @@ const PRIORITIES: Priority[] = ["high", "medium", "low"];
 
 // Which trigger the dialog morphs out of / back into. The shared morph name lives
 // on exactly one element at a time, so we track the active source.
-type MorphSource = "fab" | "header";
+type MorphSource = "fab" | "tabs";
 
 type AddTaskContextValue = {
   /** Open the dialog, morphing out of the given trigger. */
