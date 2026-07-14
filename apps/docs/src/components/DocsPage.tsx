@@ -37,7 +37,9 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
     <>
       <div className="min-w-0 flex-1">
         <div className="mx-auto max-w-190 px-6 pt-6 pb-24">
-          <header className="flex items-center justify-between gap-4 pb-4">
+          {/* Below xl the TOC rail (and its ThemeToggle) is hidden, so the
+              toggle rides in this header instead. */}
+          <header className="flex items-center justify-between gap-4 pb-4 xl:hidden">
             <Typography as={Link} variant="title-large" href="/" className="md:hidden">
               MD3 React
             </Typography>
@@ -55,8 +57,12 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto py-22 pe-6 xl:block">
-        <Toc items={toc} />
+      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 overflow-y-auto pt-6 pb-22 pe-6 xl:block">
+        <ThemeToggle />
+        {/* pt-6 + toggle + mt-6 ≈ the old py-22 offset, keeping the toc put. */}
+        <div className="mt-6">
+          <Toc items={toc} />
+        </div>
       </aside>
     </>
   );
