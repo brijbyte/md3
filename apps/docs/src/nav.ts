@@ -82,7 +82,7 @@ export const SECTIONS: NavSection[] = [
         icon: FormatSizeIcon,
       },
       {
-        path: "/styles/icons",
+        path: "/icons",
         label: "Icons",
         title: "Icons",
         description: "Browse all 4,000+ Material Symbols — search, switch style, copy the import.",

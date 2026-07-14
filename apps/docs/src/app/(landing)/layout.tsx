@@ -13,7 +13,7 @@ const FOOTER_LINKS = [
 ];
 
 // Full-width landing chrome: no sidebar, just a slim header and the page.
-// Only the home page lives here; showcases have their own (showcase) group.
+// Holds the home page and /icons; showcases have their own (showcase) group.
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-7xl px-6 pt-6 pb-12">

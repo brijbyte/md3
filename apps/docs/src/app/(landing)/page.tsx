@@ -201,7 +201,7 @@ const PREVIEWS: (Omit<PreviewCardProps, "children"> & { preview: React.ReactNode
     preview: <FeedbackPreview />,
   },
   {
-    href: "/styles/icons",
+    href: "/icons",
     title: "Icons",
     caption: "Every Material Symbol as its own React component",
     preview: <IconsPreview />,

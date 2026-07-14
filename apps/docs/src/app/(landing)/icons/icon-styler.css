@@ -1,0 +1,97 @@
+/* Icon styling playground on /icons. Token-based; not a drop-in demo. */
+
+.icon-styler {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  margin-block: 24px;
+  padding: 24px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+@media (min-width: 720px) {
+  .icon-styler {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 40%);
+  }
+}
+
+.icon-styler-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.icon-styler-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.icon-styler-blurb {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.icon-styler-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
+}
+
+.icon-styler-value {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.icon-styler-color {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Swatch shows the inherited text color until a color is picked; the native
+   color input stretches invisibly over it so the whole square is the picker. */
+.icon-styler-swatch {
+  position: relative;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--md-sys-shape-corner-small);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-on-surface);
+}
+
+.icon-styler-swatch input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.icon-styler-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.icon-styler-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: stretch;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface);
+  overflow: hidden;
+}
+
+.icon-styler-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 112px;
+  padding: 16px;
+  outline: 1px solid var(--md-sys-color-outline-variant);
+}
