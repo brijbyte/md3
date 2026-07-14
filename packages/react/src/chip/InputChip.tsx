@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Chip.module.css";
@@ -48,7 +49,8 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
     return (
       <div
         ref={ref}
-        className={mergeClassName(styles.root, className) as string}
+        // Chrome comes from Button's class; styles.root holds chip overrides.
+        className={mergeClassName(`${buttonStyles.root} ${styles.root}`, className) as string}
         style={style}
         data-variant="input"
         data-selected={selected ? "" : undefined}
@@ -58,7 +60,11 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
         data-removable={onRemove ? "" : undefined}
       >
         {/* Root-level state layer so hover tint and ripple span the whole chip. */}
-        <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
+        <span
+          className={`${buttonStyles.stateLayer} ${styles.stateLayer}`}
+          ref={ripple.containerRef}
+          aria-hidden
+        />
         <BaseButton
           className={styles.action}
           disabled={disabled}
@@ -75,9 +81,9 @@ export const InputChip = React.forwardRef<HTMLDivElement, InputChipProps>(
           {avatar != null ? (
             <span className={styles.avatar}>{avatar}</span>
           ) : icon != null ? (
-            <span className={styles.icon}>{icon}</span>
+            <span className={`${buttonStyles.icon} ${styles.icon}`}>{icon}</span>
           ) : null}
-          <span className={styles.label}>{children}</span>
+          <span className={`${buttonStyles.label} ${styles.label}`}>{children}</span>
         </BaseButton>
         {onRemove ? (
           <BaseButton

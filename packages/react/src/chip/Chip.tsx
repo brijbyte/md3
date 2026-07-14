@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button as BaseButton } from "@base-ui/react/button";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Chip.module.css";
@@ -20,7 +21,8 @@ function createChip(variant: "assist" | "suggestion", displayName: string) {
     return (
       <BaseButton
         ref={ref}
-        className={mergeClassName(styles.root, className)}
+        // Chrome comes from Button's class; styles.root holds chip overrides.
+        className={mergeClassName(`${buttonStyles.root} ${styles.root}`, className)}
         data-variant={variant}
         data-elevated={elevated ? "" : undefined}
         data-has-icon={icon != null ? "" : undefined}
@@ -34,9 +36,15 @@ function createChip(variant: "assist" | "suggestion", displayName: string) {
         }}
         {...rest}
       >
-        <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
-        {icon != null ? <span className={styles.icon}>{icon}</span> : null}
-        <span className={styles.label}>{children}</span>
+        <span
+          className={`${buttonStyles.stateLayer} ${styles.stateLayer}`}
+          ref={ripple.containerRef}
+          aria-hidden
+        />
+        {icon != null ? (
+          <span className={`${buttonStyles.icon} ${styles.icon}`}>{icon}</span>
+        ) : null}
+        <span className={`${buttonStyles.label} ${styles.label}`}>{children}</span>
       </BaseButton>
     );
   });

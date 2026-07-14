@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import { Toggle } from "@base-ui/react/toggle";
+import buttonStyles from "../button/Button.module.css";
 import { useRipple } from "../ripple/useRipple";
 import { mergeClassName } from "../utils/mergeClassName";
 import styles from "./Chip.module.css";
@@ -21,7 +22,8 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
     return (
       <Toggle
         ref={ref}
-        className={mergeClassName(styles.root, className)}
+        // Chrome comes from Button's class; styles.root holds chip overrides.
+        className={mergeClassName(`${buttonStyles.root} ${styles.root}`, className)}
         data-variant="filter"
         data-elevated={elevated ? "" : undefined}
         data-has-icon={icon != null ? "" : undefined}
@@ -35,9 +37,13 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
         }}
         {...rest}
       >
-        <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
+        <span
+          className={`${buttonStyles.stateLayer} ${styles.stateLayer}`}
+          ref={ripple.containerRef}
+          aria-hidden
+        />
         {/* Selected checkmark (material-web's path); CSS swaps it with the leading icon. */}
-        <span className={`${styles.icon} ${styles.checkmark}`} aria-hidden>
+        <span className={`${buttonStyles.icon} ${styles.icon} ${styles.checkmark}`} aria-hidden>
           <svg viewBox="0 0 18 18">
             <path
               fill="currentColor"
@@ -45,8 +51,10 @@ export const FilterChip = React.forwardRef<HTMLButtonElement, FilterChipProps>(
             />
           </svg>
         </span>
-        {icon != null ? <span className={`${styles.icon} ${styles.leading}`}>{icon}</span> : null}
-        <span className={styles.label}>{children}</span>
+        {icon != null ? (
+          <span className={`${buttonStyles.icon} ${styles.icon} ${styles.leading}`}>{icon}</span>
+        ) : null}
+        <span className={`${buttonStyles.label} ${styles.label}`}>{children}</span>
       </Toggle>
     );
   },

@@ -26,9 +26,9 @@ import "@brijbyte/md3-react/icon-button.css"; // builds on button.css
 
 > [!IMPORTANT]
 > Import order matters: `tokens.css` first, and `button.css` before
-> `icon-button.css` / `fab.css` / `fab-menu.css` / `split-button.css` — the button family shares
-> Button's CSS as its base, and those files both require and override parts of
-> it. Select builds on `menu.css` + `text-field.css` the same way: import both
+> `icon-button.css` / `fab.css` / `fab-menu.css` / `split-button.css` / `chip.css` — the
+> button family and chips share Button's CSS as their base, and those files both
+> require and override parts of it. Select builds on `menu.css` + `text-field.css` the same way: import both
 > alongside `select.css`. The aggregate bundle below orders everything itself.
 
 > [!NOTE]

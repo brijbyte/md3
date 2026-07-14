@@ -1,6 +1,12 @@
+/* Chip chrome (md.comp.*-chip, v0_192). Base chrome — flex layout, label-large
+   type, state layer + hover/focus tints, touch target, focus ring, disabled
+   content color — comes from Button.module.css (chip roots render with Button's
+   .root class stacked). This file keeps only the chip deltas: 32px sizing slots,
+   outline border + corner-small, variant colors, the filter checkmark swap, and
+   the input-chip anatomy. Same @layer and equal specificity as button.css, so
+   import order matters: button.css MUST be imported before chip.css (the
+   aggregate index.css orders them correctly). */
 @layer components {
-  /* Shared chrome for all four chip types (md.comp.*-chip, v0_192):
-     32px container, corner-small, label-large type, 18dp icons. */
   .root {
     --_container-height: 32px;
     --_leading-space: 16px;
@@ -10,30 +16,14 @@
     /* Per-variant slots; disabled resets them to currentColor. */
     --_leading-icon-color: currentColor;
     --_pressed-state-layer-color: currentColor;
+    --_radius: var(--md-sys-shape-corner-small);
 
-    box-sizing: border-box;
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--_icon-label-space);
-    height: var(--_container-height);
-    padding-inline: var(--_leading-space) var(--_trailing-space);
+    justify-content: flex-start;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: var(--md-sys-shape-corner-small);
     background: transparent;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    text-decoration: none;
-    font-family: var(--md-sys-typescale-label-large-font);
-    font-size: var(--md-sys-typescale-label-large-size);
-    line-height: var(--md-sys-typescale-label-large-line-height);
-    font-weight: var(--md-sys-typescale-label-large-weight);
-    letter-spacing: var(--md-sys-typescale-label-large-tracking);
     /* padding animates the 16→8px leading inset when an icon-less filter chip
-       selects (checkmark slot), paired with the checkmark's spatial timing. */
+       selects (checkmark slot), paired with the checkmark's spatial timing.
+       Chips don't shape-morph, so Button's border-radius transition goes. */
     transition:
       box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
       padding var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-fast-spatial);
@@ -44,25 +34,10 @@
     --_leading-space: 8px;
   }
 
-  /* 48dp touch target past the 32px container (single-button chips). */
-  .root:not([data-variant="input"])::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--md3-touch-target-width, max(48px, 100%));
-    height: max(48px, 100%);
-  }
-
-  /* State layer: hover/focus tint + ripple host (direct child of the chip
-     root in every type, so input chips tint/ripple across the full chip). */
-  .stateLayer {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    overflow: hidden;
+  /* Input roots aren't pressable themselves — the actions carry their own
+     48dp targets, so Button's root-level hit-area pseudo is dropped. */
+  .root[data-variant="input"]::after {
+    content: none;
   }
 
   /* Pressed color can differ from hover (filter chips flip); the ripple
@@ -71,29 +46,12 @@
     color: var(--_pressed-state-layer-color);
   }
 
-  .stateLayer::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: currentColor;
+  /* Input chips: the root div never focuses, and Button's root-level hover
+     tint is replaced by primary-action-driven tints below. */
+  .root[data-variant="input"]:hover .stateLayer::before {
     opacity: 0;
-    transition: opacity 15ms linear;
   }
 
-  .root:not([data-variant="input"]):hover .stateLayer::before {
-    opacity: var(--md-sys-state-hover-state-layer-opacity);
-  }
-
-  .root:not([data-variant="input"]):focus-visible .stateLayer::before {
-    opacity: var(--md-sys-state-focus-state-layer-opacity);
-  }
-
-  .root:not([data-variant="input"]):focus-visible {
-    outline: 3px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
-  }
-
-  /* Input chips: primary-action hover/focus drives the root-level layer. */
   .root[data-variant="input"]:has(> .action:hover) .stateLayer::before {
     opacity: var(--md-sys-state-hover-state-layer-opacity);
   }
@@ -108,21 +66,11 @@
   }
 
   .icon {
-    display: inline-flex;
     flex-shrink: 0;
-    font-size: var(--_icon-size);
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
     color: var(--_leading-icon-color);
   }
 
-  .icon > * {
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
   .label {
-    position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -238,7 +186,7 @@
   /* Avatar chips: fully rounded, 4px leading inset, 24dp round avatar. */
   .root[data-variant="input"][data-avatar] {
     --_leading-space: 4px;
-    border-radius: calc(var(--_container-height) / 2);
+    --_radius: var(--md3-shape-round);
   }
 
   /* Remove button supplies its own trailing spacing. */
@@ -359,12 +307,11 @@
     block-size: var(--_icon-size);
   }
 
-  /* Disabled: 38% on-surface content, 12% on-surface outline/containers.
-     Input roots carry data-disabled (the root div is never :disabled). */
+  /* Disabled content/outline: 38% / 12% on-surface. Color must live here (not
+     rely on Button's disabled rule) — the variant color rules above tie it at
+     (0,2,0) and this file imports later. Cursor/pointer-events/box-shadow come
+     from Button. Input roots carry data-disabled (the root div is never :disabled). */
   .root:is(:disabled, [data-disabled]) {
-    cursor: default;
-    pointer-events: none;
-    box-shadow: none;
     color: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
