@@ -1,86 +1,88 @@
-.root {
-  --md3-comp-linear-progress-thickness: 4px;
-  --md3-comp-linear-progress-gap: 4px;
-  --md3-comp-linear-progress-stop-size: 4px;
+@layer components {
+  .root {
+    --md3-comp-linear-progress-thickness: 4px;
+    --md3-comp-linear-progress-gap: 4px;
+    --md3-comp-linear-progress-stop-size: 4px;
 
-  position: relative;
-  display: block;
-  width: 100%;
-  height: var(--md3-comp-linear-progress-thickness);
-}
-
-.indicator,
-.track,
-.stop,
-.indeterminateBar1,
-.indeterminateBar2 {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: var(--md-sys-shape-corner-full);
-}
-
-.indicator {
-  inset-inline-start: 0;
-  background: var(--md-sys-color-primary);
-  transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
-}
-
-.track {
-  /* --_percent is set inline per render (JS-computed, not
-     expressible as a static token cascade like Slider's per-size vars). */
-  inset-inline-start: calc(
-    var(--_percent) * 1% + var(--md3-comp-linear-progress-gap) +
-      var(--md3-comp-linear-progress-thickness)
-  );
-  inset-inline-end: 0;
-  background: var(--md-sys-color-secondary-container);
-  transition: inset-inline-start var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
-}
-
-.stop {
-  inset-inline-end: 0;
-  top: 50%;
-  width: var(--md3-comp-linear-progress-stop-size);
-  height: var(--md3-comp-linear-progress-stop-size);
-  translate: 0 -50%;
-  border-radius: 50%;
-  background: var(--md-sys-color-primary);
-}
-
-/* Indeterminate: two independent pill bars, no track/stop (matches Compose —
-   the indeterminate overload never draws a track or stop indicator). Each
-   bar's inset-inline-start/width keyframes are precomputed head/tail
-   percentages sampled at every kink of Compose's piecewise-linear motion
-   spec, so plain linear interpolation between stops reproduces it exactly. */
-.indeterminateBar1 {
-  background: var(--md-sys-color-primary);
-  animation: md3-linear-progress-bar1 1750ms linear infinite;
-}
-
-.indeterminateBar2 {
-  background: var(--md-sys-color-primary);
-  animation: md3-linear-progress-bar2 1750ms linear infinite;
-}
-
-@keyframes md3-linear-progress-bar1 {
-  0% {
-    inset-inline-start: 0%;
-    width: 0%;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--md3-comp-linear-progress-thickness);
   }
-  14.2857% {
-    inset-inline-start: 0%;
-    width: 25%;
+
+  .indicator,
+  .track,
+  .stop,
+  .indeterminateBar1,
+  .indeterminateBar2 {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: var(--md-sys-shape-corner-full);
   }
-  57.1429% {
-    inset-inline-start: 75%;
-    width: 25%;
+
+  .indicator {
+    inset-inline-start: 0;
+    background: var(--md-sys-color-primary);
+    transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   }
-  71.4286%,
-  100% {
-    inset-inline-start: 100%;
-    width: 0%;
+
+  .track {
+    /* --_percent is set inline per render (JS-computed, not
+       expressible as a static token cascade like Slider's per-size vars). */
+    inset-inline-start: calc(
+      var(--_percent) * 1% + var(--md3-comp-linear-progress-gap) +
+        var(--md3-comp-linear-progress-thickness)
+    );
+    inset-inline-end: 0;
+    background: var(--md-sys-color-secondary-container);
+    transition: inset-inline-start var(--md-sys-motion-duration-medium2)
+      var(--md-sys-motion-easing-standard);
+  }
+
+  .stop {
+    inset-inline-end: 0;
+    top: 50%;
+    width: var(--md3-comp-linear-progress-stop-size);
+    height: var(--md3-comp-linear-progress-stop-size);
+    translate: 0 -50%;
+    border-radius: 50%;
+    background: var(--md-sys-color-primary);
+  }
+
+  /* Indeterminate: two independent pill bars, no track/stop (matches Compose —
+     the indeterminate overload never draws a track or stop indicator). Each
+     bar's inset-inline-start/width keyframes are precomputed head/tail
+     percentages sampled at every kink of Compose's piecewise-linear motion
+     spec, so plain linear interpolation between stops reproduces it exactly. */
+  .indeterminateBar1 {
+    background: var(--md-sys-color-primary);
+    animation: md3-linear-progress-bar1 1750ms linear infinite;
+  }
+
+  .indeterminateBar2 {
+    background: var(--md-sys-color-primary);
+    animation: md3-linear-progress-bar2 1750ms linear infinite;
+  }
+
+  @keyframes md3-linear-progress-bar1 {
+    0% {
+      inset-inline-start: 0%;
+      width: 0%;
+    }
+    14.2857% {
+      inset-inline-start: 0%;
+      width: 25%;
+    }
+    57.1429% {
+      inset-inline-start: 75%;
+      width: 25%;
+    }
+    71.4286%,
+    100% {
+      inset-inline-start: 100%;
+      width: 0%;
+    }
   }
 }
 
@@ -97,140 +99,145 @@
   inherits: false;
   initial-value: 0;
 }
+
 @property --_tail {
   syntax: "<number>";
   inherits: false;
   initial-value: 0;
 }
 
-.wavySvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
+@layer components {
+  .wavySvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
 
-/* Compose draws the RTL wavy indicator inside rotate(180°) — a point-mirror
-   about the center, i.e. scale(-1). The non-wavy bars flip via inset-inline-*. */
-.wavySvg:dir(rtl) {
-  transform: scale(-1);
-}
+  /* Compose draws the RTL wavy indicator inside rotate(180°) — a point-mirror
+     about the center, i.e. scale(-1). The non-wavy bars flip via inset-inline-*. */
+  .wavySvg:dir(rtl) {
+    transform: scale(-1);
+  }
 
-.wavyTrack {
-  stroke: var(--md-sys-color-secondary-container);
-  stroke-width: 4px;
-  stroke-linecap: round;
-  transition: stroke-dasharray var(--md-sys-motion-duration-medium2)
-    var(--md-sys-motion-easing-standard);
-}
+  .wavyTrack {
+    stroke: var(--md-sys-color-secondary-container);
+    stroke-width: 4px;
+    stroke-linecap: round;
+    transition: stroke-dasharray var(--md-sys-motion-duration-medium2)
+      var(--md-sys-motion-easing-standard);
+  }
 
-.wavyStop {
-  fill: var(--md-sys-color-primary);
-}
+  .wavyStop {
+    fill: var(--md-sys-color-primary);
+  }
 
-.wavyIndicator {
-  fill: none;
-  stroke: var(--md-sys-color-primary);
-  stroke-width: 4px;
-  stroke-linecap: round;
-}
+  .wavyIndicator {
+    fill: none;
+    stroke: var(--md-sys-color-primary);
+    stroke-width: 4px;
+    stroke-linecap: round;
+  }
 
-/* Indeterminate wavy: two sweeping bars driven entirely by CSS keyframes so
-   they share the document timeline with the non-wavy indeterminate bars (which
-   are pure keyframes too) — a JS rAF loop would run on its own clock and drift
-   out of phase. --_w100/--_wlf (width-derived, set inline) map the
-   0-1 head/tail progress into pathLength units; the wave-phase var flows the
-   crests while the dashoffset compensation keeps the visible envelope fixed. */
-.wavyIndeterminateBar {
-  --_dash: calc((var(--_head) - var(--_tail)) * var(--_w100));
-  stroke-dasharray: var(--_dash) calc(100 - var(--_dash));
-  stroke-dashoffset: calc(-1 * (var(--_tail) * var(--_w100) + var(--_wave-phase) * var(--_wlf)));
-  transform: translateX(calc(var(--_wave-phase) * -1 * var(--_wavelength)));
-}
-.wavyIndeterminateBar1 {
-  animation:
-    md3-linear-progress-ind-bar1 1750ms linear infinite,
-    md3-linear-progress-wave-phase 1000ms linear infinite;
-}
-.wavyIndeterminateBar2 {
-  animation:
-    md3-linear-progress-ind-bar2 1750ms linear infinite,
-    md3-linear-progress-wave-phase 1000ms linear infinite;
-}
+  /* Indeterminate wavy: two sweeping bars driven entirely by CSS keyframes so
+     they share the document timeline with the non-wavy indeterminate bars (which
+     are pure keyframes too) — a JS rAF loop would run on its own clock and drift
+     out of phase. --_w100/--_wlf (width-derived, set inline) map the
+     0-1 head/tail progress into pathLength units; the wave-phase var flows the
+     crests while the dashoffset compensation keeps the visible envelope fixed. */
+  .wavyIndeterminateBar {
+    --_dash: calc((var(--_head) - var(--_tail)) * var(--_w100));
+    stroke-dasharray: var(--_dash) calc(100 - var(--_dash));
+    stroke-dashoffset: calc(-1 * (var(--_tail) * var(--_w100) + var(--_wave-phase) * var(--_wlf)));
+    transform: translateX(calc(var(--_wave-phase) * -1 * var(--_wavelength)));
+  }
 
-/* Same head/tail breakpoints as the non-wavy bar1/bar2 keyframes, expressed as
-   0-1 envelope progress (tail = left edge, head = right edge). */
-@keyframes md3-linear-progress-ind-bar1 {
-  0% {
-    --_head: 0;
-    --_tail: 0;
+  .wavyIndeterminateBar1 {
+    animation:
+      md3-linear-progress-ind-bar1 1750ms linear infinite,
+      md3-linear-progress-wave-phase 1000ms linear infinite;
   }
-  14.2857% {
-    --_head: 0.25;
-    --_tail: 0;
-  }
-  57.1429% {
-    --_head: 1;
-    --_tail: 0.75;
-  }
-  71.4286%,
-  100% {
-    --_head: 1;
-    --_tail: 1;
-  }
-}
 
-@keyframes md3-linear-progress-ind-bar2 {
-  0%,
-  37.1429% {
-    --_head: 0;
-    --_tail: 0;
+  .wavyIndeterminateBar2 {
+    animation:
+      md3-linear-progress-ind-bar2 1750ms linear infinite,
+      md3-linear-progress-wave-phase 1000ms linear infinite;
   }
-  51.4286% {
-    --_head: 0.294118;
-    --_tail: 0;
-  }
-  85.7143% {
-    --_head: 1;
-    --_tail: 0.705882;
-  }
-  100% {
-    --_head: 1;
-    --_tail: 1;
-  }
-}
 
-/* Wave motion: shifting which portion of the periodic template is revealed
-   (dashoffset) while translating the whole path back by the same amount
-   keeps the visible bar's start/end fixed even as the crests appear to
-   travel — same shift-then-correct trick as CircularProgress's wavy mode. */
-.wavyIndicatorMoving {
-  animation: md3-linear-progress-wave-phase 1000ms linear infinite;
-}
+  /* Same head/tail breakpoints as the non-wavy bar1/bar2 keyframes, expressed as
+     0-1 envelope progress (tail = left edge, head = right edge). */
+  @keyframes md3-linear-progress-ind-bar1 {
+    0% {
+      --_head: 0;
+      --_tail: 0;
+    }
+    14.2857% {
+      --_head: 0.25;
+      --_tail: 0;
+    }
+    57.1429% {
+      --_head: 1;
+      --_tail: 0.75;
+    }
+    71.4286%,
+    100% {
+      --_head: 1;
+      --_tail: 1;
+    }
+  }
 
-@keyframes md3-linear-progress-wave-phase {
-  to {
-    --_wave-phase: 1;
+  @keyframes md3-linear-progress-ind-bar2 {
+    0%,
+    37.1429% {
+      --_head: 0;
+      --_tail: 0;
+    }
+    51.4286% {
+      --_head: 0.294118;
+      --_tail: 0;
+    }
+    85.7143% {
+      --_head: 1;
+      --_tail: 0.705882;
+    }
+    100% {
+      --_head: 1;
+      --_tail: 1;
+    }
   }
-}
 
-@keyframes md3-linear-progress-bar2 {
-  0%,
-  37.1429% {
-    inset-inline-start: 0%;
-    width: 0%;
+  /* Wave motion: shifting which portion of the periodic template is revealed
+     (dashoffset) while translating the whole path back by the same amount
+     keeps the visible bar's start/end fixed even as the crests appear to
+     travel — same shift-then-correct trick as CircularProgress's wavy mode. */
+  .wavyIndicatorMoving {
+    animation: md3-linear-progress-wave-phase 1000ms linear infinite;
   }
-  51.4286% {
-    inset-inline-start: 0%;
-    width: 29.4118%;
+
+  @keyframes md3-linear-progress-wave-phase {
+    to {
+      --_wave-phase: 1;
+    }
   }
-  85.7143% {
-    inset-inline-start: 70.5882%;
-    width: 29.4118%;
-  }
-  100% {
-    inset-inline-start: 100%;
-    width: 0%;
+
+  @keyframes md3-linear-progress-bar2 {
+    0%,
+    37.1429% {
+      inset-inline-start: 0%;
+      width: 0%;
+    }
+    51.4286% {
+      inset-inline-start: 0%;
+      width: 29.4118%;
+    }
+    85.7143% {
+      inset-inline-start: 70.5882%;
+      width: 29.4118%;
+    }
+    100% {
+      inset-inline-start: 100%;
+      width: 0%;
+    }
   }
 }

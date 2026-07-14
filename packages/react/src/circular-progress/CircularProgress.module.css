@@ -22,131 +22,133 @@
   initial-value: 0;
 }
 
-.root {
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-}
-
-.svg,
-.svgIndeterminate {
-  width: 100%;
-  height: 100%;
-}
-
-.svg {
-  transform: rotate(-90deg);
-}
-
-.svgIndeterminate {
-  transform: rotate(calc(-90deg + var(--_global-rotation) + var(--_step-rotation)));
-  animation:
-    md3-circular-progress-global-rotate 6000ms linear infinite,
-    md3-circular-progress-step-rotate 6000ms infinite,
-    md3-circular-progress-sweep 6000ms infinite;
-}
-
-.track,
-.indicator {
-  fill: none;
-  stroke-width: 4px;
-  stroke-linecap: round;
-  transition:
-    stroke-dasharray var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-    stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
-}
-
-.track {
-  stroke: var(--md-sys-color-secondary-container);
-}
-
-.indicator {
-  stroke: var(--md-sys-color-primary);
-}
-
-.svgIndeterminate .indicator {
-  stroke-dasharray: var(--_sweep) calc(100 - var(--_sweep));
-  transition: none;
-}
-
-.svgIndeterminate .track {
-  stroke-dasharray: calc(100 - var(--_sweep) - 2 * var(--_gap))
-    calc(var(--_sweep) + 2 * var(--_gap));
-  stroke-dashoffset: calc(-1 * (var(--_sweep) + var(--_gap)));
-  transition: none;
-}
-
-/* Wave motion: the star repeats every 360/numVertices degrees, so sampling a
-   different rotation phase reads as crests sliding along the ring. Countering
-   with the same shift in stroke-dashoffset keeps the visible arc's start/end
-   anchored despite the rotation — same shift-then-correct trick as the
-   indeterminate linear bars' inset-inline-start/width keyframes. */
-.indicatorWavy {
-  animation: md3-circular-progress-wave-phase 1000ms linear infinite;
-}
-
-@keyframes md3-circular-progress-wave-phase {
-  to {
-    --_wave-phase: 1;
+@layer components {
+  .root {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
   }
-}
 
-/* Global continuous spin: seamless since 1080deg % 360 === 0deg. */
-@keyframes md3-circular-progress-global-rotate {
-  to {
-    --_global-rotation: 1080deg;
+  .svg,
+  .svgIndeterminate {
+    width: 100%;
+    height: 100%;
   }
-}
 
-/* Stepped rotation: 90deg hops every 1.5s, each hop eased-decelerate over
-   300ms then held. CSS applies a keyframe's timing-function to the segment
-   leading OUT of it (opposite of Compose's `using`, which applies to the
-   segment leading in) — so the easing is set on each hop's starting keyframe. */
-@keyframes md3-circular-progress-step-rotate {
-  0% {
-    --_step-rotation: 0deg;
-    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+  .svg {
+    transform: rotate(-90deg);
   }
-  5% {
-    --_step-rotation: 90deg;
-  }
-  25% {
-    --_step-rotation: 90deg;
-    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
-  }
-  30% {
-    --_step-rotation: 180deg;
-  }
-  50% {
-    --_step-rotation: 180deg;
-    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
-  }
-  55% {
-    --_step-rotation: 270deg;
-  }
-  75% {
-    --_step-rotation: 270deg;
-    animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
-  }
-  80%,
-  100% {
-    --_step-rotation: 360deg;
-  }
-}
 
-/* Arc length oscillates 10%-87%: eased-standard growing (0-3s), linear
-   shrinking (3-6s) — matches CircularProgressEasing being applied only to
-   the growth segment in the Compose source. */
-@keyframes md3-circular-progress-sweep {
-  0% {
-    --_sweep: 10;
-    animation-timing-function: var(--md-sys-motion-easing-standard);
+  .svgIndeterminate {
+    transform: rotate(calc(-90deg + var(--_global-rotation) + var(--_step-rotation)));
+    animation:
+      md3-circular-progress-global-rotate 6000ms linear infinite,
+      md3-circular-progress-step-rotate 6000ms infinite,
+      md3-circular-progress-sweep 6000ms infinite;
   }
-  50% {
-    --_sweep: 87;
-    animation-timing-function: linear;
+
+  .track,
+  .indicator {
+    fill: none;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    transition:
+      stroke-dasharray var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      stroke-dashoffset var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   }
-  100% {
-    --_sweep: 10;
+
+  .track {
+    stroke: var(--md-sys-color-secondary-container);
+  }
+
+  .indicator {
+    stroke: var(--md-sys-color-primary);
+  }
+
+  .svgIndeterminate .indicator {
+    stroke-dasharray: var(--_sweep) calc(100 - var(--_sweep));
+    transition: none;
+  }
+
+  .svgIndeterminate .track {
+    stroke-dasharray: calc(100 - var(--_sweep) - 2 * var(--_gap))
+      calc(var(--_sweep) + 2 * var(--_gap));
+    stroke-dashoffset: calc(-1 * (var(--_sweep) + var(--_gap)));
+    transition: none;
+  }
+
+  /* Wave motion: the star repeats every 360/numVertices degrees, so sampling a
+     different rotation phase reads as crests sliding along the ring. Countering
+     with the same shift in stroke-dashoffset keeps the visible arc's start/end
+     anchored despite the rotation — same shift-then-correct trick as the
+     indeterminate linear bars' inset-inline-start/width keyframes. */
+  .indicatorWavy {
+    animation: md3-circular-progress-wave-phase 1000ms linear infinite;
+  }
+
+  @keyframes md3-circular-progress-wave-phase {
+    to {
+      --_wave-phase: 1;
+    }
+  }
+
+  /* Global continuous spin: seamless since 1080deg % 360 === 0deg. */
+  @keyframes md3-circular-progress-global-rotate {
+    to {
+      --_global-rotation: 1080deg;
+    }
+  }
+
+  /* Stepped rotation: 90deg hops every 1.5s, each hop eased-decelerate over
+     300ms then held. CSS applies a keyframe's timing-function to the segment
+     leading OUT of it (opposite of Compose's `using`, which applies to the
+     segment leading in) — so the easing is set on each hop's starting keyframe. */
+  @keyframes md3-circular-progress-step-rotate {
+    0% {
+      --_step-rotation: 0deg;
+      animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+    5% {
+      --_step-rotation: 90deg;
+    }
+    25% {
+      --_step-rotation: 90deg;
+      animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+    30% {
+      --_step-rotation: 180deg;
+    }
+    50% {
+      --_step-rotation: 180deg;
+      animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+    55% {
+      --_step-rotation: 270deg;
+    }
+    75% {
+      --_step-rotation: 270deg;
+      animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+    }
+    80%,
+    100% {
+      --_step-rotation: 360deg;
+    }
+  }
+
+  /* Arc length oscillates 10%-87%: eased-standard growing (0-3s), linear
+     shrinking (3-6s) — matches CircularProgressEasing being applied only to
+     the growth segment in the Compose source. */
+  @keyframes md3-circular-progress-sweep {
+    0% {
+      --_sweep: 10;
+      animation-timing-function: var(--md-sys-motion-easing-standard);
+    }
+    50% {
+      --_sweep: 87;
+      animation-timing-function: linear;
+    }
+    100% {
+      --_sweep: 10;
+    }
   }
 }
