@@ -4,7 +4,7 @@ import { Typography } from "@/ui/typography";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Full-width landing chrome: no sidebar, just a slim header and the page.
-// The home page and the showcases (full-app demos, not doc pages) live here.
+// Only the home page lives here; showcases have their own (showcase) group.
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-5xl px-6 pt-6 pb-24">

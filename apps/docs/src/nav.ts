@@ -260,8 +260,8 @@ export const SECTIONS: NavSection[] = [
   },
 ];
 
-// Full-app examples combining many components; rendered without the docs
-// sidebar (see Root.tsx), same as HOME.
+// Full-app examples combining many components; rendered standalone (no docs
+// chrome) in the (showcase) route group with a corner FAB menu for theme.
 export const SHOWCASES: NavItem[] = [
   {
     path: "/showcase/team-tasks",

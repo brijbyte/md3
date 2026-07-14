@@ -11,7 +11,7 @@ type Theme = "light" | "dark";
 
 // Mirrors apps/docs/scripts/build-color-themes.mjs's SEEDS map ("default" is
 // the library's baseline purple — no override CSS needed for it).
-const COLOR_THEMES = [
+export const COLOR_THEMES = [
   { value: "default", label: "Default", seed: "#6750A4" },
   { value: "blue", label: "Blue", seed: "#1B6EF3" },
   { value: "teal", label: "Teal", seed: "#00696B" },
@@ -21,7 +21,7 @@ const COLOR_THEMES = [
   { value: "pink", label: "Pink", seed: "#984061" },
 ] as const;
 
-function useTheme() {
+export function useTheme() {
   // Root's inline script sets data-theme before paint from localStorage / OS
   // preference; during server prerender there is no document, so default light.
   const [theme, setTheme] = React.useState<Theme>(() =>
@@ -42,7 +42,7 @@ function useTheme() {
   return [theme, setTheme] as const;
 }
 
-function useColorTheme() {
+export function useColorTheme() {
   const [colorTheme, setColorTheme] = React.useState(() =>
     typeof document !== "undefined" ? document.documentElement.dataset.colorTheme! : "default",
   );
@@ -64,7 +64,7 @@ export function ThemeToggle() {
   const [colorTheme, setColorTheme] = useColorTheme();
 
   return (
-    <SplitButton variant="tonal">
+    <SplitButton variant="filled">
       {/* Icons swap via CSS, not state: the static HTML is theme-agnostic,
           so hydration matches whatever theme the inline script applied. */}
       <SplitButtonAction
@@ -92,7 +92,7 @@ export function ThemeToggle() {
                 leadingIcon={
                   <span
                     aria-hidden
-                    className="inline-block size-[18px] rounded-full"
+                    className="inline-block size-4.5 rounded-full"
                     style={{ backgroundColor: seed }}
                   />
                 }
