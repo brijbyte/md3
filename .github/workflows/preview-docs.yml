@@ -1,0 +1,94 @@
+name: Preview docs
+
+# Deploys the PR's docs build as its own worker (md3-docs-pr-<n>) with the
+# custom domain preview-<n>.md3.brijbyte.com, and comments the URL on the
+# PR. Production (md3.brijbyte.com) only deploys via the `docs` tag. The
+# worker + domain are deleted by preview-docs-cleanup.yml when the PR closes.
+# Skipped for fork PRs (no access to the Cloudflare secrets).
+#
+# TLS: the zone's cert already carries a *.md3.brijbyte.com SAN, so these
+# hostnames get valid HTTPS with no extra certificate setup (verified).
+
+on:
+  pull_request:
+
+concurrency:
+  group: preview-docs-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write # preview-URL comment
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 26
+          cache: pnpm
+
+      # ~25k Material Symbols SVGs the icons build would otherwise re-download.
+      - name: Cache icon downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/icons/.cache
+          key: icons-svg-${{ github.run_id }}
+          restore-keys: icons-svg-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      # Per-PR worker config (mirrors wrangler.jsonc apart from name + domain).
+      - name: Deploy preview worker
+        working-directory: apps/docs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          cat > wrangler.preview.jsonc <<EOF
+          {
+            "name": "md3-docs-pr-$PR",
+            "compatibility_date": "2026-07-15",
+            "routes": [{ "pattern": "preview-$PR.md3.brijbyte.com", "custom_domain": true }],
+            "workers_dev": false,
+            "preview_urls": false,
+            "assets": {
+              "directory": "./out",
+              "html_handling": "auto-trailing-slash",
+              "not_found_handling": "404-page"
+            }
+          }
+          EOF
+          pnpm dlx wrangler@4 deploy --config wrangler.preview.jsonc
+
+      # One sticky comment per PR, updated on every push.
+      - name: Comment preview URL
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          MARKER="<!-- preview-docs -->"
+          BODY="$MARKER
+          **Docs preview:** https://preview-$PR.md3.brijbyte.com (for $SHA)"
+          COMMENT_ID="$(gh api "repos/${{ github.repository }}/issues/$PR/comments" \
+            --jq "map(select(.body | startswith(\"$MARKER\"))) | .[0].id // empty")"
+          if [ -n "$COMMENT_ID" ]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$BODY" > /dev/null
+          else
+            gh api "repos/${{ github.repository }}/issues/$PR/comments" -f body="$BODY" > /dev/null
+          fi
