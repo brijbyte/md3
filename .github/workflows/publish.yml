@@ -1,8 +1,8 @@
 name: Publish
 
-# Publishes one package when its tag is pushed: `react-v<version>` publishes
-# @brijbyte/md3-react, `icons-v<version>` publishes @brijbyte/md3-icons — the
-# two are versioned independently. The tag must match the package's
+# Publishes one package when its tag is pushed. Tags are named
+# `<pkg-name>@<version>` (e.g. `@brijbyte/md3-react@0.0.1`) — the
+# two packages are versioned independently. The tag must match the package's
 # package.json version. Publishing uses npm trusted publishing (OIDC, with
 # provenance) — no NPM_TOKEN. A version already on npm is skipped, so re-runs
 # are safe. Finally a GitHub release is cut for the tag, with the matching
@@ -12,8 +12,8 @@ name: Publish
 on:
   push:
     tags:
-      - "react-v*"
-      - "icons-v*"
+      - "@brijbyte/md3-react@*"
+      - "@brijbyte/md3-icons@*"
   workflow_dispatch:
 
 concurrency:
@@ -35,17 +35,18 @@ jobs:
         id: meta
         run: |
           TAG="${GITHUB_REF_NAME}"
-          PKG="${TAG%%-v*}"          # react | icons
-          VERSION="${TAG#*-v}"
-          case "$PKG" in
-            react|icons) ;;
-            *) echo "::error::Unrecognized tag '$TAG' — expected <react|icons>-v<version>."; exit 1 ;;
+          NAME="${TAG%@*}"           # @brijbyte/md3-react | @brijbyte/md3-icons
+          VERSION="${TAG##*@}"
+          case "$NAME" in
+            "@brijbyte/md3-react") PKG=react ;;
+            "@brijbyte/md3-icons") PKG=icons ;;
+            *) echo "::error::Unrecognized tag '$TAG' — expected <pkg-name>@<version>."; exit 1 ;;
           esac
           {
             echo "tag=$TAG"
             echo "version=$VERSION"
             echo "dir=packages/$PKG"
-            echo "name=$(node -p "require('./packages/$PKG/package.json').name")"
+            echo "name=$NAME"
           } >> "$GITHUB_OUTPUT"
 
       - name: Verify package version matches the tag
@@ -70,7 +71,7 @@ jobs:
 
       # ~25k Material Symbols SVGs the icons build would otherwise re-download.
       - name: Cache icon downloads
-        if: startsWith(steps.meta.outputs.tag, 'icons-')
+        if: startsWith(steps.meta.outputs.tag, '@brijbyte/md3-icons@')
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: packages/icons/.cache

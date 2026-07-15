@@ -1,5 +1,5 @@
 // Cut a release for one package: bump its version, verify its CHANGELOG.md
-// section exists, commit, tag <pkg>-v<version>, and push main + the tag.
+// section exists, commit, tag <pkg-name>@<version>, and push main + the tag.
 // The tag push triggers .github/workflows/publish.yml for that package only.
 //
 // Usage: pnpm release <react|icons> <version>   (e.g. `pnpm release react 0.0.2`)
@@ -20,9 +20,13 @@ const version = (rawVersion ?? "").replace(/^v/, "");
 if (!dir || !/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(version)) {
   fail("usage: pnpm release <react|icons> <version>");
 }
-const tag = `${name}-v${version}`;
+const run = (cmd, ...args) => execFileSync(cmd, args, { encoding: "utf8" }).trim();
+const git = (...args) => run("git", ...args);
 
-const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+const [{ name: pkgName }] = JSON.parse(
+  run("pnpm", "ls", "--filter", `./${dir}`, "--depth", "-1", "--json"),
+);
+const tag = `${pkgName}@${version}`;
 
 if (git("rev-parse", "--abbrev-ref", "HEAD") !== "main") fail("Releases are cut from main.");
 if (git("status", "--porcelain") !== "") fail("Working tree is not clean.");
@@ -36,7 +40,7 @@ execFileSync("node", ["scripts/extract-changelog.mjs", version, `${dir}/CHANGELO
 const path = `${dir}/package.json`;
 const pkg = JSON.parse(readFileSync(path, "utf8"));
 if (pkg.version === version) {
-  console.log(`${pkg.name} is already at ${version} — tagging HEAD without a bump commit.`);
+  console.log(`${pkgName} is already at ${version} — tagging HEAD without a bump commit.`);
 } else {
   pkg.version = version;
   writeFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
