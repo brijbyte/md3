@@ -3,7 +3,7 @@
 Skip the teaching/learning-checklist workflow here (no LEARNING.md, no comprehension
 quizzes) — overrides the global CLAUDE.md teacher instructions. Just do the work.
 Note: For screenshot testing with Playwright, always start the server on 5174 port and
-don't kill existing server running on port 5173. For any edge case/bug fixes, add an
+don't kill existing server running on port 3000. For any edge case/bug fixes, add an
 equivalent test as well. Use the `PORT` env var.
 
 React implementation of Google's Material Design 3 (https://m3.material.io/), built as a
@@ -12,14 +12,12 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
 
 ## Repo layout
 
-- `packages/react` — the component library, published as `@brijbyte/md3-react` (placeholder
-  name). No barrel export: consumers import per path (`@brijbyte/md3-react/button`, `/tokens`).
+- `packages/react` — the component library, published to npm as `@brijbyte/md3-react`.
+  No barrel export: consumers import per path (`@brijbyte/md3-react/button`, `/tokens`).
 - `packages/icons` — `@brijbyte/md3-icons`: Material Symbols (weight 400) as per-icon React
   components, fully generated into `dist/` by `scripts/build-icons.mjs`. Icons render
   `fill="currentColor"`, so they follow `--md-sys-color-*` via the surrounding `color`.
 - `apps/docs` — Next.js App Router docs/demo app (static export via satteri-nextjs), see below.
-- `apps/docs-old` — frozen pre-Next.js (Vite RSC) copy of the docs app; excluded from the
-  pnpm workspace, kept only for reference. Don't build or edit it.
 - pnpm workspace monorepo; root `pnpm build` builds everything, `pnpm dev` runs the
   library watch build + docs dev server in parallel.
 
@@ -144,15 +142,15 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   never aggregated (raw `@theme` — only meaningful inside a consumer's Tailwind v4 build).
 - **JS/CSS decoupled**: no CSS imports in published JS — consumers import stylesheets
   themselves (documented in `packages/react/README.md`).
-- **RSC support**: client components must start with `'use client'`. The build uses
-  `preserveModules` and Rolldown preserves the directive per module — re-export `index.ts`
+- **RSC support**: client components must start with `'use client'`. The build is
+  unbundled (dist mirrors src/) and re-adds the directive per module — re-export `index.ts`
   files, CSS-module maps, tokens, and utils stay directive-free/server-safe.
 - **Button-family CSS reuse**: `Button.module.css` is the family base — IconButton, FAB,
-  and both SplitButton halves stack Button's `.root` (and reuse its stateLayer/icon/label
-  spans; `SplitButtonAction` renders `Button` directly); their modules keep only deltas.
+  Chip, and both SplitButton halves stack Button's `.root` (and reuse its stateLayer/icon/
+  label spans; `SplitButtonAction` renders `Button` directly); their modules keep only deltas.
   Family overrides keep natural specificity and tie with Button's rules, so ties resolve
   by import order: **button.css must be imported before
-  icon-button.css/fab.css/split-button.css** (documented in README + integration page;
+  icon-button.css/fab.css/fab-menu.css/split-button.css/chip.css** (documented in README + integration page;
   `dist/index.css` sorts alphabetically so the aggregate is always correct; no
   `.root.root` specificity inflation — deliberately rejected). Where import order can't
   decide — family color rules vs Button's disabled colors — the family rules carry
@@ -171,7 +169,7 @@ both a publishable npm library and a docs site (deployed to md3.brijbyte.com).
   values), and `src/generated/tailwind-tokens.css` (Tailwind v4 `@theme inline` —
   `bg-primary`, `text-title-large`, `shadow-level1`; verbatim token keys, no prefix;
   settled naming). `src/generated/` is gitignored.
-- Codegen runs inside the Vite build via the `md3:codegen` plugin (also in `--watch`).
+- Codegen runs inside the tsdown build via its `build:prepare` hook (also in `--watch`).
   Standalone CLIs: `pnpm build:tokens`, `pnpm build:shapes`, `pnpm typegen:css` — needed
   before a bare `tsc` on a fresh clone.
 
@@ -217,7 +215,7 @@ children so targets don't bleed over packed siblings).
 ## Component conventions
 
 Each component lives in `src/<kebab-name>/` with `<Pascal>.tsx`, `<Pascal>.module.css`,
-`index.ts` (re-exports). Add new components to `vite.config.ts` `build.lib.entry`
+`index.ts` (re-exports). Add new components to `tsdown.config.ts` `entry`
 (per-component entry → per-component CSS); the docs app picks styles up from the rebuilt
 dist automatically.
 
@@ -237,9 +235,10 @@ Patterns:
 
 ## Build / dev workflow
 
-- `pnpm --filter @brijbyte/md3-react build` — vite lib build with `preserveModules` and
-  `minify: false` (dist stays readable); codegen and CSS emission/aggregation happen via
-  the `md3:codegen` / `md3:emit-css` plugins. `pnpm dev` in the package = `vite build --watch`.
+- `pnpm --filter @brijbyte/md3-react build` — tsdown build (`tsdown.config.ts`), unbundled
+  (`unbundle: true`, dist mirrors src/) and `minify: false` (dist stays readable); codegen
+  runs in the `build:prepare` hook, CSS emission/aggregation in `build:done`
+  (`scripts/emit-css.mjs`). `pnpm dev` in the package = `tsdown --watch --no-clean`.
 - `pnpm dev` (root) — library watch build + docs dev server (`next dev`, Turbopack) in
   parallel (`pnpm --parallel --filter @brijbyte/md3-react --filter docs dev`); the docs
   app consumes the **built library dist**. `pnpm --filter docs build` emits the static
@@ -247,7 +246,25 @@ Patterns:
 - CSS Module typings (`*.module.css.d.ts`, gitignored) are generated by the build/watch;
   a bare `tsc` on a fresh clone needs `pnpm build:tokens && pnpm build:shapes && pnpm typegen:css` first.
 - Typecheck: `pnpm typecheck` in `packages/react`; `npx tsc --noEmit` in `apps/docs`.
-- No tests yet; verify visually in the docs app (all variants × states are demoed there).
+- Tests: root `pnpm test` (vitest). `packages/react` tests run in Vitest browser mode —
+  a real chromium via Playwright, no jsdom — with screenshot baselines in
+  `__screenshots__/`; `apps/docs` has node-env unit tests for pure helpers. CI (`ci.yml`)
+  runs format check, lint, typecheck, and tests on every PR. Also verify visually in the
+  docs app (all variants × states are demoed there).
+
+## Releases
+
+`pnpm release <react|icons> <version>` (scripts/release.mjs, run from a clean main):
+verifies the package's `CHANGELOG.md` has a `## v<version>` section, bumps the version,
+commits, tags `<pkg-name>@<version>` (e.g. `@brijbyte/md3-react@0.0.1`), and pushes. The
+tag push triggers `.github/workflows/publish.yml`, which builds only the tagged package,
+publishes via npm trusted publishing (OIDC + provenance, no NPM_TOKEN), and cuts a GitHub
+release with the changelog section as its body. Already-published versions are skipped,
+so re-runs are safe. The two packages are versioned independently.
+
+Docs deploy: pushing/moving the `docs` tag (`git tag -f docs && git push -f origin docs`)
+triggers `.github/workflows/deploy-docs.yml`, which builds the static export and deploys
+it to Cloudflare Workers static assets (`apps/docs/wrangler.jsonc`, worker `md3-docs`).
 
 ## Style rules
 
@@ -259,7 +276,7 @@ Patterns:
 ## Current status / roadmap
 
 Next candidates: navigation family (nav bar / rail / drawer), search, app bars, date/time
-pickers, carousel, FAB menu, dynamic color theming, rem-based type scaling (see Units
-decision), npm publish setup (finalize package name), docs site content + deploy.
+pickers, carousel, dynamic color theming, rem-based type scaling (see Units decision),
+docs site content + deploy.
 Select ships as TextField anatomy + Menu popup (`src/select/`), reusing both modules'
 classes — its CSS overrides are specificity-bumped so import order can't break them.
