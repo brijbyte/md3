@@ -1,0 +1,103 @@
+.demo-motion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  inline-size: 100%;
+}
+
+.demo-motion-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demo-motion-track {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.demo-motion-label {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: var(--md-sys-typescale-label-large-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.demo-motion-rail {
+  position: relative;
+  block-size: 28px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.demo-motion-dot {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary);
+  /* Defaults; per-track data attributes override the curve / time below. */
+  animation: demo-motion-slide var(--md-sys-motion-duration-long2)
+    var(--md-sys-motion-easing-emphasized) both;
+}
+
+/* Easing overrides (easings demo). */
+.demo-motion-dot[data-ease="emphasized"] {
+  animation-timing-function: var(--md-sys-motion-easing-emphasized);
+}
+.demo-motion-dot[data-ease="emphasized-decelerate"] {
+  animation-timing-function: var(--md-sys-motion-easing-emphasized-decelerate);
+}
+.demo-motion-dot[data-ease="emphasized-accelerate"] {
+  animation-timing-function: var(--md-sys-motion-easing-emphasized-accelerate);
+}
+.demo-motion-dot[data-ease="standard"] {
+  animation-timing-function: var(--md-sys-motion-easing-standard);
+}
+.demo-motion-dot[data-ease="standard-decelerate"] {
+  animation-timing-function: var(--md-sys-motion-easing-standard-decelerate);
+}
+.demo-motion-dot[data-ease="standard-accelerate"] {
+  animation-timing-function: var(--md-sys-motion-easing-standard-accelerate);
+}
+.demo-motion-dot[data-ease="fast-spatial"] {
+  animation-timing-function: var(--md-sys-motion-easing-fast-spatial);
+}
+
+/* Duration overrides (durations demo). */
+.demo-motion-dot[data-duration="short2"] {
+  animation-duration: var(--md-sys-motion-duration-short2);
+}
+.demo-motion-dot[data-duration="short4"] {
+  animation-duration: var(--md-sys-motion-duration-short4);
+}
+.demo-motion-dot[data-duration="medium2"] {
+  animation-duration: var(--md-sys-motion-duration-medium2);
+}
+.demo-motion-dot[data-duration="medium4"] {
+  animation-duration: var(--md-sys-motion-duration-medium4);
+}
+.demo-motion-dot[data-duration="long2"] {
+  animation-duration: var(--md-sys-motion-duration-long2);
+}
+.demo-motion-dot[data-duration="long4"] {
+  animation-duration: var(--md-sys-motion-duration-long4);
+}
+
+@keyframes demo-motion-slide {
+  from {
+    inset-inline-start: 0;
+  }
+  to {
+    inset-inline-start: calc(100% - 28px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-motion-dot {
+    animation: none;
+    inset-inline-start: calc(100% - 28px);
+  }
+}

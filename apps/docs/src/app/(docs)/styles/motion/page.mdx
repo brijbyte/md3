@@ -1,0 +1,148 @@
+---
+title: Motion
+---
+
+import { routeMetadata } from "@/nav";
+
+export const metadata = routeMetadata("/styles/motion");
+
+import Easings from "./demo/easings.tsx";
+import Durations from "./demo/durations.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { motion } from "@brijbyte/md3-react/tokens";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+```
+
+<SpecLinks
+  links={[
+    { label: "MD3 spec", href: "https://m3.material.io/styles/motion/overview" },
+    {
+      label: "Easing & duration",
+      href: "https://m3.material.io/styles/motion/easing-and-duration/tokens-specs",
+    },
+  ]}
+/>
+
+MD3 motion is two decisions: an **easing** curve (how the speed changes) and a
+**duration** (how long it runs). The library ships both as tokens, so your app moves on
+the exact curves the components do — no magic numbers. The same values are available three
+ways: as CSS variables (`--md-sys-motion-*`), as a typed JS map
+(`import { motion } from "@brijbyte/md3-react/tokens"`), and as Tailwind utilities
+(`ease-emphasized`, `duration-medium4`).
+
+## Easing
+
+Easing sets the personality of a transition. **Emphasized** is the default for most
+motion — a slow-in, fast-middle, slow-out curve that feels expressive. **Standard** is its
+calmer counterpart for small, utility-focused changes. Each set has _accelerate_ and
+_decelerate_ variants for one-directional motion: elements **entering** the screen
+decelerate (fast → slow, settling into place), elements **leaving** accelerate (slow →
+fast, exiting decisively). `fast-spatial` is a springy curve for quick spatial moves.
+
+<Easings />
+
+| Token                          | Use for                                        |
+| ------------------------------ | ---------------------------------------------- |
+| `easing-emphasized`            | Most transitions that begin and end on screen  |
+| `easing-emphasized-decelerate` | Elements entering the screen                   |
+| `easing-emphasized-accelerate` | Elements leaving the screen                    |
+| `easing-standard`              | Small, functional changes (color, state layer) |
+| `easing-standard-decelerate`   | Small enters                                   |
+| `easing-standard-accelerate`   | Small exits                                    |
+| `easing-fast-spatial`          | Quick, springy spatial moves                   |
+
+## Duration
+
+Duration scales with the size of the change: small elements over short spans, large or
+complex transitions over longer ones. The scale runs `short1`–`short4` (50–200ms),
+`medium1`–`medium4` (250–400ms), and `long1`–`long4` (450–600ms). Reach for **short** for
+icon and selection changes, **medium** for most component transitions, and **long** for
+large surfaces entering the screen.
+
+<Durations />
+
+## Using the tokens
+
+Reference the CSS variables directly in any stylesheet — pair an easing with a duration on
+the property you're animating:
+
+```css
+.card {
+  transition:
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized);
+}
+```
+
+In JS, the typed `motion` map gives the same values as `var(...)` references (camelCase
+keys), handy for inline styles or animation libraries:
+
+```tsx
+import { motion } from "@brijbyte/md3-react/tokens";
+
+<div
+  style={{
+    transitionTimingFunction: motion.easingEmphasized,
+    transitionDuration: motion.durationMedium4,
+  }}
+/>;
+```
+
+And in a Tailwind v4 project that imports `tailwind-tokens.css`, every token is a utility —
+`ease-*` for the curves and `duration-*` for the times:
+
+```tsx
+<div className="transition-transform duration-medium4 ease-emphasized" />
+```
+
+## Recipe: rotate-through icon swap
+
+The theme toggle and copy button in this site's chrome swap one icon for another by
+rotating through — the outgoing icon rotates and scales out while the incoming one rotates
+in, on the emphasized curve. It's just two icons sharing one grid cell (so there's no
+layout shift) plus a transition; drop this into any project:
+
+```css
+.icon-swap {
+  display: inline-grid;
+  place-items: center;
+}
+.icon-swap > * {
+  grid-area: 1 / 1; /* stack both icons in the same cell */
+  transition:
+    transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+/* Second icon waits rotated out; toggle [data-swapped] to cross them over. */
+.icon-swap > :nth-child(2) {
+  transform: rotate(-90deg) scale(0);
+  opacity: 0;
+}
+.icon-swap[data-swapped] > :nth-child(1) {
+  transform: rotate(90deg) scale(0);
+  opacity: 0;
+}
+.icon-swap[data-swapped] > :nth-child(2) {
+  transform: none;
+  opacity: 1;
+}
+```
+
+## Reduced motion
+
+All of the above are transitions and animations, so honor the user's system preference —
+wrap decorative motion in a `prefers-reduced-motion` guard and let the end state apply
+instantly:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .icon-swap > * {
+    transition: none;
+  }
+}
+```

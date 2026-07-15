@@ -27,6 +27,7 @@ import TabIcon from "@brijbyte/md3-icons/outlined/Tab";
 import TextFieldsIcon from "@brijbyte/md3-icons/outlined/TextFields";
 import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
 import AutoAwesomeMotionIcon from "@brijbyte/md3-icons/outlined/AutoAwesomeMotion";
+import AnimationIcon from "@brijbyte/md3-icons/outlined/Animation";
 import BottomAppBarIcon from "@brijbyte/md3-icons/outlined/BottomAppBar";
 import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
@@ -80,6 +81,13 @@ export const SECTIONS: NavSection[] = [
         title: "Typography",
         description: "One component, fifteen type roles — change the tag, keep the scale.",
         icon: FormatSizeIcon,
+      },
+      {
+        path: "/styles/motion",
+        label: "Motion",
+        title: "Motion",
+        description: "MD3 easing and duration tokens — the same curves the components move on.",
+        icon: AnimationIcon,
       },
       {
         path: "/icons",
