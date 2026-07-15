@@ -11,7 +11,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { build } from "vite";
+import { build } from "tsdown";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -44,6 +44,19 @@ const svgUrl = (
 
 const CONCURRENCY = 32;
 const RETRIES = 3;
+
+// A version bump invalidates the SVG cache, so upstream changes to already-cached
+// icons are picked up; within a version, only missing icons are fetched.
+const { version } = JSON.parse(readFileSync(path.join(pkgRoot, "package.json"), "utf8"));
+const versionStamp = path.join(cacheDir, "version");
+if (!existsSync(versionStamp) || readFileSync(versionStamp, "utf8") !== version) {
+  if (existsSync(path.join(cacheDir, "svg"))) {
+    console.log(`Version is now ${version} — discarding the SVG cache.`);
+    rmSync(path.join(cacheDir, "svg"), { recursive: true, force: true });
+  }
+  mkdirSync(cacheDir, { recursive: true });
+  writeFileSync(versionStamp, version);
+}
 
 const fetchText = async (/** @type {string} */ url) => {
   for (let attempt = 1; ; attempt++) {
@@ -100,7 +113,7 @@ if (jobs.length > 0) {
   /** @type {string[]} */
   const missing = [];
   const next = async () => {
-    for (let job; (job = jobs.pop()); ) {
+    for (let job; (job = jobs.pop());) {
       const svg = await fetchText(job.url);
       if (svg === null) missing.push(job.url);
       else writeFileSync(job.file, svg);
@@ -166,19 +179,17 @@ for (const style of STYLES) {
 
 // Runtime helper is authored in JSX; compile it (automatic runtime) for dist.
 await build({
-  configFile: false,
+  config: false,
+  cwd: pkgRoot,
+  entry: { createIcon: path.join(pkgRoot, "src/createIcon.jsx") },
+  format: ["es"],
+  platform: "neutral",
+  outDir: stagingDir,
+  clean: false,
+  dts: false,
+  minify: false,
+  deps: { neverBundle: [/^react/] },
   logLevel: "warn",
-  build: {
-    lib: {
-      entry: path.join(pkgRoot, "src/createIcon.jsx"),
-      formats: ["es"],
-      fileName: "createIcon",
-    },
-    outDir: stagingDir,
-    emptyOutDir: false,
-    minify: false,
-    rollupOptions: { external: [/^react/] },
-  },
 });
 cpSync(path.join(pkgRoot, "src/createIcon.d.ts"), path.join(stagingDir, "createIcon.d.ts"));
 // One shared declaration for every icon module (package.json maps ./* types here) —
