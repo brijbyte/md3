@@ -107,27 +107,35 @@ rotating through — the outgoing icon rotates and scales out while the incoming
 in, on the emphasized curve. It's just two icons sharing one grid cell (so there's no
 layout shift) plus a transition; drop this into any project:
 
+```html
+<span class="icon-swap" data-swapped>
+  <YourFirstIcon class="icon1" />
+  <YourSecondIcon class="icon2" />
+</span>
+```
+
 ```css
 .icon-swap {
   display: inline-grid;
   place-items: center;
 }
-.icon-swap > * {
+.icon1,
+.icon2 {
   grid-area: 1 / 1; /* stack both icons in the same cell */
   transition:
     transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized),
     opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 /* Second icon waits rotated out; toggle [data-swapped] to cross them over. */
-.icon-swap > :nth-child(2) {
+.icon2 {
   transform: rotate(-90deg) scale(0);
   opacity: 0;
 }
-.icon-swap[data-swapped] > :nth-child(1) {
+.icon-swap[data-swapped] .icon1 {
   transform: rotate(90deg) scale(0);
   opacity: 0;
 }
-.icon-swap[data-swapped] > :nth-child(2) {
+.icon-swap[data-swapped] .icon2 {
   transform: none;
   opacity: 1;
 }
@@ -141,7 +149,8 @@ instantly:
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .icon-swap > * {
+  .icon1,
+  .icon2 {
     transition: none;
   }
 }

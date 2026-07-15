@@ -24,17 +24,17 @@
 
 /* First icon shown by default; second waiting rotated out. Both rotate the same
    way through the swap so the motion reads as one continuous turn. */
-.icon-swap-item:nth-child(2) {
+.icon-swap-2 {
   transform: rotate(-90deg) scale(0);
   opacity: 0;
 }
 
-.icon-swap[data-swapped] .icon-swap-item:nth-child(1) {
+.icon-swap[data-swapped] .icon-swap-1 {
   transform: rotate(90deg) scale(0);
   opacity: 0;
 }
 
-.icon-swap[data-swapped] .icon-swap-item:nth-child(2) {
+.icon-swap[data-swapped] .icon-swap-2 {
   transform: rotate(0) scale(1);
   opacity: 1;
 }

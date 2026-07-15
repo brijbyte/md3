@@ -21,8 +21,8 @@ export function IconSwap({
       data-swapped={swapped || undefined}
       aria-hidden
     >
-      <span className="icon-swap-item">{children[0]}</span>
-      <span className="icon-swap-item">{children[1]}</span>
+      <span className="icon-swap-item icon-swap-1">{children[0]}</span>
+      <span className="icon-swap-item icon-swap-2">{children[1]}</span>
     </span>
   );
 }
