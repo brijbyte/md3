@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { Roboto_Mono, Roboto_Flex } from "next/font/google";
 import type * as React from "react";
 import { NavigationProgress } from "../components/NavigationProgress";
+import { SkipLink } from "../components/SkipLink";
 import { HOME } from "../nav";
 
 export const metadata: Metadata = {
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-screen antialiased bg-background text-on-background font-plain text-body-large">
+        <SkipLink />
         <NavigationProgress />
         {children}
       </body>

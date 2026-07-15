@@ -36,7 +36,7 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
   if (!route) throw new Error(`DocsPage: unknown route "${pathname}"`);
   return (
     <>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1" id="main-content">
         <div className="mx-auto max-w-220 px-6 pt-6 pb-24">
           {/* Below xl the TOC rail (and its ThemeToggle) is hidden, so the
               toggle rides in this header instead. */}

@@ -6,7 +6,7 @@ import { ShowcaseFabMenu } from "@/components/ShowcaseFabMenu";
 export default function ShowcaseLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {children}
+      <main id="main-content">{children}</main>
       <ShowcaseFabMenu />
     </>
   );

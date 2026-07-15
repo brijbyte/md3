@@ -26,7 +26,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           <ThemeToggle />
         </div>
       </header>
-      {children}
+      <main id="main-content">{children}</main>
       <footer className="mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-outline-variant pt-8">
         <Typography as="span" variant="body-medium" className="text-on-surface-variant">
           MD3 React — Material Design 3 for React, built on Base UI.

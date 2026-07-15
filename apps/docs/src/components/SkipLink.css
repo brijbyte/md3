@@ -1,0 +1,18 @@
+/* Off-screen until focused (first tab stop), then slides into view above
+   everything else — same pattern as Google Search's "Skip to main content". */
+.docs-skip-link {
+  position: fixed;
+  top: -48px;
+  left: 8px;
+  z-index: var(--md-ref-z-index-popover);
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.docs-skip-link:focus-visible {
+  top: 8px;
+}
