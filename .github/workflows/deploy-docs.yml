@@ -46,6 +46,15 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Next.js incremental build cache for the docs static export.
+      - name: Cache Next.js build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: apps/docs/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'apps/docs/src/**', 'apps/docs/next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
+
       # Library + icons dist, then the static docs export to apps/docs/out/.
       - name: Build
         run: pnpm build

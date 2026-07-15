@@ -52,6 +52,16 @@ jobs:
         if: always()
         run: pnpm lint
 
+      # Next.js incremental build cache for the docs static export.
+      - name: Cache Next.js build
+        if: always()
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: apps/docs/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'apps/docs/src/**', 'apps/docs/next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
+
       # Build before Typecheck: tsc needs the build-time codegen (token typings,
       # *.module.css.d.ts) and the docs app typechecks against the built dist.
       - name: Build
