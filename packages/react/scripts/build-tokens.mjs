@@ -115,6 +115,11 @@ ${colorVars("dark")}
   const twEasings = Object.keys(tokens.motion)
     .filter((name) => name.startsWith("easing-"))
     .map((name) => twLine(`ease-${name.replace(/^easing-/, "")}`, `md-sys-motion-${name}`));
+  // duration-* utilities read the --transition-duration-* namespace (v4), so
+  // `duration-medium4` resolves --transition-duration-medium4.
+  const twDurations = Object.keys(tokens.motion)
+    .filter((name) => name.startsWith("duration-"))
+    .map((name) => twLine(`transition-${name}`, `md-sys-motion-${name}`));
   // z-index ref tokens are not exposed as Tailwind utilities — v4 has no z-index theme
   // namespace, so they'd be inert. Consume them directly via var(--md-ref-z-index-*).
 
@@ -137,6 +142,7 @@ ${[
   ...twShadows,
   "  /* motion */",
   ...twEasings,
+  ...twDurations,
 ].join("\n")}
 }
 `;
