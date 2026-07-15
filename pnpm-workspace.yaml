@@ -6,7 +6,12 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: false
+  # Only wrangler deploy/versions upload runs (bundles + uploads); no local runtime.
+  workerd: false
 engineStrict: true
+# Refuse versions published < 3 days ago (in minutes) — protects against
+# freshly-published malicious releases. Excludes below opt specific pins back in.
+minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   - "@yuku-parser/binding-darwin-arm64@0.6.3"
   - "@yuku-parser/binding-darwin-x64@0.6.3"
