@@ -265,8 +265,8 @@ so re-runs are safe. The two packages are versioned independently.
 Docs deploy: pushing/moving the `docs` tag (`git tag -f docs && git push -f origin docs`)
 triggers `.github/workflows/deploy-docs.yml`, which builds the static export and deploys
 it to Cloudflare Workers static assets (`apps/docs/wrangler.jsonc`, worker `md3-docs`).
-PRs get preview deploys at `preview-<n>.md3.brijbyte.com` (per-PR worker
-`md3-docs-pr-<n>`, `preview-docs.yml`; deleted on PR close by `preview-docs-cleanup.yml`).
+PRs get preview deploys as non-production versions of the `md3-docs` worker
+(`preview-docs.yml`, workers.dev preview URLs commented on the PR; no cleanup needed).
 
 ## Style rules
 

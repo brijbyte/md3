@@ -23,4 +23,3 @@ apps/docs/next-env.d.ts
 *.tsbuildinfo
 apps/docs/public/search-index*.json
 apps/docs/.search-index/
-apps/docs/wrangler.preview.jsonc

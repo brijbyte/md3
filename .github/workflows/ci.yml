@@ -63,9 +63,10 @@ jobs:
         run: pnpm typecheck
 
       # Vitest browser mode drives a real chromium via Playwright.
+      # playwright lives in packages/react (vitest browser provider), not the root.
       - name: Install Playwright chromium
         if: always()
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm --filter @brijbyte/md3-react exec playwright install --with-deps chromium
 
       - name: Test
         if: always()

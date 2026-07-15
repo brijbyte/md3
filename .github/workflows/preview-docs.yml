@@ -1,13 +1,10 @@
 name: Preview docs
 
-# Deploys the PR's docs build as its own worker (md3-docs-pr-<n>) with the
-# custom domain preview-<n>.md3.brijbyte.com, and comments the URL on the
-# PR. Production (md3.brijbyte.com) only deploys via the `docs` tag. The
-# worker + domain are deleted by preview-docs-cleanup.yml when the PR closes.
+# Uploads the PR's docs build as a non-production version of the md3-docs
+# worker (`wrangler versions upload`) and comments its workers.dev preview
+# URL on the PR. Production and md3.brijbyte.com are untouched — only the
+# `docs` tag deploys, and versions need no cleanup (they just age out).
 # Skipped for fork PRs (no access to the Cloudflare secrets).
-#
-# TLS: the zone's cert already carries a *.md3.brijbyte.com SAN, so these
-# hostnames get valid HTTPS with no extra certificate setup (verified).
 
 on:
   pull_request:
@@ -51,40 +48,33 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Per-PR worker config (mirrors wrangler.jsonc apart from name + domain).
-      - name: Deploy preview worker
+      - name: Upload preview version
+        id: upload
         working-directory: apps/docs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PR: ${{ github.event.pull_request.number }}
         run: |
-          cat > wrangler.preview.jsonc <<EOF
-          {
-            "name": "md3-docs-pr-$PR",
-            "compatibility_date": "2026-07-15",
-            "routes": [{ "pattern": "preview-$PR.md3.brijbyte.com", "custom_domain": true }],
-            "workers_dev": false,
-            "preview_urls": false,
-            "assets": {
-              "directory": "./out",
-              "html_handling": "auto-trailing-slash",
-              "not_found_handling": "404-page"
-            }
-          }
-          EOF
-          pnpm dlx wrangler@4 deploy --config wrangler.preview.jsonc
+          pnpm dlx wrangler@4 versions upload \
+            --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
+            | tee upload.log
+          URL="$(grep -Eo 'https://[a-z0-9.-]+\.workers\.dev' upload.log | tail -1)"
+          if [ -z "$URL" ]; then
+            echo "::error::No preview URL in wrangler output."; exit 1
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       # One sticky comment per PR, updated on every push.
       - name: Comment preview URL
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ steps.upload.outputs.url }}
           SHA: ${{ github.event.pull_request.head.sha }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           MARKER="<!-- preview-docs -->"
           BODY="$MARKER
-          **Docs preview:** https://preview-$PR.md3.brijbyte.com (for $SHA)"
+          **Docs preview:** $URL (for $SHA)"
           COMMENT_ID="$(gh api "repos/${{ github.repository }}/issues/$PR/comments" \
             --jq "map(select(.body | startswith(\"$MARKER\"))) | .[0].id // empty")"
           if [ -n "$COMMENT_ID" ]; then
