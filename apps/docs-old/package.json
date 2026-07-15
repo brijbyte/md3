@@ -27,7 +27,7 @@
     "@vitejs/plugin-rsc": "^0.5.27",
     "esbuild": "^0.28.1",
     "rsc-html-stream": "^0.0.7",
-    "satteri": "^0.9.4",
+    "satteri": "^0.9.5",
     "shiki": "^4.3.0",
     "tailwindcss": "^4.3.2",
     "vite-plugin-satteri": "^0.2.14"
