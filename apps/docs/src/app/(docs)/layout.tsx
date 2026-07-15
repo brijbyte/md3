@@ -12,7 +12,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="mx-auto flex min-h-screen max-w-360">
       <aside className="sticky top-0 hidden h-screen w-70 shrink-0 flex-col p-3 md:flex">
-        <div className="flex gap-2 justify-between items-center px-2">
+        <div className="flex gap-2 justify-between items-center px-2 py-3">
           <Typography as={Link} variant="title-large" href="/" className="shrink-0 grow">
             MD3 React
           </Typography>

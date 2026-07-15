@@ -1,7 +1,7 @@
 import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@/ui/typography";
-import { SearchDialog, SearchIconButton } from "@/components/SearchDialog";
+import { SearchDialog, SearchButton } from "@/components/SearchDialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const FOOTER_LINKS = [
@@ -22,7 +22,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           MD3 React
         </Typography>
         <div className="flex items-center gap-2">
-          <SearchIconButton />
+          <SearchButton />
           <ThemeToggle />
         </div>
       </header>
