@@ -5,6 +5,8 @@
   "name": "md3-docs",
   "compatibility_date": "2026-07-15",
   "routes": [{ "pattern": "md3.brijbyte.com", "custom_domain": true }],
+  // workers.dev preview URLs for PR versions (wrangler versions upload).
+  "preview_urls": true,
   "assets": {
     "directory": "./out",
     "html_handling": "auto-trailing-slash",
