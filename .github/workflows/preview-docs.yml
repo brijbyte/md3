@@ -48,6 +48,7 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # The alias gives a stable per-PR URL: pr-<n>-md3-docs.<account>.workers.dev.
       - name: Upload preview version
         id: upload
         working-directory: apps/docs
@@ -56,11 +57,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           pnpm dlx wrangler@4 versions upload \
+            --preview-alias "pr-${{ github.event.pull_request.number }}" \
             --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
             | tee upload.log
-          URL="$(grep -Eo 'https://[a-z0-9.-]+\.workers\.dev' upload.log | tail -1)"
+          URL="$(grep -i 'Preview Alias URL' upload.log | grep -Eo 'https://[a-z0-9.-]+\.workers\.dev' | tail -1)"
           if [ -z "$URL" ]; then
-            echo "::error::No preview URL in wrangler output."; exit 1
+            echo "::error::No preview alias URL in wrangler output."; exit 1
           fi
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
