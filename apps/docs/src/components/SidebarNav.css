@@ -22,6 +22,13 @@
     background: transparent;
   }
 
+  /* Smooth the hover/active state-layer swap (MD3 standard easing, short dur). */
+  .docs-nav-link {
+    transition:
+      background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+      color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  }
+
   @supports not selector(::-webkit-scrollbar) {
     .docs-nav-scroll {
       scrollbar-width: thin;

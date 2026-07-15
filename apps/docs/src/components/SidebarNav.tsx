@@ -42,7 +42,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
       variant="label-large"
       href={item.path}
       aria-current={active ? "page" : undefined}
-      className={`flex h-14 items-center gap-3 rounded-full px-4 font-brand ${
+      className={`docs-nav-link flex h-14 items-center gap-3 rounded-full px-4 font-brand ${
         active
           ? "bg-secondary-container text-on-secondary-container"
           : "text-on-surface-variant hover:bg-on-surface/8"

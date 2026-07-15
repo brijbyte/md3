@@ -1,0 +1,46 @@
+/* Rotate-through icon swap (see IconSwap.tsx). Both icons stack in one grid cell;
+   the swap rotates + scales one out and the other in with MD3 emphasized easing. */
+.icon-swap {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.icon-swap-item {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  inline-size: 100%;
+  block-size: 100%;
+  transition:
+    transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.icon-swap-item > * {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* First icon shown by default; second waiting rotated out. Both rotate the same
+   way through the swap so the motion reads as one continuous turn. */
+.icon-swap-item:nth-child(2) {
+  transform: rotate(-90deg) scale(0);
+  opacity: 0;
+}
+
+.icon-swap[data-swapped] .icon-swap-item:nth-child(1) {
+  transform: rotate(90deg) scale(0);
+  opacity: 0;
+}
+
+.icon-swap[data-swapped] .icon-swap-item:nth-child(2) {
+  transform: rotate(0) scale(1);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-swap-item {
+    transition: none;
+  }
+}

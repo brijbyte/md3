@@ -1,0 +1,12 @@
+/* The theme toggle drives its IconSwap from the root [data-theme] rather than a
+   `swapped` prop, so the correct icon is painted from the inline theme script
+   before hydration (no flash). Light = moon (first icon); dark = sun (second). */
+[data-theme="dark"] .theme-toggle-icon .icon-swap-item:nth-child(1) {
+  transform: rotate(90deg) scale(0);
+  opacity: 0;
+}
+
+[data-theme="dark"] .theme-toggle-icon .icon-swap-item:nth-child(2) {
+  transform: rotate(0) scale(1);
+  opacity: 1;
+}

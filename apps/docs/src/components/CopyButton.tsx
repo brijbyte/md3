@@ -4,6 +4,7 @@ import CheckIcon from "@brijbyte/md3-icons/outlined/Check";
 import ContentCopyIcon from "@brijbyte/md3-icons/outlined/ContentCopy";
 import { IconButton, type IconButtonSize } from "@/ui/icon-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
+import { IconSwap } from "./IconSwap";
 
 // Copies `text` to the clipboard, flashing a check icon as confirmation.
 export function CopyButton({
@@ -35,7 +36,10 @@ export function CopyButton({
               timer.current = window.setTimeout(() => setCopied(false), 2000);
             }}
           >
-            {copied ? <CheckIcon /> : <ContentCopyIcon />}
+            <IconSwap swapped={copied}>
+              <ContentCopyIcon />
+              <CheckIcon />
+            </IconSwap>
           </IconButton>
         }
       />

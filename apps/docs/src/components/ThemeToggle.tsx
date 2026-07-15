@@ -6,6 +6,8 @@ import { Menu, MenuContent, MenuRadioGroup, MenuRadioItem, MenuTrigger } from "@
 import MoonIcon from "@brijbyte/md3-icons/outlined/DarkMode";
 import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 import ArrowDownIcon from "@brijbyte/md3-icons/outlined/KeyboardArrowDown";
+import { IconSwap } from "./IconSwap";
+import "./ThemeToggle.css";
 
 type Theme = "light" | "dark";
 
@@ -65,19 +67,17 @@ export function ThemeToggle() {
 
   return (
     <SplitButton variant="filled" size="xsmall">
-      {/* Icons swap via CSS, not state: the static HTML is theme-agnostic,
-          so hydration matches whatever theme the inline script applied. */}
       <SplitButtonAction
         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         icon={
-          <>
-            <MoonIcon className="dark:hidden" />
-            <SunIcon className="hidden dark:inline" />
-          </>
+          <IconSwap className="theme-toggle-icon">
+            <MoonIcon />
+            <SunIcon />
+          </IconSwap>
         }
       >
-        <span className="dark:hidden">Dark</span>
-        <span className="hidden dark:inline">Light</span>
+        <span className="dark:hidden font-mono">Dark&nbsp;</span>
+        <span className="hidden dark:inline font-mono">Light</span>
       </SplitButtonAction>
       <Menu>
         <MenuTrigger render={<SplitButtonMenu aria-label="Choose color theme" />}>
@@ -96,6 +96,7 @@ export function ThemeToggle() {
                     style={{ backgroundColor: seed }}
                   />
                 }
+                className="font-mono"
               >
                 {label}
               </MenuRadioItem>
