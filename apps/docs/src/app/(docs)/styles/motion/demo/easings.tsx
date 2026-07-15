@@ -18,13 +18,12 @@ const EASINGS = [
 ];
 
 export default function EasingsDemo() {
-  // Bumping the key remounts the dots, restarting their CSS animation.
-  const [run, setRun] = React.useState(0);
+  const [playing, setPlaying] = React.useState(true);
   return (
-    <div className="demo-motion">
+    <div className="demo-motion" data-playing={playing}>
       <div className="demo-motion-toolbar">
-        <Button variant="filled" onClick={() => setRun((r) => r + 1)}>
-          Play
+        <Button variant="filled" onClick={() => setPlaying((p) => !p)}>
+          {playing ? "Pause" : "Play"}
         </Button>
       </div>
       <div className="demo-motion-tracks">
@@ -32,7 +31,7 @@ export default function EasingsDemo() {
           <div key={e.token} className="demo-motion-track">
             <span className="demo-motion-label">{e.label}</span>
             <div className="demo-motion-rail">
-              <span key={run} className="demo-motion-dot" data-ease={e.token} />
+              <span className="demo-motion-dot" data-ease={e.token} />
             </div>
           </div>
         ))}

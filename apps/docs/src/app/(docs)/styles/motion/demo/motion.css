@@ -12,20 +12,25 @@
 }
 
 .demo-motion-track {
-  display: grid;
-  grid-template-columns: minmax(0, 200px) 1fr;
+  display: flex;
   align-items: center;
   gap: 16px;
 }
 
 .demo-motion-label {
+  flex: none;
+  inline-size: 150px;
   font-family: var(--md-ref-typeface-plain);
   font-size: var(--md-sys-typescale-label-large-size);
   color: var(--md-sys-color-on-surface-variant);
 }
 
+/* Definite width (not %/fr) so the fit-content demo wrapper sizes around it —
+   the absolutely-positioned dot contributes no intrinsic width of its own. */
 .demo-motion-rail {
   position: relative;
+  flex: none;
+  inline-size: clamp(160px, 46vw, 380px);
   block-size: 28px;
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--md-sys-color-surface-container-highest);
@@ -38,9 +43,14 @@
   block-size: 28px;
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--md-sys-color-primary);
-  /* Defaults; per-track data attributes override the curve / time below. */
-  animation: demo-motion-slide var(--md-sys-motion-duration-long2)
-    var(--md-sys-motion-easing-emphasized) both;
+  /* Ping-pong forever so the curve is always on show; per-track data attributes
+     override the curve (easings demo) or the time (durations demo) below. */
+  animation: demo-motion-slide var(--md-sys-motion-duration-long4)
+    var(--md-sys-motion-easing-emphasized) infinite alternate;
+}
+
+.demo-motion[data-playing="false"] .demo-motion-dot {
+  animation-play-state: paused;
 }
 
 /* Easing overrides (easings demo). */
@@ -86,6 +96,7 @@
   animation-duration: var(--md-sys-motion-duration-long4);
 }
 
+/* Travel the full rail: 100% is the rail width, minus the dot's own width. */
 @keyframes demo-motion-slide {
   from {
     inset-inline-start: 0;
@@ -98,6 +109,5 @@
 @media (prefers-reduced-motion: reduce) {
   .demo-motion-dot {
     animation: none;
-    inset-inline-start: calc(100% - 28px);
   }
 }

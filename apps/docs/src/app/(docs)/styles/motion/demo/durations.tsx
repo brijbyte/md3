@@ -17,12 +17,12 @@ const DURATIONS = [
 ];
 
 export default function DurationsDemo() {
-  const [run, setRun] = React.useState(0);
+  const [playing, setPlaying] = React.useState(true);
   return (
-    <div className="demo-motion">
+    <div className="demo-motion" data-playing={playing}>
       <div className="demo-motion-toolbar">
-        <Button variant="filled" onClick={() => setRun((r) => r + 1)}>
-          Play
+        <Button variant="filled" onClick={() => setPlaying((p) => !p)}>
+          {playing ? "Pause" : "Play"}
         </Button>
       </div>
       <div className="demo-motion-tracks">
@@ -32,7 +32,7 @@ export default function DurationsDemo() {
               {d.token} · {d.ms}ms
             </span>
             <div className="demo-motion-rail">
-              <span key={run} className="demo-motion-dot" data-duration={d.token} />
+              <span className="demo-motion-dot" data-duration={d.token} />
             </div>
           </div>
         ))}
