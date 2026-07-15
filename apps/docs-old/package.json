@@ -30,6 +30,6 @@
     "satteri": "^0.9.5",
     "shiki": "^4.3.0",
     "tailwindcss": "^4.3.2",
-    "vite-plugin-satteri": "^0.2.14"
+    "vite-plugin-satteri": "^0.2.15"
   }
 }
