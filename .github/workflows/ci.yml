@@ -62,10 +62,30 @@ jobs:
         if: always()
         run: pnpm typecheck
 
-      # Vitest browser mode drives a real chromium via Playwright.
-      - name: Install Playwright chromium
+      # Vitest browser mode drives a real chromium via Playwright. Cache the
+      # browser binary (keyed on the Playwright version) — the apt system libs
+      # aren't cacheable, so install-deps always runs but the ~130MB browser
+      # download is skipped on a cache hit.
+      - name: Resolve Playwright version
         if: always()
-        run: pnpm exec playwright install --with-deps chromium
+        id: pw
+        run: echo "version=$(grep -m1 -E '^  playwright@' pnpm-lock.yaml | sed -E 's/^  playwright@([0-9.]+):.*/\1/')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        if: always()
+        id: pw-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright system deps
+        if: always()
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Install Playwright chromium
+        if: always() && steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium
 
       - name: Test
         if: always()
