@@ -1,0 +1,13 @@
+// Cloudflare Workers static-assets config for the docs site (md3.brijbyte.com).
+// Deployed by .github/workflows/deploy-docs.yml when the `docs` tag is pushed.
+{
+  "$schema": "https://unpkg.com/wrangler@4/config-schema.json",
+  "name": "md3-docs",
+  "compatibility_date": "2026-07-15",
+  "routes": [{ "pattern": "md3.brijbyte.com", "custom_domain": true }],
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+}
