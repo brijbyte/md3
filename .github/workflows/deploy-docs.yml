@@ -17,12 +17,14 @@ concurrency:
   group: deploy-docs
   cancel-in-progress: false
 
-permissions:
-  contents: read
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
@@ -47,8 +49,6 @@ jobs:
       # Library + icons dist, then the static docs export to apps/docs/out/.
       - name: Build
         run: pnpm build
-        env:
-          NEXT_TELEMETRY_DISABLED: "1"
 
       - name: Deploy to Cloudflare
         working-directory: apps/docs

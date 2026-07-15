@@ -107,7 +107,8 @@ describe("Slider range", () => {
     fireEvent.pointerLeave(thumbB);
     fireEvent.pointerEnter(thumbA);
     expect(await screen.findByText("20")).toBeTruthy();
-    expect(screen.queryByText("80")).toBeNull();
+    // The leave-triggered close is async — await it instead of querying immediately.
+    await waitFor(() => expect(screen.queryByText("80")).toBeNull());
   });
 
   it("opens the bubble and marks data-active only on the thumb actually moving", async () => {
@@ -183,6 +184,8 @@ describe("Slider bubble positioning", () => {
     // With the thumb stationary, re-anchoring is driven by a MutationObserver on the thumb's
     // style — nothing should schedule an animation frame (the old rAF loop ran at 60fps for
     // the whole time the bubble was open, flickering the DOM).
+    // The spy is global: let stragglers from earlier tests' teardown fire before arming it.
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(null))));
     raf.mockClear();
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(raf).not.toHaveBeenCalled();
