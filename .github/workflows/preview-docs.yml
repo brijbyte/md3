@@ -45,6 +45,15 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Next.js incremental build cache for the docs static export.
+      - name: Cache Next.js build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: apps/docs/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'apps/docs/src/**', 'apps/docs/next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
+
       - name: Build
         run: pnpm build
 
@@ -56,7 +65,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          pnpm dlx wrangler@4 versions upload \
+          pnpm exec wrangler versions upload \
             --preview-alias "pr-${{ github.event.pull_request.number }}" \
             --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
             | tee upload.log

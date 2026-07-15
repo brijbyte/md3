@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":dependencyDashboard",
+    ":semanticCommits"
+  ],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "prConcurrentLimit": 8,
+  "prHourlyLimit": 4,
+  "platformAutomerge": true,
+  "minimumReleaseAge": "3 days",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Automerge patch bumps for all deps once CI passes",
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Automerge minor bumps for devDependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": true
+    },
+    {
+      "description": "Group GitHub Actions digest updates into one PR",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Never automerge major bumps — always review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}
