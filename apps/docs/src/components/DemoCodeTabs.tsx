@@ -13,7 +13,6 @@ import SunIcon from "@brijbyte/md3-icons/outlined/LightMode";
 import RtlIcon from "@brijbyte/md3-icons/outlined/FormatTextdirectionRToL";
 import LtrIcon from "@brijbyte/md3-icons/outlined/FormatTextdirectionLToR";
 import { CopyButton } from "./CopyButton";
-import { Delayed } from "./Delayed";
 import { LoadingIndicator } from "@/ui/loading-indicator";
 import { useDemoControls } from "./DemoControls";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/ui/tooltip";
