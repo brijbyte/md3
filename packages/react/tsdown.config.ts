@@ -88,4 +88,5 @@ export default defineConfig({
       await emitCssModuleDts();
     },
   },
+  logLevel: "warn",
 });
