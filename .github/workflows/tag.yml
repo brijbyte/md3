@@ -1,11 +1,14 @@
 name: Create tag
 
 # Cut release tags straight from the GitHub UI (Actions → Create tag → Run workflow),
-# so you don't need a local checkout. Pushing a tag triggers the matching workflow:
+# so you don't need a local checkout. After tagging, this dispatches the matching
+# downstream workflow directly:
 #   - docs tag → deploy-docs.yml (Cloudflare deploy)
 #   - @brijbyte/md3-<pkg>@<version> tag → publish.yml (npm publish + release)
-# The `packages` path tags each package at its committed package.json version, skipping
-# any whose tag already exists — so it only tags packages whose version was bumped.
+# We must dispatch rather than rely on the tag push: a push made with GITHUB_TOKEN
+# does NOT trigger other workflows (GitHub's recursion guard), but workflow_dispatch
+# is exempt. The `packages` path tags each package at its committed package.json
+# version, skipping any whose tag already exists — so it only tags bumped packages.
 
 on:
   workflow_dispatch:
@@ -29,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write # push tags
+      actions: write # dispatch the downstream deploy/publish workflows
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -39,19 +45,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # `docs` is a floating tag — force-move it to this ref and force-push.
+      # `docs` is a floating tag — force-move it to this ref, then deploy.
       - name: Tag docs
         if: contains(fromJSON('["docs", "both"]'), github.event.inputs.target)
         run: |
           git tag -f docs
           git push -f origin docs
+          gh workflow run deploy-docs.yml --ref docs
+          echo "::notice::Moved docs tag — deploy-docs dispatched."
 
       # Tag each package at its committed version; skip ones already tagged.
       - name: Tag packages
         if: contains(fromJSON('["packages", "both"]'), github.event.inputs.target)
         run: |
           set -euo pipefail
-          for DIR in packages/react packages/icons; do
+          for PKG_JSON in packages/*/package.json; do
+            DIR="$(dirname "$PKG_JSON")"
             NAME="$(node -p "require('./$DIR/package.json').name")"
             VERSION="$(node -p "require('./$DIR/package.json').version")"
             TAG="$NAME@$VERSION"
@@ -66,5 +75,7 @@ jobs:
 
             git tag -a "$TAG" -m "$TAG"
             git push origin "$TAG"
-            echo "::notice::Tagged $TAG — publish workflow will run."
+            # publish.yml derives the package/version from the tag ref it runs on.
+            gh workflow run publish.yml --ref "$TAG"
+            echo "::notice::Tagged $TAG — publish dispatched."
           done
