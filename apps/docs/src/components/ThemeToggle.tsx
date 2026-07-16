@@ -11,6 +11,13 @@ import "./ThemeToggle.css";
 
 type Theme = "light" | "dark";
 
+declare global {
+  interface Window {
+    // Defined by the root layout's theme init script.
+    __syncFavicon?: (theme: Theme) => void;
+  }
+}
+
 // Mirrors apps/docs/scripts/build-color-themes.mjs's SEEDS map ("default" is
 // the library's baseline purple — no override CSS needed for it).
 export const COLOR_THEMES = [
@@ -34,6 +41,8 @@ export function useTheme() {
 
   React.useEffect(() => {
     document.documentElement.dataset.theme = theme;
+    // oxlint-disable-next-line no-underscore-dangle
+    window.__syncFavicon?.(theme);
     if (theme === "dark") {
       localStorage.removeItem("theme");
     } else {

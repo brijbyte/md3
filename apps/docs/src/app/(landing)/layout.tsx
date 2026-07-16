@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Typography } from "@/ui/typography";
 import { SearchDialog, SearchButton } from "@/components/SearchDialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/Logo";
 
 const FOOTER_LINKS = [
   { label: "GitHub", href: "https://github.com/brijbyte/md3" },
@@ -18,8 +19,9 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
   return (
     <div className="mx-auto max-w-7xl px-6 pt-6 pb-12">
       <header className="flex items-center justify-between gap-4 pb-12">
-        <Typography as={Link} variant="title-large" href="/">
-          MD3 React
+        <Typography as={Link} variant="title-large" href="/" className="flex items-center gap-2">
+          <Logo size={28} />
+          <span>MD3 React</span>
         </Typography>
         <div className="flex items-center gap-2">
           <SearchButton />
