@@ -31,6 +31,28 @@ import { useIsHydrated } from "@/utils/useIsHydrated";
 // mounted, and lets the ⌘K shortcut open it imperatively.
 const searchDialog = BaseDialog.createHandle();
 
+// Tracks the visible viewport height (shrinks when the software keyboard is
+// up) so the compact full-screen dialog can size itself to the remaining area.
+function useVisualViewportVar() {
+  React.useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const update = () =>
+      document.documentElement.style.setProperty("--docs-search-vvh", `${viewport.height}px`);
+    update();
+    viewport.addEventListener("resize", update);
+    return () => {
+      viewport.removeEventListener("resize", update);
+      document.documentElement.style.removeProperty("--docs-search-vvh");
+    };
+  }, []);
+}
+
+function VisualViewportVar() {
+  useVisualViewportVar();
+  return null;
+}
+
 export function SearchDialog() {
   const [query, setQuery] = React.useState("");
   const [engine, setEngine] = React.useState<MiniSearch<SearchDoc> | null>(null);
@@ -96,6 +118,8 @@ export function SearchDialog() {
   return (
     <Dialog handle={searchDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="docs-search-dialog" aria-label="Search documentation">
+        {/* Mounts only while the dialog is open. */}
+        <VisualViewportVar />
         <Autocomplete.Root
           items={rows}
           filter={null}
@@ -124,7 +148,17 @@ export function SearchDialog() {
                     >
                       <CloseIcon />
                     </Autocomplete.Clear>
-                  ) : undefined
+                  ) : (
+                    // Compact-only (hidden by CSS on ≥600px): full-screen search
+                    // view needs an explicit close — no scrim click, no Escape.
+                    <IconButton
+                      className="docs-search-close"
+                      aria-label="Close search"
+                      onClick={() => searchDialog.close()}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  )
                 }
                 placeholder="Search the docs"
                 aria-label="Search the docs"
