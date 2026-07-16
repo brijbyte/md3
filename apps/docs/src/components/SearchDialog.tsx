@@ -56,6 +56,7 @@ function VisualViewportVar() {
 export function SearchDialog() {
   const [query, setQuery] = React.useState("");
   const [engine, setEngine] = React.useState<MiniSearch<SearchDoc> | null>(null);
+  const savedScroll = React.useRef<{ x: number; y: number } | null>(null);
 
   React.useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -83,8 +84,14 @@ export function SearchDialog() {
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
+      // Mobile browsers pan the page when the software keyboard opens for the
+      // autofocused input and leave it panned after close; the page is
+      // scroll-locked while open, so any offset delta is that pan — undo it.
+      const saved = savedScroll.current;
+      if (saved) requestAnimationFrame(() => window.scrollTo(saved.x, saved.y));
       return;
     }
+    savedScroll.current = { x: window.scrollX, y: window.scrollY };
     setQuery("");
     React.startTransition(() => {
       loadEngine().then(setEngine);
