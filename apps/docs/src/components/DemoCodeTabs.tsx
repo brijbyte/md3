@@ -85,6 +85,15 @@ async function loadFiles(url: string): Promise<DemoFile[]> {
   return res.json();
 }
 
+// Read synchronously: this reveal only ever mounts client-side after a click, so
+// window exists and we get the real value on the first render — no effect delay
+// that would let a frame of animation slip through before it resolves.
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 // Collapsed by default: a toolbar with a centered "Show code" button and the
 // theme/direction toggles at the end (min-h-12 matches the tab strip so the
 // toggles don't move when the toolbar swaps into tabs). Showing code fetches
@@ -133,20 +142,30 @@ export function DemoCodeTabs({ codeUrl }: { codeUrl: string }) {
   );
 }
 
-// Collapsed/loading strip: the library's docked Toolbar, squeezed to the code
-// area's 48dp strip with centered content and the theme/direction toggles
-// pinned at the end, where the expanded tab bar also parks them.
-function DemoToolbar({ children }: { children: React.ReactNode }) {
+// The section's persistent bottom strip: the library's docked Toolbar with
+// centered content (the Show/Hide-code button). It stays put across the toggle
+// so only the code region above it animates. The theme/direction toggles pin to
+// the end while collapsed; expanded they move up into the tab bar, so the
+// expanded toolbar drops them (toggles={false}).
+function DemoToolbar({
+  children,
+  toggles = true,
+}: {
+  children: React.ReactNode;
+  toggles?: boolean;
+}) {
   return (
     <Toolbar
       aria-label="Demo controls"
       className="rounded-b-large relative h-auto min-h-12 justify-center px-2"
     >
       {children}
-      <div className="absolute inset-e-2 flex items-center gap-1">
-        <DemoThemeButton />
-        <DemoDirButton />
-      </div>
+      {toggles && (
+        <div className="absolute inset-e-2 flex items-center gap-1">
+          <DemoThemeButton />
+          <DemoDirButton />
+        </div>
+      )}
     </Toolbar>
   );
 }
@@ -161,14 +180,68 @@ function SuspendingSourceTabs({
   const files = React.use(promise);
   // Empty only on fetch failure, which already collapsed back to the toolbar.
   if (files.length === 0) return null;
-  return <DemoSourceTabs files={files} onHide={onHide} />;
+  return <RevealingSourceTabs files={files} onHide={onHide} />;
+}
+
+// Expands the loaded source tabs into view on the emphasized curve (grid-rows
+// 0fr→1fr + fade) above the persistent toolbar, collapsing the same way before
+// it unmounts — the toolbar stays fixed, so nothing jumps. Overflow is clipped
+// only while animating (data-clip) so the settled panel's tall code can still
+// scroll the page normally.
+function RevealingSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => void }) {
+  // Reduced motion: mount already-open (no 0fr→1fr flip, so no transition can
+  // fire) and never clip. Otherwise mount collapsed and flip open next frame.
+  const [reduced] = React.useState(prefersReducedMotion);
+  const [open, setOpen] = React.useState(reduced);
+  const [clipping, setClipping] = React.useState(!reduced);
+
+  React.useEffect(() => {
+    if (reduced) return;
+    const id = requestAnimationFrame(() => setOpen(true));
+    return () => cancelAnimationFrame(id);
+  }, [reduced]);
+
+  const hide = () => {
+    if (reduced) {
+      onHide();
+      return;
+    }
+    setClipping(true);
+    setOpen(false);
+  };
+
+  const handleTransitionEnd = (e: React.TransitionEvent) => {
+    if (e.target !== e.currentTarget || e.propertyName !== "grid-template-rows") return;
+    if (open) setClipping(false);
+    else onHide();
+  };
+
+  return (
+    <>
+      <div
+        className="demo-code-reveal"
+        data-open={open}
+        data-clip={clipping}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        <div className="demo-code-reveal-inner">
+          <DemoSourceTabs files={files} />
+        </div>
+      </div>
+      <DemoToolbar toggles={false}>
+        <ToolbarButton render={<Button variant="tonal" size="xsmall" onClick={hide} />}>
+          Hide code
+        </ToolbarButton>
+      </DemoToolbar>
+    </>
+  );
 }
 
 // Demo source tabs: one tab per file, panels hold the compile-time Shiki html.
 // Controlled selection so the copy button — floating over the code area —
-// always copies whichever file is active. The sticky "Hide code" button below
-// the code collapses back to the toolbar.
-function DemoSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => void }) {
+// always copies whichever file is active. Collapsing is driven by the toolbar's
+// "Hide code" button below the code.
+function DemoSourceTabs({ files }: { files: DemoFile[] }) {
   const [value, setValue] = React.useState(files[0].name);
   const active = files.find((f) => f.name === value) ?? files[0];
   return (
@@ -204,11 +277,6 @@ function DemoSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () => vo
             />
           </TabPanel>
         ))}
-        <div className="sticky bottom-1 my-1 flex justify-center">
-          <Button variant="tonal" size="xsmall" onClick={onHide}>
-            Hide code
-          </Button>
-        </div>
       </div>
     </Tabs>
   );
