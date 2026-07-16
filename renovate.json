@@ -7,6 +7,7 @@
     ":semanticCommits"
   ],
   "labels": ["dependencies"],
+  "ignorePaths": ["**/node_modules/**", "apps/docs-old/**"],
   "rangeStrategy": "bump",
   "dependencyDashboardTitle": "Renovate Dependency Dashboard",
   "prConcurrentLimit": 8,

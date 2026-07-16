@@ -8,6 +8,7 @@ import { BottomSheet, BottomSheetClose, BottomSheetContent } from "@/ui/bottom-s
 import { FilterChip } from "@/ui/chip";
 import { IconButton } from "@/ui/icon-button";
 import { LoadingIndicator } from "@/ui/loading-indicator";
+import { Delayed } from "@/components/Delayed";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/ui/menu";
 import { SnackbarProvider, useSnackbar } from "@/ui/snackbar";
 import { SplitButton, SplitButtonAction, SplitButtonMenu } from "@/ui/split-button";
@@ -245,7 +246,11 @@ function IconBrowserInner() {
         </>
       ) : (
         <div className="icon-browser-loading">
-          <LoadingIndicator aria-label="Loading icons" />
+          {/* Reserved space holds (min-height); only the spinner is delayed so a
+              quick data fetch never flashes it. */}
+          <Delayed>
+            <LoadingIndicator aria-label="Loading icons" />
+          </Delayed>
         </div>
       )}
 

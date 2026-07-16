@@ -31,3 +31,36 @@
 [data-theme="dark"] .demo-source-tablist {
   --_shadow: color-mix(in srgb, var(--md-sys-color-on-surface) 16%, transparent);
 }
+
+/* Show/hide-code reveal: the loaded source tabs expand on the emphasized curve
+   (grid-rows 0fr→1fr + fade) above the persistent toolbar and collapse the same
+   way before unmounting. The toolbar stays put, so nothing jumps. Overflow is
+   clipped only mid-animation (data-clip) so the settled panel scrolls normally. */
+.demo-code-reveal {
+  display: grid;
+  /* minmax(0, 1fr) caps the track at the section width so long code lines scroll
+     the <pre> (overflow-x-auto) instead of blowing the grid out past the edge. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+}
+.demo-code-reveal[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.demo-code-reveal-inner {
+  min-width: 0;
+  min-height: 0;
+}
+.demo-code-reveal[data-clip="true"] .demo-code-reveal-inner {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-code-reveal {
+    transition: none;
+  }
+}
