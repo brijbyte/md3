@@ -89,8 +89,11 @@ jobs:
           restore-keys: |
             nextjs-${{ runner.os }}-
 
+      # Quiet on success: full log only on failure, warning/error lines otherwise.
       - name: Build
-        run: pnpm build
+        run: |
+          pnpm build > build.log 2>&1 || { cat build.log; exit 1; }
+          grep -iE '(warn|error)' build.log || true
 
       # The alias gives a stable per-PR URL: pr-<n>-md3-docs.<account>.workers.dev.
       - name: Upload preview version
@@ -103,11 +106,14 @@ jobs:
           pnpm exec wrangler versions upload \
             --preview-alias "pr-${{ github.event.pull_request.number }}" \
             --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
-            | tee upload.log
+            > upload.log 2>&1 || { cat upload.log; exit 1; }
+          grep -iE '(warn|error)' upload.log || true
           URL="$(grep -i 'Preview Alias URL' upload.log | grep -Eo 'https://[a-z0-9.-]+\.workers\.dev' | tail -1)"
           if [ -z "$URL" ]; then
+            cat upload.log
             echo "::error::No preview alias URL in wrangler output."; exit 1
           fi
+          echo "Preview: $URL"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       # Same deployment + check row now resolve to the built preview.
