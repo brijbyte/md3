@@ -18,7 +18,7 @@ concurrency:
 permissions:
   contents: read
   deployments: write # PR deployment pointing at logs, then the preview URL
-  statuses: write # "docs-preview" check row whose Details link flips to the preview
+  statuses: write # "Docs preview" check row whose Details link flips to the preview
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
@@ -55,7 +55,7 @@ jobs:
             -f state=in_progress -f log_url="$RUN_URL" > /dev/null
           # Netlify-style check row: Details → build logs for now.
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
-            -f context=docs-preview -f state=pending \
+            -f context="Docs preview" -f state=pending \
             -f description="Building docs preview…" -f target_url="$RUN_URL" > /dev/null
           echo "id=$DEPLOYMENT_ID" >> "$GITHUB_OUTPUT"
           echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
@@ -128,7 +128,7 @@ jobs:
             -f environment_url="$URL" \
             -f log_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
-            -f context=docs-preview -f state=success \
+            -f context="Docs preview" -f state=success \
             -f description="Deploy preview ready" -f target_url="$URL" > /dev/null
 
       - name: Mark deployment failed
@@ -141,6 +141,6 @@ jobs:
             -f state=${{ job.status == 'cancelled' && 'inactive' || 'failure' }} \
             -f log_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
-            -f context=docs-preview -f state=${{ job.status == 'cancelled' && 'pending' || 'failure' }} \
+            -f context="Docs preview" -f state=${{ job.status == 'cancelled' && 'pending' || 'failure' }} \
             -f description="${{ job.status == 'cancelled' && 'Superseded by a newer run' || 'Docs preview build failed' }}" \
             -f target_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
