@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
   tag:
+    name: Create tags and dispatch downstream workflows
     runs-on: ubuntu-latest
     permissions:
       contents: write # push tags

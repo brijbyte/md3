@@ -26,6 +26,7 @@ permissions:
 
 jobs:
   publish:
+    name: Publish packages
     runs-on: ubuntu-latest
     environment: npm-publish # scope the trusted publisher (and any approvals) here
     steps:
