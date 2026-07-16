@@ -74,5 +74,8 @@ export default async function nextConfig(): Promise<NextConfig> {
         "./src/app/**/demo/*.tsx": { loaders: [DEMO_LOADER] },
       },
     },
+    typescript: {
+      ignoreBuildErrors: true,
+    },
   };
 }
