@@ -7,7 +7,7 @@
   "dependencies": {
     "@brijbyte/md3-icons": "latest",
     "@brijbyte/md3-react": "latest",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4.3.2"
   },
   "peerDependencies": {
     "react": "^18 || ^19"
