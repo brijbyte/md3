@@ -1,9 +1,11 @@
 name: Preview docs
 
 # Uploads the PR's docs build as a non-production version of the md3-docs
-# worker (`wrangler versions upload`) and comments its workers.dev preview
-# URL on the PR. Production and md3.brijbyte.com are untouched — only the
-# `docs` tag deploys, and versions need no cleanup (they just age out).
+# worker (`wrangler versions upload`) and surfaces it as a "Docs preview"
+# commit status on the PR: while building, its Details link points at this
+# run's logs; once uploaded, it flips to the workers.dev preview URL.
+# Production and md3.brijbyte.com are untouched — only the `docs` tag
+# deploys, and versions need no cleanup (they just age out).
 # Skipped for fork PRs (no access to the Cloudflare secrets).
 
 on:
@@ -15,7 +17,7 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write # preview-URL comment
+  statuses: write # "Docs preview" check row whose Details link flips to the preview
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
@@ -27,6 +29,20 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
+      # Netlify-style check row: Details → this run's logs while building,
+      # flipped to the preview URL after the upload.
+      - name: Set pending status
+        id: status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
+            -f context="Docs preview" -f state=pending \
+            -f description="Building docs preview…" -f target_url="$RUN_URL" > /dev/null
+          echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
@@ -56,8 +72,11 @@ jobs:
           restore-keys: |
             nextjs-${{ runner.os }}-
 
+      # Quiet on success: full log only on failure, warning/error lines otherwise.
       - name: Build
-        run: pnpm build
+        run: |
+          pnpm build > build.log 2>&1 || { cat build.log; exit 1; }
+          grep -iE '(warn|error)' build.log || true
 
       # The alias gives a stable per-PR URL: pr-<n>-md3-docs.<account>.workers.dev.
       - name: Upload preview version
@@ -70,28 +89,34 @@ jobs:
           pnpm exec wrangler versions upload \
             --preview-alias "pr-${{ github.event.pull_request.number }}" \
             --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
-            | tee upload.log
+            > upload.log 2>&1 || { cat upload.log; exit 1; }
+          grep -iE '(warn|error)' upload.log || true
           URL="$(grep -i 'Preview Alias URL' upload.log | grep -Eo 'https://[a-z0-9.-]+\.workers\.dev' | tail -1)"
           if [ -z "$URL" ]; then
+            cat upload.log
             echo "::error::No preview alias URL in wrangler output."; exit 1
           fi
+          echo "Preview: $URL"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
-      # One sticky comment per PR, updated on every push.
-      - name: Comment preview URL
+      # Same check row now resolves to the built preview.
+      - name: Mark preview ready
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           URL: ${{ steps.upload.outputs.url }}
           SHA: ${{ github.event.pull_request.head.sha }}
-          PR: ${{ github.event.pull_request.number }}
         run: |
-          MARKER="<!-- preview-docs -->"
-          BODY="$MARKER
-          **Docs preview:** $URL (for $SHA)"
-          COMMENT_ID="$(gh api "repos/${{ github.repository }}/issues/$PR/comments" \
-            --jq "map(select(.body | startswith(\"$MARKER\"))) | .[0].id // empty")"
-          if [ -n "$COMMENT_ID" ]; then
-            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$BODY" > /dev/null
-          else
-            gh api "repos/${{ github.repository }}/issues/$PR/comments" -f body="$BODY" > /dev/null
-          fi
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
+            -f context="Docs preview" -f state=success \
+            -f description="Deploy preview ready" -f target_url="$URL" > /dev/null
+
+      - name: Mark preview failed
+        if: (failure() || cancelled()) && steps.status.outputs.run_url != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
+            -f context="Docs preview" -f state=${{ job.status == 'cancelled' && 'pending' || 'failure' }} \
+            -f description="${{ job.status == 'cancelled' && 'Superseded by a newer run' || 'Docs preview build failed' }}" \
+            -f target_url="${{ steps.status.outputs.run_url }}" > /dev/null

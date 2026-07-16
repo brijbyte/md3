@@ -12,6 +12,11 @@
   overflow: hidden;
 }
 
+/* Desktop dismisses via Escape / scrim click; the close button is compact-only. */
+.docs-search-close {
+  display: none;
+}
+
 /* Header field, docked-search-view style: square the filled container and
    drop its fill so only the input row + active indicator (the divider) show. */
 .docs-search-field {
@@ -68,4 +73,32 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Compact windows: present as the MD3 full-screen search view (same treatment
+   as the library dialog's full-screen variant below 600px). */
+@media (max-width: 599.98px) {
+  .md3-dialog-viewport:has(.docs-search-dialog) {
+    padding: 0;
+  }
+
+  .docs-search-dialog {
+    margin-top: 0;
+    width: 100%;
+    /* Visible viewport height, so the software keyboard doesn't cover the
+       list; falls back to the layout viewport when the API is unavailable. */
+    height: var(--docs-search-vvh, 100%);
+    border-radius: 0;
+    background: var(--md-sys-color-surface);
+    box-shadow: none;
+  }
+
+  .docs-search-close {
+    display: inline-flex;
+  }
+
+  .docs-search-results {
+    max-height: none;
+    flex: 1;
+  }
 }

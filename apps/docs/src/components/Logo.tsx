@@ -1,0 +1,46 @@
+import type * as React from "react";
+
+interface LogoProps extends React.SVGProps<SVGSVGElement> {
+  size?: number | string;
+}
+
+// Same mark as the src/assets logo SVGs, but filled with the primary token so
+// it follows both the light/dark theme and the selected color theme.
+export function Logo({ size = 24, ...props }: LogoProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 512 512"
+      width={size}
+      height={size}
+      {...props}
+    >
+      <path
+        fill="var(--md-sys-color-primary)"
+        fillRule="evenodd"
+        d="
+M 496.000 256.000
+C 496.000 329.500, 403.432 348.984, 376.208 376.208
+C 348.984 403.432, 329.500 496.000, 256.000 496.000
+C 182.500 496.000, 163.016 403.432, 135.792 376.208
+C 108.568 348.984, 16.000 329.500, 16.000 256.000
+C 16.000 182.500, 108.568 163.016, 135.792 135.792
+C 163.016 108.568, 182.500 16.000, 256.000 16.000
+C 329.500 16.000, 348.984 108.568, 376.208 135.792
+C 403.432 163.016, 496.000 182.500, 496.000 256.000
+Z
+M 321.364 256.000
+A 150.0 58.0 120 0 1 288.682 312.607
+A 150.0 58.0 0 0 1 223.318 312.607
+A 150.0 58.0 60 0 1 190.636 256.000
+A 150.0 58.0 120 0 1 223.318 199.393
+A 150.0 58.0 0 0 1 288.682 199.393
+A 150.0 58.0 60 0 1 321.364 256.000
+M 294.000 256.000
+A 38.0 38.0 0 1 0 218.000 256.000
+A 38.0 38.0 0 1 0 294.000 256.000
+"
+      />
+    </svg>
+  );
+}
