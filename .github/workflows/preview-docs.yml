@@ -1,11 +1,11 @@
 name: Preview docs
 
 # Uploads the PR's docs build as a non-production version of the md3-docs
-# worker (`wrangler versions upload`) and surfaces it as a GitHub deployment
-# on the PR: while building, "View deployment" points at this run's logs;
-# once uploaded, it points at the workers.dev preview URL. Production and
-# md3.brijbyte.com are untouched — only the `docs` tag deploys, and versions
-# need no cleanup (they just age out).
+# worker (`wrangler versions upload`) and surfaces it as a "Docs preview"
+# commit status on the PR: while building, its Details link points at this
+# run's logs; once uploaded, it flips to the workers.dev preview URL.
+# Production and md3.brijbyte.com are untouched — only the `docs` tag
+# deploys, and versions need no cleanup (they just age out).
 # Skipped for fork PRs (no access to the Cloudflare secrets).
 
 on:
@@ -17,7 +17,6 @@ concurrency:
 
 permissions:
   contents: read
-  deployments: write # PR deployment pointing at logs, then the preview URL
   statuses: write # "Docs preview" check row whose Details link flips to the preview
 
 env:
@@ -30,34 +29,18 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      # Netlify-style deployment entry on the PR: in_progress now (details →
-      # this run's logs), flipped to the preview URL after the upload.
-      - name: Start GitHub deployment
-        id: deployment
+      # Netlify-style check row: Details → this run's logs while building,
+      # flipped to the preview URL after the upload.
+      - name: Set pending status
+        id: status
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ github.event.pull_request.head.sha }}
-          PR: ${{ github.event.pull_request.number }}
         run: |
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          DEPLOYMENT_ID="$(gh api "repos/$GITHUB_REPOSITORY/deployments" --jq .id --input - <<EOF
-          {
-            "ref": "$SHA",
-            "environment": "docs-preview/pr-$PR",
-            "description": "Docs preview for PR #$PR",
-            "auto_merge": false,
-            "transient_environment": true,
-            "required_contexts": []
-          }
-          EOF
-          )"
-          gh api "repos/$GITHUB_REPOSITORY/deployments/$DEPLOYMENT_ID/statuses" \
-            -f state=in_progress -f log_url="$RUN_URL" > /dev/null
-          # Netlify-style check row: Details → build logs for now.
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
             -f context="Docs preview" -f state=pending \
             -f description="Building docs preview…" -f target_url="$RUN_URL" > /dev/null
-          echo "id=$DEPLOYMENT_ID" >> "$GITHUB_OUTPUT"
           echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -116,31 +99,24 @@ jobs:
           echo "Preview: $URL"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
-      # Same deployment + check row now resolve to the built preview.
-      - name: Mark deployment succeeded
+      # Same check row now resolves to the built preview.
+      - name: Mark preview ready
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           URL: ${{ steps.upload.outputs.url }}
           SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/deployments/${{ steps.deployment.outputs.id }}/statuses" \
-            -f state=success \
-            -f environment_url="$URL" \
-            -f log_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
             -f context="Docs preview" -f state=success \
             -f description="Deploy preview ready" -f target_url="$URL" > /dev/null
 
-      - name: Mark deployment failed
-        if: (failure() || cancelled()) && steps.deployment.outputs.id != ''
+      - name: Mark preview failed
+        if: (failure() || cancelled()) && steps.status.outputs.run_url != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/deployments/${{ steps.deployment.outputs.id }}/statuses" \
-            -f state=${{ job.status == 'cancelled' && 'inactive' || 'failure' }} \
-            -f log_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
           gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
             -f context="Docs preview" -f state=${{ job.status == 'cancelled' && 'pending' || 'failure' }} \
             -f description="${{ job.status == 'cancelled' && 'Superseded by a newer run' || 'Docs preview build failed' }}" \
-            -f target_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
+            -f target_url="${{ steps.status.outputs.run_url }}" > /dev/null
