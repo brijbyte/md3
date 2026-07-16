@@ -1,0 +1,70 @@
+name: Create tag
+
+# Cut release tags straight from the GitHub UI (Actions → Create tag → Run workflow),
+# so you don't need a local checkout. Pushing a tag triggers the matching workflow:
+#   - docs tag → deploy-docs.yml (Cloudflare deploy)
+#   - @brijbyte/md3-<pkg>@<version> tag → publish.yml (npm publish + release)
+# The `packages` path tags each package at its committed package.json version, skipping
+# any whose tag already exists — so it only tags packages whose version was bumped.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: What to tag
+        type: choice
+        required: true
+        default: both
+        options:
+          - docs
+          - packages
+          - both
+
+concurrency:
+  group: create-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # push tags
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0 # full history + tags so we can move/create tags
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # `docs` is a floating tag — force-move it to this ref and force-push.
+      - name: Tag docs
+        if: contains(fromJSON('["docs", "both"]'), github.event.inputs.target)
+        run: |
+          git tag -f docs
+          git push -f origin docs
+
+      # Tag each package at its committed version; skip ones already tagged.
+      - name: Tag packages
+        if: contains(fromJSON('["packages", "both"]'), github.event.inputs.target)
+        run: |
+          set -euo pipefail
+          for DIR in packages/react packages/icons; do
+            NAME="$(node -p "require('./$DIR/package.json').name")"
+            VERSION="$(node -p "require('./$DIR/package.json').version")"
+            TAG="$NAME@$VERSION"
+
+            if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+              echo "::notice::$TAG already exists — skipping."
+              continue
+            fi
+
+            # Fails (non-zero) if the CHANGELOG section is missing or empty.
+            node scripts/extract-changelog.mjs "$VERSION" "$DIR/CHANGELOG.md" >/dev/null
+
+            git tag -a "$TAG" -m "$TAG"
+            git push origin "$TAG"
+            echo "::notice::Tagged $TAG — publish workflow will run."
+          done
