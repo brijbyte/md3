@@ -122,5 +122,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh api "repos/$GITHUB_REPOSITORY/deployments/${{ steps.deployment.outputs.id }}/statuses" \
-            -f state=${{ cancelled() && 'inactive' || 'failure' }} \
+            -f state=${{ job.status == 'cancelled' && 'inactive' || 'failure' }} \
             -f log_url="${{ steps.deployment.outputs.run_url }}" > /dev/null
