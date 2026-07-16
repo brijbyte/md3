@@ -21,9 +21,7 @@ export function MobileTabs() {
     ref.current
       ?.querySelector("[data-active]")
       ?.scrollIntoView({ inline: "center", block: "nearest" });
-    // Mount only: later route changes keep the user's scroll position.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   return (
     <Tabs

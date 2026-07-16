@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Typography } from "@/ui/typography";
 import { NAV } from "../nav";
 import { MobileTabs } from "./MobileTabs";
+import { Logo } from "./Logo";
 import { SearchIconButton } from "./SearchDialog";
 import { ThemeToggle } from "./ThemeToggle";
 import { Toc, type TocItem } from "./toc";
@@ -41,14 +42,21 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
           {/* Below xl the TOC rail (and its ThemeToggle) is hidden, so the
               toggle rides in this header instead. */}
           <header className="flex items-center justify-between gap-4 pb-4 xl:hidden">
-            <Typography as={Link} variant="title-large" href="/" className="md:hidden">
-              MD3 React
-            </Typography>
-            <span className="hidden md:block" aria-hidden />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 md:hidden">
+              <Typography
+                as={Link}
+                variant="title-large"
+                href="/"
+                className="flex shrink-0 items-center gap-2 whitespace-nowrap"
+              >
+                <Logo size={28} />
+                <span>MD3 React</span>
+              </Typography>
               <SearchIconButton />
-              <ThemeToggle />
             </div>
+            {/* ≥md the sidebar carries title + search; only the toggle rides here. */}
+            <span className="hidden md:block" aria-hidden />
+            <ThemeToggle />
           </header>
           <MobileTabs />
           <Typography as="h1" variant="display-small" className="font-bold" id="top">

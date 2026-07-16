@@ -1,7 +1,7 @@
 import type * as React from "react";
 import Link from "next/link";
 import { Typography } from "@/ui/typography";
-import { SearchDialog, SearchButton } from "@/components/SearchDialog";
+import { SearchDialog, SearchButton, SearchIconButton } from "@/components/SearchDialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
 
@@ -19,14 +19,21 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
   return (
     <div className="mx-auto max-w-7xl px-6 pt-6 pb-12">
       <header className="flex items-center justify-between gap-4 pb-12">
-        <Typography as={Link} variant="title-large" href="/" className="flex items-center gap-2">
-          <Logo size={28} />
-          <span>MD3 React</span>
-        </Typography>
-        <div className="flex items-center gap-2">
-          <SearchButton />
-          <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <Typography
+            as={Link}
+            variant="title-large"
+            href="/"
+            className="flex shrink-0 items-center gap-2 whitespace-nowrap"
+          >
+            <Logo size={28} />
+            <span>MD3 React</span>
+          </Typography>
+          {/* ⌘K hint is keyboard-only — compact widths get the same icon trigger as docs. */}
+          <SearchButton className="max-sm:hidden" />
+          <SearchIconButton className="sm:hidden" />
         </div>
+        <ThemeToggle />
       </header>
       <main id="main-content">{children}</main>
       <footer className="mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-outline-variant pt-8">

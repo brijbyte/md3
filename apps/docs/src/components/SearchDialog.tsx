@@ -227,13 +227,21 @@ function useShortcutHint() {
   return isMac ? "⌘K" : "Ctrl+K";
 }
 
-export function SearchButton({ hideShortcut }: { hideShortcut?: boolean }) {
+export function SearchButton({
+  hideShortcut,
+  className,
+}: {
+  hideShortcut?: boolean;
+  className?: string;
+}) {
   const keys = useShortcutHint();
   return (
     <DialogTrigger
       handle={searchDialog}
       aria-label={`Search the docs. Press ${keys}`}
-      render={<Button icon={<SearchIcon />} variant="outlined" size="xsmall" />}
+      render={
+        <Button icon={<SearchIcon />} variant="outlined" size="xsmall" className={className} />
+      }
     >
       {!hideShortcut ? (
         <Typography as="span" variant="body-large">
@@ -244,11 +252,18 @@ export function SearchButton({ hideShortcut }: { hideShortcut?: boolean }) {
   );
 }
 
-export function SearchIconButton() {
+export function SearchIconButton({ className }: { className?: string }) {
   return (
     <DialogTrigger
       handle={searchDialog}
-      render={<IconButton size="xsmall" variant="tonal" aria-label="Search the docs" />}
+      render={
+        <IconButton
+          size="xsmall"
+          variant="tonal"
+          aria-label="Search the docs"
+          className={className}
+        />
+      }
     >
       <SearchIcon />
     </DialogTrigger>
