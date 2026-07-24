@@ -33,6 +33,6 @@
     "shiki": "^4.3.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "yuku-parser": "^0.7.0"
+    "yuku-parser": "^0.7.2"
   }
 }
