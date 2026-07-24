@@ -52,7 +52,7 @@
     "@types/react-dom": "^19.2.3",
     "postcss": "^8.5.17",
     "postcss-modules": "^9.0.1",
-    "tsdown": "^0.22.9",
+    "tsdown": "^0.22.12",
     "typed-css-modules": "^0.9.1",
     "vitest": "^4.1.10"
   },
