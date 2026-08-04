@@ -5,18 +5,15 @@ import "./uncontained.css";
 import { Carousel, CarouselItem } from "@brijbyte/md3-react/carousel";
 
 const tracks = [
-  "Slow Tide",
-  "Nightjar",
-  "Paper Moon",
-  "Copper Line",
-  "Half Light",
-  "Drift",
-  "Ember",
-  "Salt Flats",
+  { slug: "lagoon", title: "Slow Tide", artist: "Meridian" },
+  { slug: "aurora", title: "Nightjar", artist: "Halden" },
+  { slug: "dunes", title: "Paper Moon", artist: "Ossa" },
+  { slug: "basalt", title: "Copper Line", artist: "Rell" },
+  { slug: "glacier", title: "Half Light", artist: "Vessel" },
+  { slug: "canopy", title: "Drift", artist: "Meridian" },
+  { slug: "reef", title: "Ember", artist: "Ossa" },
+  { slug: "tundra", title: "Salt Flats", artist: "Halden" },
 ];
-
-const tone = (index: number) =>
-  ["", " demo-uncontained-tile-b", " demo-uncontained-tile-c"][index % 3];
 
 export default function CarouselUncontained() {
   return (
@@ -27,10 +24,14 @@ export default function CarouselUncontained() {
       itemSpacing={12}
       className="demo-uncontained"
     >
-      {tracks.map((name, index) => (
-        <CarouselItem key={name}>
-          <figure className={`demo-uncontained-tile${tone(index)}`}>
-            <figcaption>{name}</figcaption>
+      {tracks.map((track) => (
+        <CarouselItem key={track.title}>
+          <figure className="demo-uncontained-tile">
+            <img className="demo-uncontained-image" src={`/carousel/${track.slug}.svg`} alt="" />
+            <figcaption>
+              <span className="demo-uncontained-title">{track.title}</span>
+              <span className="demo-uncontained-artist">{track.artist}</span>
+            </figcaption>
           </figure>
         </CarouselItem>
       ))}

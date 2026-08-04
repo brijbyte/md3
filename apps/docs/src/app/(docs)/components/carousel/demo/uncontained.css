@@ -3,37 +3,55 @@
 }
 
 .demo-uncontained-tile {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  box-sizing: border-box;
+  position: relative;
   width: 100%;
   height: 150px;
   margin: 0;
   padding: 0;
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  font-family: var(--md-sys-typescale-label-large-font);
-  font-size: var(--md-sys-typescale-label-large-size);
-  font-weight: var(--md-sys-typescale-label-large-weight);
+  background: var(--md-sys-color-surface-container-high);
 }
 
-/* Track the mask so the label ellipsizes instead of being sliced mid-word. */
+.demo-uncontained-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Track the mask so the labels ellipsize instead of being sliced mid-word. */
 .demo-uncontained-tile figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   width: var(--md3-carousel-mask-size, 100%);
-  padding: 12px;
+  padding: 24px 10px 10px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--md-sys-color-scrim) 75%, transparent),
+    transparent
+  );
+  color: var(--md-ref-palette-neutral100);
+}
+
+.demo-uncontained-title,
+.demo-uncontained-artist {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.demo-uncontained-tile-b {
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
+.demo-uncontained-title {
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
 }
 
-.demo-uncontained-tile-c {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+.demo-uncontained-artist {
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  opacity: 0.8;
 }

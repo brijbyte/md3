@@ -5,9 +5,12 @@ import "./full-screen.css";
 import { useState } from "react";
 import { Carousel, CarouselItem } from "@brijbyte/md3-react/carousel";
 
-const slides = ["Aurora", "Fjord", "Dunes", "Canopy"];
-
-const tone = (index: number) => ["", " demo-full-tile-b", " demo-full-tile-c"][index % 3];
+const slides = [
+  { slug: "glacier", label: "Glacier" },
+  { slug: "reef", label: "Reef" },
+  { slug: "dunes", label: "Dunes" },
+  { slug: "canopy", label: "Canopy" },
+];
 
 export default function CarouselFullScreen() {
   const [active, setActive] = useState(0);
@@ -20,10 +23,11 @@ export default function CarouselFullScreen() {
         onValueChange={setActive}
         className="demo-full"
       >
-        {slides.map((name, index) => (
-          <CarouselItem key={name}>
-            <figure className={`demo-full-tile${tone(index)}`}>
-              <figcaption>{name}</figcaption>
+        {slides.map((slide) => (
+          <CarouselItem key={slide.slug}>
+            <figure className="demo-full-tile">
+              <img className="demo-full-image" src={`/carousel/${slide.slug}.svg`} alt="" />
+              <figcaption>{slide.label}</figcaption>
             </figure>
           </CarouselItem>
         ))}

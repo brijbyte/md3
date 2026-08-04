@@ -3,40 +3,45 @@
 }
 
 .demo-carousel-tile {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  box-sizing: border-box;
+  position: relative;
   width: 100%;
   height: 200px;
   margin: 0;
   padding: 0;
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+  /* Shows through until the image decodes. */
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.demo-carousel-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* The item is laid out at the large size, so the image is composed for that box and
+     the carousel's mask crops it — same as a photo carousel on Android. */
+  object-fit: cover;
+}
+
+/* The tile is centred under the mask, so a full-width caption gets sliced on both sides
+   as the item collapses ("Canopy" -> "opy"). Tracking the mask width keeps the label
+   inside the visible crop and lets it ellipsize instead. */
+.demo-carousel-tile figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: var(--md3-carousel-mask-size, 100%);
+  padding: 24px 12px 12px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--md-sys-color-scrim) 70%, transparent),
+    transparent
+  );
+  color: var(--md-ref-palette-neutral100);
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
   font-weight: var(--md-sys-typescale-label-large-weight);
-}
-
-/* The tile is laid out at the large size and centred under the mask, so a plain
-   caption gets sliced on both sides as the item collapses ("Canopy" -> "opy").
-   Tracking the mask width keeps the label inside the visible area and lets it
-   ellipsize instead. */
-.demo-carousel-tile figcaption {
-  box-sizing: border-box;
-  width: var(--md3-carousel-mask-size, 100%);
-  padding: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.demo-carousel-tile-b {
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
-}
-
-.demo-carousel-tile-c {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
 }
