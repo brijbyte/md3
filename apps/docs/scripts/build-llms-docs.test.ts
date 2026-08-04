@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   collectDemoFiles,
   parseImports,
+  resolveDemoFile,
   renderLlmsTxt,
   renderSpecLinks,
   transformPage,
@@ -15,7 +16,7 @@ import { routeMetadata } from "@/nav";
 
 export const metadata = routeMetadata("/components/widget");
 
-import WidgetBasic from "./demo/basic.tsx";
+import WidgetBasic from "./demo/basic.js";
 import { SpecLinks } from "@/components/SpecLinks";
 import { TypeScale } from "./TypeScale.tsx";
 
@@ -94,6 +95,15 @@ describe("parseImports", () => {
     expect(parseImports('import A from "./demo/a.tsx";\nimport { b } from "@/b";')).toEqual({
       A: "./demo/a.tsx",
     });
+  });
+});
+
+describe("resolveDemoFile", () => {
+  it("maps TS-style .js and extensionless specifiers to the on-disk file", () => {
+    expect(resolveDemoFile("./basic.js", demo.files)).toBe("basic.tsx");
+    expect(resolveDemoFile("./helper", demo.files)).toBe("helper.tsx");
+    expect(resolveDemoFile("./basic.css", demo.files)).toBe("basic.css");
+    expect(resolveDemoFile("./missing.js", demo.files)).toBeNull();
   });
 });
 

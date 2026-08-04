@@ -33,16 +33,19 @@ function relativeImports(source) {
     .filter(Boolean);
 }
 
-// Entry file → its transitive demo-local file list (entry first), resolving
-// extensionless imports against the files present in the demo dir.
+// Import specifier → on-disk file: extensionless and TS-style `.js`
+// specifiers both resolve to the .tsx/.ts actually present in the demo dir.
+export function resolveDemoFile(spec, demoFiles) {
+  const base = spec.replace(/^\.\//, "");
+  const stem = base.replace(/\.js$/, "");
+  for (const cand of [base, `${stem}.tsx`, `${stem}.ts`]) {
+    if (demoFiles.includes(cand)) return cand;
+  }
+  return null;
+}
+
+// Entry file → its transitive demo-local file list (entry first).
 export function collectDemoFiles(entry, demoFiles, readFile) {
-  const resolve = (spec) => {
-    const base = spec.replace(/^\.\//, "");
-    for (const cand of [base, `${base}.tsx`, `${base}.ts`]) {
-      if (demoFiles.includes(cand)) return cand;
-    }
-    return null;
-  };
   const seen = [];
   const queue = [entry];
   while (queue.length) {
@@ -51,7 +54,7 @@ export function collectDemoFiles(entry, demoFiles, readFile) {
     seen.push(file);
     if (!/\.tsx?$/.test(file)) continue;
     for (const spec of relativeImports(readFile(file))) {
-      const resolved = resolve(spec);
+      const resolved = resolveDemoFile(spec, demoFiles);
       if (resolved) queue.push(resolved);
     }
     // Sibling stylesheet by convention, even when not imported by the entry.
@@ -91,10 +94,12 @@ export function transformPage(source, { route, title, description, demo }) {
   const handleJsx = (node) => {
     const spec = imports[node.name] ?? "";
     if (spec.startsWith("./demo/") && demo) {
-      const entry = spec.replace("./demo/", "");
-      hasDemos = true;
-      replace(node, demoReference(entry, collectDemoFiles(entry, demo.files, demo.read), route));
-      return;
+      const entry = resolveDemoFile(spec.replace("./demo/", ""), demo.files);
+      if (entry) {
+        hasDemos = true;
+        replace(node, demoReference(entry, collectDemoFiles(entry, demo.files, demo.read), route));
+        return;
+      }
     }
     if (node.name === "SpecLinks") {
       replace(node, renderSpecLinks(slice(node)) ?? "");
