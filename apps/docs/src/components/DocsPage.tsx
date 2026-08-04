@@ -3,7 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "@/ui/button";
 import { Typography } from "@/ui/typography";
+import MarkdownIcon from "@brijbyte/md3-icons/outlined/Markdown";
 import { NAV } from "../nav";
 import { MobileTabs } from "./MobileTabs";
 import { Logo } from "./Logo";
@@ -59,9 +61,21 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
           </header>
           <MobileTabs />
-          <Typography as="h1" variant="display-small" className="font-bold" id="top">
-            {route.title}
-          </Typography>
+          <div className="flex items-start justify-between gap-4">
+            <Typography as="h1" variant="display-small" className="font-bold" id="top">
+              {route.title}
+            </Typography>
+            {/* LLM-facing markdown twin of this page (llms.txt lists them all). */}
+            <Button
+              variant="outlined"
+              size="xsmall"
+              icon={<MarkdownIcon />}
+              className="mt-3 shrink-0"
+              render={<a href={`${pathname}.md`} />}
+            >
+              Markdown
+            </Button>
+          </div>
           <Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
             {route.description}
           </Typography>
