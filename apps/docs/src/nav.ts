@@ -29,6 +29,7 @@ import ToggleOnIcon from "@brijbyte/md3-icons/outlined/ToggleOn";
 import AutoAwesomeMotionIcon from "@brijbyte/md3-icons/outlined/AutoAwesomeMotion";
 import AnimationIcon from "@brijbyte/md3-icons/outlined/Animation";
 import BottomAppBarIcon from "@brijbyte/md3-icons/outlined/BottomAppBar";
+import BottomNavigationIcon from "@brijbyte/md3-icons/outlined/BottomNavigation";
 import TooltipIcon from "@brijbyte/md3-icons/outlined/Tooltip";
 
 export type NavItem = {
@@ -200,6 +201,13 @@ export const SECTIONS: NavSection[] = [
         title: "Menu",
         description: "Dropdowns, submenus, and radio/checkbox items, built on Base UI Menu.",
         icon: MenuIcon,
+      },
+      {
+        path: "/components/navigation-bar",
+        label: "Navigation bar",
+        title: "Navigation bar",
+        description: "Bottom navigation between 3–6 destinations, in the expressive 64dp bar.",
+        icon: BottomNavigationIcon,
       },
       {
         path: "/components/radio",
