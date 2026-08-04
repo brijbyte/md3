@@ -6,3 +6,19 @@
 
 /search-index.*.json
   Cache-Control: public, max-age=31536000, immutable
+
+# Raw demo sources are fetched as text by LLM agents; without this, .ts is
+# served as video/mp2t and .tsx as application/octet-stream.
+/demo-src/*.ts
+  Content-Type: text/plain; charset=utf-8
+
+/demo-src/*.tsx
+  Content-Type: text/plain; charset=utf-8
+
+# The markdown twins and llms.txt are UTF-8; without an explicit charset,
+# readers fall back to windows-1252 and mangle em dashes etc.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8

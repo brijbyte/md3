@@ -9,17 +9,22 @@ export const metadata = routeMetadata("/icons");
 import IconBrowser from "./IconBrowser";
 import IconStyler from "./IconStyler";
 import { Typography } from "@/ui/typography";
+import { MarkdownLinkButton } from "@/components/MarkdownLinkButton";
 import { SpecLinks } from "@/components/SpecLinks";
 
 {/* Standalone landing-group page: no DocsPage wrapper, so it renders its own header. */}
 
-<Typography as="h1" variant="display-small" className="font-bold" id="top">
-  {metadata.title}
-</Typography>
-
-<Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
-  {metadata.description}
-</Typography>
+<web-only>
+  <div className="flex items-start justify-between gap-4">
+    <Typography as="h1" variant="display-small" className="font-bold" id="top">
+      {metadata.title}
+    </Typography>
+    <MarkdownLinkButton path="/icons" />
+  </div>
+  <Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
+    {metadata.description}
+  </Typography>
+</web-only>
 
 ```tsx
 import HomeIcon from "@brijbyte/md3-icons/outlined/Home";
@@ -45,9 +50,19 @@ import FavoriteFill from "@brijbyte/md3-icons/rounded/FavoriteFill";
 ```
 
 Three styles — `outlined`, `rounded`, `sharp` — each with a filled variant (append `Fill`
-to the name). Digit-leading names get an `Icon` prefix (`10k` → `Icon10k`). Pick a variant
-below and click any icon to copy its name, component, or import.
+to the name). Digit-leading names get an `Icon` prefix (`10k` → `Icon10k`).
+
+<web-only>Pick a variant below and click any icon to copy its name, component, or import.</web-only>
 
 ## Browse
+
+<llm-only>
+The interactive browser can't be rendered in markdown. To find or verify icon names,
+fetch the JSON indexes served by this site (root-relative): `/icons-data/outlined.json`,
+`/icons-data/rounded.json`, `/icons-data/sharp.json`, plus `-fill` variants
+(`/icons-data/outlined-fill.json`, …). Each is an array of
+`[material-symbol-name, ComponentName]` pairs; import the component as
+`@brijbyte/md3-icons/<style>/<ComponentName>`.
+</llm-only>
 
 <IconBrowser />

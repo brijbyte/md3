@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Typography } from "@/ui/typography";
+import { MarkdownLinkButton } from "./MarkdownLinkButton";
 import { NAV } from "../nav";
 import { MobileTabs } from "./MobileTabs";
 import { Logo } from "./Logo";
@@ -59,9 +60,12 @@ export function DocsPage({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
           </header>
           <MobileTabs />
-          <Typography as="h1" variant="display-small" className="font-bold" id="top">
-            {route.title}
-          </Typography>
+          <div className="flex items-start justify-between gap-4">
+            <Typography as="h1" variant="display-small" className="font-bold" id="top">
+              {route.title}
+            </Typography>
+            <MarkdownLinkButton path={pathname} />
+          </div>
           <Typography variant="title-medium" className="mt-2 mb-8 text-on-surface-variant">
             {route.description}
           </Typography>
