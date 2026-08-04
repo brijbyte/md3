@@ -11,9 +11,10 @@ import { mdxToMdast } from "satteri";
 const docsRoot = fileURLToPath(new URL("..", import.meta.url));
 const SITE = "https://md3.brijbyte.com";
 
-const DEMO_PREAMBLE = `> Demos are referenced below as links to complete, standalone source files
-> (real package imports, sibling CSS). Fetch a demo's files for a working
-> example; \`package.json\` in the same folder lists its dependencies.`;
+const DEMO_PREAMBLE = `> Demos are referenced below as root-relative links to complete, standalone
+> source files (real package imports, sibling CSS) — resolve them against the
+> host this file was fetched from. Fetch a demo's files for a working example;
+> \`package.json\` in the same folder lists its dependencies.`;
 
 // import statements in an mdxjsEsm block → { LocalName: "./demo/basic.tsx" }.
 export function parseImports(esmSource) {
@@ -68,7 +69,7 @@ export function renderSpecLinks(jsxSource) {
 }
 
 function demoReference(entry, files, route) {
-  const base = `${SITE}/demo-src${route}`;
+  const base = `/demo-src${route}`;
   const list = files.map((f) => `- ${base}/${f}`).join("\n");
   return `**Demo (\`${entry}\`)** — full source:\n\n${list}`;
 }
@@ -105,7 +106,7 @@ export function transformPage(source, { route, title, description, demo }) {
       replace(node, "");
       return;
     }
-    replace(node, `*Interactive example — see [the rendered page](${SITE}${route}).*`);
+    replace(node, `*Interactive example — see [the rendered page](${route}).*`);
   };
 
   const walk = (node) => {
@@ -152,7 +153,8 @@ export function renderLlmsTxt(sections) {
     "> layer on top of Base UI. Per-component imports and stylesheets; docs at",
     `> ${SITE}.`,
     "",
-    "Every page below is served as markdown at the listed `.md` URL. Demo links",
+    "Every page below is served as markdown at the listed root-relative `.md`",
+    "URL — resolve it against the host this file was fetched from. Demo links",
     "inside those pages point to standalone source files under `/demo-src/`;",
     "fetch them for complete, working usage examples.",
   ];
@@ -160,7 +162,7 @@ export function renderLlmsTxt(sections) {
     if (!items.length) continue;
     lines.push("", `## ${label}`, "");
     for (const { path: route, title, description } of items) {
-      lines.push(`- [${title}](${SITE}${route}.md): ${description}`);
+      lines.push(`- [${title}](${route}.md): ${description}`);
     }
   }
   return lines.join("\n") + "\n";

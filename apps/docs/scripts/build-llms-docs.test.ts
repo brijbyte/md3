@@ -5,7 +5,6 @@ import {
   renderLlmsTxt,
   renderSpecLinks,
   transformPage,
-  // @ts-expect-error -- untyped build script
 } from "./build-llms-docs.mjs";
 
 const PAGE = `---
@@ -63,11 +62,11 @@ describe("transformPage", () => {
     expect(md).toContain("Prose stays as-is, with `inline code`");
   });
 
-  it("expands demo tags into absolute source links (entry, helpers, css)", () => {
+  it("expands demo tags into root-relative source links (entry, helpers, css)", () => {
     expect(md).toContain("**Demo (`basic.tsx`)**");
-    expect(md).toContain("https://md3.brijbyte.com/demo-src/components/widget/basic.tsx");
-    expect(md).toContain("https://md3.brijbyte.com/demo-src/components/widget/basic.css");
-    expect(md).toContain("https://md3.brijbyte.com/demo-src/components/widget/helper.tsx");
+    expect(md).toContain("- /demo-src/components/widget/basic.tsx");
+    expect(md).toContain("- /demo-src/components/widget/basic.css");
+    expect(md).toContain("- /demo-src/components/widget/helper.tsx");
   });
 
   it("renders SpecLinks as markdown links", () => {
@@ -75,9 +74,7 @@ describe("transformPage", () => {
   });
 
   it("replaces other JSX with a pointer to the rendered page", () => {
-    expect(md).toContain(
-      "*Interactive example — see [the rendered page](https://md3.brijbyte.com/components/widget).*",
-    );
+    expect(md).toContain("*Interactive example — see [the rendered page](/components/widget).*");
     expect(md).not.toContain("<TypeScale");
   });
 
@@ -125,6 +122,6 @@ describe("renderLlmsTxt", () => {
       },
     ]);
     expect(txt).toContain("## Components");
-    expect(txt).toContain("- [Widget](https://md3.brijbyte.com/components/widget.md): A widget.");
+    expect(txt).toContain("- [Widget](/components/widget.md): A widget.");
   });
 });
