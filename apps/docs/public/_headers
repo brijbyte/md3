@@ -6,3 +6,11 @@
 
 /search-index.*.json
   Cache-Control: public, max-age=31536000, immutable
+
+# Raw demo sources are fetched as text by LLM agents; without this, .ts is
+# served as video/mp2t and .tsx as application/octet-stream.
+/demo-src/*.ts
+  Content-Type: text/plain; charset=utf-8
+
+/demo-src/*.tsx
+  Content-Type: text/plain; charset=utf-8
