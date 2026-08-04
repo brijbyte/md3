@@ -1,0 +1,191 @@
+/* Spec: Compose ShortNavigationBar/NavigationItem (androidx-main, expressive):
+   bar 64, vertical-item pill 56x32 (icon 24 + 16h/4v padding), horizontal pill
+   h40 + 16 inline padding, icon-label gaps 4, item block padding 6. Colors from
+   NavigationBarTokens v0_11_0 (active label = secondary; material-web v0_192
+   carries the pre-expressive on-surface/prominent values — superseded). */
+@layer components {
+  .root {
+    box-sizing: border-box;
+    display: flex;
+    min-height: 64px;
+    background: var(--md-sys-color-surface-container);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  /* Centered arrangement (medium windows): items group at 60/70/80/90% of the
+     bar width for 3/4/5/6 items, per Compose CenteredContentMeasurePolicy. */
+  .root[data-arrangement="centered"]:has(> .item:nth-child(3):last-child) {
+    padding-inline: 20%;
+  }
+
+  .root[data-arrangement="centered"]:has(> .item:nth-child(4):last-child) {
+    padding-inline: 15%;
+  }
+
+  .root[data-arrangement="centered"]:has(> .item:nth-child(5):last-child) {
+    padding-inline: 10%;
+  }
+
+  .root[data-arrangement="centered"]:has(> .item:nth-child(6):last-child) {
+    padding-inline: 5%;
+  }
+
+  .item {
+    box-sizing: border-box;
+    flex: 1 1 0;
+    min-width: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding-block: 6px;
+    padding-inline: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .item[data-icon-position="start"] {
+    flex-direction: row;
+  }
+
+  /* Pill: indicator fill (::before), state layer/ripple, icon (+ label when
+     the icon position is start). */
+  .indicator {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 32px;
+    border-radius: var(--md-sys-shape-corner-full);
+  }
+
+  .item[data-icon-position="start"] .indicator {
+    width: auto;
+    height: 40px;
+    padding-inline: 16px;
+    gap: 4px;
+  }
+
+  /* Active fill expands from the center (Compose animates indicator width). */
+  .indicator::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--md-sys-color-secondary-container);
+    opacity: 0;
+    clip-path: inset(0 50% round var(--md-sys-shape-corner-full));
+  }
+
+  .item[data-active] .indicator::before {
+    opacity: 1;
+    clip-path: inset(0 round var(--md-sys-shape-corner-full));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .indicator::before {
+      transition:
+        clip-path var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-fast-spatial),
+        opacity var(--md-sys-motion-duration-short2) linear;
+    }
+  }
+
+  .item:focus-visible .indicator {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+  }
+
+  /* State layer: hover/focus tint + ripple host, clipped to the pill. */
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 15ms linear;
+  }
+
+  .item:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .item:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .icon {
+    position: relative;
+    display: inline-flex;
+    font-size: 24px;
+    inline-size: 24px;
+    block-size: 24px;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .item[data-active] .icon {
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .label {
+    /* Positioned so it paints above the absolutely positioned indicator fill. */
+    position: relative;
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    line-height: var(--md-sys-typescale-label-medium-line-height);
+    font-weight: var(--md-sys-typescale-label-medium-weight);
+    letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+    color: var(--md-sys-color-on-surface-variant);
+    white-space: nowrap;
+  }
+
+  .item[data-active] .label {
+    color: var(--md-sys-color-secondary);
+  }
+
+  /* Badge slot, anchored from the icon's top center (same mapping as Tabs). */
+  .badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    display: inline-flex;
+  }
+
+  .badge:has([data-variant="small"]) {
+    margin-inline-start: 6px;
+    margin-block-start: 4px;
+  }
+
+  .badge:has([data-variant="large"]) {
+    margin-inline-start: 2px;
+    margin-block-start: 1px;
+  }
+
+  .item[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .item[data-disabled] .icon,
+  .item[data-disabled] .label {
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-content-opacity) * 100%),
+      transparent
+    );
+  }
+}

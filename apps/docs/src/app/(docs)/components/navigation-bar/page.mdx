@@ -1,0 +1,56 @@
+---
+title: Navigation bar
+---
+
+import { routeMetadata } from "@/nav";
+
+export const metadata = routeMetadata("/components/navigation-bar");
+
+import NavigationBarBadges from "./demo/badges.tsx";
+import NavigationBarBasic from "./demo/basic.tsx";
+import NavigationBarHorizontal from "./demo/horizontal.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { NavigationBar, NavigationBarItem } from "@brijbyte/md3-react/navigation-bar";
+```
+
+```css
+@import "@brijbyte/md3-react/navigation-bar.css";
+```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/navigation-bar/overview" }]}
+/>
+
+## Basic
+
+A navigation bar switches between 3–5 top-level destinations on compact windows. This is the
+expressive 64dp short bar; the active pill expands from the center when a destination is
+selected. Mark the current destination with `active` — it also announces as `aria-current="page"`,
+so items work as links via `render` without extra wiring.
+
+<NavigationBarBasic />
+
+## Horizontal items
+
+On medium windows (like a phone in landscape), switch items to `iconPosition="start"` so icon and
+label share one pill, and group them with `arrangement="centered"` — the bar insets the group per
+MD3's item-count table (3 items span 60% of the bar, up to 6 spanning 90%).
+
+<NavigationBarHorizontal />
+
+## With badges
+
+```tsx
+import { Badge } from "@brijbyte/md3-react/badge";
+```
+
+```css
+@import "@brijbyte/md3-react/badge.css";
+```
+
+Pass `badge` to anchor a Badge to the icon's top-right corner. Badges are visual only — put the
+count in the item's `aria-label` when it's meaningful.
+
+<NavigationBarBadges />

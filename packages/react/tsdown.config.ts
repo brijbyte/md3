@@ -46,6 +46,7 @@ export default defineConfig({
     "list/index": "src/list/index.ts",
     "loading-indicator/index": "src/loading-indicator/index.ts",
     "menu/index": "src/menu/index.ts",
+    "navigation-bar/index": "src/navigation-bar/index.ts",
     "radio/index": "src/radio/index.ts",
     "select/index": "src/select/index.ts",
     "side-sheet/index": "src/side-sheet/index.ts",
