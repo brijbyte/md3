@@ -1,0 +1,86 @@
+---
+title: Carousel
+---
+
+import { routeMetadata } from "@/nav";
+
+export const metadata = routeMetadata("/components/carousel");
+
+import CarouselFullScreen from "./demo/full-screen.tsx";
+import CarouselHero from "./demo/hero.tsx";
+import CarouselMultiBrowse from "./demo/multi-browse.tsx";
+import CarouselUncontained from "./demo/uncontained.tsx";
+import { SpecLinks } from "@/components/SpecLinks";
+
+```tsx
+import { Carousel, CarouselItem } from "@brijbyte/md3-react/carousel";
+```
+
+```css
+@import "@brijbyte/md3-react/tokens.css";
+@import "@brijbyte/md3-react/ripple.css";
+@import "@brijbyte/md3-react/carousel.css";
+```
+
+<SpecLinks
+  links={[{ label: "MD3 spec", href: "https://m3.material.io/components/carousel/overview" }]}
+/>
+
+## Multi-browse
+
+The default layout. Carousel picks the arrangement of large, medium, and small items that fits the
+container with the least distortion of `itemWidth`, then masks each item down to the keyline it
+currently sits on — items expand and collapse as they scroll rather than resizing in steps.
+
+Items are laid out at a uniform large size and only _painted_ at their keyline size, so masking
+never disturbs the scroller's geometry. Drag, wheel, and trackpad scrolling are native.
+
+<CarouselMultiBrowse />
+
+## Hero
+
+A hero carousel puts one large item next to a small one, so the next item is always previewed.
+`center-aligned-hero` flanks the large item with a small item on each side; with fewer than three
+items it falls back to the start-aligned arrangement, since there is nothing to flank it with.
+
+Both accept `itemWidth` as the _maximum_ hero width. Leave it off and the hero grows to fill the
+container minus the small items.
+
+<CarouselHero />
+
+## Uncontained
+
+Items keep exactly the width you give them and scroll straight off the edge, with the cut-off item
+sized to leave enough motion at the boundary. Use it when item size carries meaning — album art,
+avatars, anything with a fixed aspect ratio.
+
+<CarouselUncontained />
+
+## Full screen
+
+One item fills the container at a time. Pair it with `value`/`onValueChange` when something outside
+the carousel needs to follow along.
+
+<CarouselFullScreen />
+
+## Keyboard and screen readers
+
+Carousel is built on Base UI's Tabs primitive: the strip is a `tablist` and each item a `tab`, so
+you get roving tabindex, arrow keys to move between items (<kbd>←</kbd>/<kbd>→</kbd>, flipped under
+RTL), <kbd>Home</kbd> and <kbd>End</kbd> to jump to the ends, and the focal item exposed as
+`aria-selected`. Focus does not loop past the ends — a carousel has a real first and last item.
+
+Moving the focal item scrolls it to the leading keyline; scrolling by hand does the reverse and
+adopts the item nearest that keyline once the scroll settles. Always give the carousel an
+`aria-label` describing the collection.
+
+Near the end of a long carousel the scroller runs out of travel before the last items can reach the
+leading keyline. Those items stay selectable and fully visible — they just settle on the trailing
+keylines instead, which is the same behavior as the Android implementation.
+
+## Props
+
+`Carousel` takes `layout` (`multi-browse`, `hero`, `center-aligned-hero`, `uncontained`,
+`full-screen`), `itemWidth`, `itemSpacing`, and `minSmallItemWidth`/`maxSmallItemWidth` to bound the
+small keylines (40 and 56 by default, per the MD3 defaults). The focal item is controlled with
+`value`/`onValueChange` or left uncontrolled with `defaultValue`.

@@ -6,6 +6,7 @@ import NotificationsIcon from "@brijbyte/md3-icons/outlined/Notifications";
 import CampaignIcon from "@brijbyte/md3-icons/outlined/Campaign";
 import CelebrationIcon from "@brijbyte/md3-icons/outlined/Celebration";
 import CardsIcon from "@brijbyte/md3-icons/outlined/Cards";
+import ViewCarouselIcon from "@brijbyte/md3-icons/outlined/ViewCarousel";
 import CheckBoxIcon from "@brijbyte/md3-icons/outlined/CheckBox";
 import ChipsIcon from "@brijbyte/md3-icons/outlined/Chips";
 import CategoryIcon from "@brijbyte/md3-icons/outlined/Category";
@@ -136,6 +137,13 @@ export const SECTIONS: NavSection[] = [
         title: "Card",
         description: "A bare, unopinionated container — you own the layout inside it.",
         icon: CardsIcon,
+      },
+      {
+        path: "/components/carousel",
+        label: "Carousel",
+        title: "Carousel",
+        description: "Keyline-masked browsing — items expand and collapse as they scroll past.",
+        icon: ViewCarouselIcon,
       },
       {
         path: "/components/chips",

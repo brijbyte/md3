@@ -1,0 +1,198 @@
+import { DirectionProvider } from "@base-ui/react/direction-provider";
+import { render, waitFor } from "@testing-library/react";
+import { userEvent } from "@vitest/browser/context";
+import { expect, test } from "vitest";
+// Shape/state tokens drive the mask geometry.
+import "../generated/tokens.css";
+import { Carousel, CarouselItem, type CarouselProps } from "./Carousel";
+import styles from "./Carousel.module.css";
+import {
+  MAX_SMALL_ITEM_SIZE,
+  MIN_SMALL_ITEM_SIZE,
+  multiBrowseArrangement,
+  uncontainedArrangement,
+} from "./keylines";
+
+const VIEWPORT = 480;
+
+function renderCarousel(props?: Partial<CarouselProps> & { count?: number; dir?: "ltr" | "rtl" }) {
+  const { count = 8, dir = "ltr", ...rest } = props ?? {};
+  const utils = render(
+    <DirectionProvider direction={dir}>
+      <div dir={dir} style={{ width: VIEWPORT }}>
+        <Carousel aria-label="Photos" {...rest}>
+          {Array.from({ length: count }, (_, i) => (
+            <CarouselItem key={i} data-testid={`item-${i}`}>
+              <div style={{ height: 160, width: "100%", background: "#ccc" }}>{i}</div>
+            </CarouselItem>
+          ))}
+        </Carousel>
+      </div>
+    </DirectionProvider>,
+  );
+  const masks = () => Array.from(utils.container.querySelectorAll<HTMLElement>(`.${styles.mask}`));
+  const maskWidth = (i: number) => masks()[i]!.getBoundingClientRect().width;
+  return { ...utils, masks, maskWidth };
+}
+
+test("multi-browse arrangement fills the viewport exactly", () => {
+  const arrangement = multiBrowseArrangement({
+    availableSpace: VIEWPORT,
+    preferredItemSize: 186,
+    itemSpacing: 8,
+    itemCount: 10,
+  })!;
+  expect(arrangement).not.toBeNull();
+  const total =
+    arrangement.largeSize * arrangement.largeCount +
+    arrangement.mediumSize * arrangement.mediumCount +
+    arrangement.smallSize * arrangement.smallCount +
+    8 * (arrangement.largeCount + arrangement.mediumCount + arrangement.smallCount - 1);
+  expect(total).toBeCloseTo(VIEWPORT, 3);
+  // Large > medium > small is what makes the keyline motion read as expanding/collapsing.
+  expect(arrangement.largeSize).toBeGreaterThan(arrangement.mediumSize);
+  expect(arrangement.mediumSize).toBeGreaterThan(arrangement.smallSize);
+  expect(arrangement.smallSize).toBeGreaterThanOrEqual(MIN_SMALL_ITEM_SIZE);
+  expect(arrangement.smallSize).toBeLessThanOrEqual(MAX_SMALL_ITEM_SIZE);
+});
+
+// Fewer items than keyline positions: small slots go first, one medium is kept so the
+// large items don't fill the whole carousel, and large slots are never dropped.
+test("multi-browse sheds surplus keylines when there are too few items", () => {
+  const arrangement = multiBrowseArrangement({
+    availableSpace: VIEWPORT,
+    preferredItemSize: 186,
+    itemSpacing: 8,
+    itemCount: 2,
+  })!;
+  expect(arrangement.smallCount).toBe(0);
+  expect(arrangement.mediumCount).toBe(1);
+});
+
+test("uncontained keeps a uniform item size and cuts off the overflow item", () => {
+  const arrangement = uncontainedArrangement({
+    availableSpace: VIEWPORT,
+    itemSize: 150,
+    itemSpacing: 8,
+  })!;
+  expect(arrangement.largeSize).toBe(150);
+  expect(arrangement.smallCount).toBe(0);
+  expect(arrangement.mediumCount).toBe(1);
+  // The cut-off item must be visibly smaller than a full item, or there is no motion.
+  expect(arrangement.mediumSize).toBeLessThan(arrangement.largeSize);
+});
+
+test("renders a tablist whose focal item is masked to the large size", async () => {
+  const { container, maskWidth } = renderCarousel();
+  expect(container.querySelector('[role="tablist"]')).not.toBeNull();
+  expect(container.querySelectorAll('[role="tab"]')).toHaveLength(8);
+
+  const arrangement = multiBrowseArrangement({
+    availableSpace: VIEWPORT,
+    preferredItemSize: 186,
+    itemSpacing: 8,
+    itemCount: 8,
+  })!;
+  await waitFor(() => expect(maskWidth(0)).toBeCloseTo(arrangement.largeSize, 0));
+  // Trailing keylines collapse: after the large run comes medium, then small.
+  const after = arrangement.largeCount;
+  expect(maskWidth(after)).toBeCloseTo(arrangement.mediumSize, 0);
+  expect(maskWidth(after + arrangement.mediumCount)).toBeCloseTo(arrangement.smallSize, 0);
+});
+
+test("masks stay within the viewport and never overlap", async () => {
+  const { container, masks } = renderCarousel();
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => expect(masks()[0]!.getBoundingClientRect().width).toBeGreaterThan(100));
+
+  const stripRect = strip.getBoundingClientRect();
+  const visible = masks()
+    .map((m) => m.getBoundingClientRect())
+    .filter((r) => r.right > stripRect.left + 1 && r.left < stripRect.right - 1);
+  expect(visible.length).toBeGreaterThan(2);
+  for (let i = 1; i < visible.length; i++) {
+    // Keylines are laid end to end; a gap smaller than the spacing means they collided.
+    expect(visible[i]!.left).toBeGreaterThanOrEqual(visible[i - 1]!.right - 0.5);
+  }
+});
+
+test("arrow keys move the focal item and report the new index", async () => {
+  const changes: number[] = [];
+  const { container } = renderCarousel({ onValueChange: (v) => changes.push(v) });
+  const tabs = container.querySelectorAll<HTMLElement>('[role="tab"]');
+
+  tabs[0]!.focus();
+  await userEvent.keyboard("{ArrowRight}");
+  await waitFor(() => expect(changes.at(-1)).toBe(1));
+  expect(tabs[1]!.getAttribute("aria-selected")).toBe("true");
+
+  await userEvent.keyboard("{End}");
+  await waitFor(() => expect(changes.at(-1)).toBe(7));
+});
+
+test("clicking an item makes it focal and scrolls it to the leading keyline", async () => {
+  const { container, getByTestId } = renderCarousel();
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => expect(strip.scrollWidth).toBeGreaterThan(strip.clientWidth));
+
+  await userEvent.click(getByTestId("item-2"));
+  await waitFor(() => {
+    const stripRect = strip.getBoundingClientRect();
+    const mask = getByTestId("item-2").querySelector<HTMLElement>(`.${styles.mask}`)!;
+    expect(mask.getBoundingClientRect().left).toBeCloseTo(stripRect.left, 0);
+  });
+});
+
+test("center-aligned hero centers the focal mask in the viewport", async () => {
+  const { container, getByTestId } = renderCarousel({
+    layout: "center-aligned-hero",
+    defaultValue: 3,
+  });
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => {
+    const stripRect = strip.getBoundingClientRect();
+    const mask = getByTestId("item-3").querySelector<HTMLElement>(`.${styles.mask}`)!;
+    const rect = mask.getBoundingClientRect();
+    expect(rect.left + rect.width / 2).toBeCloseTo(stripRect.left + stripRect.width / 2, 0);
+  });
+});
+
+// Regression: the mask transform used to sit on the item, which is also what carries
+// `scroll-snap-align`. A transform moves an element's snap area, so painting dragged the
+// snap points around and the strip settled off-keyline (worst under center-aligned hero,
+// where the whole body is offset). The item box must stay untransformed.
+test("mask paint never moves the item's scroll-snap area", async () => {
+  const { container, getByTestId } = renderCarousel({
+    layout: "center-aligned-hero",
+    defaultValue: 2,
+  });
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+
+  await waitFor(() => {
+    const mask = getByTestId("item-2").querySelector<HTMLElement>(`.${styles.mask}`)!;
+    expect(mask.style.transform).not.toBe("");
+  });
+  for (const tab of container.querySelectorAll<HTMLElement>('[role="tab"]')) {
+    expect(getComputedStyle(tab).transform).toBe("none");
+  }
+
+  // Snap points are one uniform pitch apart, so the settled offset is exactly index * pitch.
+  const itemSize = parseFloat(getComputedStyle(strip).getPropertyValue("--md3-carousel-item-size"));
+  await waitFor(() => expect(Math.abs(strip.scrollLeft)).toBeCloseTo(2 * (itemSize + 8), 0));
+});
+
+test("full-screen masks one item across the whole viewport", async () => {
+  const { maskWidth } = renderCarousel({ layout: "full-screen" });
+  await waitFor(() => expect(maskWidth(0)).toBeCloseTo(VIEWPORT, 0));
+});
+
+// RTL flips the leading edge, so the focal mask must land on the right.
+test("rtl anchors the focal mask to the right edge of the strip", async () => {
+  const { container, getByTestId } = renderCarousel({ dir: "rtl" });
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => {
+    const stripRect = strip.getBoundingClientRect();
+    const mask = getByTestId("item-0").querySelector<HTMLElement>(`.${styles.mask}`)!;
+    expect(mask.getBoundingClientRect().right).toBeCloseTo(stripRect.right, 0);
+  });
+});
