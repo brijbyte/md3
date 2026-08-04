@@ -5,17 +5,29 @@
 .demo-carousel-tile {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   box-sizing: border-box;
   width: 100%;
   height: 200px;
   margin: 0;
-  padding: 12px;
+  padding: 0;
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
   font-weight: var(--md-sys-typescale-label-large-weight);
-  /* Captions must not wrap as the mask closes, or the crop reads as a reflow. */
+}
+
+/* The tile is laid out at the large size and centred under the mask, so a plain
+   caption gets sliced on both sides as the item collapses ("Canopy" -> "opy").
+   Tracking the mask width keeps the label inside the visible area and lets it
+   ellipsize instead. */
+.demo-carousel-tile figcaption {
+  box-sizing: border-box;
+  width: var(--md3-carousel-mask-size, 100%);
+  padding: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

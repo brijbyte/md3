@@ -63,6 +63,29 @@ the carousel needs to follow along.
 
 <CarouselFullScreen />
 
+## Cropping item content
+
+Each item is laid out at the large size and centred under its mask, so a collapsing item crops its
+content evenly on both sides — exactly what you want for photos, and exactly what you don't want
+for a caption, which ends up sliced mid-word (`Canopy` → `opy`).
+
+The component publishes the item's live mask width as `--md3-carousel-mask-size` on the mask
+element, so anything inside the item can track the visible area. Give text that width and let it
+ellipsize:
+
+```css
+.tile figcaption {
+  box-sizing: border-box;
+  width: var(--md3-carousel-mask-size, 100%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+```
+
+The value updates every scroll frame, so the label narrows smoothly as the item collapses. It is
+unset until the first paint — keep a fallback, as above. The demos on this page all use it.
+
 ## Keyboard and screen readers
 
 Carousel is built on Base UI's Tabs primitive: the strip is a `tablist` and each item a `tab`, so

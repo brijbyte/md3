@@ -100,6 +100,18 @@ test("renders a tablist whose focal item is masked to the large size", async () 
   expect(maskWidth(after + arrangement.mediumCount)).toBeCloseTo(arrangement.smallSize, 0);
 });
 
+// Public contract: item content (captions especially) tracks this to stay inside the
+// visible crop instead of being sliced mid-word. Documented on the Carousel docs page.
+test("exposes the live mask width as --md3-carousel-mask-size", async () => {
+  const { masks, maskWidth } = renderCarousel();
+  await waitFor(() => expect(maskWidth(0)).toBeGreaterThan(100));
+  for (const [index, mask] of masks().entries()) {
+    const published = mask.style.getPropertyValue("--md3-carousel-mask-size");
+    expect(published).not.toBe("");
+    expect(parseFloat(published)).toBeCloseTo(maskWidth(index), 0);
+  }
+});
+
 test("masks stay within the viewport and never overlap", async () => {
   const { container, masks } = renderCarousel();
   const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;

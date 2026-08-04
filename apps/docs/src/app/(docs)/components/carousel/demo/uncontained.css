@@ -5,16 +5,26 @@
 .demo-uncontained-tile {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   box-sizing: border-box;
   width: 100%;
   height: 150px;
   margin: 0;
-  padding: 12px;
+  padding: 0;
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
   font-weight: var(--md-sys-typescale-label-large-weight);
+}
+
+/* Track the mask so the label ellipsizes instead of being sliced mid-word. */
+.demo-uncontained-tile figcaption {
+  box-sizing: border-box;
+  width: var(--md3-carousel-mask-size, 100%);
+  padding: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
