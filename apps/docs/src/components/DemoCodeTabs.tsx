@@ -144,20 +144,25 @@ export function DemoCodeTabs({ codeUrl }: { codeUrl: string }) {
 
 // The section's persistent bottom strip: the library's docked Toolbar with
 // centered content (the Show/Hide-code button). It stays put across the toggle
-// so only the code region above it animates. The theme/direction toggles pin to
+// so only the code region above it animates, and sticks to the viewport bottom
+// so "Hide code" stays reachable while tall code scrolls. The theme/direction toggles pin to
 // the end while collapsed; expanded they move up into the tab bar, so the
 // expanded toolbar drops them (toggles={false}).
 function DemoToolbar({
   children,
   toggles = true,
+  sticky = false,
 }: {
   children: React.ReactNode;
   toggles?: boolean;
+  sticky?: boolean;
 }) {
   return (
     <Toolbar
       aria-label="Demo controls"
-      className="rounded-b-large relative h-auto min-h-12 justify-center px-2"
+      className={`rounded-b-large h-auto min-h-12 justify-center px-2 ${
+        sticky ? "sticky bottom-0 z-1" : "relative"
+      }`}
     >
       {children}
       {toggles && (
@@ -216,8 +221,10 @@ function RevealingSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () 
     else onHide();
   };
 
+  // The wrapper bounds the sticky toolbar to the code region, so "Hide code"
+  // pins to the viewport bottom over tall code but never over the demo surface.
   return (
-    <>
+    <div>
       <div
         className="demo-code-reveal"
         data-open={open}
@@ -228,12 +235,12 @@ function RevealingSourceTabs({ files, onHide }: { files: DemoFile[]; onHide: () 
           <DemoSourceTabs files={files} />
         </div>
       </div>
-      <DemoToolbar toggles={false}>
+      <DemoToolbar toggles={false} sticky>
         <ToolbarButton render={<Button variant="tonal" size="xsmall" onClick={hide} />}>
           Hide code
         </ToolbarButton>
       </DemoToolbar>
-    </>
+    </div>
   );
 }
 
