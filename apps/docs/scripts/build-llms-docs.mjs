@@ -124,6 +124,21 @@ export function transformPage(source, { route, title, description, demo }) {
         replace(node, "");
         return;
       case "mdxJsxFlowElement":
+        // <llm-only> renders here (and only here): drop the tags, keep the
+        // children — the site's MDX provider maps the tag to null instead.
+        if (node.name === "llm-only") {
+          const kids = node.children;
+          if (!kids.length) {
+            replace(node, "");
+            return;
+          }
+          edits.push(
+            { start: node.position.start.offset, end: kids[0].position.start.offset, text: "" },
+            { start: kids.at(-1).position.end.offset, end: node.position.end.offset, text: "" },
+          );
+          kids.forEach(walk);
+          return;
+        }
         handleJsx(node);
         return;
       case "mdxJsxTextElement":

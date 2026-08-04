@@ -50,4 +50,13 @@ below and click any icon to copy its name, component, or import.
 
 ## Browse
 
+<llm-only>
+The interactive browser can't be rendered in markdown. To find or verify icon names,
+fetch the JSON indexes served by this site (root-relative): `/icons-data/outlined.json`,
+`/icons-data/rounded.json`, `/icons-data/sharp.json`, plus `-fill` variants
+(`/icons-data/outlined-fill.json`, …). Each is an array of
+`[material-symbol-name, ComponentName]` pairs; import the component as
+`@brijbyte/md3-icons/<style>/<ComponentName>`.
+</llm-only>
+
 <IconBrowser />

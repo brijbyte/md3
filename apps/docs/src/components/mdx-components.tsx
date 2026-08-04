@@ -58,6 +58,9 @@ function heading(tag: "h2" | "h3", variant: TypographyVariant, className: string
 }
 
 export const MDX_COMPONENTS: Record<string, React.ElementType> = {
+  // LLM-only prose: rendered into the .md twins (scripts/build-llms-docs.mjs),
+  // never into the site.
+  "llm-only": () => null,
   h2: heading("h2", "headline-small", "mt-10 mb-3 scroll-mt-6"),
   h3: heading("h3", "title-large", "mt-8 mb-2 scroll-mt-6"),
   p: (props: Props<"p">) => <Typography className="my-4" {...props} />,

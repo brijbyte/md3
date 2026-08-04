@@ -35,6 +35,12 @@ Prose stays as-is, with \`inline code\` and <Kbd>K</Kbd> inline JSX.
 <WidgetBasic />
 
 <TypeScale />
+
+<llm-only>
+LLM-only prose with a nested demo:
+
+<WidgetBasic />
+</llm-only>
 `;
 
 const demo = {
@@ -77,6 +83,12 @@ describe("transformPage", () => {
   it("replaces other JSX with a pointer to the rendered page", () => {
     expect(md).toContain("*Interactive example — see [the rendered page](/components/widget).*");
     expect(md).not.toContain("<TypeScale");
+  });
+
+  it("unwraps <llm-only> content, handling nested tags", () => {
+    expect(md).toContain("LLM-only prose with a nested demo:");
+    expect(md).not.toContain("llm-only");
+    expect(md.match(/\*\*Demo \(`basic\.tsx`\)\*\*/g)).toHaveLength(2);
   });
 
   it("wraps inline JSX in inline code", () => {
