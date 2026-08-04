@@ -41,6 +41,10 @@ LLM-only prose with a nested demo:
 
 <WidgetBasic />
 </llm-only>
+
+<web-only>
+Web-only prose, invisible to LLMs.
+</web-only>
 `;
 
 const demo = {
@@ -89,6 +93,11 @@ describe("transformPage", () => {
     expect(md).toContain("LLM-only prose with a nested demo:");
     expect(md).not.toContain("llm-only");
     expect(md.match(/\*\*Demo \(`basic\.tsx`\)\*\*/g)).toHaveLength(2);
+  });
+
+  it("drops <web-only> content entirely", () => {
+    expect(md).not.toContain("Web-only prose");
+    expect(md).not.toContain("web-only");
   });
 
   it("wraps inline JSX in inline code", () => {

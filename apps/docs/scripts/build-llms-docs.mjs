@@ -124,8 +124,13 @@ export function transformPage(source, { route, title, description, demo }) {
         replace(node, "");
         return;
       case "mdxJsxFlowElement":
-        // <llm-only> renders here (and only here): drop the tags, keep the
-        // children — the site's MDX provider maps the tag to null instead.
+        // Audience tags: <web-only> content is for the site alone; <llm-only>
+        // renders here (and only here) — drop the tags, keep the children.
+        // The site's MDX provider does the mirror image of both.
+        if (node.name === "web-only") {
+          replace(node, "");
+          return;
+        }
         if (node.name === "llm-only") {
           const kids = node.children;
           if (!kids.length) {
