@@ -1,0 +1,518 @@
+"use client";
+import * as React from "react";
+import { useDirection } from "@base-ui/react/direction-provider";
+import { Tabs as BaseTabs } from "@base-ui/react/tabs";
+import { useRipple } from "../ripple/useRipple";
+import { mergeClassName } from "../utils/mergeClassName";
+import styles from "./Carousel.module.css";
+import {
+  ANCHOR_SIZE,
+  centerAlignedKeylines,
+  heroArrangement,
+  type KeylineList,
+  MAX_SMALL_ITEM_SIZE,
+  MIN_SMALL_ITEM_SIZE,
+  multiBrowseArrangement,
+  itemMaskStops,
+  leadingScroll,
+  slotAt,
+  startAlignedKeylines,
+  uncontainedArrangement,
+} from "./keylines";
+
+export type CarouselLayout =
+  | "multi-browse"
+  | "hero"
+  | "center-aligned-hero"
+  | "uncontained"
+  | "full-screen";
+
+const CarouselIndexContext = React.createContext<number>(-1);
+
+interface MaskAnimation {
+  /** Per-item keyframes; the item appends its own index.  */
+  name: string;
+}
+
+interface CarouselContextValue {
+  registerItem: (index: number, element: HTMLElement | null) => void;
+  /** Set only while the masks are driven off a scroll timeline instead of by script. */
+  maskAnimation: MaskAnimation | null;
+}
+
+const CarouselContext = React.createContext<CarouselContextValue | null>(null);
+
+const round = (value: number) => Math.round(value * 100) / 100;
+
+/**
+ * One keyframe set per item, each spanning the scroller's whole travel, so no item needs an
+ * `animation-range` to place it — ranges outside the timeline are exactly the sort of thing
+ * engines disagree about. Width and transform share the keyframes: as two animations they
+ * can be sampled a frame apart, which shows up as a mask wearing one moment's width at
+ * another moment's position.
+ */
+function maskKeyframes(
+  name: string,
+  keylines: KeylineList,
+  itemCount: number,
+  maxScroll: number,
+  isRtl: boolean,
+): string {
+  let css = "";
+  for (let index = 0; index < itemCount; index++) {
+    const frames = itemMaskStops(keylines, index, maxScroll).map((stop) => {
+      const shift = isRtl ? -stop.shift : stop.shift;
+      return `${round(stop.progress * 100)}%{width:${round(stop.size)}px;transform:translateX(${round(shift)}px)}`;
+    });
+    css += `@keyframes ${name}-${index}{${frames.join("")}}`;
+  }
+  return css;
+}
+
+function buildKeylines(
+  layout: CarouselLayout,
+  viewport: number,
+  itemCount: number,
+  options: {
+    itemWidth: number | undefined;
+    itemSpacing: number;
+    minSmallItemWidth: number;
+    maxSmallItemWidth: number;
+  },
+): KeylineList | null {
+  const { itemSpacing, minSmallItemWidth, maxSmallItemWidth } = options;
+  if (viewport <= 0 || itemCount === 0) {
+    return null;
+  }
+
+  if (layout === "full-screen") {
+    return startAlignedKeylines(
+      {
+        priority: 1,
+        smallSize: 0,
+        smallCount: 0,
+        mediumSize: 0,
+        mediumCount: 0,
+        largeSize: viewport,
+        largeCount: 1,
+      },
+      itemSpacing,
+    );
+  }
+
+  if (layout === "uncontained") {
+    const arrangement = uncontainedArrangement({
+      availableSpace: viewport,
+      itemSize: options.itemWidth ?? 186,
+      itemSpacing,
+    });
+    if (!arrangement) return null;
+    // A half-width leading anchor keeps the motion at the start closer to the cut off at the end.
+    const leftAnchor = Math.max(
+      Math.min(ANCHOR_SIZE, arrangement.largeSize),
+      arrangement.mediumSize * 0.5,
+    );
+    return startAlignedKeylines(arrangement, itemSpacing, leftAnchor, ANCHOR_SIZE);
+  }
+
+  if (layout === "hero" || layout === "center-aligned-hero") {
+    const result = heroArrangement({
+      availableSpace: viewport,
+      maxItemSize: options.itemWidth ?? null,
+      itemSpacing,
+      itemCount,
+      isCentered: layout === "center-aligned-hero",
+      minSmallItemSize: minSmallItemWidth,
+      maxSmallItemSize: maxSmallItemWidth,
+    });
+    if (!result) return null;
+    return result.centered
+      ? centerAlignedKeylines(result.arrangement, viewport, itemSpacing)
+      : startAlignedKeylines(result.arrangement, itemSpacing);
+  }
+
+  const arrangement = multiBrowseArrangement({
+    availableSpace: viewport,
+    preferredItemSize: options.itemWidth ?? 186,
+    itemSpacing,
+    itemCount,
+    minSmallItemSize: minSmallItemWidth,
+    maxSmallItemSize: maxSmallItemWidth,
+  });
+  return arrangement ? startAlignedKeylines(arrangement, itemSpacing) : null;
+}
+
+export interface CarouselProps extends Omit<
+  React.ComponentPropsWithoutRef<"div">,
+  "defaultValue" | "onChange"
+> {
+  /** Keyline strategy. @default 'multi-browse' */
+  layout?: CarouselLayout;
+  /** Index of the focal item. Use when the component is controlled. */
+  value?: number;
+  /** Index of the focal item on mount. @default 0 */
+  defaultValue?: number;
+  /** Called with the new focal index, from a click, arrow key, or settled scroll. */
+  onValueChange?: (value: number) => void;
+  /**
+   * Target width of a large item. `preferredItemWidth` for multi-browse, the exact item
+   * width for uncontained, and the max hero width for hero layouts. Ignored by full-screen.
+   * @default 186
+   */
+  itemWidth?: number;
+  /** Space between items. @default 8 */
+  itemSpacing?: number;
+  /** Lower bound for small items. @default 40 */
+  minSmallItemWidth?: number;
+  /** Upper bound for small items. @default 56 */
+  maxSmallItemWidth?: number;
+}
+
+export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
+  function Carousel(props, ref) {
+    const {
+      className,
+      layout = "multi-browse",
+      value: valueProp,
+      defaultValue = 0,
+      onValueChange,
+      itemWidth,
+      itemSpacing = 8,
+      minSmallItemWidth = MIN_SMALL_ITEM_SIZE,
+      maxSmallItemWidth = MAX_SMALL_ITEM_SIZE,
+      children,
+      ...rest
+    } = props;
+
+    const direction = useDirection();
+    const isRtl = direction === "rtl";
+    const stripRef = React.useRef<HTMLDivElement | null>(null);
+    const itemsRef = React.useRef<Map<number, HTMLElement>>(new Map());
+    const itemCount = React.Children.count(children);
+    // Set while our own scrollTo is in flight, so its scrollend doesn't re-adopt a value.
+    const programmaticScroll = React.useRef(false);
+    const didMount = React.useRef(false);
+
+    // Always drive Base UI as controlled so a settled scroll can move the focal item too.
+    const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue);
+    const isControlled = valueProp !== undefined;
+    const value = isControlled ? valueProp : uncontrolledValue;
+    const valueRef = React.useRef(value);
+    valueRef.current = value;
+
+    const setValue = useEventCallback((next: number) => {
+      if (next === valueRef.current) return;
+      valueRef.current = next;
+      if (!isControlled) {
+        setUncontrolledValue(next);
+      }
+      onValueChange?.(next);
+    });
+
+    const [viewport, setViewport] = React.useState(0);
+    React.useEffect(() => {
+      const strip = stripRef.current;
+      if (!strip) return;
+      setViewport(strip.clientWidth);
+      const observer = new ResizeObserver((entries) => {
+        const width = entries[0]?.contentRect.width;
+        if (width != null) setViewport(width);
+      });
+      observer.observe(strip);
+      return () => observer.disconnect();
+    }, []);
+
+    const keylines = React.useMemo(
+      () =>
+        buildKeylines(layout, viewport, itemCount, {
+          itemWidth,
+          itemSpacing,
+          minSmallItemWidth,
+          maxSmallItemWidth,
+        }),
+      [layout, viewport, itemCount, itemWidth, itemSpacing, minSmallItemWidth, maxSmallItemWidth],
+    );
+    const keylinesRef = React.useRef(keylines);
+    keylinesRef.current = keylines;
+    const timelineRef = React.useRef(false);
+
+    // Keyframe percentages are fractions of the scroller's travel, so it has to be measured
+    // rather than derived — a keyline rounding difference would skew the whole curve.
+    const [maxScroll, setMaxScroll] = React.useState(0);
+    React.useLayoutEffect(() => {
+      const strip = stripRef.current;
+      if (!strip) return;
+      const travel = strip.scrollWidth - strip.clientWidth;
+      setMaxScroll((current) => (Math.abs(current - travel) < 0.5 ? current : travel));
+      // Item widths come from the keylines, so the travel can only move when they do.
+    }, [keylines, itemCount]);
+
+    // iOS runs scrolling off the main thread and starves rAF during a drag, so no amount of
+    // scheduling keeps a scripted paint in step. Where scroll timelines exist, hand the masks
+    // to the compositor instead; elsewhere keep painting them by hand.
+    const [hasScrollTimeline, setHasScrollTimeline] = React.useState(false);
+    React.useEffect(() => {
+      setHasScrollTimeline(
+        typeof CSS !== "undefined" &&
+          typeof CSS.supports === "function" &&
+          CSS.supports("animation-timeline", "scroll(nearest inline)"),
+      );
+    }, []);
+
+    const animationName = `md3-carousel-${React.useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+    // Nothing to scroll means no timeline to hang the masks off; script paints them instead.
+    const timeline = hasScrollTimeline && keylines != null && maxScroll > 0;
+    const keyframes = React.useMemo(
+      () =>
+        timeline ? maskKeyframes(animationName, keylines!, itemCount, maxScroll, isRtl) : null,
+      [timeline, animationName, keylines, itemCount, maxScroll, isRtl],
+    );
+    timelineRef.current = timeline;
+
+    const registerItem = React.useCallback((index: number, element: HTMLElement | null) => {
+      if (element) {
+        itemsRef.current.set(index, element);
+      } else {
+        itemsRef.current.delete(index);
+      }
+    }, []);
+    const maskAnimation = React.useMemo<MaskAnimation | null>(
+      () => (timeline ? { name: animationName } : null),
+      [timeline, animationName],
+    );
+    const context = React.useMemo<CarouselContextValue>(
+      () => ({ registerItem, maskAnimation }),
+      [registerItem, maskAnimation],
+    );
+
+    // Items are laid out at a uniform `pitch` and only *masked* down to their keyline
+    // size, so painting never changes scroll geometry — no feedback loop with the scroller.
+    const paint = useEventCallback(() => {
+      const strip = stripRef.current;
+      const list = keylinesRef.current;
+      if (!strip || !list) return;
+      const scroll = leadingScroll(strip.scrollLeft, isRtl);
+      const driven = timelineRef.current;
+      for (const [index, element] of itemsRef.current) {
+        // The mask, not the item box, carries the paint: a transform moves an element's
+        // scroll-snap area, so transforming the item itself would drag the snap points
+        // around as we paint and the strip could never settle on a keyline.
+        const mask = element.firstElementChild as HTMLElement | null;
+        if (!mask) continue;
+        const leading = index * list.pitch - scroll;
+        const slot = slotAt(list, list.focalIndex + leading / list.pitch);
+        // Published for item content to track — captions ellipsize against it. Written from
+        // script on both paths: this is public API, and an animated value is not dependably
+        // inherited by descendants (Safari hands them the un-animated one).
+        mask.style.setProperty("--md3-carousel-mask-size", `${slot.size}px`);
+        if (driven) continue;
+        const shift = slot.offset - leading;
+        mask.style.transform = `translateX(${isRtl ? -shift : shift}px)`;
+      }
+    });
+
+    // Repaint on scroll (rAF-coalesced) and whenever the keylines change.
+    React.useLayoutEffect(() => {
+      paint();
+    }, [paint, keylines]);
+
+    // Touch and trackpad scrolling runs on the compositor and only notifies the main thread
+    // in bursts, so painting once per `scroll` event leaves the masks tens of pixels behind
+    // the items — they slide along with the drag and snap back whenever a paint lands, worst
+    // on the collapsed keylines at either edge, which are meant to sit nearly still. A scroll
+    // event instead starts a per-frame loop that always reads the freshest offset, and the
+    // loop parks itself once the scroller has held still.
+    React.useEffect(() => {
+      const strip = stripRef.current;
+      if (!strip) return;
+      const IDLE_FRAMES = 5;
+      let frame = 0;
+      let idle = 0;
+      let previous = NaN;
+      const loop = () => {
+        if (strip.scrollLeft === previous) {
+          if (++idle > IDLE_FRAMES) {
+            frame = 0;
+            return;
+          }
+        } else {
+          idle = 0;
+          previous = strip.scrollLeft;
+        }
+        paint();
+        frame = requestAnimationFrame(loop);
+      };
+      const onScroll = () => {
+        idle = 0;
+        if (!frame) {
+          previous = NaN;
+          frame = requestAnimationFrame(loop);
+        }
+      };
+      strip.addEventListener("scroll", onScroll, { passive: true });
+      return () => {
+        strip.removeEventListener("scroll", onScroll);
+        if (frame) cancelAnimationFrame(frame);
+      };
+    }, [paint]);
+
+    // A settled scroll (drag, wheel, snap) adopts the item nearest the focal keyline.
+    React.useEffect(() => {
+      const strip = stripRef.current;
+      if (!strip) return;
+      const settle = () => {
+        const list = keylinesRef.current;
+        if (!list || programmaticScroll.current) {
+          programmaticScroll.current = false;
+          return;
+        }
+        // Clamped: a rubber-banding scroller can settle from outside its own range.
+        const travel = strip.scrollWidth - strip.clientWidth;
+        const scroll = Math.min(Math.max(leadingScroll(strip.scrollLeft, isRtl), 0), travel);
+        // The trailing items can't reach the focal keyline — the scroller runs out of
+        // travel first. Pinned at the end, keep the current item rather than snapping
+        // back to whichever one happens to sit on the keyline.
+        if (scroll >= travel - 1 && valueRef.current * list.pitch >= travel - 1) {
+          return;
+        }
+        setValue(Math.max(0, Math.min(itemCount - 1, Math.round(scroll / list.pitch))));
+      };
+      if ("onscrollend" in strip) {
+        strip.addEventListener("scrollend", settle);
+        return () => strip.removeEventListener("scrollend", settle);
+      }
+      let timer: ReturnType<typeof setTimeout>;
+      const onScroll = () => {
+        clearTimeout(timer);
+        timer = setTimeout(settle, 120);
+      };
+      strip.addEventListener("scroll", onScroll, { passive: true });
+      return () => {
+        strip.removeEventListener("scroll", onScroll);
+        clearTimeout(timer);
+      };
+    }, [setValue, itemCount, isRtl]);
+
+    // Bring the focal item to its keyline. The target is analytic (uniform pitch), so it
+    // stays correct regardless of how the masks happen to be painted at this instant.
+    React.useEffect(() => {
+      const strip = stripRef.current;
+      const list = keylinesRef.current;
+      if (!strip || !list) return;
+      const target = value * list.pitch;
+      const current = leadingScroll(strip.scrollLeft, isRtl);
+      if (Math.abs(current - target) < 1) return;
+      const animate =
+        didMount.current && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      programmaticScroll.current = true;
+      strip.scrollTo({ left: isRtl ? -target : target, behavior: animate ? "smooth" : "auto" });
+    }, [value, keylines, isRtl]);
+
+    React.useEffect(() => {
+      didMount.current = true;
+    }, []);
+
+    const largeSize = keylines?.slots[keylines.focalIndex]?.size ?? 0;
+
+    return (
+      <BaseTabs.Root
+        ref={ref}
+        className={[styles.root, className].filter(Boolean).join(" ")}
+        value={value}
+        onValueChange={(next) => {
+          if (typeof next === "number") setValue(next);
+        }}
+        {...rest}
+      >
+        {/* The scroller sits *outside* the tablist on purpose: Base UI's composite scrolls
+            its own root element into view on every arrow key, instantly and against an
+            offset it measures from the nearest positioned ancestor. Keeping the tablist
+            unscrollable leaves the scroll position ours alone. */}
+        {keyframes ? <style>{keyframes}</style> : null}
+        <div
+          ref={stripRef}
+          className={styles.strip}
+          style={{
+            // Layout pitch: every item occupies a large-size box; masks shrink visually only.
+            ["--md3-carousel-item-size" as string]: `${largeSize}px`,
+            ["--md3-carousel-item-spacing" as string]: `${itemSpacing}px`,
+            // Turns the browser's own "reveal the focused item" scroll into "put it on the
+            // leading keyline" — see the scroll-margin rule in the CSS. Held a pixel under
+            // the scrollport: a snap area *wider* than the scrollport relaxes mandatory
+            // snapping, and `viewport` is a rounded measurement of a fractional box.
+            ["--md3-carousel-item-inset" as string]: `${Math.max(0, viewport - largeSize - 1)}px`,
+          }}
+        >
+          <BaseTabs.List className={styles.track} activateOnFocus loopFocus={false}>
+            <CarouselContext.Provider value={context}>
+              {React.Children.map(children, (child, index) => (
+                <CarouselIndexContext.Provider value={index}>{child}</CarouselIndexContext.Provider>
+              ))}
+            </CarouselContext.Provider>
+          </BaseTabs.List>
+        </div>
+      </BaseTabs.Root>
+    );
+  },
+);
+
+export interface CarouselItemProps extends Omit<BaseTabs.Tab.Props, "value"> {
+  /** Overrides the positional index used as the Tab value. */
+  value?: number;
+}
+
+export const CarouselItem = React.forwardRef<HTMLButtonElement, CarouselItemProps>(
+  function CarouselItem(props, ref) {
+    const { className, children, value, onPointerDown, onClick, ...rest } = props;
+    const index = React.useContext(CarouselIndexContext);
+    const context = React.useContext(CarouselContext);
+    const ripple = useRipple();
+    const elementRef = React.useRef<HTMLButtonElement | null>(null);
+
+    const setRef = React.useCallback(
+      (node: HTMLButtonElement | null) => {
+        elementRef.current = node;
+        context?.registerItem(index, node);
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [context, index, ref],
+    );
+
+    const animation = context?.maskAnimation;
+    const maskStyle: React.CSSProperties | undefined = animation
+      ? { animationName: `${animation.name}-${index}` }
+      : undefined;
+
+    return (
+      <BaseTabs.Tab
+        ref={setRef}
+        className={mergeClassName(styles.item, className)}
+        value={value ?? index}
+        onPointerDown={(event) => {
+          ripple.onPointerDown(event);
+          onPointerDown?.(event);
+        }}
+        onClick={(event) => {
+          ripple.onClick();
+          onClick?.(event);
+        }}
+        {...rest}
+      >
+        <span className={styles.mask} style={maskStyle}>
+          <span className={styles.content}>{children}</span>
+          <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
+        </span>
+      </BaseTabs.Tab>
+    );
+  },
+);
+
+/** Stable callback that always sees the latest render's values. */
+function useEventCallback<Args extends unknown[], Return>(fn: (...args: Args) => Return) {
+  const ref = React.useRef(fn);
+  React.useLayoutEffect(() => {
+    ref.current = fn;
+  });
+  return React.useCallback((...args: Args) => ref.current(...args), []);
+}

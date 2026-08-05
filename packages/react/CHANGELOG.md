@@ -4,6 +4,17 @@ Each `## v<version>` section becomes the GitHub release body for the
 `@brijbyte/md3-react@<version>` tag; a release cannot be cut without one (`pnpm release`
 checks).
 
+## Unreleased
+
+- New `Carousel` component (`@brijbyte/md3-react/carousel` + `carousel.css`): MD3
+  multi-browse, hero, center-aligned hero, uncontained, and full-screen layouts. The
+  keyline arrangement is ported from Compose Material3, and items are masked to their
+  keyline rather than resized, so scroll geometry stays stable. Where scroll-driven
+  animations are available the masks are driven off the scroll position on the
+  compositor, so they stay in step with a touch drag; older browsers fall back to
+  painting them from script. Built on Base UI Tabs for roving tabindex and
+  arrow/Home/End keyboard navigation.
+
 ## v0.0.2
 
 - New `NavigationBar` component (`@brijbyte/md3-react/navigation-bar` +

@@ -1,0 +1,139 @@
+/* Spec: Compose material3 carousel (androidx-main) — items are laid out at a uniform
+   large size and masked down to their keyline size, so the mask never disturbs scroll
+   geometry. Item shape is corner-extra-large per m3.material.io/components/carousel/specs. */
+@layer components {
+  .root {
+    display: block;
+  }
+
+  .strip {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    /* Focusing a tab makes the browser reveal it, and that reveal cannot be pre-empted:
+       it runs after every microtask and animation-frame callback, so script can neither
+       beat it nor undo it unseen. Making it smooth is the only way keyboard navigation
+       animates instead of jumping. User-driven scrolling is unaffected by this. */
+    scroll-behavior: smooth;
+    /* The scrollbar would sit under the masks and defeat the cut-off illusion. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* max-content keeps the tablist itself unscrollable — Base UI only scrolls its composite
+     root when it overflows, and this carousel drives the scroll position analytically. */
+  .track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--md3-carousel-item-spacing, 8px);
+    width: max-content;
+  }
+
+  .item {
+    box-sizing: border-box;
+    flex: 0 0 var(--md3-carousel-item-size, 186px);
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    scroll-snap-align: start;
+    /* Revealing an item ahead of the viewport aligns its trailing edge, which stops a
+       viewport short of the keyline; padding the box out to the full viewport width makes
+       that alignment land exactly where our own scroll would put it, in both directions.
+       Only the end edge grows, so `scroll-snap-align: start` is untouched. */
+    scroll-margin-inline-end: var(--md3-carousel-item-inset, 0px);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  .mask {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    width: var(--md3-carousel-mask-size, var(--md3-carousel-item-size, 186px));
+    overflow: hidden;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    background: var(--md-sys-color-surface-container);
+    /* Repainted every scroll frame; keep it on its own compositor layer. */
+    will-change: transform;
+    /* Inert until an animation-name is set, which only happens where scroll timelines are
+       supported. The strip is the nearest inline-axis scroller, so this ties the masks
+       straight to its scroll position — the compositor keeps them in step during a drag
+       instead of script chasing it a frame behind. */
+    animation-timeline: scroll(nearest inline);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+  }
+
+  /* The mask is narrower than the item box, so the focus ring belongs on the mask.
+     Inward ring (like the Tabs list): the strip clips on both axes, and the focal mask
+     sits flush with the scrollport's leading edge, so an outset ring is cut off on every
+     side. -3px puts the 3px ring flush inside the mask, following its corner radius. */
+  .item:focus-visible .mask {
+    outline: 3px solid var(--md-sys-color-secondary);
+    outline-offset: -3px;
+  }
+
+  /* Content keeps the large width and is cropped symmetrically as the mask closes,
+     rather than squashing — matches Compose's maskClip. */
+  .content {
+    flex: 0 0 var(--md3-carousel-item-size, 186px);
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .stateLayer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .stateLayer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  .item:hover .stateLayer::before {
+    opacity: var(--md-sys-state-hover-state-layer-opacity);
+  }
+
+  .item:focus-visible .stateLayer::before {
+    opacity: var(--md-sys-state-focus-state-layer-opacity);
+  }
+
+  .item[data-disabled] {
+    cursor: default;
+  }
+
+  .item[data-disabled] .mask {
+    opacity: 0.38;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .strip {
+      scroll-behavior: auto;
+    }
+
+    .mask {
+      will-change: auto;
+    }
+  }
+}

@@ -34,6 +34,7 @@ export default defineConfig({
     "button-group/index": "src/button-group/index.ts",
     "button/index": "src/button/index.ts",
     "card/index": "src/card/index.ts",
+    "carousel/index": "src/carousel/index.ts",
     "checkbox/index": "src/checkbox/index.ts",
     "chip/index": "src/chip/index.ts",
     "circular-progress/index": "src/circular-progress/index.ts",
