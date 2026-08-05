@@ -218,8 +218,7 @@ test("arrow keys animate towards the keyline going backwards as well as forwards
 
 // The browser's reveal-the-focused-element scroll can't be prevented, so it is aimed
 // instead: a trailing scroll margin of viewport - itemSize turns "bring this item into
-// view" into "put this item on the leading keyline", and smooth scroll behaviour keeps it
-// from jumping there ahead of our own animation.
+// view" into "put this item on the leading keyline", so wherever it lands agrees with us.
 test("item scroll margin aims the browser's reveal scroll at the keyline", async () => {
   const { container } = renderCarousel();
   const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
@@ -232,6 +231,8 @@ test("item scroll margin aims the browser's reveal scroll at the keyline", async
   // A snap area wider than the scrollport relaxes mandatory snapping, which a touch fling
   // then settles out of — the margin has to stay under it, not merely near it.
   expect(margin + item.getBoundingClientRect().width).toBeLessThan(strip.clientWidth);
+  // The reveal itself has to animate: it runs after all script for the keypress, so it
+  // cannot be pre-empted or rewound out of sight.
   expect(getComputedStyle(strip).scrollBehavior).toBe("smooth");
 });
 

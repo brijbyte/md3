@@ -11,9 +11,10 @@
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
-    /* Focusing a tab makes the browser reveal it, and that scroll can't be opted out of
-       (Base UI calls focus() itself, so `preventScroll` is out of reach). Animate it
-       instead of letting it jump, so keyboard navigation reads the same either way. */
+    /* Focusing a tab makes the browser reveal it, and that reveal cannot be pre-empted:
+       it runs after every microtask and animation-frame callback, so script can neither
+       beat it nor undo it unseen. Making it smooth is the only way keyboard navigation
+       animates instead of jumping. User-driven scrolling is unaffected by this. */
     scroll-behavior: smooth;
     /* The scrollbar would sit under the masks and defeat the cut-off illusion. */
     scrollbar-width: none;

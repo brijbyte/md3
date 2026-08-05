@@ -235,16 +235,38 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       paint();
     }, [paint, keylines]);
 
+    // Touch and trackpad scrolling runs on the compositor and only notifies the main thread
+    // in bursts, so painting once per `scroll` event leaves the masks tens of pixels behind
+    // the items — they slide along with the drag and snap back whenever a paint lands, worst
+    // on the collapsed keylines at either edge, which are meant to sit nearly still. A scroll
+    // event instead starts a per-frame loop that always reads the freshest offset, and the
+    // loop parks itself once the scroller has held still.
     React.useEffect(() => {
       const strip = stripRef.current;
       if (!strip) return;
+      const IDLE_FRAMES = 5;
       let frame = 0;
+      let idle = 0;
+      let previous = NaN;
+      const loop = () => {
+        if (strip.scrollLeft === previous) {
+          if (++idle > IDLE_FRAMES) {
+            frame = 0;
+            return;
+          }
+        } else {
+          idle = 0;
+          previous = strip.scrollLeft;
+        }
+        paint();
+        frame = requestAnimationFrame(loop);
+      };
       const onScroll = () => {
-        if (frame) return;
-        frame = requestAnimationFrame(() => {
-          frame = 0;
-          paint();
-        });
+        idle = 0;
+        if (!frame) {
+          previous = NaN;
+          frame = requestAnimationFrame(loop);
+        }
       };
       strip.addEventListener("scroll", onScroll, { passive: true });
       return () => {
