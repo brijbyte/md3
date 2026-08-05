@@ -370,6 +370,16 @@ export function uncontainedArrangement(options: {
   };
 }
 
+/**
+ * Distance scrolled away from the leading edge, which `scrollLeft` counts backwards in RTL.
+ * Stays signed on purpose: a scroller rubber-banding past its start reports an out-of-range
+ * offset, and the keylines extrapolate through it. Taking the magnitude instead would mirror
+ * the overscroll and send every mask the wrong way at twice the speed.
+ */
+export function leadingScroll(scrollLeft: number, isRtl: boolean): number {
+  return isRtl ? -scrollLeft : scrollLeft;
+}
+
 export interface Slot {
   size: number;
   /** Leading edge of the slot, in px from the viewport's leading edge. */

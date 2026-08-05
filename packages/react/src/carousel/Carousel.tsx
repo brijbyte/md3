@@ -13,6 +13,7 @@ import {
   MAX_SMALL_ITEM_SIZE,
   MIN_SMALL_ITEM_SIZE,
   multiBrowseArrangement,
+  leadingScroll,
   slotAt,
   startAlignedKeylines,
   uncontainedArrangement,
@@ -214,7 +215,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       const strip = stripRef.current;
       const list = keylinesRef.current;
       if (!strip || !list) return;
-      const scroll = Math.abs(strip.scrollLeft);
+      const scroll = leadingScroll(strip.scrollLeft, isRtl);
       for (const [index, element] of itemsRef.current) {
         // The mask, not the item box, carries the paint: a transform moves an element's
         // scroll-snap area, so transforming the item itself would drag the snap points
@@ -262,8 +263,9 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
           programmaticScroll.current = false;
           return;
         }
-        const scroll = Math.abs(strip.scrollLeft);
+        // Clamped: a rubber-banding scroller can settle from outside its own range.
         const maxScroll = strip.scrollWidth - strip.clientWidth;
+        const scroll = Math.min(Math.max(leadingScroll(strip.scrollLeft, isRtl), 0), maxScroll);
         // The trailing items can't reach the focal keyline — the scroller runs out of
         // travel first. Pinned at the end, keep the current item rather than snapping
         // back to whichever one happens to sit on the keyline.
@@ -286,7 +288,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         strip.removeEventListener("scroll", onScroll);
         clearTimeout(timer);
       };
-    }, [setValue, itemCount]);
+    }, [setValue, itemCount, isRtl]);
 
     // Bring the focal item to its keyline. The target is analytic (uniform pitch), so it
     // stays correct regardless of how the masks happen to be painted at this instant.
@@ -295,7 +297,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       const list = keylinesRef.current;
       if (!strip || !list) return;
       const target = value * list.pitch;
-      const current = Math.abs(strip.scrollLeft);
+      const current = leadingScroll(strip.scrollLeft, isRtl);
       if (Math.abs(current - target) < 1) return;
       const animate =
         didMount.current && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -331,8 +333,10 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
             ["--md3-carousel-item-size" as string]: `${largeSize}px`,
             ["--md3-carousel-item-spacing" as string]: `${itemSpacing}px`,
             // Turns the browser's own "reveal the focused item" scroll into "put it on the
-            // leading keyline" — see the scroll-margin rule in the CSS.
-            ["--md3-carousel-item-inset" as string]: `${Math.max(0, viewport - largeSize)}px`,
+            // leading keyline" — see the scroll-margin rule in the CSS. Held a pixel under
+            // the scrollport: a snap area *wider* than the scrollport relaxes mandatory
+            // snapping, and `viewport` is a rounded measurement of a fractional box.
+            ["--md3-carousel-item-inset" as string]: `${Math.max(0, viewport - largeSize - 1)}px`,
           }}
         >
           <BaseTabs.List className={styles.track} activateOnFocus loopFocus={false}>

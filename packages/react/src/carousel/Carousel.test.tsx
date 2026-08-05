@@ -9,7 +9,10 @@ import styles from "./Carousel.module.css";
 import {
   MAX_SMALL_ITEM_SIZE,
   MIN_SMALL_ITEM_SIZE,
+  leadingScroll,
   multiBrowseArrangement,
+  slotAt,
+  startAlignedKeylines,
   uncontainedArrangement,
 } from "./keylines";
 
@@ -82,6 +85,34 @@ test("uncontained keeps a uniform item size and cuts off the overflow item", () 
   expect(arrangement.mediumCount).toBe(1);
   // The cut-off item must be visibly smaller than a full item, or there is no motion.
   expect(arrangement.mediumSize).toBeLessThan(arrangement.largeSize);
+});
+
+// Regression: a touch scroller rubber-banding past its start reports an out-of-range
+// offset — negative in LTR, positive in RTL. The paint used to take the magnitude of
+// scrollLeft (a shortcut for RTL counting backwards), which mirrors that overscroll, so
+// the masks lurched forwards while the items were being dragged backwards. Visible only
+// at the ends of the travel, and only on input that can overscroll — hence "a shake at
+// the edges" on touch and nothing at all with a mouse.
+test("overscrolling past the leading edge keeps the masks travelling the same way", () => {
+  const arrangement = multiBrowseArrangement({
+    availableSpace: VIEWPORT,
+    preferredItemSize: 186,
+    itemSpacing: 8,
+    itemCount: 8,
+  })!;
+  const list = startAlignedKeylines(arrangement, 8);
+  // Where the first item's mask lands for a given scrollLeft, exactly as `paint` derives it.
+  const maskAt = (scrollLeft: number, isRtl = false) =>
+    slotAt(list, list.focalIndex + -leadingScroll(scrollLeft, isRtl) / list.pitch).offset;
+
+  // Dragging back past the start must keep pushing the mask the way it was already going.
+  expect(maskAt(-24)).toBeGreaterThan(maskAt(-12));
+  expect(maskAt(-12)).toBeGreaterThan(maskAt(0));
+  expect(maskAt(0)).toBeGreaterThan(maskAt(12));
+  // Same story in RTL, where scrollLeft counts backwards and overscroll goes positive.
+  expect(maskAt(24, true)).toBeGreaterThan(maskAt(12, true));
+  expect(maskAt(12, true)).toBeGreaterThan(maskAt(0, true));
+  expect(maskAt(0, true)).toBeGreaterThan(maskAt(-12, true));
 });
 
 test("renders a tablist whose focal item is masked to the large size", async () => {
@@ -196,7 +227,11 @@ test("item scroll margin aims the browser's reveal scroll at the keyline", async
 
   const itemSize = parseFloat(getComputedStyle(strip).getPropertyValue("--md3-carousel-item-size"));
   const item = container.querySelector<HTMLElement>('[role="tab"]')!;
-  expect(parseFloat(getComputedStyle(item).scrollMarginRight)).toBeCloseTo(VIEWPORT - itemSize, 0);
+  const margin = parseFloat(getComputedStyle(item).scrollMarginRight);
+  expect(margin).toBeCloseTo(VIEWPORT - itemSize - 1, 0);
+  // A snap area wider than the scrollport relaxes mandatory snapping, which a touch fling
+  // then settles out of — the margin has to stay under it, not merely near it.
+  expect(margin + item.getBoundingClientRect().width).toBeLessThan(strip.clientWidth);
   expect(getComputedStyle(strip).scrollBehavior).toBe("smooth");
 });
 
