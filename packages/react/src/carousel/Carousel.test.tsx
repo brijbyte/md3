@@ -135,16 +135,25 @@ test("renders a tablist whose focal item is masked to the large size", async () 
 
 // Public contract: item content (captions especially) tracks this to stay inside the
 // visible crop instead of being sliced mid-word. Documented on the Carousel docs page.
-test("exposes the live mask width as --md3-carousel-mask-size", async () => {
-  const { masks, maskWidth } = renderCarousel();
+//
+// Regression: this briefly rode on a registered custom property animated on the mask. The
+// mask itself sized correctly, but Safari hands *descendants* the un-animated value, so a
+// caption sized against it fell back to shrink-wrapping its text and drew a scrim box far
+// narrower than the mask. Reaching descendants is the entire point of publishing it, so it
+// stays an ordinary inline custom property that plain inheritance carries down.
+test("publishes the mask width down to item content", async () => {
+  const { masks, maskWidth, getByTestId } = renderCarousel();
   await waitFor(() => expect(maskWidth(0)).toBeGreaterThan(100));
   for (const [index, mask] of masks().entries()) {
-    // Computed, not inline: where scroll timelines exist the value comes from the mask
-    // animation, and consumers read it through the cascade either way.
-    const published = getComputedStyle(mask).getPropertyValue("--md3-carousel-mask-size");
+    const published = mask.style.getPropertyValue("--md3-carousel-mask-size");
     expect(published).not.toBe("");
     expect(parseFloat(published)).toBeCloseTo(maskWidth(index), 0);
   }
+  // What a caption actually resolves: the value has to survive the trip down the tree.
+  const content = getByTestId("item-0").querySelector<HTMLElement>(`.${styles.content}`)!
+    .firstElementChild as HTMLElement;
+  const inherited = getComputedStyle(content).getPropertyValue("--md3-carousel-mask-size");
+  expect(parseFloat(inherited)).toBeCloseTo(maskWidth(0), 0);
 });
 
 // The masks are driven straight off the scroll position by a generated keyframe set rather

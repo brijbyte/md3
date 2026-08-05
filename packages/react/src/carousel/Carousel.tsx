@@ -54,24 +54,26 @@ const U_OVERSHOOT = 2;
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /**
- * One keyframe set for the whole strip: every item follows the same curve of slot position,
+ * Two keyframe sets for the whole strip: every item follows the same curve of slot position,
  * so items differ only in `animation-range`. Percentages run with the scroll, which walks
  * slot positions downwards.
+ *
+ * Position and size are split because only the transform can be composited — keeping it in
+ * its own animation lets it ride the scrolling thread even while the width, which cannot
+ * avoid layout, waits on the main thread.
  */
 function maskKeyframes(name: string, keylines: KeylineList, isRtl: boolean): string {
   const uMax = keylines.slots.length - 1 + U_OVERSHOOT;
   const uMin = -U_OVERSHOOT;
   const span = uMax - uMin;
-  const frames = maskStops(keylines, uMin, uMax)
-    .toReversed()
-    .map((stop) => {
-      const shift = isRtl ? -stop.shift : stop.shift;
-      return `${round(((uMax - stop.u) / span) * 100)}%{--md3-carousel-mask-size:${round(stop.size)}px;transform:translateX(${round(shift)}px)}`;
-    });
-  // Registered so the size interpolates as a length; an unregistered custom property would
-  // jump between stops instead. Injected here, with the keyframes, so the plain fallback
-  // path keeps the `var(..., <item size>)` default it relies on before the first paint.
-  return `@property --md3-carousel-mask-size{syntax:"<length>";inherits:true;initial-value:0px}@keyframes ${name}{${frames.join("")}}`;
+  const move: string[] = [];
+  const size: string[] = [];
+  for (const stop of maskStops(keylines, uMin, uMax).toReversed()) {
+    const at = `${round(((uMax - stop.u) / span) * 100)}%`;
+    move.push(`${at}{transform:translateX(${round(isRtl ? -stop.shift : stop.shift)}px)}`);
+    size.push(`${at}{width:${round(stop.size)}px}`);
+  }
+  return `@keyframes ${name}-move{${move.join("")}}@keyframes ${name}-size{${size.join("")}}`;
 }
 
 function buildKeylines(
@@ -291,8 +293,9 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     const paint = useEventCallback(() => {
       const strip = stripRef.current;
       const list = keylinesRef.current;
-      if (!strip || !list || timelineRef.current) return;
+      if (!strip || !list) return;
       const scroll = leadingScroll(strip.scrollLeft, isRtl);
+      const driven = timelineRef.current;
       for (const [index, element] of itemsRef.current) {
         // The mask, not the item box, carries the paint: a transform moves an element's
         // scroll-snap area, so transforming the item itself would drag the snap points
@@ -301,7 +304,11 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         if (!mask) continue;
         const leading = index * list.pitch - scroll;
         const slot = slotAt(list, list.focalIndex + leading / list.pitch);
+        // Published for item content to track — captions ellipsize against it. Written from
+        // script on both paths: this is public API, and an animated value is not dependably
+        // inherited by descendants (Safari hands them the un-animated one).
         mask.style.setProperty("--md3-carousel-mask-size", `${slot.size}px`);
+        if (driven) continue;
         const shift = slot.offset - leading;
         mask.style.transform = `translateX(${isRtl ? -shift : shift}px)`;
       }
@@ -320,7 +327,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     // loop parks itself once the scroller has held still.
     React.useEffect(() => {
       const strip = stripRef.current;
-      if (!strip || timeline) return;
+      if (!strip) return;
       const IDLE_FRAMES = 5;
       let frame = 0;
       let idle = 0;
@@ -350,7 +357,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         strip.removeEventListener("scroll", onScroll);
         if (frame) cancelAnimationFrame(frame);
       };
-    }, [paint, timeline]);
+    }, [paint]);
 
     // A settled scroll (drag, wheel, snap) adopts the item nearest the focal keyline.
     React.useEffect(() => {
@@ -478,10 +485,12 @@ export const CarouselItem = React.forwardRef<HTMLButtonElement, CarouselItemProp
     const animation = context?.maskAnimation;
     const maskStyle: React.CSSProperties | undefined = animation
       ? {
-          animationName: animation.name,
+          animationName: `${animation.name}-move, ${animation.name}-size`,
           // The stretch of scroll over which this item crosses the keylines. Every item runs
           // the same keyframes; only where they start differs, by one pitch per index.
           animationRange: `${animation.pitch * (animation.focalIndex + index - animation.uMax)}px ${animation.pitch * (animation.focalIndex + index - animation.uMin)}px`,
+          // Listed per animation rather than trusting the list to be cycled.
+          animationTimeline: "scroll(nearest inline), scroll(nearest inline)",
         }
       : undefined;
 
