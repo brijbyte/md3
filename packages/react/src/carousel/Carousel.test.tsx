@@ -157,9 +157,9 @@ test("publishes the mask width down to item content", async () => {
 });
 
 // The masks are driven straight off the scroll position by a generated keyframe set rather
-// than repainted by script, so the whole curve has to match the keyline math — at arbitrary
-// offsets, not just at the snap points. Beyond the keyframes' range the animation holds its
-// end value instead of extrapolating, which is only sound while those masks are off-screen.
+// than repainted by script, so the whole curve has to match the keyline math — every item,
+// at arbitrary offsets, not just at the snap points. The keyframes span the scroller's whole
+// travel, so there is no range outside which the curve is merely approximated.
 test("timeline-driven masks match the keyline math at arbitrary offsets", async () => {
   const { container, masks } = renderCarousel();
   const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
@@ -173,30 +173,24 @@ test("timeline-driven masks match the keyline math at arbitrary offsets", async 
     itemCount: 8,
   })!;
   const list = startAlignedKeylines(arrangement, 8);
-  const uMax = list.slots.length - 1 + 2;
-  const uMin = -2;
 
   let checked = 0;
   for (const target of [0, 37, 120, 200.5, 340]) {
+    // Mandatory snapping pulls arbitrary offsets back to a keyline, so read where the
+    // scroller actually is and hold the masks to *that* — the curve has to be right at any
+    // offset, settled or not. Measured in the same tick, which flushes the animation.
     strip.scrollLeft = target;
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    const stripRect = strip.getBoundingClientRect();
     const scroll = strip.scrollLeft;
+    const stripRect = strip.getBoundingClientRect();
     masks().forEach((mask, index) => {
-      const u = list.focalIndex + index - scroll / list.pitch;
+      const slot = slotAt(list, list.focalIndex + index - scroll / list.pitch);
       const rect = mask.getBoundingClientRect();
-      if (u > uMax || u < uMin) {
-        // Held rather than extrapolated — fine only because it is out of sight.
-        expect(rect.left > stripRect.right || rect.right < stripRect.left).toBe(true);
-        return;
-      }
-      const slot = slotAt(list, u);
       expect(rect.width).toBeCloseTo(slot.size, 0);
       expect(rect.left - stripRect.left).toBeCloseTo(slot.offset, 0);
       checked++;
     });
   }
-  expect(checked).toBeGreaterThan(10);
+  expect(checked).toBe(40);
 });
 
 // Safari before 26 and Firefox before 144 have no scroll timelines, so the scripted paint
@@ -390,6 +384,37 @@ test("mask paint never moves the item's scroll-snap area", async () => {
 test("full-screen masks one item across the whole viewport", async () => {
   const { maskWidth } = renderCarousel({ layout: "full-screen" });
   await waitFor(() => expect(maskWidth(0)).toBeCloseTo(VIEWPORT, 0));
+});
+
+// Regression: the next item showed as a sliver laid over the current one. Full-screen is the
+// layout with no room to hide a mispositioned mask — settled on a slide, every other item
+// has to be entirely outside the scrollport, so this catches a mask sitting at one moment's
+// position while wearing another moment's width.
+test("full-screen shows nothing but the settled slide", async () => {
+  const { container, masks } = renderCarousel({ layout: "full-screen", count: 4 });
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => expect(masks()[0]!.getBoundingClientRect().width).toBeCloseTo(VIEWPORT, 0));
+  const pitch =
+    parseFloat(getComputedStyle(strip).getPropertyValue("--md3-carousel-item-size")) + 8;
+
+  for (const slide of [0, 1, 2, 3]) {
+    strip.scrollLeft = slide * pitch;
+    // scroll-behavior is smooth, so even assigning scrollLeft animates — wait for the slide
+    // to actually arrive, or this measures the transition rather than the settled state.
+    await waitFor(() => expect(Math.abs(strip.scrollLeft - slide * pitch)).toBeLessThan(0.5));
+    const port = strip.getBoundingClientRect();
+    const settled = slide;
+    masks().forEach((mask, index) => {
+      const rect = mask.getBoundingClientRect();
+      if (index === settled) {
+        expect(rect.width).toBeCloseTo(port.width, 0);
+        expect(rect.left).toBeCloseTo(port.left, 0);
+      } else {
+        const visible = Math.min(rect.right, port.right) - Math.max(rect.left, port.left);
+        expect(visible).toBeLessThanOrEqual(0.5);
+      }
+    });
+  }
 });
 
 // RTL flips the leading edge, so the focal mask must land on the right.

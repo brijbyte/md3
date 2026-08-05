@@ -501,28 +501,39 @@ export function maskShift(keylines: KeylineList, u: number): number {
 }
 
 export interface MaskStop {
-  /** Slot position; the mask function bends only where this is an integer. */
-  u: number;
+  /** Fraction of the scroller's travel at which this stop applies. */
+  progress: number;
   size: number;
   shift: number;
 }
 
 /**
- * The mask function sampled at every point where it bends, over `[uMin, uMax]` ascending.
+ * The mask function for one item across the scroller's whole travel, sampled wherever it
+ * bends. Covering the full range means the curve is exact everywhere — including past the
+ * end keylines, where `slotAt` keeps extrapolating — rather than being held at a fill value.
  *
- * Folding the item's own scroll travel into `shift` leaves a curve of `u` alone, so *every*
- * item follows the identical curve and differs only in the scroll offset that puts it at a
- * given `u` (`pitch * (focalIndex + index - u)`). That is what lets one set of keyframes,
- * offset per item, drive the whole strip off the scroll position — no script per frame.
+ * Size and shift travel together in one stop list on purpose: split across two animations
+ * they can be sampled a frame apart, which puts a mask at one moment's position wearing
+ * another moment's width.
  */
-export function maskStops(keylines: KeylineList, uMin: number, uMax: number): MaskStop[] {
+export function itemMaskStops(keylines: KeylineList, index: number, maxScroll: number): MaskStop[] {
+  const { pitch, focalIndex } = keylines;
   const stops: MaskStop[] = [];
-  const at = (u: number) =>
-    stops.push({ u, size: slotAt(keylines, u).size, shift: maskShift(keylines, u) });
-  at(uMin);
-  for (let u = Math.ceil(uMin); u <= Math.floor(uMax); u++) {
-    if (u > uMin && u < uMax) at(u);
+  const at = (scroll: number) => {
+    const u = focalIndex + index - scroll / pitch;
+    stops.push({
+      progress: scroll / maxScroll,
+      size: slotAt(keylines, u).size,
+      shift: maskShift(keylines, u),
+    });
+  };
+  at(0);
+  // Walking slot positions down from the one this item starts at walks the scroll up.
+  for (let u = Math.floor(focalIndex + index); ; u--) {
+    const scroll = pitch * (focalIndex + index - u);
+    if (scroll >= maxScroll) break;
+    if (scroll > 0) at(scroll);
   }
-  at(uMax);
+  at(maxScroll);
   return stops;
 }
