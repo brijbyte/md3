@@ -142,6 +142,26 @@ test("arrow keys move the focal item and report the new index", async () => {
   await waitFor(() => expect(changes.at(-1)).toBe(7));
 });
 
+// Regression: the ring sat 5px outside the mask (outline-offset: 2px), but the strip
+// clips on both axes and the focal mask is flush with its leading edge, so the ring was
+// sliced off top and bottom. It has to paint inward to survive.
+test("focus ring paints inside the mask so the scroll container can't clip it", async () => {
+  const { container } = renderCarousel();
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  const tabs = container.querySelectorAll<HTMLElement>('[role="tab"]');
+
+  tabs[0]!.focus();
+  await userEvent.keyboard("{ArrowRight}");
+  const focused = container.querySelector<HTMLElement>('[role="tab"]:focus-visible');
+  expect(focused).not.toBeNull();
+
+  const ring = getComputedStyle(focused!.querySelector<HTMLElement>(`.${styles.mask}`)!);
+  expect(parseFloat(ring.outlineWidth)).toBeGreaterThan(0);
+  expect(parseFloat(ring.outlineOffset)).toBeLessThan(0);
+  // The strip clips on both axes — which is exactly why the ring must be inward.
+  expect(getComputedStyle(strip).overflowY).toBe("hidden");
+});
+
 test("clicking an item makes it focal and scrolls it to the leading keyline", async () => {
   const { container, getByTestId } = renderCarousel();
   const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;

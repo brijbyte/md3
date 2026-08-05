@@ -51,10 +51,13 @@
     will-change: transform;
   }
 
-  /* The mask is narrower than the item box, so the focus ring belongs on the mask. */
+  /* The mask is narrower than the item box, so the focus ring belongs on the mask.
+     Inward ring (like the Tabs list): the strip clips on both axes, and the focal mask
+     sits flush with the scrollport's leading edge, so an outset ring is cut off on every
+     side. -3px puts the 3px ring flush inside the mask, following its corner radius. */
   .item:focus-visible .mask {
     outline: 3px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
+    outline-offset: -3px;
   }
 
   /* Content keeps the large width and is cropped symmetrically as the mask closes,
