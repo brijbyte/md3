@@ -15,11 +15,13 @@ import {
 
 const VIEWPORT = 480;
 
-function renderCarousel(props?: Partial<CarouselProps> & { count?: number; dir?: "ltr" | "rtl" }) {
-  const { count = 8, dir = "ltr", ...rest } = props ?? {};
+function renderCarousel(
+  props?: Partial<CarouselProps> & { count?: number; dir?: "ltr" | "rtl"; inset?: number },
+) {
+  const { count = 8, dir = "ltr", inset = 0, ...rest } = props ?? {};
   const utils = render(
     <DirectionProvider direction={dir}>
-      <div dir={dir} style={{ width: VIEWPORT }}>
+      <div dir={dir} style={{ width: VIEWPORT, marginInlineStart: inset }}>
         <Carousel aria-label="Photos" {...rest}>
           {Array.from({ length: count }, (_, i) => (
             <CarouselItem key={i} data-testid={`item-${i}`}>
@@ -140,6 +142,62 @@ test("arrow keys move the focal item and report the new index", async () => {
 
   await userEvent.keyboard("{End}");
   await waitFor(() => expect(changes.at(-1)).toBe(7));
+});
+
+// Regression: arrow keys animated forwards but lurched the wrong way backwards — the
+// strip jumped a whole pitch past the destination and then slid back, which reads as a
+// forwards step. Base UI's composite scrolls its own root into view on every arrow key,
+// measuring the item's offset from the nearest *positioned* ancestor rather than from the
+// scroller, so an inset carousel aimed a pitch too far; the browser's own reveal-the-
+// focused-tab scroll piled on top. The scroller now sits outside the tablist and the item
+// scroll margin lines the browser's reveal up with our keyline.
+test("arrow keys animate towards the keyline going backwards as well as forwards", async () => {
+  // Inset so the strip is far from the page origin — that offset is what Base UI's
+  // scroll-into-view used to add to its target.
+  const { container } = renderCarousel({ inset: 600 });
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  const list = container.querySelector<HTMLElement>('[role="tablist"]')!;
+  // Base UI only scrolls its composite root when that root overflows.
+  expect(list.parentElement).toBe(strip);
+  expect(list.scrollWidth).toBe(list.clientWidth);
+
+  await waitFor(() => expect(strip.scrollWidth).toBeGreaterThan(strip.clientWidth));
+  const pitch =
+    parseFloat(getComputedStyle(strip).getPropertyValue("--md3-carousel-item-size")) + 8;
+  const trail = async (keys: string) => {
+    const samples: number[] = [];
+    await userEvent.keyboard(keys);
+    for (let i = 0; i < 10; i++) {
+      samples.push(Math.abs(strip.scrollLeft));
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+    return samples;
+  };
+
+  container.querySelector<HTMLElement>('[role="tab"]')!.focus();
+  const forwards = await trail("{ArrowRight}{ArrowRight}{ArrowRight}");
+  // Overshooting the destination at any point means the strip travelled the wrong way.
+  expect(Math.max(...forwards)).toBeLessThanOrEqual(3 * pitch + 1);
+  await waitFor(() => expect(Math.abs(strip.scrollLeft)).toBeCloseTo(3 * pitch, 0));
+
+  const backwards = await trail("{ArrowLeft}");
+  expect(Math.min(...backwards)).toBeGreaterThanOrEqual(2 * pitch - 1);
+  await waitFor(() => expect(Math.abs(strip.scrollLeft)).toBeCloseTo(2 * pitch, 0));
+});
+
+// The browser's reveal-the-focused-element scroll can't be prevented, so it is aimed
+// instead: a trailing scroll margin of viewport - itemSize turns "bring this item into
+// view" into "put this item on the leading keyline", and smooth scroll behaviour keeps it
+// from jumping there ahead of our own animation.
+test("item scroll margin aims the browser's reveal scroll at the keyline", async () => {
+  const { container } = renderCarousel();
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => expect(strip.scrollWidth).toBeGreaterThan(strip.clientWidth));
+
+  const itemSize = parseFloat(getComputedStyle(strip).getPropertyValue("--md3-carousel-item-size"));
+  const item = container.querySelector<HTMLElement>('[role="tab"]')!;
+  expect(parseFloat(getComputedStyle(item).scrollMarginRight)).toBeCloseTo(VIEWPORT - itemSize, 0);
+  expect(getComputedStyle(strip).scrollBehavior).toBe("smooth");
 });
 
 // Regression: the ring sat 5px outside the mask (outline-offset: 2px), but the strip

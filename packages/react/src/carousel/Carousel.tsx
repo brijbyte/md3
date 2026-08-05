@@ -319,23 +319,30 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         }}
         {...rest}
       >
-        <BaseTabs.List
+        {/* The scroller sits *outside* the tablist on purpose: Base UI's composite scrolls
+            its own root element into view on every arrow key, instantly and against an
+            offset it measures from the nearest positioned ancestor. Keeping the tablist
+            unscrollable leaves the scroll position ours alone. */}
+        <div
           ref={stripRef}
           className={styles.strip}
-          activateOnFocus
-          loopFocus={false}
           style={{
             // Layout pitch: every item occupies a large-size box; masks shrink visually only.
             ["--md3-carousel-item-size" as string]: `${largeSize}px`,
             ["--md3-carousel-item-spacing" as string]: `${itemSpacing}px`,
+            // Turns the browser's own "reveal the focused item" scroll into "put it on the
+            // leading keyline" — see the scroll-margin rule in the CSS.
+            ["--md3-carousel-item-inset" as string]: `${Math.max(0, viewport - largeSize)}px`,
           }}
         >
-          <CarouselContext.Provider value={context}>
-            {React.Children.map(children, (child, index) => (
-              <CarouselIndexContext.Provider value={index}>{child}</CarouselIndexContext.Provider>
-            ))}
-          </CarouselContext.Provider>
-        </BaseTabs.List>
+          <BaseTabs.List className={styles.track} activateOnFocus loopFocus={false}>
+            <CarouselContext.Provider value={context}>
+              {React.Children.map(children, (child, index) => (
+                <CarouselIndexContext.Provider value={index}>{child}</CarouselIndexContext.Provider>
+              ))}
+            </CarouselContext.Provider>
+          </BaseTabs.List>
+        </div>
       </BaseTabs.Root>
     );
   },
