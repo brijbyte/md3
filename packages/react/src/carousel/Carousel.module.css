@@ -65,6 +65,13 @@
     background: var(--md-sys-color-surface-container);
     /* Repainted every scroll frame; keep it on its own compositor layer. */
     will-change: transform;
+    /* Inert until an animation-name is set, which only happens where scroll timelines are
+       supported. The strip is the nearest inline-axis scroller, so this ties the masks
+       straight to its scroll position — the compositor keeps them in step during a drag
+       instead of script chasing it a frame behind. */
+    animation-timeline: scroll(nearest inline);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
   }
 
   /* The mask is narrower than the item box, so the focus ring belongs on the mask.

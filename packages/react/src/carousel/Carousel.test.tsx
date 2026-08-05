@@ -139,9 +139,80 @@ test("exposes the live mask width as --md3-carousel-mask-size", async () => {
   const { masks, maskWidth } = renderCarousel();
   await waitFor(() => expect(maskWidth(0)).toBeGreaterThan(100));
   for (const [index, mask] of masks().entries()) {
-    const published = mask.style.getPropertyValue("--md3-carousel-mask-size");
+    // Computed, not inline: where scroll timelines exist the value comes from the mask
+    // animation, and consumers read it through the cascade either way.
+    const published = getComputedStyle(mask).getPropertyValue("--md3-carousel-mask-size");
     expect(published).not.toBe("");
     expect(parseFloat(published)).toBeCloseTo(maskWidth(index), 0);
+  }
+});
+
+// The masks are driven straight off the scroll position by a generated keyframe set rather
+// than repainted by script, so the whole curve has to match the keyline math — at arbitrary
+// offsets, not just at the snap points. Beyond the keyframes' range the animation holds its
+// end value instead of extrapolating, which is only sound while those masks are off-screen.
+test("timeline-driven masks match the keyline math at arbitrary offsets", async () => {
+  const { container, masks } = renderCarousel();
+  const strip = container.querySelector<HTMLElement>(`.${styles.strip}`)!;
+  await waitFor(() => expect(masks()[0]!.getBoundingClientRect().width).toBeGreaterThan(100));
+  expect(CSS.supports("animation-timeline", "scroll(nearest inline)")).toBe(true);
+
+  const arrangement = multiBrowseArrangement({
+    availableSpace: VIEWPORT,
+    preferredItemSize: 186,
+    itemSpacing: 8,
+    itemCount: 8,
+  })!;
+  const list = startAlignedKeylines(arrangement, 8);
+  const uMax = list.slots.length - 1 + 2;
+  const uMin = -2;
+
+  let checked = 0;
+  for (const target of [0, 37, 120, 200.5, 340]) {
+    strip.scrollLeft = target;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const stripRect = strip.getBoundingClientRect();
+    const scroll = strip.scrollLeft;
+    masks().forEach((mask, index) => {
+      const u = list.focalIndex + index - scroll / list.pitch;
+      const rect = mask.getBoundingClientRect();
+      if (u > uMax || u < uMin) {
+        // Held rather than extrapolated — fine only because it is out of sight.
+        expect(rect.left > stripRect.right || rect.right < stripRect.left).toBe(true);
+        return;
+      }
+      const slot = slotAt(list, u);
+      expect(rect.width).toBeCloseTo(slot.size, 0);
+      expect(rect.left - stripRect.left).toBeCloseTo(slot.offset, 0);
+      checked++;
+    });
+  }
+  expect(checked).toBeGreaterThan(10);
+});
+
+// Safari before 26 and Firefox before 144 have no scroll timelines, so the scripted paint
+// has to stay intact — inline styles, matching geometry and all.
+test("falls back to painting the masks by script without scroll timelines", async () => {
+  const supports = CSS.supports.bind(CSS);
+  CSS.supports = ((property: string, value?: string) =>
+    property === "animation-timeline" ? false : supports(property, value!)) as typeof CSS.supports;
+  try {
+    const { masks, maskWidth } = renderCarousel();
+    await waitFor(() => expect(maskWidth(0)).toBeGreaterThan(100));
+    const arrangement = multiBrowseArrangement({
+      availableSpace: VIEWPORT,
+      preferredItemSize: 186,
+      itemSpacing: 8,
+      itemCount: 8,
+    })!;
+    expect(maskWidth(0)).toBeCloseTo(arrangement.largeSize, 0);
+
+    const mask = masks()[0]!;
+    expect(getComputedStyle(mask).animationName).toBe("none");
+    expect(mask.style.getPropertyValue("--md3-carousel-mask-size")).not.toBe("");
+    expect(mask.style.transform).not.toBe("");
+  } finally {
+    CSS.supports = supports as typeof CSS.supports;
   }
 });
 
@@ -296,7 +367,7 @@ test("mask paint never moves the item's scroll-snap area", async () => {
 
   await waitFor(() => {
     const mask = getByTestId("item-2").querySelector<HTMLElement>(`.${styles.mask}`)!;
-    expect(mask.style.transform).not.toBe("");
+    expect(getComputedStyle(mask).transform).not.toBe("none");
   });
   for (const tab of container.querySelectorAll<HTMLElement>('[role="tab"]')) {
     expect(getComputedStyle(tab).transform).toBe("none");

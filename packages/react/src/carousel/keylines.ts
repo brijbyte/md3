@@ -494,3 +494,35 @@ export function slotAt(keylines: KeylineList, u: number): Slot {
   const b = slots[i0 + 1]!;
   return { size: lerp(a.size, b.size, frac), offset: lerp(a.offset, b.offset, frac) };
 }
+
+/** How far an item at slot position `u` must be pushed to sit on its keyline. */
+export function maskShift(keylines: KeylineList, u: number): number {
+  return slotAt(keylines, u).offset - keylines.pitch * (u - keylines.focalIndex);
+}
+
+export interface MaskStop {
+  /** Slot position; the mask function bends only where this is an integer. */
+  u: number;
+  size: number;
+  shift: number;
+}
+
+/**
+ * The mask function sampled at every point where it bends, over `[uMin, uMax]` ascending.
+ *
+ * Folding the item's own scroll travel into `shift` leaves a curve of `u` alone, so *every*
+ * item follows the identical curve and differs only in the scroll offset that puts it at a
+ * given `u` (`pitch * (focalIndex + index - u)`). That is what lets one set of keyframes,
+ * offset per item, drive the whole strip off the scroll position — no script per frame.
+ */
+export function maskStops(keylines: KeylineList, uMin: number, uMax: number): MaskStop[] {
+  const stops: MaskStop[] = [];
+  const at = (u: number) =>
+    stops.push({ u, size: slotAt(keylines, u).size, shift: maskShift(keylines, u) });
+  at(uMin);
+  for (let u = Math.ceil(uMin); u <= Math.floor(uMax); u++) {
+    if (u > uMin && u < uMax) at(u);
+  }
+  at(uMax);
+  return stops;
+}

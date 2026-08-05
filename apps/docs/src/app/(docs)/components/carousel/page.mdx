@@ -33,6 +33,10 @@ currently sits on — items expand and collapse as they scroll rather than resiz
 Items are laid out at a uniform large size and only _painted_ at their keyline size, so masking
 never disturbs the scroller's geometry. Drag, wheel, and trackpad scrolling are native.
 
+Where the browser supports scroll-driven animations, the masks are tied straight to the scroll
+position and follow it on the compositor. Everywhere else they are painted from script instead,
+which lags a frame or two behind a touch drag but is otherwise identical.
+
 <CarouselMultiBrowse />
 
 ## Hero

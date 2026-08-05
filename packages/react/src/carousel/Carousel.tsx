@@ -14,6 +14,7 @@ import {
   MIN_SMALL_ITEM_SIZE,
   multiBrowseArrangement,
   leadingScroll,
+  maskStops,
   slotAt,
   startAlignedKeylines,
   uncontainedArrangement,
@@ -28,11 +29,50 @@ export type CarouselLayout =
 
 const CarouselIndexContext = React.createContext<number>(-1);
 
+interface MaskAnimation {
+  name: string;
+  pitch: number;
+  focalIndex: number;
+  uMin: number;
+  uMax: number;
+}
+
 interface CarouselContextValue {
   registerItem: (index: number, element: HTMLElement | null) => void;
+  /** Set only while the masks are driven off a scroll timeline instead of by script. */
+  maskAnimation: MaskAnimation | null;
 }
 
 const CarouselContext = React.createContext<CarouselContextValue | null>(null);
+
+/**
+ * The mask function runs a little past the end keylines so that the animation's fill —
+ * which holds the last value rather than extrapolating — only ever applies off-screen.
+ */
+const U_OVERSHOOT = 2;
+
+const round = (value: number) => Math.round(value * 100) / 100;
+
+/**
+ * One keyframe set for the whole strip: every item follows the same curve of slot position,
+ * so items differ only in `animation-range`. Percentages run with the scroll, which walks
+ * slot positions downwards.
+ */
+function maskKeyframes(name: string, keylines: KeylineList, isRtl: boolean): string {
+  const uMax = keylines.slots.length - 1 + U_OVERSHOOT;
+  const uMin = -U_OVERSHOOT;
+  const span = uMax - uMin;
+  const frames = maskStops(keylines, uMin, uMax)
+    .toReversed()
+    .map((stop) => {
+      const shift = isRtl ? -stop.shift : stop.shift;
+      return `${round(((uMax - stop.u) / span) * 100)}%{--md3-carousel-mask-size:${round(stop.size)}px;transform:translateX(${round(shift)}px)}`;
+    });
+  // Registered so the size interpolates as a length; an unregistered custom property would
+  // jump between stops instead. Injected here, with the keyframes, so the plain fallback
+  // path keeps the `var(..., <item size>)` default it relies on before the first paint.
+  return `@property --md3-carousel-mask-size{syntax:"<length>";inherits:true;initial-value:0px}@keyframes ${name}{${frames.join("")}}`;
+}
 
 function buildKeylines(
   layout: CarouselLayout,
@@ -199,6 +239,27 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     );
     const keylinesRef = React.useRef(keylines);
     keylinesRef.current = keylines;
+    const timelineRef = React.useRef(false);
+
+    // iOS runs scrolling off the main thread and starves rAF during a drag, so no amount of
+    // scheduling keeps a scripted paint in step. Where scroll timelines exist, hand the masks
+    // to the compositor instead; elsewhere keep painting them by hand.
+    const [hasScrollTimeline, setHasScrollTimeline] = React.useState(false);
+    React.useEffect(() => {
+      setHasScrollTimeline(
+        typeof CSS !== "undefined" &&
+          typeof CSS.supports === "function" &&
+          CSS.supports("animation-timeline", "scroll(nearest inline)"),
+      );
+    }, []);
+
+    const animationName = `md3-carousel-${React.useId().replace(/[^a-zA-Z0-9-]/g, "")}`;
+    const timeline = hasScrollTimeline && keylines != null;
+    const keyframes = React.useMemo(
+      () => (timeline ? maskKeyframes(animationName, keylines!, isRtl) : null),
+      [timeline, animationName, keylines, isRtl],
+    );
+    timelineRef.current = timeline;
 
     const registerItem = React.useCallback((index: number, element: HTMLElement | null) => {
       if (element) {
@@ -207,14 +268,30 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         itemsRef.current.delete(index);
       }
     }, []);
-    const context = React.useMemo<CarouselContextValue>(() => ({ registerItem }), [registerItem]);
+    const maskAnimation = React.useMemo<MaskAnimation | null>(
+      () =>
+        timeline
+          ? {
+              name: animationName,
+              pitch: keylines!.pitch,
+              focalIndex: keylines!.focalIndex,
+              uMin: -U_OVERSHOOT,
+              uMax: keylines!.slots.length - 1 + U_OVERSHOOT,
+            }
+          : null,
+      [timeline, animationName, keylines],
+    );
+    const context = React.useMemo<CarouselContextValue>(
+      () => ({ registerItem, maskAnimation }),
+      [registerItem, maskAnimation],
+    );
 
     // Items are laid out at a uniform `pitch` and only *masked* down to their keyline
     // size, so painting never changes scroll geometry — no feedback loop with the scroller.
     const paint = useEventCallback(() => {
       const strip = stripRef.current;
       const list = keylinesRef.current;
-      if (!strip || !list) return;
+      if (!strip || !list || timelineRef.current) return;
       const scroll = leadingScroll(strip.scrollLeft, isRtl);
       for (const [index, element] of itemsRef.current) {
         // The mask, not the item box, carries the paint: a transform moves an element's
@@ -243,7 +320,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     // loop parks itself once the scroller has held still.
     React.useEffect(() => {
       const strip = stripRef.current;
-      if (!strip) return;
+      if (!strip || timeline) return;
       const IDLE_FRAMES = 5;
       let frame = 0;
       let idle = 0;
@@ -273,7 +350,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         strip.removeEventListener("scroll", onScroll);
         if (frame) cancelAnimationFrame(frame);
       };
-    }, [paint]);
+    }, [paint, timeline]);
 
     // A settled scroll (drag, wheel, snap) adopts the item nearest the focal keyline.
     React.useEffect(() => {
@@ -347,6 +424,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
             its own root element into view on every arrow key, instantly and against an
             offset it measures from the nearest positioned ancestor. Keeping the tablist
             unscrollable leaves the scroll position ours alone. */}
+        {keyframes ? <style>{keyframes}</style> : null}
         <div
           ref={stripRef}
           className={styles.strip}
@@ -397,6 +475,16 @@ export const CarouselItem = React.forwardRef<HTMLButtonElement, CarouselItemProp
       [context, index, ref],
     );
 
+    const animation = context?.maskAnimation;
+    const maskStyle: React.CSSProperties | undefined = animation
+      ? {
+          animationName: animation.name,
+          // The stretch of scroll over which this item crosses the keylines. Every item runs
+          // the same keyframes; only where they start differs, by one pitch per index.
+          animationRange: `${animation.pitch * (animation.focalIndex + index - animation.uMax)}px ${animation.pitch * (animation.focalIndex + index - animation.uMin)}px`,
+        }
+      : undefined;
+
     return (
       <BaseTabs.Tab
         ref={setRef}
@@ -412,7 +500,7 @@ export const CarouselItem = React.forwardRef<HTMLButtonElement, CarouselItemProp
         }}
         {...rest}
       >
-        <span className={styles.mask}>
+        <span className={styles.mask} style={maskStyle}>
           <span className={styles.content}>{children}</span>
           <span className={styles.stateLayer} ref={ripple.containerRef} aria-hidden />
         </span>
