@@ -32,7 +32,7 @@
     "satteri-nextjs": "^0.0.2",
     "shiki": "^4.3.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "yuku-parser": "^0.7.2"
   }
 }
