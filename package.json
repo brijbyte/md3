@@ -22,7 +22,7 @@
     "oxlint": "^1.74.0",
     "playwright": "^1.61.1",
     "tsdown": "^0.22.9",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10",
     "wrangler": "^4.112.0"
   },
